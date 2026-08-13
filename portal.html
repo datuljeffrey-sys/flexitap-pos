@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlexiTap POS — Store Owner Portal</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #0f172a;
+      --sidebar-bg: #1e293b;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+    }
+
+    [data-theme="light"] {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --bg: #f8fafc;
+      --sidebar-bg: #ffffff;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; transition: background-color 0.2s, color 0.2s; }
+    body { background-color: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+
+    /* Sidebar Navigation */
+    aside {
+      width: 250px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; justify-content: space-between; padding: 1.5rem 1rem;
+    }
+    .brand { font-size: 1.4rem; font-weight: 800; color: var(--text); padding: 0 0.5rem 1.5rem 0.5rem; border-bottom: 1px solid var(--border); }
+    .brand span { color: var(--primary); }
+
+    .menu { list-style: none; margin-top: 1.5rem; }
+    .menu-item { margin-bottom: 0.4rem; }
+    .menu-link {
+      display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem;
+      color: var(--text-muted); text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer;
+    }
+    .menu-link:hover, .menu-link.active { background-color: var(--primary); color: #ffffff; }
+
+    .user-profile {
+      padding-top: 1rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;
+    }
+    .user-info { font-size: 0.85rem; }
+    .user-name { font-weight: 700; color: var(--text); }
+    .user-tier { font-size: 0.75rem; color: var(--accent); font-weight: 600; }
+
+    /* Main Dashboard Layout */
+    main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+
+    header {
+      padding: 1.2rem 2rem; background-color: var(--sidebar-bg); border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; sticky; top: 0; z-index: 10;
+    }
+    .header-title h1 { font-size: 1.5rem; font-weight: 700; }
+    .header-title p { font-size: 0.85rem; color: var(--text-muted); }
+
+    .header-actions { display: flex; align-items: center; gap: 1rem; }
+    .theme-btn {
+      background: var(--border); border: none; color: var(--text); padding: 0.5rem;
+      border-radius: 50%; width: 36px; height: 36px; cursor: pointer;
+    }
+    .btn-logout {
+      background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+      padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer;
+    }
+    .btn-logout:hover { color: var(--danger); border-color: var(--danger); }
+
+    /* Dashboard Content Grid */
+    .content { padding: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; }
+
+    /* Banner / Alert */
+    .pro-banner {
+      background: linear-gradient(90deg, #1e3a8a 0%, #2563eb 100%); color: #fff;
+      padding: 1.2rem 1.5rem; border-radius: 12px; margin-bottom: 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .pro-banner h3 { font-size: 1.1rem; margin-bottom: 0.2rem; }
+    .pro-banner p { font-size: 0.85rem; opacity: 0.9; }
+
+    /* Metrics Grid */
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .metric-card {
+      background-color: var(--card-bg); border: 1px solid var(--border);
+      padding: 1.5rem; border-radius: 12px;
+    }
+    .metric-title { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+    .metric-value { font-size: 1.8rem; font-weight: 800; margin: 0.5rem 0 0.2rem 0; color: var(--text); }
+    .metric-trend { font-size: 0.8rem; font-weight: 600; }
+    .trend-up { color: var(--accent); }
+    .trend-down { color: var(--danger); }
+
+    /* Data Tables & Feeds */
+    .grid-two-col { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+    .panel {
+      background-color: var(--card-bg); border: 1px solid var(--border);
+      padding: 1.5rem; border-radius: 12px;
+    }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; }
+    .panel-title { font-size: 1.1rem; font-weight: 700; }
+
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+    th { padding: 0.75rem 0.5rem; border-bottom: 1px solid var(--border); color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; }
+    td { padding: 0.85rem 0.5rem; border-bottom: 1px solid var(--border); }
+    tr:last-child td { border-bottom: none; }
+
+    .status-badge {
+      display: inline-block; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 700;
+    }
+    .status-completed { background: rgba(16, 185, 129, 0.15); color: var(--accent); }
+    .status-pending { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+
+    /* Low Inventory List */
+    .inventory-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
+    .inventory-item:last-child { border-bottom: none; }
+    .item-name { font-weight: 600; font-size: 0.9rem; }
+    .item-stock { font-size: 0.8rem; color: var(--danger); font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside>
+    <div>
+      <div class="brand">Flexi<span>Tap POS</span></div>
+      <ul class="menu">
+        <li class="menu-item"><a class="menu-link active" onclick="switchView('Dashboard')">📊 Dashboard</a></li>
+        <li class="menu-item"><a class="menu-link" onclick="switchView('Sales Reports')">💰 Sales & Revenue</a></li>
+        <li class="menu-item"><a class="menu-link" onclick="switchView('Inventory')">📦 Stock & Inventory</a></li>
+        <li class="menu-item"><a class="menu-link" onclick="switchView('Terminals')">📱 POS Terminals</a></li>
+        <li class="menu-item"><a class="menu-link" onclick="switchView('Settings')">⚙️ Store Settings</a></li>
+      </ul>
+    </div>
+
+    <div class="user-profile">
+      <div class="user-info">
+        <div class="user-name">Central Bakery Store</div>
+        <div class="user-tier">✓ Pro Cloud Subscription</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main>
+    <!-- Header -->
+    <header>
+      <div class="header-title">
+        <h1 id="pageTitle">Store Overview</h1>
+        <p>Real-time analytics synced from in-store POS terminals.</p>
+      </div>
+      <div class="header-actions">
+        <button class="theme-btn" onclick="toggleTheme()" title="Toggle Theme">☀️</button>
+        <button class="btn-logout" onclick="alert('Logged out from Supabase Auth Session.')">Logout</button>
+      </div>
+    </header>
+
+    <!-- Dashboard Body -->
+    <div class="content">
+
+      <!-- Active Subscription Banner -->
+      <div class="pro-banner">
+        <div>
+          <h3>Multi-Terminal Sync Active</h3>
+          <p>Your store tablets are actively syncing live sales to this web portal.</p>
+        </div>
+        <button style="background: #fff; color: var(--primary); border: none; padding: 0.5rem 1rem; border-radius: 6px; font-weight: 700; cursor: pointer;" onclick="alert('Opening store settings...')">Manage Stores</button>
+      </div>
+
+      <!-- Key Metrics Grid -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-title">Today's Total Sales</div>
+          <div class="metric-value">$1,248.50</div>
+          <div class="metric-trend trend-up">↑ +14% vs yesterday</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">Total Orders</div>
+          <div class="metric-value">142</div>
+          <div class="metric-trend trend-up">↑ +8% vs yesterday</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">Average Order Value</div>
+          <div class="metric-value">$8.79</div>
+          <div class="metric-trend trend-up">↑ +2% vs yesterday</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">Active POS Terminals</div>
+          <div class="metric-value">3 Terminals</div>
+          <div class="metric-trend trend-up" style="color: var(--accent);">● All Online</div>
+        </div>
+      </div>
+
+      <!-- Two Column Layout: Recent Transactions + Low Inventory -->
+      <div class="grid-two-col">
+        
+        <!-- Live Transaction Feed -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Live Transaction Feed</div>
+            <button style="background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;" onclick="alert('Exporting CSV sales report...')">Export CSV</button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Terminal</th>
+                <th>Payment</th>
+                <th>Total</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>#POS-1092</td>
+                <td>Terminal #1 (Front Counter)</td>
+                <td>Cash</td>
+                <td>$14.50</td>
+                <td><span class="status-badge status-completed">Completed</span></td>
+              </tr>
+              <tr>
+                <td>#POS-1091</td>
+                <td>Terminal #2 (Drive-thru)</td>
+                <td>Card / Tap</td>
+                <td>$22.80</td>
+                <td><span class="status-badge status-completed">Completed</span></td>
+              </tr>
+              <tr>
+                <td>#POS-1090</td>
+                <td>Terminal #1 (Front Counter)</td>
+                <td>QR Code / Digital</td>
+                <td>$8.20</td>
+                <td><span class="status-badge status-completed">Completed</span></td>
+              </tr>
+              <tr>
+                <td>#POS-1089</td>
+                <td>Terminal #3 (Kiosk)</td>
+                <td>Cash</td>
+                <td>$31.00</td>
+                <td><span class="status-badge status-pending">Processing</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Low Stock Alerts -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Low Stock Alerts</div>
+            <span style="font-size: 0.75rem; color: var(--danger); font-weight: 700;">Needs Restock</span>
+          </div>
+          <div class="inventory-item">
+            <div>
+              <div class="item-name">Whole Wheat Bread</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Category: Bakery</div>
+            </div>
+            <div class="item-stock">4 items left</div>
+          </div>
+          <div class="inventory-item">
+            <div>
+              <div class="item-name">Espresso Beans (1kg)</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Category: Beverage</div>
+            </div>
+            <div class="item-stock">2 bags left</div>
+          </div>
+          <div class="inventory-item">
+            <div>
+              <div class="item-name">Paper Coffee Cups (16oz)</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Category: Supplies</div>
+            </div>
+            <div class="item-stock">15 cups left</div>
+          </div>
+          <button class="btn-logout" style="width: 100%; margin-top: 1.2rem; color: var(--primary); border-color: var(--primary);" onclick="alert('Redirecting to Inventory Management...')">Update Inventory</button>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      document.querySelector('.theme-btn').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    }
+
+    function switchView(viewName) {
+      document.getElementById('pageTitle').textContent = viewName;
+      document.querySelectorAll('.menu-link').forEach(el => el.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+    }
+  </script>
+</body>
+</html>
