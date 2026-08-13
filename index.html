@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FlexiTap POS — Smart Point of Sale & Management Platform</title>
+
+  <!-- Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     :root {
       --primary: #2563eb;
@@ -176,7 +180,7 @@
     <div id="tab3" class="tab-content">
       <div>
         <h3 style="font-size: 1.4rem; margin-bottom: 1rem;">Gated Owner Portal</h3>
-        <p style="color: var(--text-muted);">Logging into `yourdomain.com/login` gives store owners complete access to end-of-day sales reports, tax calculations, stock level alerts, and staff shift tracking.</p>
+        <p style="color: var(--text-muted);">Logging into `flexitapapp.com/portal.html` gives store owners complete access to end-of-day sales reports, tax calculations, stock level alerts, and staff shift tracking.</p>
       </div>
       <div style="background: var(--bg); padding: 2rem; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
         <span style="font-size: 3.5rem;">📊</span>
@@ -234,7 +238,7 @@
       <button class="close-btn" onclick="closeModal('clientModal')">&times;</button>
       <h2>Store Owner Web Portal</h2>
       <p>Log in with your POS account credentials to view web reports. (Requires Cloud Subscription).</p>
-      <form onsubmit="simulatedLogin(event, 'Store Analytics Dashboard')">
+      <form onsubmit="handleLogin(event, 'Store Analytics Dashboard')">
         <div class="form-group">
           <label>Owner Email Address</label>
           <input type="email" placeholder="owner@store.com" required>
@@ -254,13 +258,13 @@
       <button class="close-btn" onclick="closeModal('devModal')">&times;</button>
       <h2 style="color: var(--accent);">Developer & Operations Portal</h2>
       <p>Internal diagnostics, feature flags, and merchant support toolset.</p>
-      <form onsubmit="simulatedLogin(event, 'Developer Ops Console')">
+      <form onsubmit="handleLogin(event, 'Developer Ops Console')">
         <div class="form-group">
           <label>Developer Email</label>
-          <input type="email" placeholder="dev@flexitap.internal" required>
+          <input type="email" placeholder="dev@flexitapapp.com" required>
         </div>
         <div class="form-group">
-          <label>Security Key</label>
+          <label>Security Key / Password</label>
           <input type="password" placeholder="••••••••" required>
         </div>
         <button type="submit" class="btn btn-primary" style="width: 100%; background-color: #065f46;">Authenticate Dev Session</button>
@@ -293,6 +297,39 @@
   </footer>
 
   <script>
+    // Initialize Supabase Client
+    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwODI0MzMsImV4cCI6MjA3MDY1ODQzM30.7m_q95iG2b_WvO294EAn-x6mX3mI4e7-uL4q5t4f-P4';
+    
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Real Supabase Login Function
+    async function handleLogin(e, portalName) {
+      e.preventDefault();
+      const email = e.target.querySelector('input[type="email"]').value;
+      const password = e.target.querySelector('input[type="password"]').value;
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+
+      if (error) {
+        alert(`Supabase Auth Error: ${error.message}`);
+      } else {
+        alert(`[Supabase Verified]\nAuthenticated successfully as ${data.user.email}! Loading ${portalName}...`);
+        closeModal('clientModal');
+        closeModal('devModal');
+        
+        // Redirect to live portal page
+        if (portalName.includes('Developer')) {
+          window.location.href = '/dev-portal.html';
+        } else {
+          window.location.href = '/portal.html';
+        }
+      }
+    }
+
     function toggleTheme() {
       const currentTheme = document.documentElement.getAttribute('data-theme');
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -314,13 +351,6 @@
       const isYearly = document.getElementById('pricingToggle').checked;
       const proPrice = document.getElementById('proPrice');
       proPrice.innerHTML = isYearly ? '$23<span style="font-size: 1rem; font-weight: normal;">/store/mo</span>' : '$29<span style="font-size: 1rem; font-weight: normal;">/store/mo</span>';
-    }
-
-    function simulatedLogin(e, portalName) {
-      e.preventDefault();
-      alert(`[Supabase Auth Simulation]\nAuthenticated successfully! Loading ${portalName}...`);
-      closeModal('clientModal');
-      closeModal('devModal');
     }
 
     function simulateDownload(platform) {
