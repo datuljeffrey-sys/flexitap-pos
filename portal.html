@@ -3,306 +3,242 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FlexiTap — Customer Portal</title>
-
-  <!-- Supabase JS Client via CDN -->
+  <title>FlexiTap — Advanced Analytics Portal</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <style>
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body {
-      padding: 24px;
-      background: #f8fafc;
-      color: #0f172a;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: white;
-      padding: 20px 24px;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .card-grid {
-      display: flex;
-      gap: 16px;
-      margin-top: 24px;
-      flex-wrap: wrap;
-    }
-    .card {
-      background: white;
-      border: 1px solid #e2e8f0;
-      padding: 24px;
-      border-radius: 12px;
-      flex: 1;
-      min-width: 220px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .card h3 {
-      margin: 0;
-      color: #64748b;
-      font-size: 14px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .metric {
-      font-size: 32px;
-      font-weight: 800;
-      color: #10b981;
-      margin: 12px 0 0 0;
-    }
-    .status-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 9999px;
-      font-size: 12px;
-      font-weight: 600;
-      background: #dcfce7;
-      color: #166534;
-    }
-    button.logout {
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    button.logout:hover { background: #dc2626; }
-    .loading-container { text-align: center; padding: 60px 20px; color: #64748b; }
+    body { padding: 24px; background: #f8fafc; color: #0f172a; max-width: 1000px; margin: 0 auto; }
     
-    /* Login Fallback Form */
-    .login-box {
-      background: white;
-      border: 1px solid #e2e8f0;
-      padding: 32px;
-      border-radius: 12px;
-      max-width: 400px;
-      margin: 40px auto;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0 16px 0;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      box-sizing: border-box;
-    }
-    button.login-btn {
-      width: 100%;
-      padding: 10px;
-      background: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-    }
+    .header-bar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 20px 24px; border-radius: 12px; border: 1px solid #e2e8f0; }
+    .status-badge { padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 600; background: #dcfce7; color: #166534; }
+    
+    /* Grid & Cards */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 20px 0; }
+    .card { background: white; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .card h3 { margin: 0; color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase; }
+    .metric { font-size: 26px; font-weight: 800; margin: 8px 0 0 0; color: #0f172a; }
+    .metric.green { color: #10b981; }
+    .metric.blue { color: #2563eb; }
+    .metric.purple { color: #8b5cf6; }
+    
+    /* Breakdown Sections */
+    .breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px; }
+    @media (max-width: 768px) { .breakdown-grid { grid-template-columns: 1fr; } }
+    
+    .breakdown-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 15px; }
+    .progress-bar-bg { background: #f1f5f9; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 4px; }
+    .progress-bar-fill { background: #3b82f6; height: 100%; border-radius: 4px; }
+    
+    button.logout { background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+    .date-picker-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; background: white; padding: 12px 20px; border-radius: 8px; border: 1px solid #e2e8f0; }
+    input[type="date"] { padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
   </style>
 </head>
 <body>
 
-  <!-- LOADING STATE -->
-  <div id="loading-state" class="loading-container">
-    <h2>Connecting to Store Portal...</h2>
-    <p>Verifying authentication session...</p>
-  </div>
-
-  <!-- FALLBACK LOGIN FORM (In case session is not present) -->
-  <div id="login-section" class="login-box" style="display: none;">
-    <h2 style="margin-top: 0;">Portal Sign In</h2>
-    <form id="login-form">
-      <label>Email</label>
-      <input type="email" id="portal-email" required placeholder="merchant@example.com" />
-      <label>Password</label>
-      <input type="password" id="portal-password" required />
-      <button type="submit" class="login-btn">Sign In</button>
-    </form>
-    <p id="auth-error" style="color: #ef4444; margin-top: 12px; font-size: 14px; text-align: center;"></p>
-  </div>
-
-  <!-- MAIN DASHBOARD CONTENT -->
   <div id="portal-content" style="display: none;">
+    <!-- HEADER -->
     <div class="header-bar">
       <div>
-        <h1 id="store-name" style="margin: 0; font-size: 24px;">Store Portal</h1>
+        <h1 id="store-name" style="margin: 0; font-size: 22px;">Store Analytics</h1>
         <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">
-          Category: <strong id="store-category">General</strong> &bull; 
-          <span class="status-badge" id="sync-status">Live Connected</span>
+          Business: <strong id="store-category">General</strong> &bull; <span class="status-badge" id="sync-status">Live Connected</span>
         </p>
       </div>
       <button class="logout" onclick="handleLogout()">Sign Out</button>
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 32px;">
-      <h2 style="margin: 0; font-size: 20px;">Today's Live Sales</h2>
-      <span id="display-date" style="color: #64748b; font-size: 14px; font-weight: 500;"></span>
+    <!-- DATE CONTROLS -->
+    <div class="date-picker-bar">
+      <h2 style="margin: 0; font-size: 18px;">Sales Performance</h2>
+      <div>
+        <label style="font-size: 14px; color: #64748b; margin-right: 8px;">Select Date:</label>
+        <input type="date" id="selected-date" onchange="handleDateChange()" />
+      </div>
     </div>
 
-    <div class="card-grid">
+    <!-- KPI METRICS -->
+    <div class="kpi-grid">
       <div class="card">
         <h3>Net Sales</h3>
-        <p class="metric" id="net-sales">₱0.00</p>
+        <p class="metric green" id="net-sales">₱0.00</p>
+      </div>
+      <div class="card">
+        <h3>Gross Sales</h3>
+        <p class="metric" id="gross-sales">₱0.00</p>
       </div>
       <div class="card">
         <h3>Transactions</h3>
-        <p class="metric" id="tx-count" style="color: #3b82f6;">0</p>
+        <p class="metric blue" id="tx-count">0</p>
       </div>
       <div class="card">
-        <h3>Average Sale</h3>
-        <p class="metric" id="avg-sale" style="color: #8b5cf6;">₱0.00</p>
+        <h3>Average Ticket</h3>
+        <p class="metric purple" id="avg-sale">₱0.00</p>
+      </div>
+      <div class="card">
+        <h3>Total Discounts</h3>
+        <p class="metric" id="discounts" style="color: #ef4444;">₱0.00</p>
+      </div>
+    </div>
+
+    <!-- DEEP DIVE BREAKDOWNS -->
+    <div class="breakdown-grid">
+      <!-- Payment Breakdown -->
+      <div class="card">
+        <h3 style="margin-bottom: 16px;">Payment Method Breakdown</h3>
+        <div id="payment-breakdown-container">
+          <p style="color: #94a3b8; font-size: 14px;">No payment data recorded for this date.</p>
+        </div>
+      </div>
+
+      <!-- Category Breakdown -->
+      <div class="card">
+        <h3 style="margin-bottom: 16px;">Sales by Category</h3>
+        <div id="category-breakdown-container">
+          <p style="color: #94a3b8; font-size: 14px;">No category sales recorded for this date.</p>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    // --- SUPABASE CONFIGURATION ---
     const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAwMjgyODgsImV4cCI6MjA1NTYwNDI4OH0.M_J8yWdK_B7t7xH3ZtD5C9l5tq8t8-w6Z2lQ6v5mUQI';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let activeStore = null;
 
-    function getLocalDateString() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
+    function getLocalDateString(d = new Date()) {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
     }
 
-    async function initPortal(user) {
-      try {
-        if (!user) {
-          document.getElementById('loading-state').style.display = 'none';
-          document.getElementById('login-section').style.display = 'block';
-          document.getElementById('portal-content').style.display = 'none';
-          return;
-        }
-
-        document.getElementById('login-section').style.display = 'none';
-
-        // Query Store
-        const { data: store, error } = await supabaseClient
-          .from('stores')
-          .select('*')
-          .or(`owner_id.eq.${user.id},user_id.eq.${user.id}`)
-          .maybeSingle();
-
-        if (error || !store) {
-          console.error("Store Lookup Error:", error);
-          document.getElementById('loading-state').innerHTML = `
-            <h2 style="color: #ef4444;">Store Not Found</h2>
-            <p>No store is linked to account (${user.email}). Please complete setup in the POS app.</p>
-            <button onclick="handleLogout()" style="padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer;">Sign Out</button>
-          `;
-          return;
-        }
-
-        activeStore = store;
-
-        document.getElementById('store-name').innerText = store.name || 'My Store';
-        document.getElementById('store-category').innerText = store.business_category || 'General';
-        
-        document.getElementById('loading-state').style.display = 'none';
-        document.getElementById('portal-content').style.display = 'block';
-
-        const todayStr = getLocalDateString();
-        document.getElementById('display-date').innerText = `Date: ${todayStr}`;
-        const symbol = store.currency_symbol || '₱';
-
-        // Load & Subscribe
-        await loadSalesData(store.id, todayStr, symbol);
-        subscribeToLiveUpdates(store.id, todayStr, symbol);
-
-      } catch (err) {
-        console.error("Portal Exception:", err);
+    async function init() {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
       }
+
+      const { data: store } = await supabaseClient
+        .from('stores')
+        .select('*')
+        .or(`owner_id.eq.${user.id},user_id.eq.${user.id}`)
+        .maybeSingle();
+
+      if (!store) return;
+      activeStore = store;
+
+      document.getElementById('store-name').innerText = store.name || 'My Store';
+      document.getElementById('store-category').innerText = store.business_category || 'General';
+      document.getElementById('portal-content').style.display = 'block';
+
+      const todayStr = getLocalDateString();
+      document.getElementById('selected-date').value = todayStr;
+
+      loadDataForDate(todayStr);
+      subscribeToLive(store.id);
     }
 
-    async function loadSalesData(storeId, todayStr, symbol) {
+    async function loadDataForDate(dateStr) {
       const { data } = await supabaseClient
         .from('daily_sales_summaries')
         .select('*')
-        .eq('store_id', storeId)
-        .eq('date', todayStr)
+        .eq('store_id', activeStore.id)
+        .eq('date', dateStr)
         .maybeSingle();
 
-      updateSalesMetrics(data || { net_sales: 0, transactions: 0, average_sale: 0 }, symbol);
+      renderDashboard(data || {
+        net_sales: 0,
+        gross_sales: 0,
+        transactions: 0,
+        average_sale: 0,
+        total_discounts: 0,
+        payment_breakdown: {},
+        category_breakdown: {}
+      });
     }
 
-    function subscribeToLiveUpdates(storeId, todayStr, symbol) {
-      supabaseClient
-        .channel(`daily-sales-live-${storeId}`)
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'daily_sales_summaries',
-            filter: `store_id=eq.${storeId}`
-          },
-          (payload) => {
-            if (payload.new && payload.new.date === todayStr) {
-              updateSalesMetrics(payload.new, symbol);
-            }
-          }
-        )
-        .subscribe((status) => {
-          if (status === 'SUBSCRIBED') {
-            document.getElementById('sync-status').innerText = 'Live Connected';
-          }
-        });
-    }
-
-    function updateSalesMetrics(data, symbol) {
+    function renderDashboard(data) {
+      const symbol = activeStore.currency_symbol || '₱';
       const netSales = Number(data.net_sales || 0);
+      const grossSales = Number(data.gross_sales || netSales);
       const txCount = Number(data.transactions || 0);
       const avgSale = Number(data.average_sale || (txCount > 0 ? netSales / txCount : 0));
+      const discounts = Number(data.total_discounts || data.discounts || 0);
 
+      // KPI Elements
       document.getElementById('net-sales').innerText = `${symbol}${netSales.toFixed(2)}`;
+      document.getElementById('gross-sales').innerText = `${symbol}${grossSales.toFixed(2)}`;
       document.getElementById('tx-count').innerText = txCount;
       document.getElementById('avg-sale').innerText = `${symbol}${avgSale.toFixed(2)}`;
+      document.getElementById('discounts').innerText = `${symbol}${discounts.toFixed(2)}`;
+
+      // Payment Breakdown Render
+      renderBreakdownList('payment-breakdown-container', data.payment_breakdown || {}, netSales, symbol);
+
+      // Category Breakdown Render
+      renderBreakdownList('category-breakdown-container', data.category_breakdown || {}, netSales, symbol);
     }
 
-    // Login Fallback Handler
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('portal-email').value.trim();
-      const password = document.getElementById('portal-password').value;
-      document.getElementById('auth-error').innerText = '';
+    function renderBreakdownList(containerId, dataMap, totalSales, symbol) {
+      const container = document.getElementById(containerId);
+      const keys = Object.keys(dataMap);
 
-      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
-      if (error) {
-        document.getElementById('auth-error').innerText = error.message;
-      } else {
-        initPortal(data.user);
+      if (keys.length === 0) {
+        container.innerHTML = `<p style="color: #94a3b8; font-size: 14px;">No data recorded for this section.</p>`;
+        return;
       }
-    });
+
+      let html = '';
+      keys.forEach((key) => {
+        const val = Number(dataMap[key] || 0);
+        const percent = totalSales > 0 ? ((val / totalSales) * 100).toFixed(1) : 0;
+        html += `
+          <div style="margin-bottom: 12px;">
+            <div class="breakdown-item" style="border: none; padding: 0;">
+              <span><strong>${key}</strong> <span style="color: #64748b; font-size: 13px;">(${percent}%)</span></span>
+              <span>${symbol}${val.toFixed(2)}</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" style="width: ${percent}%;"></div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function subscribeToLive(storeId) {
+      supabaseClient
+        .channel(`portal-comprehensive-${storeId}`)
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'daily_sales_summaries',
+          filter: `store_id=eq.${storeId}`
+        }, (payload) => {
+          const currentDate = document.getElementById('selected-date').value;
+          if (payload.new && payload.new.date === currentDate) {
+            renderDashboard(payload.new);
+          }
+        })
+        .subscribe();
+    }
+
+    function handleDateChange() {
+      const newDate = document.getElementById('selected-date').value;
+      if (newDate) loadDataForDate(newDate);
+    }
 
     async function handleLogout() {
       await supabaseClient.auth.signOut();
-      document.getElementById('portal-content').style.display = 'none';
-      document.getElementById('login-section').style.display = 'block';
+      window.location.href = 'index.html';
     }
 
-    // Safely check session using Auth State Listener
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        initPortal(session.user);
-      } else {
-        initPortal(null);
-      }
-    });
+    init();
   </script>
 </body>
 </html>
