@@ -9,9 +9,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       padding: 24px;
       background: #f8fafc;
       color: #0f172a;
@@ -78,6 +77,35 @@
     }
     button.logout:hover { background: #dc2626; }
     .loading-container { text-align: center; padding: 60px 20px; color: #64748b; }
+    
+    /* Login Fallback Form */
+    .login-box {
+      background: white;
+      border: 1px solid #e2e8f0;
+      padding: 32px;
+      border-radius: 12px;
+      max-width: 400px;
+      margin: 40px auto;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 16px 0;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    button.login-btn {
+      width: 100%;
+      padding: 10px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -86,6 +114,19 @@
   <div id="loading-state" class="loading-container">
     <h2>Connecting to Store Portal...</h2>
     <p>Verifying authentication session...</p>
+  </div>
+
+  <!-- FALLBACK LOGIN FORM (In case session is not present) -->
+  <div id="login-section" class="login-box" style="display: none;">
+    <h2 style="margin-top: 0;">Portal Sign In</h2>
+    <form id="login-form">
+      <label>Email</label>
+      <input type="email" id="portal-email" required placeholder="merchant@example.com" />
+      <label>Password</label>
+      <input type="password" id="portal-password" required />
+      <button type="submit" class="login-btn">Sign In</button>
+    </form>
+    <p id="auth-error" style="color: #ef4444; margin-top: 12px; font-size: 14px; text-align: center;"></p>
   </div>
 
   <!-- MAIN DASHBOARD CONTENT -->
@@ -130,7 +171,6 @@
 
     let activeStore = null;
 
-    // Helper: Local Date Formatting (YYYY-MM-DD)
     function getLocalDateString() {
       const now = new Date();
       const year = now.getFullYear();
@@ -139,18 +179,18 @@
       return `${year}-${month}-${day}`;
     }
 
-    async function initPortal() {
+    async function initPortal(user) {
       try {
-        // 1. Verify Active Session
-        const { data: { user } } = await supabaseClient.auth.getUser();
-
         if (!user) {
-          // No session found, send back to index.html login modal
-          window.location.href = 'index.html';
+          document.getElementById('loading-state').style.display = 'none';
+          document.getElementById('login-section').style.display = 'block';
+          document.getElementById('portal-content').style.display = 'none';
           return;
         }
 
-        // 2. Fetch Store Profile matching owner_id or user_id
+        document.getElementById('login-section').style.display = 'none';
+
+        // Query Store
         const { data: store, error } = await supabaseClient
           .from('stores')
           .select('*')
@@ -161,15 +201,14 @@
           console.error("Store Lookup Error:", error);
           document.getElementById('loading-state').innerHTML = `
             <h2 style="color: #ef4444;">Store Not Found</h2>
-            <p>No store is linked to this account yet. Please complete onboarding in the POS app.</p>
-            <button onclick="handleLogout()" style="padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer;">Return to Home</button>
+            <p>No store is linked to account (${user.email}). Please complete setup in the POS app.</p>
+            <button onclick="handleLogout()" style="padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer;">Sign Out</button>
           `;
           return;
         }
 
         activeStore = store;
 
-        // Render UI Header
         document.getElementById('store-name').innerText = store.name || 'My Store';
         document.getElementById('store-category').innerText = store.business_category || 'General';
         
@@ -180,30 +219,24 @@
         document.getElementById('display-date').innerText = `Date: ${todayStr}`;
         const symbol = store.currency_symbol || '₱';
 
-        // 3. Load Sales Summary
+        // Load & Subscribe
         await loadSalesData(store.id, todayStr, symbol);
-
-        // 4. Subscribe to Real-time Sync
         subscribeToLiveUpdates(store.id, todayStr, symbol);
 
       } catch (err) {
-        console.error("Portal Initialization Exception:", err);
+        console.error("Portal Exception:", err);
       }
     }
 
     async function loadSalesData(storeId, todayStr, symbol) {
-      const { data, error } = await supabaseClient
+      const { data } = await supabaseClient
         .from('daily_sales_summaries')
         .select('*')
         .eq('store_id', storeId)
         .eq('date', todayStr)
         .maybeSingle();
 
-      if (data) {
-        updateSalesMetrics(data, symbol);
-      } else {
-        updateSalesMetrics({ net_sales: 0, transactions: 0, average_sale: 0 }, symbol);
-      }
+      updateSalesMetrics(data || { net_sales: 0, transactions: 0, average_sale: 0 }, symbol);
     }
 
     function subscribeToLiveUpdates(storeId, todayStr, symbol) {
@@ -218,7 +251,6 @@
             filter: `store_id=eq.${storeId}`
           },
           (payload) => {
-            console.log('Live Sales Update Received:', payload.new);
             if (payload.new && payload.new.date === todayStr) {
               updateSalesMetrics(payload.new, symbol);
             }
@@ -241,12 +273,36 @@
       document.getElementById('avg-sale').innerText = `${symbol}${avgSale.toFixed(2)}`;
     }
 
+    // Login Fallback Handler
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('portal-email').value.trim();
+      const password = document.getElementById('portal-password').value;
+      document.getElementById('auth-error').innerText = '';
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        document.getElementById('auth-error').innerText = error.message;
+      } else {
+        initPortal(data.user);
+      }
+    });
+
     async function handleLogout() {
       await supabaseClient.auth.signOut();
-      window.location.href = 'index.html';
+      document.getElementById('portal-content').style.display = 'none';
+      document.getElementById('login-section').style.display = 'block';
     }
 
-    initPortal();
+    // Safely check session using Auth State Listener
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        initPortal(session.user);
+      } else {
+        initPortal(null);
+      }
+    });
   </script>
 </body>
 </html>
