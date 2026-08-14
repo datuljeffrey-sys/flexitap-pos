@@ -277,7 +277,7 @@
 
       // Initialize massive aggregation object mirroring SBR PDF
       let agg = { 
-        net_sales: 0, gross_sales: 0, transactions: 0, tax_total: 0, house_tips: 0, gratuity: 0, paid_outs: 0, total_accountable: 0,
+        net_sales: 0, gross_sales: 0, transactions: 0, tax_total: 0, house_tips: 0, gratuity: 0, paid_outs: 0, total_accountable: 0, total_tendered: 0,
         payment_breakdown: {}, detailed_categories: {}, order_types: {}, serving_periods: {}, tax_breakdown: {} 
       };
       
@@ -287,10 +287,13 @@
           agg.transactions += Number(row.transactions || row.transaction_count || 0);
           agg.gross_sales += Number(row.gross_sales || row.net_sales || 0);
           agg.tax_total += Number(row.tax_total || 0);
-          agg.house_tips += Number(row.house_tips || 0);
+          // Handles both 'house_tips' and the new 'tips' field
+          agg.house_tips += Number(row.house_tips || row.tips || 0);
           agg.gratuity += Number(row.gratuity || 0);
           agg.paid_outs += Number(row.paid_outs || 0);
-          agg.total_accountable += Number(row.total_accountable || row.gross_sales || 0);
+          agg.total_tendered += Number(row.total_tendered || 0);
+          // Handles total_accountable or total_tendered
+          agg.total_accountable += Number(row.total_accountable || row.total_tendered || row.gross_sales || 0);
 
           // Payments
           const pb = row.payment_breakdown || row.sales_by_payment || {};
@@ -303,14 +306,14 @@
             } else {
               agg.payment_breakdown[k].count += (pb[k].count || 0);
               agg.payment_breakdown[k].sale_amt += (pb[k].sale_amt || 0);
-              agg.payment_breakdown[k].hs_tips += (pb[k].hs_tips || pb[k].house_tips || 0);
+              agg.payment_breakdown[k].hs_tips += (pb[k].hs_tips || pb[k].house_tips || pb[k].tips || 0);
               agg.payment_breakdown[k].emp_tips += (pb[k].emp_tips || 0);
               agg.payment_breakdown[k].emp_grats += (pb[k].emp_grats || 0);
               agg.payment_breakdown[k].total += (pb[k].total_sales || pb[k].total_collected || pb[k].sale_amt || 0);
             }
           }
 
-          // Categories (Includes VAT and TAX now)
+          // Categories (Includes VAT and TAX)
           const dc = row.detailed_categories || row.category_breakdown || {};
           for(let k in dc) {
             if (!agg.detailed_categories[k]) agg.detailed_categories[k] = { units: 0, gross: 0, disc: 0, vat: 0, tax: 0, net: 0 };
@@ -371,7 +374,7 @@
         <tr><td>Gross Sales</td><td class="num">${sym}${agg.gross_sales.toFixed(2)}</td></tr>
         <tr><td>Tax Total</td><td class="num">${sym}${agg.tax_total.toFixed(2)}</td></tr>
         <tr><td>Gratuity</td><td class="num">${sym}${agg.gratuity.toFixed(2)}</td></tr>
-        <tr><td>House Tips</td><td class="num">${sym}${agg.house_tips.toFixed(2)}</td></tr>
+        <tr><td>Tips</td><td class="num">${sym}${agg.house_tips.toFixed(2)}</td></tr>
         <tr><td>- Paid Outs</td><td class="num">${sym}${agg.paid_outs.toFixed(2)}</td></tr>
         <tr class="total-row"><td>Total Accountable</td><td class="num">${sym}${agg.total_accountable.toFixed(2)}</td></tr>
       `;
