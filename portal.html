@@ -6,7 +6,6 @@
   <title>FlexiTap — Analytics Portal</title>
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,7 +34,8 @@
     #login-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 1000; }
     .login-box { background: var(--sidebar-bg); border: 1px solid var(--card-border); padding: 40px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
     .login-box label { display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
-    .login-box input { width: 100%; padding: 12px; margin-bottom: 20px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: white; }
+    .login-box input { width: 100%; padding: 12px; margin-bottom: 20px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: white; outline: none; }
+    .login-box input:focus { border-color: var(--primary); }
     .btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
     .btn-submit:hover { background: var(--primary-hover); }
 
@@ -89,6 +89,7 @@
     .data-table .num { text-align: right; font-family: monospace; font-size: 15px; }
     .data-table .th-num { text-align: right; }
     .data-table .total-row td { font-weight: 800; border-top: 2px solid var(--card-border); border-bottom: none; color: var(--primary); }
+    .data-table .sub-row td { color: var(--text-muted); font-size: 13px; padding-left: 20px; }
 
     .tab-content { display: none; animation: fadeIn 0.3s ease; }
     .tab-content.active { display: block; }
@@ -113,7 +114,6 @@
   </div>
 
   <div id="app-layout">
-    
     <aside class="sidebar" data-html2canvas-ignore>
       <div class="logo-container"><div class="logo-icon">⚡</div>FlexiTap</div>
       <nav class="nav-menu">
@@ -131,11 +131,9 @@
     </aside>
 
     <main class="main-content" id="exportable-area">
-      
-      <!-- GLOBAL HEADER -->
       <div class="header-flex">
         <div>
-          <h1 class="page-title">Analytics <span class="status-badge" data-html2canvas-ignore>Live Sync</span></h1>
+          <h1 class="page-title">Sales by Range <span class="status-badge" data-html2canvas-ignore>Live Sync</span></h1>
           <p style="color: var(--text-muted); margin-top: 8px;">Store: <strong id="store-name" style="color: #fff;">...</strong></p>
         </div>
         <div class="toolbar-group" id="export-controls" data-html2canvas-ignore>
@@ -158,19 +156,41 @@
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px;">
-          <!-- Media Breakdown Table -->
-          <div class="panel-container">
-            <div class="panel-header">Media Breakdown</div>
-            <table class="data-table">
-              <thead><tr><th>Media</th><th class="th-num">Count</th><th class="th-num">Sale Amt</th><th class="th-num">Hs Tips</th><th class="th-num">Emp Tips</th><th class="th-num">Total</th></tr></thead>
-              <tbody id="media-tbody">
-                <!-- Javascript will inject rows here -->
-              </tbody>
-            </table>
+          
+          <!-- LEFT COLUMN -->
+          <div style="display: flex; flex-direction: column; gap: 24px;">
+            <!-- Accountability Summary Table -->
+            <div class="panel-container">
+              <div class="panel-header">Financial Overview</div>
+              <table class="data-table">
+                <tbody id="accountability-tbody">
+                  <!-- JS Injected -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Media Breakdown Table -->
+            <div class="panel-container">
+              <div class="panel-header">Media Count</div>
+              <table class="data-table">
+                <thead><tr><th>Media</th><th class="th-num">Sale Amt</th><th class="th-num">Hs Tips</th><th class="th-num">Emp Tips</th><th class="th-num">Emp Grats</th><th class="th-num">Total Sales</th></tr></thead>
+                <tbody id="media-tbody"></tbody>
+              </table>
+            </div>
           </div>
 
-          <!-- Order Type & Serving Period -->
+          <!-- RIGHT COLUMN -->
           <div style="display: flex; flex-direction: column; gap: 24px;">
+            <!-- Tax Description -->
+            <div class="panel-container">
+              <div class="panel-header">Tax Description</div>
+              <table class="data-table">
+                <thead><tr><th>Tax Name</th><th class="th-num">Sales</th><th class="th-num">Tax</th><th class="th-num">Exempt</th></tr></thead>
+                <tbody id="tax-tbody"></tbody>
+              </table>
+            </div>
+
+            <!-- Order Type -->
             <div class="panel-container">
               <div class="panel-header">Order Type Summary</div>
               <table class="data-table">
@@ -179,6 +199,7 @@
               </table>
             </div>
 
+            <!-- Serving Period -->
             <div class="panel-container">
               <div class="panel-header">Serving Period</div>
               <table class="data-table">
@@ -187,6 +208,7 @@
               </table>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -194,19 +216,21 @@
       <div id="tab-department" class="tab-content">
         <div class="panel-container">
           <div class="panel-header">Sales by Department / Category</div>
-          <table class="data-table" style="font-size: 15px;">
+          <table class="data-table" style="font-size: 13px;">
             <thead>
               <tr>
                 <th>Description</th>
                 <th class="th-num">Units</th>
                 <th class="th-num">Gross</th>
                 <th class="th-num">Disc/Cpn</th>
+                <th class="th-num">VAT</th>
+                <th class="th-num">Tax</th>
                 <th class="th-num">Net</th>
                 <th class="th-num">% Total</th>
               </tr>
             </thead>
             <tbody id="department-tbody">
-              <!-- Javascript will inject rows here -->
+              <!-- JS Injected -->
             </tbody>
           </table>
         </div>
@@ -251,23 +275,27 @@
         .gte('date', startDate)
         .lte('date', endDate);
 
-      // Initialize empty complex aggregation object
+      // Initialize massive aggregation object mirroring SBR PDF
       let agg = { 
-        net_sales: 0, transactions: 0, 
-        payment_breakdown: {}, detailed_categories: {}, order_types: {}, serving_periods: {} 
+        net_sales: 0, gross_sales: 0, transactions: 0, tax_total: 0, house_tips: 0, gratuity: 0, paid_outs: 0, total_accountable: 0,
+        payment_breakdown: {}, detailed_categories: {}, order_types: {}, serving_periods: {}, tax_breakdown: {} 
       };
       
       if (data && data.length > 0) {
         data.forEach(row => {
           agg.net_sales += Number(row.net_sales || 0);
           agg.transactions += Number(row.transactions || row.transaction_count || 0);
-          
-          // Aggregate Payments
+          agg.gross_sales += Number(row.gross_sales || row.net_sales || 0);
+          agg.tax_total += Number(row.tax_total || 0);
+          agg.house_tips += Number(row.house_tips || 0);
+          agg.gratuity += Number(row.gratuity || 0);
+          agg.paid_outs += Number(row.paid_outs || 0);
+          agg.total_accountable += Number(row.total_accountable || row.gross_sales || 0);
+
+          // Payments
           const pb = row.payment_breakdown || row.sales_by_payment || {};
           for (let k in pb) {
-            if (!agg.payment_breakdown[k]) agg.payment_breakdown[k] = { count: 0, sale_amt: 0, hs_tips: 0, emp_tips: 0, total: 0 };
-            
-            // Handle new complex object vs old flat double fallback
+            if (!agg.payment_breakdown[k]) agg.payment_breakdown[k] = { count: 0, sale_amt: 0, hs_tips: 0, emp_tips: 0, emp_grats: 0, total: 0 };
             if (typeof pb[k] === 'number') {
               agg.payment_breakdown[k].sale_amt += pb[k];
               agg.payment_breakdown[k].total += pb[k];
@@ -275,41 +303,53 @@
             } else {
               agg.payment_breakdown[k].count += (pb[k].count || 0);
               agg.payment_breakdown[k].sale_amt += (pb[k].sale_amt || 0);
-              agg.payment_breakdown[k].hs_tips += (pb[k].house_tips || 0);
+              agg.payment_breakdown[k].hs_tips += (pb[k].hs_tips || pb[k].house_tips || 0);
               agg.payment_breakdown[k].emp_tips += (pb[k].emp_tips || 0);
-              agg.payment_breakdown[k].total += (pb[k].total_collected || pb[k].sale_amt || 0);
+              agg.payment_breakdown[k].emp_grats += (pb[k].emp_grats || 0);
+              agg.payment_breakdown[k].total += (pb[k].total_sales || pb[k].total_collected || pb[k].sale_amt || 0);
             }
           }
 
-          // Aggregate Categories
+          // Categories (Includes VAT and TAX now)
           const dc = row.detailed_categories || row.category_breakdown || {};
           for(let k in dc) {
-            if (!agg.detailed_categories[k]) agg.detailed_categories[k] = { units: 0, gross: 0, disc: 0, net: 0 };
+            if (!agg.detailed_categories[k]) agg.detailed_categories[k] = { units: 0, gross: 0, disc: 0, vat: 0, tax: 0, net: 0 };
             if(typeof dc[k] === 'number') {
               agg.detailed_categories[k].net += dc[k];
               agg.detailed_categories[k].gross += dc[k];
             } else {
               agg.detailed_categories[k].units += (dc[k].units || 0);
-              agg.detailed_categories[k].gross += (dc[k].gross_sales || 0);
-              agg.detailed_categories[k].disc += (dc[k].discounts || 0);
-              agg.detailed_categories[k].net += (dc[k].net_sales || 0);
+              agg.detailed_categories[k].gross += (dc[k].gross_sales || dc[k].gross || 0);
+              agg.detailed_categories[k].disc += (dc[k].discounts || dc[k].disc || 0);
+              agg.detailed_categories[k].vat += (dc[k].vat || 0);
+              agg.detailed_categories[k].tax += (dc[k].tax || 0);
+              agg.detailed_categories[k].net += (dc[k].net_sales || dc[k].net || 0);
             }
           }
 
-          // Aggregate Order Types
+          // Order Types
           const ot = row.order_types || {};
           for(let k in ot) {
             if(!agg.order_types[k]) agg.order_types[k] = { count: 0, total: 0 };
             agg.order_types[k].count += (ot[k].count || 0);
-            agg.order_types[k].total += (ot[k].total_sales || 0);
+            agg.order_types[k].total += (ot[k].total_sales || ot[k].total || 0);
           }
 
-          // Aggregate Serving Periods
+          // Serving Periods
           const sp = row.serving_periods || {};
           for(let k in sp) {
             if(!agg.serving_periods[k]) agg.serving_periods[k] = { count: 0, total: 0 };
-            agg.serving_periods[k].count += (sp[k].customer_count || 0);
-            agg.serving_periods[k].total += (sp[k].total_sales || 0);
+            agg.serving_periods[k].count += (sp[k].customer_count || sp[k].count || 0);
+            agg.serving_periods[k].total += (sp[k].total_sales || sp[k].total || 0);
+          }
+
+          // Tax Breakdown
+          const tb = row.tax_breakdown || {};
+          for(let k in tb) {
+            if(!agg.tax_breakdown[k]) agg.tax_breakdown[k] = { sales: 0, tax: 0, exempt: 0 };
+            agg.tax_breakdown[k].sales += (tb[k].taxable_sales || tb[k].sales || 0);
+            agg.tax_breakdown[k].tax += (tb[k].tax_collected || tb[k].tax || 0);
+            agg.tax_breakdown[k].exempt += (tb[k].exempt || 0);
           }
         });
       }
@@ -322,24 +362,42 @@
       const sym = activeStore?.currency_symbol || '₱';
       const avgSale = agg.transactions > 0 ? (agg.net_sales / agg.transactions) : 0;
       
-      // Update KPIs
       document.getElementById('net-sales').innerText = `${sym}${agg.net_sales.toFixed(2)}`;
       document.getElementById('tx-count').innerText = agg.transactions;
       document.getElementById('avg-sale').innerText = `${sym}${avgSale.toFixed(2)}`;
 
-      // 1. Render Media Breakdown Table
-      let mHtml = '';
-      let mTotalCount = 0, mTotalAmt = 0, mTotalHs = 0, mTotalEmp = 0, mTotalFinal = 0;
+      // 1. Accountability Summary
+      let accHtml = `
+        <tr><td>Gross Sales</td><td class="num">${sym}${agg.gross_sales.toFixed(2)}</td></tr>
+        <tr><td>Tax Total</td><td class="num">${sym}${agg.tax_total.toFixed(2)}</td></tr>
+        <tr><td>Gratuity</td><td class="num">${sym}${agg.gratuity.toFixed(2)}</td></tr>
+        <tr><td>House Tips</td><td class="num">${sym}${agg.house_tips.toFixed(2)}</td></tr>
+        <tr><td>- Paid Outs</td><td class="num">${sym}${agg.paid_outs.toFixed(2)}</td></tr>
+        <tr class="total-row"><td>Total Accountable</td><td class="num">${sym}${agg.total_accountable.toFixed(2)}</td></tr>
+      `;
+      document.getElementById('accountability-tbody').innerHTML = accHtml;
+
+      // 2. Media Breakdown
+      let mHtml = ''; let mTotalAmt = 0, mTotalHs = 0, mTotalEmp = 0, mTotalGrats = 0, mTotalFinal = 0;
       for(let k in agg.payment_breakdown) {
         let v = agg.payment_breakdown[k];
-        mHtml += `<tr><td>${k}</td><td class="num">${v.count}</td><td class="num">${sym}${v.sale_amt.toFixed(2)}</td><td class="num">${sym}${v.hs_tips.toFixed(2)}</td><td class="num">${sym}${v.emp_tips.toFixed(2)}</td><td class="num">${sym}${v.total.toFixed(2)}</td></tr>`;
-        mTotalCount += v.count; mTotalAmt += v.sale_amt; mTotalHs += v.hs_tips; mTotalEmp += v.emp_tips; mTotalFinal += v.total;
+        mHtml += `<tr><td>${k}</td><td class="num">${sym}${v.sale_amt.toFixed(2)}</td><td class="num">${sym}${v.hs_tips.toFixed(2)}</td><td class="num">${sym}${v.emp_tips.toFixed(2)}</td><td class="num">${sym}${v.emp_grats.toFixed(2)}</td><td class="num">${sym}${v.total.toFixed(2)}</td></tr>`;
+        mTotalAmt += v.sale_amt; mTotalHs += v.hs_tips; mTotalEmp += v.emp_tips; mTotalGrats += v.emp_grats; mTotalFinal += v.total;
       }
-      if(mHtml === '') mHtml = '<tr><td colspan="6" style="text-align:center; color: #64748b;">No payment data recorded.</td></tr>';
-      else mHtml += `<tr class="total-row"><td>Totals</td><td class="num">${mTotalCount}</td><td class="num">${sym}${mTotalAmt.toFixed(2)}</td><td class="num">${sym}${mTotalHs.toFixed(2)}</td><td class="num">${sym}${mTotalEmp.toFixed(2)}</td><td class="num">${sym}${mTotalFinal.toFixed(2)}</td></tr>`;
+      if(mHtml === '') mHtml = '<tr><td colspan="6" style="text-align:center; color: #64748b;">No media data.</td></tr>';
+      else mHtml += `<tr class="total-row"><td>Totals</td><td class="num">${sym}${mTotalAmt.toFixed(2)}</td><td class="num">${sym}${mTotalHs.toFixed(2)}</td><td class="num">${sym}${mTotalEmp.toFixed(2)}</td><td class="num">${sym}${mTotalGrats.toFixed(2)}</td><td class="num">${sym}${mTotalFinal.toFixed(2)}</td></tr>`;
       document.getElementById('media-tbody').innerHTML = mHtml;
 
-      // 2. Render Order Types Table
+      // 3. Tax Breakdown
+      let tHtml = '';
+      for(let k in agg.tax_breakdown) {
+        let v = agg.tax_breakdown[k];
+        tHtml += `<tr><td>${k}</td><td class="num">${sym}${v.sales.toFixed(2)}</td><td class="num">${sym}${v.tax.toFixed(2)}</td><td class="num">${sym}${v.exempt.toFixed(2)}</td></tr>`;
+      }
+      if(tHtml === '') tHtml = '<tr><td colspan="4" style="text-align:center; color: #64748b;">No tax breakdown available.</td></tr>';
+      document.getElementById('tax-tbody').innerHTML = tHtml;
+
+      // 4. Order Types
       let oHtml = ''; let oTotalCount = 0, oTotalAmt = 0;
       for(let k in agg.order_types) {
         let v = agg.order_types[k];
@@ -354,7 +412,7 @@
       }
       document.getElementById('order-type-tbody').innerHTML = oHtml;
 
-      // 3. Render Serving Periods Table
+      // 5. Serving Periods
       let sHtml = ''; let sTotalCount = 0, sTotalAmt = 0;
       for(let k in agg.serving_periods) {
         let v = agg.serving_periods[k];
@@ -369,23 +427,26 @@
       }
       document.getElementById('serving-period-tbody').innerHTML = sHtml;
 
-      // 4. Render Department Sales Table
-      let dHtml = ''; let dTotalUnits = 0, dTotalGross = 0, dTotalDisc = 0, dTotalNet = 0;
+      // 6. Department Sales
+      let dHtml = ''; let dTotalUnits = 0, dTotalGross = 0, dTotalDisc = 0, dTotalVat = 0, dTotalTax = 0, dTotalNet = 0;
       for(let k in agg.detailed_categories) {
         let v = agg.detailed_categories[k];
         let pct = agg.net_sales > 0 ? ((v.net / agg.net_sales) * 100).toFixed(2) : '0.00';
-        dHtml += `<tr><td>${k.toUpperCase()}</td><td class="num">${v.units}</td><td class="num">${sym}${v.gross.toFixed(2)}</td><td class="num">${sym}${v.disc.toFixed(2)}</td><td class="num">${sym}${v.net.toFixed(2)}</td><td class="num">${pct}%</td></tr>`;
-        dTotalUnits += v.units; dTotalGross += v.gross; dTotalDisc += v.disc; dTotalNet += v.net;
+        dHtml += `<tr><td>${k.toUpperCase()}</td><td class="num">${v.units}</td><td class="num">${sym}${v.gross.toFixed(2)}</td><td class="num">${sym}${v.disc.toFixed(2)}</td><td class="num">${sym}${v.vat.toFixed(2)}</td><td class="num">${sym}${v.tax.toFixed(2)}</td><td class="num">${sym}${v.net.toFixed(2)}</td><td class="num">${pct}%</td></tr>`;
+        dTotalUnits += v.units; dTotalGross += v.gross; dTotalDisc += v.disc; dTotalVat += v.vat; dTotalTax += v.tax; dTotalNet += v.net;
       }
-      if(dHtml === '') dHtml = '<tr><td colspan="6" style="text-align:center; color: #64748b; padding: 40px;">No category sales recorded.</td></tr>';
-      else dHtml += `<tr class="total-row"><td>TOTAL SALES</td><td class="num">${dTotalUnits}</td><td class="num">${sym}${dTotalGross.toFixed(2)}</td><td class="num">${sym}${dTotalDisc.toFixed(2)}</td><td class="num">${sym}${dTotalNet.toFixed(2)}</td><td class="num">100.00%</td></tr>`;
+      if(dHtml === '') dHtml = '<tr><td colspan="8" style="text-align:center; color: #64748b; padding: 40px;">No category sales recorded.</td></tr>';
+      else dHtml += `<tr class="total-row"><td>TOTAL SALES</td><td class="num">${dTotalUnits}</td><td class="num">${sym}${dTotalGross.toFixed(2)}</td><td class="num">${sym}${dTotalDisc.toFixed(2)}</td><td class="num">${sym}${dTotalVat.toFixed(2)}</td><td class="num">${sym}${dTotalTax.toFixed(2)}</td><td class="num">${sym}${dTotalNet.toFixed(2)}</td><td class="num">100.00%</td></tr>`;
       document.getElementById('department-tbody').innerHTML = dHtml;
     }
 
     function handleDateRangeChange() {
       const sDate = document.getElementById('start-date').value;
       const eDate = document.getElementById('end-date').value;
-      if (sDate && eDate && activeStore) fetchSalesRange(sDate, eDate);
+      if (sDate && eDate && activeStore) {
+        if (sDate <= eDate) fetchSalesRange(sDate, eDate);
+        else alert("Start date must be before or equal to End date.");
+      }
     }
 
     async function loadApp(user) {
@@ -402,7 +463,6 @@
 
       activeStore = store;
       document.getElementById('app-layout').style.display = 'flex';
-      
       document.getElementById('store-name').innerText = store.name || 'My Store';
       document.getElementById('store-tier').innerText = profile?.subscription_tier || 'Free';
       
@@ -412,7 +472,7 @@
 
       await fetchSalesRange(todayStr, todayStr);
 
-      supabaseClient.channel(`dashboard-live-${store.id}`).on('postgres_changes', {
+      supabaseClient.channel(`dashboard-range-${store.id}`).on('postgres_changes', {
         event: '*', schema: 'public', table: 'daily_sales_summaries', filter: `store_id=eq.${store.id}`
       }, (payload) => {
         const sDate = document.getElementById('start-date').value;
@@ -425,37 +485,37 @@
     function exportPDF() {
       if (!activeStore) return;
       const controls = document.getElementById('export-controls');
-      controls.style.display = 'none'; // Hide buttons
+      controls.style.display = 'none';
 
       html2pdf().set({
         margin: 0.2,
-        filename: `FlexiTap_${activeStore.name}_Sales.pdf`,
+        filename: `SBR_${activeStore.name}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, backgroundColor: '#090d16' },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
       }).from(document.getElementById('exportable-area')).save().then(() => {
-        controls.style.display = 'flex'; // Restore buttons
+        controls.style.display = 'flex';
       });
     }
 
     // EXPORT CSV
     function exportCSV() {
       if (!currentAggregatedData || !activeStore) return;
-      let csv = "FlexiTap Sales Summary\n\n";
+      let csv = "FlexiTap Sales By Range (SBR)\n\n";
       csv += "Metric,Value\n";
       csv += `Net Sales,${currentAggregatedData.net_sales.toFixed(2)}\n`;
       csv += `Transactions,${currentAggregatedData.transactions}\n\n`;
       
-      csv += "Department,Units,Gross,Net\n";
+      csv += "Department,Units,Gross,Disc,VAT,Tax,Net\n";
       for(let k in currentAggregatedData.detailed_categories) {
         let v = currentAggregatedData.detailed_categories[k];
-        csv += `${k},${v.units},${v.gross.toFixed(2)},${v.net.toFixed(2)}\n`;
+        csv += `${k},${v.units},${v.gross.toFixed(2)},${v.disc.toFixed(2)},${v.vat.toFixed(2)},${v.tax.toFixed(2)},${v.net.toFixed(2)}\n`;
       }
       
       const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csv);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `Sales_${activeStore.name}.csv`);
+      link.setAttribute("download", `SBR_${activeStore.name}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -474,6 +534,7 @@
     async function logout() {
       await supabaseClient.auth.signOut();
       document.getElementById('app-layout').style.display = 'none';
+      document.getElementById('p-password').value = '';
       document.getElementById('login-view').style.display = 'flex';
     }
 
