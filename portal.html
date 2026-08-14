@@ -3,295 +3,191 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FlexiTap POS — Next-Gen Cloud POS & Real-Time Analytics</title>
-  
-  <!-- Supabase JS Client via CDN -->
+  <title>FlexiTap — Customer Portal</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
   <style>
     :root {
       --bg: #090d16;
       --card-bg: rgba(22, 30, 49, 0.7);
       --card-border: rgba(255, 255, 255, 0.08);
       --primary: #3b82f6;
-      --primary-hover: #2563eb;
       --accent-green: #10b981;
       --accent-purple: #8b5cf6;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
-
-    /* Ambient Glow Backgrounds */
-    .glow-top {
-      position: absolute; top: -150px; left: 50%; transform: translateX(-50%);
-      width: 700px; height: 450px; background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, rgba(9, 13, 22, 0) 70%);
-      pointer-events: none; z-index: 0;
-    }
-
-    /* Container */
-    .container { max-width: 1150px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
-
-    /* Header / Navbar */
-    header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 20px 0; border-bottom: 1px solid var(--card-border);
-      position: sticky; top: 0; background: rgba(9, 13, 22, 0.85); backdrop-filter: blur(12px); z-index: 100;
-    }
-    .logo {
-      display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 800;
-      color: #ffffff; text-decoration: none; letter-spacing: -0.5px;
-    }
-    .logo-badge {
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
-      font-size: 16px; font-weight: 800; color: white;
-    }
-    .btn-login {
-      background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border); color: #fff;
-      padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s ease;
-    }
-    .btn-login:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.2); }
-
-    /* Hero Section */
-    .hero { text-align: center; padding: 90px 0 60px; }
-    .badge {
-      display: inline-flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.12);
-      border: 1px solid rgba(59, 130, 246, 0.3); padding: 6px 16px; border-radius: 9999px;
-      font-size: 13px; font-weight: 600; color: #60a5fa; margin-bottom: 24px;
-    }
-    .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); }
+    * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; }
+    body { padding: 24px; background: var(--bg); color: var(--text-main); max-width: 900px; margin: 0 auto; line-height: 1.6; }
     
-    .hero h1 {
-      font-size: 52px; font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -1.5px;
-      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .hero p { font-size: 19px; color: var(--text-muted); max-width: 650px; margin: 0 auto 36px; font-weight: 400; }
+    .header-bar { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border: 1px solid var(--card-border); padding: 20px 24px; border-radius: 16px; }
+    .status-badge { padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 600; background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
     
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary), #2563eb);
-      color: white; border: none; padding: 14px 32px; border-radius: 12px; font-size: 16px;
-      font-weight: 700; cursor: pointer; transition: 0.2s; box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -5px rgba(59, 130, 246, 0.6); }
-
-    /* Dashboard Mockup Preview */
-    .preview-wrapper {
-      margin: 40px auto 80px; max-width: 850px; background: var(--card-bg);
-      border: 1px solid var(--card-border); border-radius: 20px; padding: 24px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);
-    }
-    .preview-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 16px; margin-bottom: 20px; }
-    .preview-title { font-size: 16px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
-    .status-pill { background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); }
-    .preview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; text-align: left; }
-    .stat-box { background: rgba(15, 23, 42, 0.8); border: 1px solid var(--card-border); padding: 18px; border-radius: 12px; }
-    .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
-    .stat-val { font-size: 26px; font-weight: 800; margin-top: 6px; }
-
-    /* Feature Grid */
-    .features { padding: 40px 0 100px; text-align: center; }
-    .section-title { font-size: 32px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px; }
-    .section-subtitle { color: var(--text-muted); margin-bottom: 48px; font-size: 16px; }
-    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; text-align: left; }
-    .feature-card {
-      background: var(--card-bg); border: 1px solid var(--card-border);
-      padding: 32px; border-radius: 16px; transition: 0.25s ease;
-    }
-    .feature-card:hover { transform: translateY(-4px); border-color: rgba(59, 130, 246, 0.4); }
-    .icon-box {
-      width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
-      font-size: 22px; margin-bottom: 20px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);
-    }
-    .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fff; }
-    .feature-card p { font-size: 14px; color: var(--text-muted); }
-
-    /* Modal Styling */
-    .modal-overlay {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px);
-      justify-content: center; align-items: center; z-index: 1000;
-    }
-    .modal-card {
-      background: #111827; border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 36px; border-radius: 20px; width: 100%; max-width: 420px;
-      position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-    }
-    .close-btn {
-      position: absolute; top: 18px; right: 18px; background: none; border: none;
-      color: var(--text-muted); font-size: 22px; cursor: pointer;
-    }
-    .modal-card h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
-    .modal-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 20px 0; }
+    .card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 24px; border-radius: 16px; }
+    .card h3 { margin: 0; color: var(--text-muted); font-size: 13px; font-weight: 600; text-transform: uppercase; }
+    .metric { font-size: 32px; font-weight: 800; margin: 10px 0 0 0; }
+    .green { color: var(--accent-green); }
+    .blue { color: var(--primary); }
+    .purple { color: var(--accent-purple); }
     
+    button.logout { background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    
+    /* Login view fallback */
+    .login-box { background: #111827; border: 1px solid var(--card-border); padding: 32px; border-radius: 16px; max-width: 400px; margin: 60px auto; }
     label { display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
-    input {
-      width: 100%; padding: 12px 14px; margin-bottom: 18px;
-      background: #090d16; border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 10px; color: white; font-size: 15px;
-    }
-    input:focus { outline: none; border-color: var(--primary); }
-    .submit-btn {
-      width: 100%; padding: 12px; background: var(--primary); color: white;
-      border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px;
-    }
-    .submit-btn:hover { background: var(--primary-hover); }
-    .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
-
-    /* Footer */
-    footer { border-top: 1px solid var(--card-border); padding: 30px 0; text-align: center; color: var(--text-muted); font-size: 14px; }
-
-    @media(max-width: 768px) {
-      .hero h1 { font-size: 36px; }
-      .preview-grid { grid-template-columns: 1fr; }
-    }
+    input { width: 100%; padding: 12px; margin-bottom: 16px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; color: white; }
+    .btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
   </style>
 </head>
 <body>
 
-  <div class="glow-top"></div>
+  <!-- 1. LOGIN FORM -->
+  <div id="login-view" class="login-box" style="display: none;">
+    <h2 style="margin-bottom: 8px;">Portal Sign In</h2>
+    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Enter your merchant credentials.</p>
+    <form id="portal-form">
+      <label>Email</label>
+      <input type="email" id="p-email" required placeholder="merchant@example.com" />
+      <label>Password</label>
+      <input type="password" id="p-password" required placeholder="••••••••" />
+      <button type="submit" class="btn-submit" id="p-btn">Sign In</button>
+    </form>
+    <p id="p-err" style="color: #f87171; font-size: 14px; margin-top: 12px; text-align: center;"></p>
+  </div>
 
-  <!-- NAVBAR -->
-  <header>
-    <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-      <a href="#" class="logo">
-        <div class="logo-badge">⚡</div>
-        FlexiTap POS
-      </a>
-      <button class="btn-login" onclick="openModal()">Store Owner Login</button>
-    </div>
-  </header>
-
-  <!-- HERO SECTION -->
-  <main class="container">
-    <section class="hero">
-      <div class="badge">
-        <span class="badge-dot"></span> Real-Time Cloud Sync & Offline-First POS
+  <!-- 2. DASHBOARD VIEW -->
+  <div id="dashboard-view" style="display: none;">
+    <div class="header-bar">
+      <div>
+        <h1 id="store-name" style="font-size: 22px;">My Store</h1>
+        <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">
+          Category: <strong id="store-category" style="color: #fff;">General</strong> &bull; <span class="status-badge" id="sync-status">Live Connected</span>
+        </p>
       </div>
-      <h1>Smarter Checkout.<br>Instant Business Intelligence.</h1>
-      <p>Manage point-of-sale checkout, inventory, and payment flows directly from your tablet with seamless live cloud reporting.</p>
-      <button class="btn-primary" onclick="openModal()">Access Merchant Portal</button>
-    </section>
-
-    <!-- LIVE DEMO PREVIEW CARD -->
-    <div class="preview-wrapper">
-      <div class="preview-header">
-        <div class="preview-title">
-          <span>📊</span> Live Store Analytics Feed
-        </div>
-        <span class="status-pill">&bull; Supabase Live Sync</span>
-      </div>
-      <div class="preview-grid">
-        <div class="stat-box">
-          <div class="stat-label">Today's Net Sales</div>
-          <div class="stat-val" style="color: var(--accent-green);">₱14,850.00</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Transactions</div>
-          <div class="stat-val" style="color: var(--primary);">48</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Average Ticket</div>
-          <div class="stat-val" style="color: var(--accent-purple);">₱309.37</div>
-        </div>
-      </div>
+      <button class="logout" onclick="logout()">Sign Out</button>
     </div>
 
-    <!-- FEATURES -->
-    <section class="features">
-      <h2 class="section-title">Built for Modern High-Speed Commerce</h2>
-      <p class="section-subtitle">Everything you need to run counter checkout, kitchen tickets, or retail inventory.</p>
-
-      <div class="feature-grid">
-        <div class="feature-card">
-          <div class="icon-box">⚡</div>
-          <h3>Offline-First Architecture</h3>
-          <p>Keep ringing up sales even when Wi-Fi drops. Orders save locally to SQLite and sync to Supabase the moment you're back online.</p>
-        </div>
-
-        <div class="feature-card">
-          <div class="icon-box">📱</div>
-          <h3>Live Merchant Portal</h3>
-          <p>Monitor daily revenue, discounts, and payment method splits anywhere in real time from any browser.</p>
-        </div>
-
-        <div class="feature-card">
-          <div class="icon-box">🍽️</div>
-          <h3>Multi-Industry Engine</h3>
-          <p>Custom workflows tailored for F&B (table management, modifiers) and Retail (barcode scanning, stock counts).</p>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="container">
-      &copy; 2026 FlexiTap POS System. All rights reserved.
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 28px;">
+      <h2 style="font-size: 18px;">Today's Live Sales</h2>
+      <span id="display-date" style="color: var(--text-muted); font-size: 14px;"></span>
     </div>
-  </footer>
 
-  <!-- AUTH MODAL -->
-  <div class="modal-overlay" id="login-modal">
-    <div class="modal-card">
-      <button class="close-btn" onclick="closeModal()">&times;</button>
-      <h2>Merchant Portal</h2>
-      <p>Log in with your FlexiTap account credentials.</p>
-
-      <form id="portal-login-form">
-        <label for="modal-email">Owner Email</label>
-        <input type="email" id="modal-email" required placeholder="merchant@example.com" />
-
-        <label for="modal-password">Password</label>
-        <input type="password" id="modal-password" required placeholder="••••••••" />
-
-        <button type="submit" class="submit-btn" id="login-btn-text">Log In to Portal</button>
-      </form>
-      <div id="modal-error" class="error-msg"></div>
+    <div class="card-grid">
+      <div class="card">
+        <h3>Net Sales</h3>
+        <p class="metric green" id="net-sales">₱0.00</p>
+      </div>
+      <div class="card">
+        <h3>Transactions</h3>
+        <p class="metric blue" id="tx-count">0</p>
+      </div>
+      <div class="card">
+        <h3>Average Sale</h3>
+        <p class="metric purple" id="avg-sale">₱0.00</p>
+      </div>
     </div>
   </div>
 
   <script>
-    // --- SUPABASE CLIENT ---
     const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    function openModal() { document.getElementById('login-modal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('login-modal').style.display = 'none'; }
+    let activeStore = null;
 
-    // Close modal on background click
-    document.getElementById('login-modal').addEventListener('click', (e) => {
-      if (e.target.id === 'login-modal') closeModal();
+    function getLocalDate() {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+    }
+
+    async function loadDashboard(user) {
+      document.getElementById('login-view').style.display = 'none';
+
+      const { data: store } = await supabaseClient
+        .from('stores')
+        .select('*')
+        .or(`owner_id.eq.${user.id},user_id.eq.${user.id}`)
+        .maybeSingle();
+
+      if (!store) {
+        document.getElementById('login-view').style.display = 'block';
+        document.getElementById('p-err').innerText = 'No store profile found for this account.';
+        return;
+      }
+
+      activeStore = store;
+      document.getElementById('store-name').innerText = store.name || 'My Store';
+      document.getElementById('store-category').innerText = store.business_category || 'General';
+      document.getElementById('display-date').innerText = `Date: ${getLocalDate()}`;
+      document.getElementById('dashboard-view').style.display = 'block';
+
+      const todayStr = getLocalDate();
+      const symbol = store.currency_symbol || '₱';
+
+      const { data: summary } = await supabaseClient
+        .from('daily_sales_summaries')
+        .select('*')
+        .eq('store_id', store.id)
+        .eq('date', todayStr)
+        .maybeSingle();
+
+      updateCards(summary || { net_sales: 0, transactions: 0, average_sale: 0 }, symbol);
+
+      supabaseClient
+        .channel(`portal-sales-sync-${store.id}`)
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'daily_sales_summaries',
+          filter: `store_id=eq.${store.id}`
+        }, (payload) => {
+          if (payload.new && payload.new.date === getLocalDate()) {
+            updateCards(payload.new, symbol);
+          }
+        })
+        .subscribe();
+    }
+
+    function updateCards(data, symbol) {
+      const net = Number(data.net_sales || 0);
+      const tx = Number(data.transactions || 0);
+      const avg = Number(data.average_sale || (tx > 0 ? net / tx : 0));
+
+      document.getElementById('net-sales').innerText = `${symbol}${net.toFixed(2)}`;
+      document.getElementById('tx-count').innerText = tx;
+      document.getElementById('avg-sale').innerText = `${symbol}${avg.toFixed(2)}`;
+    }
+
+    document.getElementById('portal-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('p-email').value.trim();
+      const password = document.getElementById('p-password').value;
+      document.getElementById('p-btn').innerText = 'Signing In...';
+      document.getElementById('p-err').innerText = '';
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) {
+        document.getElementById('p-err').innerText = error.message;
+        document.getElementById('p-btn').innerText = 'Sign In';
+      } else {
+        loadDashboard(data.user);
+      }
     });
 
-    // Form Submission
-    document.getElementById('portal-login-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('modal-email').value.trim();
-      const password = document.getElementById('modal-password').value;
-      const errorDiv = document.getElementById('modal-error');
-      const btnText = document.getElementById('login-btn-text');
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      document.getElementById('dashboard-view').style.display = 'none';
+      document.getElementById('login-view').style.display = 'block';
+    }
 
-      errorDiv.innerText = '';
-      btnText.innerText = 'Signing in...';
-
-      try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-
-        // Redirect directly to your live portal
-        window.location.href = 'portal.html';
-      } catch (err) {
-        errorDiv.innerText = err.message || 'Invalid credentials.';
-        btnText.innerText = 'Log In to Portal';
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        loadDashboard(session.user);
+      } else {
+        document.getElementById('login-view').style.display = 'block';
       }
     });
   </script>
