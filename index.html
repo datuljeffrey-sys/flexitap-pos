@@ -197,7 +197,7 @@
   <!-- NAVBAR -->
   <header>
     <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-      <a href="#" class="logo">
+      <a href="index.html" class="logo">
         <div class="logo-badge">⚡</div>
         FlexiTap POS
       </a>
@@ -432,28 +432,30 @@
     // --- SUPABASE CLIENT ---
     const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true
-      }
-    });
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function openModal(id) { 
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'flex'; 
+    }
+    
+    function closeModal(id) { 
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none'; 
+    }
 
     // Close any modal on backdrop click
-    document.querySelectorAll('.modal-overlay').forEach((overlay) => {
-      overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) overlay.style.display = 'none';
+    document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+          overlay.style.display = 'none';
+        }
       });
     });
 
-    // Form Submission with Bulletproof Session Redirect
-    document.getElementById('portal-login-form').addEventListener('submit', async (e) => {
+    // Form Submission
+    document.getElementById('portal-login-form').addEventListener('submit', async function(e) {
       e.preventDefault();
-      e.stopPropagation();
 
       const email = document.getElementById('modal-email').value.trim();
       const password = document.getElementById('modal-password').value;
@@ -469,18 +471,13 @@
           password: password 
         });
 
-        if (error) throw error;
-
-        if (data?.session) {
-          btnText.innerText = 'Redirecting...';
-          // Ensure session is saved before navigating
-          setTimeout(() => {
-            window.location.assign('portal.html');
-          }, 100);
-        } else {
-          throw new Error('Could not establish session. Please verify your credentials.');
+        if (error) {
+          throw error;
         }
 
+        if (data && data.user) {
+          window.location.href = 'portal.html';
+        }
       } catch (err) {
         console.error('Sign-in error:', err);
         errorDiv.innerText = err.message || 'Invalid email or password.';
