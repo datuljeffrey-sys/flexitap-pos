@@ -4,35 +4,46 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FlexiTap — Customer Portal</title>
-  
-  <!-- Supabase JS Client via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 24px; background: #f8fafc; color: #0f172a; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 24px; background: #f8fafc; color: #0f172a; max-width: 800px; margin: 0 auto; }
     .card-grid { display: flex; gap: 16px; margin-top: 20px; flex-wrap: wrap; }
-    .card { background: white; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; min-width: 200px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    .card h3 { margin: 0 0 8px 0; font-size: 14px; color: #64748b; font-weight: 500; }
-    .metric { font-size: 28px; font-weight: 700; color: #10b981; margin: 0; }
-    .status-badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 600; background: #dcfce7; color: #166534; }
+    .card { background: white; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; flex: 1; min-width: 200px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .metric { font-size: 28px; font-weight: 700; color: #10b981; margin: 8px 0 0 0; }
+    .login-box { background: white; border: 1px solid #e2e8f0; padding: 32px; border-radius: 12px; max-width: 400px; margin: 40px auto; }
+    input { width: 100%; padding: 10px; margin: 8px 0 16px 0; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+    button { width: 100%; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
+    button.logout { width: auto; background: #ef4444; padding: 6px 12px; font-size: 14px; }
   </style>
 </head>
 <body>
 
-  <div id="auth-check">Loading portal data...</div>
+  <!-- 1. LOGIN UI (Shown if user is not logged in) -->
+  <div id="login-section" class="login-box" style="display: none;">
+    <h2>FlexiTap Portal Login</h2>
+    <form id="login-form">
+      <label>Email</label>
+      <input type="email" id="email" required placeholder="merchant@example.com" />
+      <label>Password</label>
+      <input type="password" id="password" required />
+      <button type="submit">Sign In</button>
+    </form>
+    <p id="auth-error" style="color: #ef4444; margin-top: 12px; font-size: 14px;"></p>
+  </div>
 
+  <!-- 2. DASHBOARD UI (Shown when logged in) -->
   <div id="portal-content" style="display: none;">
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <div>
         <h1 id="store-name" style="margin: 0;">Store Portal</h1>
-        <p style="margin: 4px 0 0 0; color: #64748b;">Category: <span id="store-category">-</span></p>
+        <p style="margin: 4px 0 0 0; color: #64748b;">Business: <span id="store-category">-</span></p>
       </div>
-      <span class="status-badge" id="sync-status">Live Connected</span>
+      <button class="logout" onclick="handleLogout()">Sign Out</button>
     </div>
 
     <hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;" />
 
-    <h2>Today's Real-Time Sales</h2>
+    <h2>Today's Live Sales</h2>
     <div class="card-grid">
       <div class="card">
         <h3>Net Sales</h3>
@@ -50,23 +61,22 @@
   </div>
 
   <script>
-    // 1. Initialize Supabase Client
     const SUPABASE_URL = 'YOUR_SUPABASE_URL';
     const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let activeStore = null;
-
-    async function initPortal() {
-      // 2. Fetch authenticated merchant session
+    async function checkAuthAndLoad() {
       const { data: { user } } = await supabaseClient.auth.getUser();
 
       if (!user) {
-        document.getElementById('auth-check').innerHTML = 'Please log in to view portal.';
+        document.getElementById('login-section').style.display = 'block';
+        document.getElementById('portal-content').style.display = 'none';
         return;
       }
 
-      // 3. Fetch Store matching owner_id
+      document.getElementById('login-section').style.display = 'none';
+
+      // RLS guarantees this query only returns stores owned by user.id
       const { data: store, error } = await supabaseClient
         .from('stores')
         .select('*')
@@ -74,62 +84,64 @@
         .maybeSingle();
 
       if (error || !store) {
-        document.getElementById('auth-check').innerHTML = 'No active store found for this account.';
+        alert('No store registered for this account.');
         return;
       }
 
-      activeStore = store;
       document.getElementById('store-name').innerText = store.name || 'My Store';
       document.getElementById('store-category').innerText = store.business_category || 'General';
-      document.getElementById('auth-check').style.display = 'none';
       document.getElementById('portal-content').style.display = 'block';
 
-      // 4. Initial sales fetch for today
       const todayStr = new Date().toISOString().split('T')[0];
-      fetchTodaySales(store.id, todayStr, store.currency_symbol || '₱');
+      const symbol = store.currency_symbol || '₱';
 
-      // 5. Subscribe to Real-Time Updates pushed from Flutter POS app
-      subscribeToLiveSales(store.id, todayStr, store.currency_symbol || '₱');
-    }
-
-    async function fetchTodaySales(storeId, todayStr, symbol) {
-      const { data } = await supabaseClient
+      // Load initial sales
+      const { data: sales } = await supabaseClient
         .from('daily_sales_summaries')
         .select('*')
-        .eq('store_id', storeId)
+        .eq('store_id', store.id)
         .eq('date', todayStr)
         .maybeSingle();
 
-      if (data) updateUI(data, symbol);
-    }
+      if (sales) updateUI(sales, symbol);
 
-    function subscribeToLiveSales(storeId, todayStr, symbol) {
+      // Listen for updates specific to this store
       supabaseClient
-        .channel(`daily-sales-${storeId}`)
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'daily_sales_summaries',
-            filter: `store_id=eq.${storeId}`
-          },
-          (payload) => {
-            if (payload.new && payload.new.date === todayStr) {
-              updateUI(payload.new, symbol); // Instant real-time UI update!
-            }
+        .channel(`daily-sales-${store.id}`)
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'daily_sales_summaries',
+          filter: `store_id=eq.${store.id}`
+        }, (payload) => {
+          if (payload.new && payload.new.date === todayStr) {
+            updateUI(payload.new, symbol);
           }
-        )
+        })
         .subscribe();
     }
 
-    function updateUI(data, symbol) {
-      document.getElementById('net-sales').innerText = `${symbol} ${(data.net_sales || 0).toFixed(2)}`;
-      document.getElementById('tx-count').innerText = data.transactions || 0;
-      document.getElementById('avg-sale').innerText = `${symbol} ${(data.average_sale || 0).toFixed(2)}`;
+    // Login Form Handler
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        document.getElementById('auth-error').innerText = error.message;
+      } else {
+        checkAuthAndLoad();
+      }
+    });
+
+    async function handleLogout() {
+      await supabaseClient.auth.signOut();
+      location.reload();
     }
 
-    initPortal();
+    checkAuthAndLoad();
   </script>
 </body>
 </html>
