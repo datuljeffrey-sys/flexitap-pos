@@ -3,65 +3,351 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FlexiTap — Next Gen POS System</title>
+  <title>FlexiTap POS — Next-Gen Cloud POS & Real-Time Analytics</title>
   
   <!-- Supabase JS Client via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { margin: 0; padding: 0; background-color: #0f172a; color: #f8fafc; }
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(22, 30, 49, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent-green: #10b981;
+      --accent-purple: #8b5cf6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
+
+    /* Ambient Glow Backgrounds */
+    .glow-top {
+      position: absolute; top: -150px; left: 50%; transform: translateX(-50%);
+      width: 700px; height: 450px; background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, rgba(9, 13, 22, 0) 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .container { max-width: 1150px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+    /* Header / Navbar */
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 0; border-bottom: 1px solid var(--card-border);
+      position: sticky; top: 0; background: rgba(9, 13, 22, 0.85); backdrop-filter: blur(12px); z-index: 100;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 800;
+      color: #ffffff; text-decoration: none; letter-spacing: -0.5px;
+    }
+    .logo-badge {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 800; color: white;
+    }
+    .nav-links { display: flex; align-items: center; gap: 20px; }
+    .nav-link { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.2s; }
+    .nav-link:hover { color: #fff; }
     
-    /* Header Navbar */
-    header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid #1e293b; }
-    .logo { font-size: 24px; font-weight: 800; color: #3b82f6; letter-spacing: -0.5px; }
-    .nav-btn { background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .nav-btn:hover { background: #1d4ed8; }
+    .btn-login {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border); color: #fff;
+      padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease;
+    }
+    .btn-login:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.2); }
 
     /* Hero Section */
-    .hero { text-align: center; padding: 100px 20px; max-width: 800px; margin: 0 auto; }
-    .hero h1 { font-size: 48px; font-weight: 800; margin-bottom: 16px; line-height: 1.2; }
-    .hero p { font-size: 18px; color: #94a3b8; margin-bottom: 32px; }
+    .hero { text-align: center; padding: 80px 0 50px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3); padding: 6px 16px; border-radius: 9999px;
+      font-size: 13px; font-weight: 600; color: #60a5fa; margin-bottom: 24px;
+    }
+    .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); }
+    
+    .hero h1 {
+      font-size: 52px; font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -1.5px;
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero p { font-size: 19px; color: var(--text-muted); max-width: 650px; margin: 0 auto 32px; }
+    
+    .cta-group { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #2563eb);
+      color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 15px;
+      font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px;
+      box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4); text-decoration: none;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -5px rgba(59, 130, 246, 0.6); }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: #fff;
+      padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px; text-decoration: none; transition: 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
+
+    /* Dashboard Mockup Preview */
+    .preview-wrapper {
+      margin: 40px auto 80px; max-width: 850px; background: var(--card-bg);
+      border: 1px solid var(--card-border); border-radius: 20px; padding: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);
+    }
+    .preview-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 16px; margin-bottom: 20px; }
+    .preview-title { font-size: 16px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
+    .status-pill { background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .preview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; text-align: left; }
+    .stat-box { background: rgba(15, 23, 42, 0.8); border: 1px solid var(--card-border); padding: 18px; border-radius: 12px; }
+    .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
+    .stat-val { font-size: 26px; font-weight: 800; margin-top: 6px; }
+
+    /* Features Section */
+    .features { padding: 40px 0 80px; text-align: center; }
+    .section-title { font-size: 32px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px; }
+    .section-subtitle { color: var(--text-muted); margin-bottom: 48px; font-size: 16px; }
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; text-align: left; }
+    .feature-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 32px; border-radius: 16px; transition: 0.25s ease; }
+    .feature-card:hover { transform: translateY(-4px); border-color: rgba(59, 130, 246, 0.4); }
+    .icon-box { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 20px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); }
+    .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fff; }
+    .feature-card p { font-size: 14px; color: var(--text-muted); }
+
+    /* Pricing Section */
+    .pricing { padding: 40px 0 100px; text-align: center; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 40px; text-align: left; }
+    .pricing-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 32px; border-radius: 20px; position: relative; }
+    .pricing-card.popular { border-color: var(--primary); box-shadow: 0 0 30px -5px rgba(59, 130, 246, 0.3); }
+    .badge-pop { position: absolute; top: 16px; right: 16px; background: var(--primary); color: white; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase; }
+    .pricing-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .price { font-size: 36px; font-weight: 800; margin: 16px 0; color: #fff; }
+    .price span { font-size: 14px; font-weight: 500; color: var(--text-muted); }
+    .pricing-list { list-style: none; margin: 24px 0; font-size: 14px; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px; }
+    .pricing-list li { display: flex; align-items: center; gap: 8px; }
+    .pricing-list li::before { content: "✓"; color: var(--accent-green); font-weight: 800; }
+
+    /* Footer */
+    footer { border-top: 1px solid var(--card-border); padding: 40px 0; color: var(--text-muted); font-size: 14px; }
+    .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-link { color: var(--text-muted); text-decoration: none; cursor: pointer; transition: 0.2s; }
+    .footer-link:hover { color: #fff; }
 
     /* Modal Styling */
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 1000; }
-    .modal-card { background: #1e293b; border: 1px solid #334155; padding: 32px; border-radius: 16px; width: 100%; max-width: 420px; position: relative; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
-    .close-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer; }
-    .modal-card h2 { margin-top: 0; font-size: 22px; }
-    .modal-card p { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px);
+      justify-content: center; align-items: center; z-index: 1000;
+    }
+    .modal-card {
+      background: #111827; border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 36px; border-radius: 20px; width: 100%; max-width: 440px;
+      position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    }
+    .modal-card.wide { max-width: 650px; max-height: 80vh; overflow-y: auto; }
+    .close-btn {
+      position: absolute; top: 18px; right: 18px; background: none; border: none;
+      color: var(--text-muted); font-size: 22px; cursor: pointer;
+    }
+    .modal-card h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .modal-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
     
     label { display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
-    input { width: 100%; padding: 12px; margin-bottom: 16px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; font-size: 15px; }
-    input:focus { outline: none; border-color: #3b82f6; }
-    .submit-btn { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 16px; }
-    .submit-btn:hover { background: #1d4ed8; }
-    .error-msg { color: #f87171; font-size: 14px; margin-top: 12px; text-align: center; }
+    input {
+      width: 100%; padding: 12px 14px; margin-bottom: 18px;
+      background: #090d16; border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px; color: white; font-size: 15px;
+    }
+    input:focus { outline: none; border-color: var(--primary); }
+    .submit-btn {
+      width: 100%; padding: 12px; background: var(--primary); color: white;
+      border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px;
+    }
+    .submit-btn:hover { background: var(--primary-hover); }
+    .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
+
+    @media(max-width: 768px) {
+      .hero h1 { font-size: 36px; }
+      .preview-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .footer-content { flex-direction: column; text-align: center; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
+  <div class="glow-top"></div>
+
+  <!-- NAVBAR -->
   <header>
-    <div class="logo">FlexiTap POS</div>
-    <button class="nav-btn" onclick="openModal()">Store Owner Login</button>
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <a href="#" class="logo">
+        <div class="logo-badge">⚡</div>
+        FlexiTap POS
+      </a>
+      
+      <div class="nav-links">
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#pricing" class="nav-link">Pricing</a>
+        <a href="#download" class="nav-link">Download</a>
+        <a href="https://github.com/datuljeffrey-sys/flexitapapp/tree/main" target="_blank" class="nav-link">Dev Portal ↗</a>
+      </div>
+
+      <button class="btn-login" onclick="openModal('login-modal')">Store Owner Login</button>
+    </div>
   </header>
 
   <!-- HERO SECTION -->
-  <main class="hero">
-    <h1>All-in-One Cloud POS & Analytics Dashboard</h1>
-    <p>Manage sales, inventory, and receipts directly from your mobile register or access your real-time analytics portal anywhere.</p>
-    <button class="nav-btn" style="padding: 14px 28px; font-size: 18px;" onclick="openModal()">Open Customer Portal</button>
+  <main class="container">
+    <section class="hero">
+      <div class="badge">
+        <span class="badge-dot"></span> Real-Time Cloud Sync & Offline-First Engine
+      </div>
+      <h1>Smarter POS Register.<br>Instant Business Intelligence.</h1>
+      <p>High-speed checkout, table management, offline-first reliability, and real-time merchant analytics right in your browser.</p>
+      
+      <div class="cta-group" id="download">
+        <button class="btn-primary" onclick="openModal('login-modal')">
+          <span>📊</span> Launch Customer Portal
+        </button>
+        <a href="https://github.com/datuljeffrey-sys/flexitapapp/releases" target="_blank" class="btn-secondary">
+          <span>⬇️</span> Download Android APK
+        </a>
+      </div>
+    </section>
+
+    <!-- LIVE DEMO PREVIEW CARD -->
+    <div class="preview-wrapper">
+      <div class="preview-header">
+        <div class="preview-title">
+          <span>📊</span> Live Store Analytics Feed
+        </div>
+        <span class="status-pill">&bull; Supabase Live Connected</span>
+      </div>
+      <div class="preview-grid">
+        <div class="stat-box">
+          <div class="stat-label">Today's Net Sales</div>
+          <div class="stat-val" style="color: var(--accent-green);">₱14,850.00</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Transactions</div>
+          <div class="stat-val" style="color: var(--primary);">48</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Average Ticket</div>
+          <div class="stat-val" style="color: var(--accent-purple);">₱309.37</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <section class="features" id="features">
+      <h2 class="section-title">Built for High-Speed Commerce</h2>
+      <p class="section-subtitle">Everything you need to run counter checkout, kitchen tickets, or retail inventory.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="icon-box">⚡</div>
+          <h3>Offline-First Architecture</h3>
+          <p>Keep ringing up sales even when Wi-Fi drops. Orders save locally to SQLite and sync to Supabase the moment you're back online.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon-box">📱</div>
+          <h3>Live Web Portal</h3>
+          <p>Monitor real-time revenue, gross/net sales, discounts, and GCash/Card payment splits anywhere in real time.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon-box">🍽️</div>
+          <h3>Multi-Industry Engine</h3>
+          <p>Tailored workflows for F&B (table management, order modifiers) and Retail (barcode scanning, stock alerts).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING TIERS -->
+    <section class="pricing" id="pricing">
+      <h2 class="section-title">Transparent Freemium Pricing</h2>
+      <p class="section-subtitle">Start free on a single register or upgrade for real-time cloud sync and analytics.</p>
+
+      <div class="pricing-grid">
+        <!-- Free Tier -->
+        <div class="pricing-card">
+          <h3>Free</h3>
+          <p style="color: var(--text-muted); font-size: 13px;">For solo pop-ups & kiosks</p>
+          <div class="price">₱0 <span>/ month</span></div>
+          <ul class="pricing-list">
+            <li>Single Standalone Register</li>
+            <li>Local SQLite Offline Storage</li>
+            <li>Standard Receipt Printing</li>
+            <li>Basic Shift Summaries</li>
+          </ul>
+          <a href="#download" class="btn-secondary" style="width: 100%; justify-content: center;">Get Started Free</a>
+        </div>
+
+        <!-- Plus Tier -->
+        <div class="pricing-card popular">
+          <span class="badge-pop">Popular</span>
+          <h3>Plus</h3>
+          <p style="color: var(--text-muted); font-size: 13px;">For growing retail & cafes</p>
+          <div class="price">₱499 <span>/ month</span></div>
+          <ul class="pricing-list">
+            <li><strong>Live Web Customer Portal</strong></li>
+            <li>Real-time Cloud Sync (Supabase)</li>
+            <li>Payment Method & Category Breakdown</li>
+            <li>Historical Date Picker Reports</li>
+          </ul>
+          <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="openModal('login-modal')">Upgrade to Plus</button>
+        </div>
+
+        <!-- Pro Tier -->
+        <div class="pricing-card">
+          <h3>Pro</h3>
+          <p style="color: var(--text-muted); font-size: 13px;">For multi-terminal businesses</p>
+          <div class="price">₱999 <span>/ month</span></div>
+          <ul class="pricing-list">
+            <li>Multi-terminal Master/Sub sync</li>
+            <li>Kitchen Display System (KDS)</li>
+            <li>Advanced Cloud Inventory</li>
+            <li>Priority 24/7 Support</li>
+          </ul>
+          <button class="btn-secondary" style="width: 100%; justify-content: center;" onclick="openModal('login-modal')">Contact for Pro</button>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <!-- LOGIN MODAL -->
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-content">
+      <div>
+        &copy; 2026 FlexiTap POS. All rights reserved.
+      </div>
+      <div class="footer-links">
+        <a class="footer-link" onclick="openModal('terms-modal')">Terms of Service</a>
+        <a class="footer-link" onclick="openModal('privacy-modal')">Privacy Policy</a>
+        <a href="https://github.com/datuljeffrey-sys/flexitapapp/tree/main" target="_blank" class="footer-link">Developer Docs</a>
+        <a class="footer-link" onclick="openModal('login-modal')">Merchant Login</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 1. AUTH LOGIN MODAL -->
   <div class="modal-overlay" id="login-modal">
     <div class="modal-card">
-      <button class="close-btn" onclick="closeModal()">&times;</button>
-      <h2>Store Owner Web Portal</h2>
-      <p>Log in with your POS account credentials to view live reports.</p>
+      <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
+      <h2>Merchant Portal</h2>
+      <p>Log in with your FlexiTap account credentials.</p>
 
       <form id="portal-login-form">
-        <label for="modal-email">Owner Email Address</label>
+        <label for="modal-email">Owner Email</label>
         <input type="email" id="modal-email" required placeholder="merchant@example.com" />
 
         <label for="modal-password">Password</label>
@@ -73,26 +359,52 @@
     </div>
   </div>
 
+  <!-- 2. TERMS OF SERVICE MODAL -->
+  <div class="modal-overlay" id="terms-modal">
+    <div class="modal-card wide">
+      <button class="close-btn" onclick="closeModal('terms-modal')">&times;</button>
+      <h2>Terms of Service</h2>
+      <p style="margin-bottom: 16px;">Effective Date: August 2026</p>
+      <div style="font-size: 14px; color: var(--text-muted); display: flex; flex-direction: column; gap: 12px; line-height: 1.6;">
+        <p><strong style="color: #fff;">1. Acceptance of Terms:</strong> By downloading or accessing FlexiTap POS and the Merchant Web Portal, you agree to comply with these terms.</p>
+        <p><strong style="color: #fff;">2. Offline & Cloud Data:</strong> FlexiTap operates with an offline-first SQLite database. Cloud reporting features require an active internet connection and a supported subscription tier.</p>
+        <p><strong style="color: #fff;">3. Merchant Responsibility:</strong> Merchants are solely responsible for local tax calculations, receipt compliance, and securing access to their physical registers and portal credentials.</p>
+        <p><strong style="color: #fff;">4. Subscription & Billing:</strong> Paid tiers (Plus, Pro) are billed monthly. Cancellation takes effect at the end of the current billing cycle without loss of local register functionality.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. PRIVACY POLICY MODAL -->
+  <div class="modal-overlay" id="privacy-modal">
+    <div class="modal-card wide">
+      <button class="close-btn" onclick="closeModal('privacy-modal')">&times;</button>
+      <h2>Privacy Policy</h2>
+      <p style="margin-bottom: 16px;">Effective Date: August 2026</p>
+      <div style="font-size: 14px; color: var(--text-muted); display: flex; flex-direction: column; gap: 12px; line-height: 1.6;">
+        <p><strong style="color: #fff;">1. Data Collection:</strong> We store store configuration, user profile identifiers, and aggregated transaction summaries strictly to provide analytics on your web portal.</p>
+        <p><strong style="color: #fff;">2. Row Level Security:</strong> Merchant data is isolated at the database level using Postgres Row Level Security (RLS). No store can query another merchant's transactions.</p>
+        <p><strong style="color: #fff;">3. No Third-Party Selling:</strong> We do not sell or monetize merchant transaction histories or customer information to third-party advertisers.</p>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // --- SUPABASE CONFIGURATION ---
+    // --- SUPABASE CLIENT ---
     const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Modal UI Controls
-    function openModal() { document.getElementById('login-modal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('login-modal').style.display = 'none'; }
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    // Auto Check if already logged in
-    async function checkExistingSession() {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (session) {
-        // User is already authenticated! Redirect directly to portal
-        window.location.href = 'portal.html';
-      }
-    }
+    // Close any modal on backdrop click
+    document.querySelectorAll('.modal-overlay').forEach((overlay) => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.style.display = 'none';
+      });
+    });
 
-    // Login Form Handler
+    // Form Submission
     document.getElementById('portal-login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('modal-email').value.trim();
@@ -101,23 +413,19 @@
       const btnText = document.getElementById('login-btn-text');
 
       errorDiv.innerText = '';
-      btnText.innerText = 'Authenticating...';
+      btnText.innerText = 'Signing in...';
 
       try {
         const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
         if (error) throw error;
 
-        // Success! Redirect straight to portal.html without page reload interruptions
+        // Redirect directly to live analytics portal
         window.location.href = 'portal.html';
-
       } catch (err) {
-        errorDiv.innerText = err.message || 'Failed to authenticate.';
+        errorDiv.innerText = err.message || 'Invalid credentials.';
         btnText.innerText = 'Log In to Portal';
       }
     });
-
-    checkExistingSession();
   </script>
 </body>
 </html>
