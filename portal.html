@@ -6,21 +6,84 @@
   <title>FlexiTap — Customer Portal</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 24px; background: #f8fafc; color: #0f172a; max-width: 800px; margin: 0 auto; }
-    .card-grid { display: flex; gap: 16px; margin-top: 20px; flex-wrap: wrap; }
-    .card { background: white; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; flex: 1; min-width: 200px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    .metric { font-size: 28px; font-weight: 700; color: #10b981; margin: 8px 0 0 0; }
-    .login-box { background: white; border: 1px solid #e2e8f0; padding: 32px; border-radius: 12px; max-width: 400px; margin: 40px auto; }
-    input { width: 100%; padding: 10px; margin: 8px 0 16px 0; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
-    button { width: 100%; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
-    button.logout { width: auto; background: #ef4444; padding: 6px 12px; font-size: 14px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 24px;
+      background: #f8fafc;
+      color: #0f172a;
+      max-width: 850px;
+      margin: 0 auto;
+    }
+    .card-grid {
+      display: flex;
+      gap: 16px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      padding: 20px;
+      border-radius: 12px;
+      flex: 1;
+      min-width: 200px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .metric {
+      font-size: 28px;
+      font-weight: 700;
+      color: #10b981;
+      margin: 8px 0 0 0;
+    }
+    .login-box {
+      background: white;
+      border: 1px solid #e2e8f0;
+      padding: 32px;
+      border-radius: 12px;
+      max-width: 400px;
+      margin: 40px auto;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 16px 0;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.logout {
+      width: auto;
+      background: #ef4444;
+      padding: 6px 14px;
+      font-size: 14px;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #dcfce7;
+      color: #166534;
+    }
   </style>
 </head>
 <body>
 
-  <!-- 1. LOGIN UI (Shown if user is not logged in) -->
+  <!-- 1. LOGIN UI -->
   <div id="login-section" class="login-box" style="display: none;">
-    <h2>FlexiTap Portal Login</h2>
+    <h2 style="margin-top: 0;">FlexiTap Portal Login</h2>
     <form id="login-form">
       <label>Email</label>
       <input type="email" id="email" required placeholder="merchant@example.com" />
@@ -31,94 +94,158 @@
     <p id="auth-error" style="color: #ef4444; margin-top: 12px; font-size: 14px;"></p>
   </div>
 
-  <!-- 2. DASHBOARD UI (Shown when logged in) -->
+  <!-- 2. DASHBOARD UI -->
   <div id="portal-content" style="display: none;">
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <div>
         <h1 id="store-name" style="margin: 0;">Store Portal</h1>
-        <p style="margin: 4px 0 0 0; color: #64748b;">Business: <span id="store-category">-</span></p>
+        <p style="margin: 4px 0 0 0; color: #64748b;">
+          Business: <span id="store-category">General</span> &bull; 
+          <span class="status-badge" id="sync-status">Live Connected</span>
+        </p>
       </div>
       <button class="logout" onclick="handleLogout()">Sign Out</button>
     </div>
 
     <hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;" />
 
-    <h2>Today's Live Sales</h2>
+    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+      <h2 style="margin: 0;">Today's Live Sales</h2>
+      <span id="display-date" style="color: #64748b; font-size: 14px;"></span>
+    </div>
+
     <div class="card-grid">
       <div class="card">
-        <h3>Net Sales</h3>
+        <h3 style="margin: 0; color: #64748b; font-size: 14px;">Net Sales</h3>
         <p class="metric" id="net-sales">₱0.00</p>
       </div>
       <div class="card">
-        <h3>Transactions</h3>
+        <h3 style="margin: 0; color: #64748b; font-size: 14px;">Transactions</h3>
         <p class="metric" id="tx-count" style="color: #3b82f6;">0</p>
       </div>
       <div class="card">
-        <h3>Average Sale</h3>
+        <h3 style="margin: 0; color: #64748b; font-size: 14px;">Average Sale</h3>
         <p class="metric" id="avg-sale" style="color: #8b5cf6;">₱0.00</p>
       </div>
     </div>
   </div>
 
   <script>
+    // --- SUPABASE CONFIGURATION ---
     const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAwMjgyODgsImV4cCI6MjA1NTYwNDI4OH0.M_J8yWdK_B7t7xH3ZtD5C9l5tq8t8-w6Z2lQ6v5mUQI'; // Paste your Supabase Anon key here
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    let activeStore = null;
+
+    // Helper: Get Local Date in YYYY-MM-DD format (avoids UTC timezone shift issues)
+    function getLocalDateString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
     async function checkAuthAndLoad() {
-      const { data: { user } } = await supabaseClient.auth.getUser();
+      try {
+        const { data: { user } } = await supabaseClient.auth.getUser();
 
-      if (!user) {
-        document.getElementById('login-section').style.display = 'block';
-        document.getElementById('portal-content').style.display = 'none';
-        return;
+        if (!user) {
+          document.getElementById('login-section').style.display = 'block';
+          document.getElementById('portal-content').style.display = 'none';
+          return;
+        }
+
+        document.getElementById('login-section').style.display = 'none';
+
+        // Query store matching either owner_id or user_id
+        let { data: store, error } = await supabaseClient
+          .from('stores')
+          .select('*')
+          .or(`owner_id.eq.${user.id},user_id.eq.${user.id}`)
+          .maybeSingle();
+
+        if (error || !store) {
+          console.error("Store Fetch Error:", error);
+          alert('No store found linked to your account. Please complete onboarding in the POS app.');
+          return;
+        }
+
+        activeStore = store;
+        document.getElementById('store-name').innerText = store.name || 'My Store';
+        document.getElementById('store-category').innerText = store.business_category || 'General';
+        document.getElementById('portal-content').style.display = 'block';
+
+        const todayStr = getLocalDateString();
+        document.getElementById('display-date').innerText = `Date: ${todayStr}`;
+        const symbol = store.currency_symbol || '₱';
+
+        // 1. Initial Load of Sales Summary
+        await loadTodaySales(store.id, todayStr, symbol);
+
+        // 2. Real-time Live Subscription
+        subscribeToLiveSales(store.id, todayStr, symbol);
+
+      } catch (err) {
+        console.error("Initialization Error:", err);
       }
+    }
 
-      document.getElementById('login-section').style.display = 'none';
-
-      // RLS guarantees this query only returns stores owned by user.id
-      const { data: store, error } = await supabaseClient
-        .from('stores')
-        .select('*')
-        .eq('owner_id', user.id)
-        .maybeSingle();
-
-      if (error || !store) {
-        alert('No store registered for this account.');
-        return;
-      }
-
-      document.getElementById('store-name').innerText = store.name || 'My Store';
-      document.getElementById('store-category').innerText = store.business_category || 'General';
-      document.getElementById('portal-content').style.display = 'block';
-
-      const todayStr = new Date().toISOString().split('T')[0];
-      const symbol = store.currency_symbol || '₱';
-
-      // Load initial sales
-      const { data: sales } = await supabaseClient
+    async function loadTodaySales(storeId, todayStr, symbol) {
+      const { data, error } = await supabaseClient
         .from('daily_sales_summaries')
         .select('*')
-        .eq('store_id', store.id)
+        .eq('store_id', storeId)
         .eq('date', todayStr)
         .maybeSingle();
 
-      if (sales) updateUI(sales, symbol);
+      if (error) {
+        console.error('Error querying daily_sales_summaries:', error.message);
+        return;
+      }
 
-      // Listen for updates specific to this store
+      if (data) {
+        updateUI(data, symbol);
+      } else {
+        // Fallback default if no transactions have occurred today yet
+        updateUI({ net_sales: 0, transactions: 0, average_sale: 0 }, symbol);
+      }
+    }
+
+    function subscribeToLiveSales(storeId, todayStr, symbol) {
       supabaseClient
-        .channel(`daily-sales-${store.id}`)
-        .on('postgres_changes', {
-          event: '*',
-          schema: 'public',
-          table: 'daily_sales_summaries',
-          filter: `store_id=eq.${store.id}`
-        }, (payload) => {
-          if (payload.new && payload.new.date === todayStr) {
-            updateUI(payload.new, symbol);
+        .channel(`portal-daily-sales-${storeId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'daily_sales_summaries',
+            filter: `store_id=eq.${storeId}`
+          },
+          (payload) => {
+            console.log('Live Sales Update Received from POS:', payload.new);
+            if (payload.new && payload.new.date === todayStr) {
+              updateUI(payload.new, symbol);
+            }
           }
-        })
-        .subscribe();
+        )
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            document.getElementById('sync-status').innerText = 'Live Connected';
+          }
+        });
+    }
+
+    function updateUI(data, symbol) {
+      const netSales = Number(data.net_sales || 0);
+      const txCount = Number(data.transactions || 0);
+      const avgSale = Number(data.average_sale || (txCount > 0 ? netSales / txCount : 0));
+
+      document.getElementById('net-sales').innerText = `${symbol}${netSales.toFixed(2)}`;
+      document.getElementById('tx-count').innerText = txCount;
+      document.getElementById('avg-sale').innerText = `${symbol}${avgSale.toFixed(2)}`;
     }
 
     // Login Form Handler
@@ -126,6 +253,7 @@
       e.preventDefault();
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
+      document.getElementById('auth-error').innerText = '';
 
       const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
@@ -141,6 +269,7 @@
       location.reload();
     }
 
+    // Start script
     checkAuthAndLoad();
   </script>
 </body>
