@@ -241,8 +241,73 @@
     .support-perks { list-style: none; margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; color: #cbd5e1; }
     .support-perks li::before { content: "🛡️ "; }
 
+    /* ABOUT US SECTION */
+    .about-section {
+      padding: 60px 0 20px;
+    }
+    .about-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 40px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 32px;
+      align-items: center;
+      text-align: left;
+    }
+    .about-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(139, 92, 246, 0.12);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #c084fc;
+      margin-bottom: 16px;
+    }
+    .about-card h3 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .about-card p {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .about-stat-box {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    .about-stat-number {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .about-stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
     /* FAQ */
-    .faq-section { padding: 40px 0 100px; }
+    .faq-section { padding: 40px 0 60px; }
     .faq-container { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; text-align: left; }
     .faq-item { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 18px 24px; cursor: pointer; transition: 0.2s; }
     .faq-item:hover { border-color: rgba(255,255,255,0.2); }
@@ -307,6 +372,7 @@
       .preview-grid { grid-template-columns: 1fr; }
       .nav-links { display: none; }
       .support-plan-banner { grid-template-columns: 1fr; }
+      .about-card { grid-template-columns: 1fr; padding: 28px; }
       .footer-content { flex-direction: column; text-align: center; }
       #sales-chat-panel { width: calc(100vw - 32px); right: 16px; bottom: 84px; height: 480px; }
     }
@@ -334,6 +400,7 @@
         <a href="#workflows" class="nav-link">Workflows</a>
         <a href="#hardware" class="nav-link">Hardware</a>
         <a href="#pricing" class="nav-link">Pricing</a>
+        <a href="#about" class="nav-link">About Us</a>
         <a href="#faq" class="nav-link">FAQ</a>
         <a href="dev_portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
       </div>
@@ -785,7 +852,33 @@
       </div>
     </section>
 
-    <!-- 5. FAQ SECTION -->
+    <!-- 5. ABOUT US SECTION -->
+    <section class="about-section" id="about">
+      <div class="about-card">
+        <div>
+          <div class="about-badge">🚀 Built by DevBrew</div>
+          <h3>Deep POS Expertise, Modern Architecture</h3>
+          <p>
+            FlexiTap is designed and engineered by <strong>DevBrew</strong>, a software lab headquartered in the Philippines. Our core engineering team brings nearly <strong>30 years of combined hands-on experience</strong> across legacy and modern point-of-sale platforms.
+          </p>
+          <p>
+            Having built, maintained, and supported POS ecosystems for decades, we founded FlexiTap to solve the real-world operational challenges merchants face every day: eliminating predatory hardware lock-ins, preventing network downtime with true offline-first reliability, and delivering flat-rate, transparent software that scales effortlessly.
+          </p>
+        </div>
+        <div class="about-stats">
+          <div class="about-stat-box">
+            <div class="about-stat-number">~30</div>
+            <div class="about-stat-label">Years Combined POS Experience</div>
+          </div>
+          <div class="about-stat-box">
+            <div class="about-stat-number">100%</div>
+            <div class="about-stat-label">Hardware Independent (BYOD)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. FAQ SECTION -->
     <section class="faq-section" id="faq">
       <div style="text-align: center; margin-bottom: 32px;">
         <h2 class="section-title">Frequently Asked Questions</h2>
@@ -833,7 +926,7 @@
         </svg>
         <div>
           <div style="font-weight: 700; color: #fff; margin-bottom: 2px;">FlexiTap POS</div>
-          <div>&copy; 2026 FlexiTap POS System. Sales: <a href="mailto:sales@flexitapapp.com" style="color: var(--primary); text-decoration: none;">sales@flexitapapp.com</a></div>
+          <div>&copy; 2026 FlexiTap POS System. Developed by DevBrew. Sales: <a href="mailto:sales@flexitapapp.com" style="color: var(--primary); text-decoration: none;">sales@flexitapapp.com</a></div>
         </div>
       </div>
 
@@ -846,7 +939,7 @@
             <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           </a>
           <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Instagram">
-            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.441-1.44z"/></svg>
           </a>
         </div>
         <div class="footer-links">
