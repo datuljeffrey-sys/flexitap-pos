@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FlexiTap POS — Developer & Ops Portal</title>
+  <title>FlexiTap — Dev, Ops & Technical Support Portal</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --primary: #3b82f6;
@@ -13,11 +19,12 @@
       --danger: #ef4444;
       --bg: #090d16;
       --sidebar-bg: #111827;
-      --card-bg: #1f2937;
-      --text: #f9fafb;
-      --text-muted: #9ca3af;
-      --border: #374151;
+      --card-bg: rgba(22, 30, 49, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
       --code-bg: #030712;
+      --sidebar-width: 270px;
     }
 
     [data-theme="light"] {
@@ -26,279 +33,413 @@
       --accent: #059669;
       --warning: #d97706;
       --danger: #dc2626;
-      --bg: #f3f4f6;
+      --bg: #f8fafc;
       --sidebar-bg: #ffffff;
       --card-bg: #ffffff;
-      --text: #111827;
-      --text-muted: #6b7280;
-      --border: #e5e7eb;
-      --code-bg: #1f2937;
+      --card-border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --code-bg: #1e293b;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; transition: background-color 0.2s, color 0.2s; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.2s, border-color 0.2s; }
     body { background-color: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
 
-    /* Sidebar Navigation */
+    /* --- SIDEBAR (Matches Your Wireframe) --- */
     aside {
-      width: 260px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border);
-      display: flex; flex-direction: column; justify-content: space-between; padding: 1.5rem 1rem;
+      width: var(--sidebar-width); background-color: var(--sidebar-bg); border-right: 1px solid var(--card-border);
+      display: flex; flex-direction: column; justify-content: space-between; padding: 24px 16px; flex-shrink: 0;
     }
-    .brand { font-size: 1.3rem; font-weight: 800; color: var(--text); padding: 0 0.5rem 1.2rem 0.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .brand-badge { background: rgba(59, 130, 246, 0.2); color: var(--primary); font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; }
+    .brand-box { display: flex; align-items: center; gap: 12px; padding: 0 8px 24px; border-bottom: 1px solid var(--card-border); }
+    .brand-logo-svg { width: 34px; height: 34px; flex-shrink: 0; }
+    .brand-title { font-size: 1.15rem; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+    .brand-title span { color: var(--primary); font-size: 0.8rem; display: block; font-weight: 700; text-transform: uppercase; }
 
-    .menu { list-style: none; margin-top: 1.5rem; }
-    .menu-item { margin-bottom: 0.4rem; }
-    .menu-link {
-      display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1rem;
-      color: var(--text-muted); text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer;
+    .nav-list { list-style: none; margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+    .nav-btn {
+      width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 14px 18px;
+      color: var(--text-muted); background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border);
+      border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; text-align: left; transition: all 0.2s;
     }
-    .menu-link:hover, .menu-link.active { background-color: var(--primary); color: #ffffff; }
+    .nav-btn:hover { background: rgba(255, 255, 255, 0.06); color: var(--text); border-color: rgba(255, 255, 255, 0.2); }
+    .nav-btn.active {
+      background: rgba(59, 130, 246, 0.12); color: #ffffff; border-color: var(--primary);
+      box-shadow: inset 4px 0 0 var(--primary);
+    }
+    .nav-badge { font-size: 0.75rem; padding: 2px 8px; border-radius: 9999px; background: rgba(239, 68, 68, 0.2); color: #f87171; }
 
-    .user-profile { padding-top: 1rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .user-name { font-weight: 700; font-size: 0.85rem; color: var(--text); }
-    .user-role { font-size: 0.75rem; color: var(--danger); font-weight: 700; }
+    .sidebar-footer { padding-top: 20px; border-top: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
+    .user-info { font-size: 0.85rem; font-weight: 700; color: var(--text); }
+    .user-tag { font-size: 0.72rem; color: var(--accent); font-weight: 800; display: block; }
 
-    /* Main Ops Area */
-    main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+    /* --- MAIN CONTENT AREA --- */
+    main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background-color: var(--bg); }
 
     header {
-      padding: 1.2rem 2rem; background-color: var(--sidebar-bg); border-bottom: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center; sticky; top: 0; z-index: 10;
+      padding: 18px 36px; background-color: var(--sidebar-bg); border-bottom: 1px solid var(--card-border);
+      display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50;
     }
-    .header-title h1 { font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 0.6rem; }
+    .header-title h1 { font-size: 1.35rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
     .header-title p { font-size: 0.85rem; color: var(--text-muted); }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
 
-    .header-actions { display: flex; align-items: center; gap: 1rem; }
-    .theme-btn { background: var(--border); border: none; color: var(--text); padding: 0.5rem; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; }
+    .theme-toggle { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: var(--text); width: 38px; height: 38px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+    .btn-exit { padding: 9px 16px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.25); }
+    .btn-exit:hover { background: var(--danger); color: #fff; }
 
-    /* Content Layout */
-    .content { padding: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; }
+    .content-body { padding: 32px 36px; max-width: 1400px; margin: 0 auto; width: 100%; }
 
-    /* Metrics Row */
-    .system-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-    .sys-card { background-color: var(--card-bg); border: 1px solid var(--border); padding: 1.25rem; border-radius: 12px; }
-    .sys-title { font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
-    .sys-value { font-size: 1.6rem; font-weight: 800; margin: 0.4rem 0; color: var(--text); }
-    .sys-status { font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; }
+    /* --- VIEW SECTIONS --- */
+    .tab-view { display: none; animation: fadeIn 0.25s ease; }
+    .tab-view.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Two Column Panels */
-    .panel-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
-    .panel { background-color: var(--card-bg); border: 1px solid var(--border); padding: 1.5rem; border-radius: 12px; }
-    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; }
-    .panel-title { font-size: 1.1rem; font-weight: 700; }
+    /* System Stats Grid */
+    .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 24px; }
+    .kpi-card { background-color: var(--card-bg); border: 1px solid var(--card-border); padding: 20px; border-radius: 14px; backdrop-filter: blur(8px); }
+    .kpi-title { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .kpi-val { font-size: 1.8rem; font-weight: 800; margin: 6px 0; color: var(--text); }
+    .kpi-status { font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 
-    /* Tables & Controls */
-    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
-    th { padding: 0.75rem 0.5rem; border-bottom: 1px solid var(--border); color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
-    td { padding: 0.85rem 0.5rem; border-bottom: 1px solid var(--border); }
+    /* Panels & Tables */
+    .panel { background-color: var(--card-bg); border: 1px solid var(--card-border); padding: 24px; border-radius: 16px; margin-bottom: 24px; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--card-border); }
+    .panel-title { font-size: 1.1rem; font-weight: 800; color: var(--text); }
+
+    .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; }
+    .data-table th { padding: 12px 10px; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 700; border-bottom: 1px solid var(--card-border); }
+    .data-table td { padding: 14px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+    .data-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+    .badge-pill { display: inline-block; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; }
+    .badge-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-yellow { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-red { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
 
     .action-btn {
-      padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
-      border: 1px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer;
+      padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; cursor: pointer;
+      border: 1px solid var(--card-border); background: rgba(255, 255, 255, 0.05); color: var(--text); transition: 0.2s;
     }
     .action-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .action-btn-danger { color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
+    .action-btn-danger:hover { background: var(--danger); color: #fff; }
 
-    /* Feature Flags List */
-    .flag-item { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0; border-bottom: 1px solid var(--border); }
-    .flag-item:last-child { border-bottom: none; }
-    .flag-name { font-weight: 700; font-size: 0.85rem; }
-    .flag-desc { font-size: 0.75rem; color: var(--text-muted); }
+    /* Remote Terminal Shell */
+    .terminal-window { background: var(--code-bg); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; font-family: 'JetBrains Mono', monospace; }
+    .terminal-header { background: rgba(255, 255, 255, 0.03); padding: 10px 16px; display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--card-border); }
+    .terminal-body { padding: 18px; min-height: 220px; max-height: 380px; overflow-y: auto; font-size: 0.82rem; line-height: 1.6; }
+    .terminal-input-bar { display: flex; border-top: 1px solid var(--card-border); background: #000; }
+    .terminal-input-bar input { flex: 1; padding: 12px 16px; background: transparent; border: none; color: #fff; font-family: inherit; font-size: 0.85rem; outline: none; }
+    .terminal-send { background: var(--primary); color: white; border: none; padding: 0 20px; font-weight: 700; cursor: pointer; }
 
-    /* Toggle Switch */
-    .switch { position: relative; display: inline-block; width: 44px; height: 22px; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .3s; border-radius: 34px; }
-    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
-    input:checked + .slider { background-color: var(--accent); }
-    input:checked + .slider:before { transform: translateX(22px); }
-
-    /* Live Terminal Console */
-    .console-panel { background-color: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; font-family: monospace; font-size: 0.8rem; }
-    .console-header { display: flex; justify-content: space-between; margin-bottom: 0.75rem; color: var(--text-muted); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
-    .log-line { margin-bottom: 0.4rem; }
     .log-info { color: #38bdf8; }
     .log-success { color: #34d399; }
     .log-warn { color: #fbbf24; }
+    .log-error { color: #f87171; }
   </style>
 </head>
 <body>
 
-  <!-- Dev Sidebar -->
+  <!-- SIDEBAR (Wireframe Layout) -->
   <aside>
     <div>
-      <div class="brand">
-        Flexi<span>Tap Internal</span>
-        <span class="brand-badge">DEV / OPS</span>
+      <div class="brand-box">
+        <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="50,22 70,22 25,67 5,67" fill="#1e88e5" />
+          <polygon points="50,52 70,52 35,87 15,87" fill="#29b6f6" />
+          <polygon points="35,67 55,67 70,52 50,52" fill="#4fc3f7" />
+          <polygon points="35,67 55,67 70,87 50,87" fill="#0288d1" />
+        </svg>
+        <div class="brand-title">
+          FlexiTap
+          <span>Dev & Support Ops</span>
+        </div>
       </div>
-      <ul class="menu">
-        <li class="menu-item"><a class="menu-link active" onclick="switchView('System Health')">⚡ Health & Telemetry</a></li>
-        <li class="menu-item"><a class="menu-link" onclick="switchView('Merchant Management')">🏪 Merchant Accounts</a></li>
-        <li class="menu-item"><a class="menu-link" onclick="switchView('Feature Flags')">🚩 Feature Flags</a></li>
-        <li class="menu-item"><a class="menu-link" onclick="switchView('Supabase Logs')">📜 Supabase Logs</a></li>
-        <li class="menu-item"><a class="menu-link" onclick="switchView('API Keys')">🔑 API & Webhooks</a></li>
+
+      <ul class="nav-list">
+        <li>
+          <button class="nav-btn active" onclick="switchNav('clients', this)">
+            <span>👥 Clients</span>
+          </button>
+        </li>
+        <li>
+          <button class="nav-btn" onclick="switchNav('remote', this)">
+            <span>📡 Remote Access</span>
+          </button>
+        </li>
+        <li>
+          <button class="nav-btn" onclick="switchNav('monitoring', this)">
+            <span>📊 Monitoring</span>
+          </button>
+        </li>
+        <li>
+          <button class="nav-btn" onclick="switchNav('errors', this)">
+            <span>⚠️ Errors</span>
+            <span class="nav-badge" id="error-badge">2 New</span>
+          </button>
+        </li>
       </ul>
     </div>
 
-    <div class="user-profile">
+    <div class="sidebar-footer">
       <div>
-        <div class="user-name">alex.dev@flexitap.internal</div>
-        <div class="user-role">● Super Admin Access</div>
+        <div class="user-info">admin@flexitap.io</div>
+        <span class="user-tag">● Level 3 Support / Dev</span>
       </div>
     </div>
   </aside>
 
-  <!-- Main Workspace -->
+  <!-- MAIN WORKSPACE -->
   <main>
     <header>
       <div class="header-title">
-        <h1 id="pageTitle">System Health & Telemetry</h1>
-        <p>Live Supabase database status, active POS sockets, and environment flags.</p>
+        <h1 id="view-title">Merchant Clients & Support Hub</h1>
+        <p id="view-subtitle">Search merchant stores, troubleshoot terminal fleets, and override subscription tiers.</p>
       </div>
       <div class="header-actions">
-        <button class="theme-btn" onclick="toggleTheme()">☀️</button>
-        <button class="action-btn" style="color: var(--danger); border-color: var(--danger);" onclick="alert('Developer session terminated.')">Exit Dev Ops</button>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light">☀️</button>
+        <button class="btn-exit" onclick="alert('Support session closed.')">Sign Out</button>
       </div>
     </header>
 
-    <div class="content">
+    <div class="content-body">
 
-      <!-- System Status Cards -->
-      <div class="system-grid">
-        <div class="sys-card">
-          <div class="sys-title">Supabase DB Connections</div>
-          <div class="sys-value">42 / 100 Pool</div>
-          <div class="sys-status" style="color: var(--accent);">● Healthy (RLS Active)</div>
+      <!-- ================= 1. CLIENTS VIEW ================= -->
+      <div id="view-clients" class="tab-view active">
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-title">Active Merchants</div>
+            <div class="kpi-val" style="color: var(--accent);">142</div>
+            <div class="kpi-status" style="color: var(--accent);">● 89 Online Today</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Subscription Mix</div>
+            <div class="kpi-val" style="color: var(--primary);">48 Pro / 62 Plus</div>
+            <div class="kpi-status" style="color: var(--text-muted);">32 Free Kiosks</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Connected POS Hardware</div>
+            <div class="kpi-val" style="color: #a855f7;">230 Devices</div>
+            <div class="kpi-status" style="color: var(--accent);">● Sockets Healthy</div>
+          </div>
         </div>
-        <div class="sys-card">
-          <div class="sys-title">Active POS Sync Sockets</div>
-          <div class="sys-value">184 Tablets</div>
-          <div class="sys-status" style="color: var(--accent);">● Realtime Engine OK</div>
-        </div>
-        <div class="sys-card">
-          <div class="sys-title">API Response Time</div>
-          <div class="sys-value">48 ms</div>
-          <div class="sys-status" style="color: var(--accent);">● Optimal Performance</div>
-        </div>
-        <div class="sys-card">
-          <div class="sys-title">Stripe Webhook Queue</div>
-          <div class="sys-value">0 Pending</div>
-          <div class="sys-status" style="color: var(--accent);">● Sync Instant</div>
-        </div>
-      </div>
 
-      <!-- Merchant Override Table + Feature Switches -->
-      <div class="panel-grid">
-        
-        <!-- Merchant Override Management -->
         <div class="panel">
           <div class="panel-header">
-            <div class="panel-title">Merchant Support & Tier Override</div>
-            <input type="text" placeholder="Search merchant email..." style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem; outline: none;">
+            <div class="panel-title">Merchant Support & Fleet Management</div>
+            <input type="text" placeholder="Search store name, ID, or owner email..." style="padding: 8px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 300px;">
           </div>
-          <table>
+          <table class="data-table">
             <thead>
               <tr>
-                <th>Merchant Account</th>
-                <th>Role</th>
-                <th>Web Access Flag</th>
-                <th>POS Sync</th>
-                <th>Actions</th>
+                <th>Store & Owner</th>
+                <th>Hardware Fleet</th>
+                <th>Tier</th>
+                <th>Cloud Sync</th>
+                <th>Diagnostics & Support</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>bakery_central@gmail.com</td>
-                <td><code>customer</code></td>
-                <td><span style="color: var(--accent); font-weight: 700;">TRUE (Pro)</span></td>
-                <td>Active (3 POS)</td>
-                <td><button class="action-btn" onclick="alert('Opened Override Modal for Bakery Central')">Override Tier</button></td>
+                <td><strong>Manila Bakes & Coffee</strong><br><span style="color: var(--text-muted); font-size: 0.8rem;">owner_manila@gmail.com</span></td>
+                <td>3 Tablets (1 Main, 2 KDS)</td>
+                <td><span class="badge-pill badge-green">PRO</span></td>
+                <td><span style="color: var(--accent);">● Real-Time Active</span></td>
+                <td>
+                  <button class="action-btn" onclick="openRemoteFor('Manila Bakes (Main POS)')">Remote Shell</button>
+                  <button class="action-btn" onclick="alert('Triggered full SQLite -> Supabase catch-up sync for Manila Bakes.')">Force Sync</button>
+                </td>
               </tr>
               <tr>
-                <td>corner_cafe_ph@yahoo.com</td>
-                <td><code>customer</code></td>
-                <td><span style="color: var(--text-muted); font-weight: 700;">FALSE (Free)</span></td>
-                <td>Active (1 POS)</td>
-                <td><button class="action-btn" onclick="alert('Upgraded Merchant to Pro manually.')">Grant Temp Web Access</button></td>
+                <td><strong>Corner Kiosk Express</strong><br><span style="color: var(--text-muted); font-size: 0.8rem;">kiosk_user@yahoo.com</span></td>
+                <td>1 Android Phone</td>
+                <td><span class="badge-pill badge-yellow">FREE</span></td>
+                <td><span style="color: var(--text-muted);">Offline Only</span></td>
+                <td>
+                  <button class="action-btn" onclick="alert('Upgraded Corner Kiosk Express to Plus Tier (30-day trial granted).')">Grant Plus Trial</button>
+                </td>
               </tr>
               <tr>
-                <td>taqueria_express@gmail.com</td>
-                <td><code>customer</code></td>
-                <td><span style="color: var(--accent); font-weight: 700;">TRUE (Pro)</span></td>
-                <td>Offline (Sync Error)</td>
-                <td><button class="action-btn" onclick="alert('Resyncing POS socket cache...')">Fix POS Socket</button></td>
+                <td><strong>Cebu Grill House</strong><br><span style="color: var(--text-muted); font-size: 0.8rem;">cebu_grill@gmail.com</span></td>
+                <td>2 Tablets (1 POS, 1 CDS)</td>
+                <td><span class="badge-pill badge-green">PLUS</span></td>
+                <td><span style="color: var(--danger);">⚠️ Schema Desync (v1.0.0)</span></td>
+                <td>
+                  <button class="action-btn action-btn-danger" onclick="alert('Pushed remote database migration schema to Cebu Grill House.')">Repair SQLite Schema</button>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
-
-        <!-- Global System Feature Flags -->
-        <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title">Global Feature Flags</div>
-          </div>
-
-          <div class="flag-item">
-            <div>
-              <div class="flag-name">Strict Web Access Check</div>
-              <div class="flag-desc">Enforce `has_web_access = true` at `/login`</div>
-            </div>
-            <label class="switch">
-              <input type="checkbox" checked onchange="alert('Toggled Web Access RLS policy')">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="flag-item">
-            <div>
-              <div class="flag-name">Allow Offline POS Ring Up</div>
-              <div class="flag-desc">Permit transaction caching without internet</div>
-            </div>
-            <label class="switch">
-              <input type="checkbox" checked onchange="alert('Toggled Offline Storage Flag')">
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="flag-item">
-            <div>
-              <div class="flag-name">Maintenance Mode</div>
-              <div class="flag-desc">Lock client login and display update notice</div>
-            </div>
-            <label class="switch">
-              <input type="checkbox" onchange="alert('WARNING: Toggled Maintenance Mode')">
-              <span class="slider"></span>
-            </label>
-          </div>
-        </div>
-
       </div>
 
-      <!-- Real-time Supabase Auth & Webhook Logs Console -->
-      <div class="console-panel">
-        <div class="console-header">
-          <span>REALTIME SUPABASE & WEBHOOK SYSTEM LOGS</span>
-          <span>FILTER: ALL LOGS</span>
+      <!-- ================= 2. REMOTE ACCESS VIEW ================= -->
+      <div id="view-remote" class="tab-view">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Remote POS Device Console & ADB Controller</div>
+            <select style="background: var(--bg); border: 1px solid var(--card-border); color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem;" id="target-terminal">
+              <option>Manila Bakes — Main Counter (POS-01) [Online]</option>
+              <option>Cebu Grill — Cashier Register (POS-01) [Warning]</option>
+              <option>Taqueria Central — Kitchen Display (KDS-02) [Online]</option>
+            </select>
+          </div>
+
+          <div class="terminal-window">
+            <div class="terminal-header">
+              <span>REMOTE SESSION: POS-01 (Android 13 / Flutter Engine v3.24)</span>
+              <span style="color: var(--accent);">● SSL SOCKET ENCRYPTED</span>
+            </div>
+            <div class="terminal-body" id="remote-logs">
+              <div class="log-line"><span class="log-info">[13:10:02]</span> Connecting to remote terminal daemon: wss://pos-gateway.flexitap.io/device/POS-01</div>
+              <div class="log-line"><span class="log-success">[13:10:04]</span> Socket handshake confirmed. SQLite state: 1,420 records. Auth token valid.</div>
+              <div class="log-line"><span class="log-info">[13:11:15]</span> SalesSyncService: Daily summary aggregated. Total net sales: ₱14,850.00.</div>
+              <div class="log-line"><span class="log-success">[13:11:16]</span> Upsert successful to table 'daily_sales_summaries' (onConflict: store_id, date).</div>
+            </div>
+            <div class="terminal-input-bar">
+              <input type="text" id="terminal-cmd" placeholder="Execute diagnostic command (e.g. 'pull-sqlite-schema', 'clear-cache', 'restart-service', 'sync-now')..." />
+              <button class="terminal-send" onclick="sendRemoteCommand()">Send Command</button>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-top: 16px;">
+            <button class="action-btn" onclick="quickCommand('sync-now')">⚡ Trigger Force Sync</button>
+            <button class="action-btn" onclick="quickCommand('pull-logs')">📄 Pull Logcat File</button>
+            <button class="action-btn" onclick="quickCommand('clear-cache')">🧹 Clear Device Cache</button>
+            <button class="action-btn action-btn-danger" onclick="quickCommand('restart-app')">🔄 Remote App Restart</button>
+          </div>
         </div>
-        <div class="log-line"><span class="log-info">[2026-08-12 19:14:02]</span> <span class="log-success">AUTH_SUCCESS</span> User `corner_cafe_ph@yahoo.com` authenticated via Flutter App SDK.</div>
-        <div class="log-line"><span class="log-info">[2026-08-12 19:15:10]</span> <span class="log-success">STRIPE_WEBHOOK</span> `evt_3M00001` processed. Updated `public.profiles.has_web_access = true` for user `bakery_central@gmail.com`.</div>
-        <div class="log-line"><span class="log-info">[2026-08-12 19:15:45]</span> <span class="log-warn">AUTH_DENIED</span> User `free_user_test@gmail.com` attempted login at `/login`. Denied: `has_web_access == false`. Prompt displayed.</div>
+      </div>
+
+      <!-- ================= 3. MONITORING VIEW ================= -->
+      <div id="view-monitoring" class="tab-view">
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-title">Supabase Database Health</div>
+            <div class="kpi-val" style="color: var(--accent);">42 / 100</div>
+            <div class="kpi-status" style="color: var(--accent);">● Connection Pool OK</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Web Portal Latency</div>
+            <div class="kpi-val" style="color: var(--primary);">38 ms</div>
+            <div class="kpi-status" style="color: var(--accent);">● Postgres Realtime Sub 50ms</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-title">Sync Throughput</div>
+            <div class="kpi-val" style="color: #a855f7;">420 tx/min</div>
+            <div class="kpi-status" style="color: var(--accent);">● 0 Queued Retries</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Realtime System Stream & Webhooks</div>
+          </div>
+          <div class="terminal-window">
+            <div class="terminal-header">
+              <span>LIVE CLOUD TELEMETRY FEED</span>
+              <span>FILTER: SUPABASE & STRIPE</span>
+            </div>
+            <div class="terminal-body">
+              <div class="log-line"><span class="log-info">[13:12:00]</span> <span class="log-success">POSTGREST_200</span> `daily_sales_summaries` upserted for Store `store_c10492` (₱2,450.00).</div>
+              <div class="log-line"><span class="log-info">[13:12:14]</span> <span class="log-success">AUTH_TOKEN_REFRESH</span> Refresh token accepted for `owner_manila@gmail.com`.</div>
+              <div class="log-line"><span class="log-info">[13:12:30]</span> <span class="log-warn">SUBSCRIPTION_GUARD</span> Blocked web login attempt for free tier `kiosk_user@yahoo.com`.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= 4. ERRORS VIEW ================= -->
+      <div id="view-errors" class="tab-view">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Diagnostic Exceptions & Desync Queue</div>
+            <button class="action-btn" onclick="alert('Cleared resolved errors.')">Dismiss Resolved</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Severity</th>
+                <th>Source</th>
+                <th>Error Message / Stack</th>
+                <th>Occurrence</th>
+                <th>Resolution Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="badge-pill badge-red">CRITICAL</span></td>
+                <td>Cebu Grill (Tablet)</td>
+                <td><code>PostgrestException: column "tips" does not exist in table "daily_sales_summaries"</code></td>
+                <td>3 mins ago</td>
+                <td><button class="action-btn" onclick="alert('Applied SQL patch to Supabase daily_sales_summaries table.')">Auto-Migrate SQL</button></td>
+              </tr>
+              <tr>
+                <td><span class="badge-pill badge-yellow">WARNING</span></td>
+                <td>Kiosk K-04 (Phone)</td>
+                <td><code>SocketException: Failed host lookup 'ezaqdnnecfkmqjdzigrf.supabase.co' (Device Offline)</code></td>
+                <td>12 mins ago</td>
+                <td><button class="action-btn" onclick="alert('Stored in local SQLite cache. Ready for auto-catchup on reconnect.')">Inspect Local Queue</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </div>
   </main>
 
   <script>
-    function toggleTheme() {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', newTheme);
-      document.querySelector('.theme-btn').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    // Navigation routing matching wireframe items
+    const views = {
+      clients: { title: 'Merchant Clients & Support Hub', subtitle: 'Search merchant stores, troubleshoot terminal fleets, and override subscription tiers.' },
+      remote: { title: 'Remote Access & Diagnostics', subtitle: 'Send real-time ADB commands, clear caches, and inspect remote device state.' },
+      monitoring: { title: 'Telemetry & Sockets Monitoring', subtitle: 'Live Supabase real-time channels, API latencies, and sync performance.' },
+      errors: { title: 'Exception Log & Sync Repairs', subtitle: 'Diagnose SQLite/Supabase conflicts, schema mismatches, and failed upserts.' }
+    };
+
+    function switchNav(key, element) {
+      document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      
+      document.getElementById(`view-${key}`).classList.add('active');
+      if (element) element.classList.add('active');
+
+      document.getElementById('view-title').textContent = views[key].title;
+      document.getElementById('view-subtitle').textContent = views[key].subtitle;
     }
 
-    function switchView(title) {
-      document.getElementById('pageTitle').textContent = title;
-      document.querySelectorAll('.menu-link').forEach(el => el.classList.remove('active'));
-      event.currentTarget.classList.add('active');
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    }
+
+    function sendRemoteCommand() {
+      const input = document.getElementById('terminal-cmd');
+      const val = input.value.trim();
+      if (!val) return;
+
+      const logBox = document.getElementById('remote-logs');
+      const time = new Date().toLocaleTimeString();
+      
+      logBox.innerHTML += `<div class="log-line"><span class="log-info">[${time}]</span> &gt; ${val}</div>`;
+      logBox.innerHTML += `<div class="log-line"><span class="log-success">[${time}]</span> Remote execution acknowledged by device daemon.</div>`;
+      
+      input.value = '';
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function quickCommand(cmd) {
+      document.getElementById('terminal-cmd').value = cmd;
+      sendRemoteCommand();
+    }
+
+    function openRemoteFor(device) {
+      switchNav('remote', document.querySelectorAll('.nav-btn')[1]);
+      const logBox = document.getElementById('remote-logs');
+      logBox.innerHTML += `<div class="log-line"><span class="log-warn">[SESSION SWITCH]</span> Switched focus to: ${device}</div>`;
     }
   </script>
 </body>
