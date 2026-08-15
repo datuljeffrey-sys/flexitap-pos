@@ -95,6 +95,32 @@
     .tab-content { display: none; animation: fadeIn 0.3s ease; }
     .tab-content.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* --- LIVE AGENT SUPPORT WIDGET --- */
+    #merchant-chat-btn {
+      position: fixed; bottom: 24px; right: 24px; background: linear-gradient(135deg, var(--accent-green), #059669);
+      color: white; border: 1px solid rgba(255,255,255,0.25); border-radius: 9999px; padding: 12px 20px;
+      font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 990; transition: transform 0.2s;
+    }
+    #merchant-chat-btn:hover { transform: translateY(-2px); }
+
+    #merchant-chat-panel {
+      display: none; position: fixed; bottom: 85px; right: 24px; width: 380px; height: 520px;
+      background: #111827; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 18px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6); flex-direction: column; overflow: hidden; z-index: 999;
+    }
+    .m-chat-header { background: rgba(255,255,255,0.03); padding: 16px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
+    .m-chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
+    
+    .bubble { max-width: 80%; padding: 10px 14px; border-radius: 12px; line-height: 1.4; word-break: break-word; }
+    .bubble-merchant { align-self: flex-end; background: var(--primary); color: #fff; border-bottom-right-radius: 2px; }
+    .bubble-agent { align-self: flex-start; background: rgba(255,255,255,0.08); border: 1px solid var(--card-border); color: #f8fafc; border-bottom-left-radius: 2px; }
+    .bubble-meta { font-size: 10px; opacity: 0.6; margin-top: 4px; display: block; text-align: right; }
+
+    .m-chat-input-bar { display: flex; border-top: 1px solid var(--card-border); background: #090d16; }
+    .m-chat-input-bar input { flex: 1; padding: 14px; background: transparent; border: none; color: #fff; outline: none; font-size: 13px; }
+    .m-chat-send { background: var(--accent-green); color: white; border: none; padding: 0 18px; font-weight: 700; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -167,7 +193,6 @@
 
       <!-- 1. SALES SUMMARY TAB -->
       <div id="tab-summary" class="tab-content active">
-        
         <div class="kpi-grid">
           <div class="kpi-card"><h3>Net Sales</h3><div class="metric" style="color: var(--accent-green);" id="net-sales">₱0.00</div></div>
           <div class="kpi-card"><h3>Transactions</h3><div class="metric" style="color: var(--primary);" id="tx-count">0</div></div>
@@ -175,8 +200,6 @@
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px;">
-          
-          <!-- LEFT COLUMN -->
           <div style="display: flex; flex-direction: column; gap: 24px;">
             <div class="panel-container">
               <div class="panel-header">Financial Overview</div>
@@ -184,7 +207,6 @@
                 <tbody id="accountability-tbody"></tbody>
               </table>
             </div>
-
             <div class="panel-container">
               <div class="panel-header">Media Count</div>
               <table class="data-table">
@@ -194,7 +216,6 @@
             </div>
           </div>
 
-          <!-- RIGHT COLUMN -->
           <div style="display: flex; flex-direction: column; gap: 24px;">
             <div class="panel-container">
               <div class="panel-header">Tax Description</div>
@@ -203,7 +224,6 @@
                 <tbody id="tax-tbody"></tbody>
               </table>
             </div>
-
             <div class="panel-container">
               <div class="panel-header">Order Type Summary</div>
               <table class="data-table">
@@ -211,7 +231,6 @@
                 <tbody id="order-type-tbody"></tbody>
               </table>
             </div>
-
             <div class="panel-container">
               <div class="panel-header">Serving Period</div>
               <table class="data-table">
@@ -220,7 +239,6 @@
               </table>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -250,8 +268,32 @@
       <div id="tab-labor" class="tab-content"><div class="panel-container"><div class="panel-header">Labor Sales</div><p class="placeholder-text" style="padding: 40px 0;">Coming Soon</p></div></div>
       <div id="tab-item" class="tab-content"><div class="panel-container"><div class="panel-header">Item Sales</div><p class="placeholder-text" style="padding: 40px 0;">Coming Soon</p></div></div>
       <div id="tab-terminal" class="tab-content"><div class="panel-container"><div class="panel-header">Sales by Terminal</div><p class="placeholder-text" style="padding: 40px 0;">Coming Soon</p></div></div>
-
     </main>
+  </div>
+
+  <!-- LIVE SUPPORT FLOATING BUTTON -->
+  <button id="merchant-chat-btn" onclick="toggleMerchantSupport()">
+    <span>🟢</span> Priority Tech Support
+  </button>
+
+  <!-- LIVE SUPPORT CHAT PANEL -->
+  <div id="merchant-chat-panel">
+    <div class="m-chat-header">
+      <div>
+        <div style="font-weight: 800; color: #fff; font-size: 14px;">FlexiTap Live Support</div>
+        <div style="font-size: 11px; color: var(--accent-green);">● Level 3 Technical Team Online</div>
+      </div>
+      <button onclick="toggleMerchantSupport()" style="background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer;">&times;</button>
+    </div>
+    <div class="m-chat-body" id="m-chat-messages">
+      <div class="bubble bubble-agent">
+        👋 Hello! How can our support team assist your store today?
+      </div>
+    </div>
+    <form class="m-chat-input-bar" onsubmit="sendMerchantMessage(event)">
+      <input type="text" id="m-chat-input" placeholder="Type your message..." required autocomplete="off" />
+      <button type="submit" class="m-chat-send">Send</button>
+    </form>
   </div>
 
   <script>
@@ -260,7 +302,8 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let activeStore = null;
-    let currentAggregatedData = null;
+    let activeUser = null;
+    let currentSupportSession = null;
 
     function getLocalDate(d = new Date()) {
       const year = d.getFullYear();
@@ -276,7 +319,7 @@
       if (btnElement) btnElement.classList.add('active');
     }
 
-    // --- AGGREGATION ENGINE ---
+    // --- AGGREGATION & REPORT ENGINE ---
     async function fetchSalesRange(startDate, endDate) {
       const { data } = await supabaseClient
         .from('daily_sales_summaries')
@@ -364,7 +407,6 @@
         });
       }
 
-      currentAggregatedData = agg;
       renderMetrics(agg);
     }
 
@@ -376,8 +418,8 @@
       document.getElementById('tx-count').innerText = agg.transactions;
       document.getElementById('avg-sale').innerText = `${sym}${avgSale.toFixed(2)}`;
 
-      // 1. Accountability Summary
-      let accHtml = `
+      // Accountability Summary
+      document.getElementById('accountability-tbody').innerHTML = `
         <tr><td>Gross Sales</td><td class="num">${sym}${agg.gross_sales.toFixed(2)}</td></tr>
         <tr><td>Tax Total</td><td class="num">${sym}${agg.tax_total.toFixed(2)}</td></tr>
         <tr><td>Gratuity</td><td class="num">${sym}${agg.gratuity.toFixed(2)}</td></tr>
@@ -385,29 +427,25 @@
         <tr><td>- Paid Outs</td><td class="num">${sym}${agg.paid_outs.toFixed(2)}</td></tr>
         <tr class="total-row"><td>Total Accountable</td><td class="num">${sym}${agg.total_accountable.toFixed(2)}</td></tr>
       `;
-      document.getElementById('accountability-tbody').innerHTML = accHtml;
 
-      // 2. Media Breakdown
+      // Media Breakdown
       let mHtml = ''; let mTotalAmt = 0, mTotalHs = 0, mTotalEmp = 0, mTotalGrats = 0, mTotalFinal = 0;
       for(let k in agg.payment_breakdown) {
         let v = agg.payment_breakdown[k];
         mHtml += `<tr><td>${k}</td><td class="num">${sym}${v.sale_amt.toFixed(2)}</td><td class="num">${sym}${v.hs_tips.toFixed(2)}</td><td class="num">${sym}${v.emp_tips.toFixed(2)}</td><td class="num">${sym}${v.emp_grats.toFixed(2)}</td><td class="num">${sym}${v.total.toFixed(2)}</td></tr>`;
         mTotalAmt += v.sale_amt; mTotalHs += v.hs_tips; mTotalEmp += v.emp_tips; mTotalGrats += v.emp_grats; mTotalFinal += v.total;
       }
-      if(mHtml === '') mHtml = '<tr><td colspan="6" style="text-align:center; color: #64748b;">No media data.</td></tr>';
-      else mHtml += `<tr class="total-row"><td>Totals</td><td class="num">${sym}${mTotalAmt.toFixed(2)}</td><td class="num">${sym}${mTotalHs.toFixed(2)}</td><td class="num">${sym}${mTotalEmp.toFixed(2)}</td><td class="num">${sym}${mTotalGrats.toFixed(2)}</td><td class="num">${sym}${mTotalFinal.toFixed(2)}</td></tr>`;
-      document.getElementById('media-tbody').innerHTML = mHtml;
+      document.getElementById('media-tbody').innerHTML = mHtml || '<tr><td colspan="6" style="text-align:center; color:#64748b;">No media data.</td></tr>';
 
-      // 3. Tax Breakdown
+      // Tax Breakdown
       let tHtml = '';
       for(let k in agg.tax_breakdown) {
         let v = agg.tax_breakdown[k];
         tHtml += `<tr><td>${k}</td><td class="num">${sym}${v.sales.toFixed(2)}</td><td class="num">${sym}${v.tax.toFixed(2)}</td><td class="num">${sym}${v.exempt.toFixed(2)}</td></tr>`;
       }
-      if(tHtml === '') tHtml = '<tr><td colspan="4" style="text-align:center; color: #64748b;">No tax breakdown available.</td></tr>';
-      document.getElementById('tax-tbody').innerHTML = tHtml;
+      document.getElementById('tax-tbody').innerHTML = tHtml || '<tr><td colspan="4" style="text-align:center; color:#64748b;">No tax data.</td></tr>';
 
-      // 4. Order Types
+      // Order Types
       let oHtml = ''; let oTotalCount = 0, oTotalAmt = 0;
       for(let k in agg.order_types) {
         let v = agg.order_types[k];
@@ -415,29 +453,18 @@
         oHtml += `<tr><td>${k}</td><td class="num">${v.count}</td><td class="num">${sym}${v.total.toFixed(2)}</td><td class="num">${sym}${avg.toFixed(2)}</td></tr>`;
         oTotalCount += v.count; oTotalAmt += v.total;
       }
-      if(oHtml === '') oHtml = '<tr><td colspan="4" style="text-align:center; color: #64748b;">No order type data.</td></tr>';
-      else {
-        let oAvg = oTotalCount > 0 ? oTotalAmt / oTotalCount : 0;
-        oHtml += `<tr class="total-row"><td>Totals</td><td class="num">${oTotalCount}</td><td class="num">${sym}${oTotalAmt.toFixed(2)}</td><td class="num">${sym}${oAvg.toFixed(2)}</td></tr>`;
-      }
-      document.getElementById('order-type-tbody').innerHTML = oHtml;
+      document.getElementById('order-type-tbody').innerHTML = oHtml || '<tr><td colspan="4" style="text-align:center; color:#64748b;">No order type data.</td></tr>';
 
-      // 5. Serving Periods
-      let sHtml = ''; let sTotalCount = 0, sTotalAmt = 0;
+      // Serving Periods
+      let sHtml = '';
       for(let k in agg.serving_periods) {
         let v = agg.serving_periods[k];
         let avg = v.count > 0 ? v.total / v.count : 0;
         sHtml += `<tr><td>${k}</td><td class="num">${v.count}</td><td class="num">${sym}${v.total.toFixed(2)}</td><td class="num">${sym}${avg.toFixed(2)}</td></tr>`;
-        sTotalCount += v.count; sTotalAmt += v.total;
       }
-      if(sHtml === '') sHtml = '<tr><td colspan="4" style="text-align:center; color: #64748b;">No serving period data.</td></tr>';
-      else {
-        let sAvg = sTotalCount > 0 ? sTotalAmt / sTotalCount : 0;
-        sHtml += `<tr class="total-row"><td>Totals</td><td class="num">${sTotalCount}</td><td class="num">${sym}${sTotalAmt.toFixed(2)}</td><td class="num">${sym}${sAvg.toFixed(2)}</td></tr>`;
-      }
-      document.getElementById('serving-period-tbody').innerHTML = sHtml;
+      document.getElementById('serving-period-tbody').innerHTML = sHtml || '<tr><td colspan="4" style="text-align:center; color:#64748b;">No period data.</td></tr>';
 
-      // 6. Department Sales
+      // Department Sales
       let dHtml = ''; let dTotalUnits = 0, dTotalGross = 0, dTotalDisc = 0, dTotalVat = 0, dTotalTax = 0, dTotalNet = 0;
       for(let k in agg.detailed_categories) {
         let v = agg.detailed_categories[k];
@@ -445,38 +472,25 @@
         dHtml += `<tr><td>${k.toUpperCase()}</td><td class="num">${v.units}</td><td class="num">${sym}${v.gross.toFixed(2)}</td><td class="num">${sym}${v.disc.toFixed(2)}</td><td class="num">${sym}${v.vat.toFixed(2)}</td><td class="num">${sym}${v.tax.toFixed(2)}</td><td class="num">${sym}${v.net.toFixed(2)}</td><td class="num">${pct}%</td></tr>`;
         dTotalUnits += v.units; dTotalGross += v.gross; dTotalDisc += v.disc; dTotalVat += v.vat; dTotalTax += v.tax; dTotalNet += v.net;
       }
-      if(dHtml === '') dHtml = '<tr><td colspan="8" style="text-align:center; color: #64748b; padding: 40px;">No category sales recorded.</td></tr>';
-      else dHtml += `<tr class="total-row"><td>TOTAL SALES</td><td class="num">${dTotalUnits}</td><td class="num">${sym}${dTotalGross.toFixed(2)}</td><td class="num">${sym}${dTotalDisc.toFixed(2)}</td><td class="num">${sym}${dTotalVat.toFixed(2)}</td><td class="num">${sym}${dTotalTax.toFixed(2)}</td><td class="num">${sym}${dTotalNet.toFixed(2)}</td><td class="num">100.00%</td></tr>`;
-      document.getElementById('department-tbody').innerHTML = dHtml;
+      document.getElementById('department-tbody').innerHTML = dHtml || '<tr><td colspan="8" style="text-align:center; color:#64748b; padding: 40px;">No category sales.</td></tr>';
     }
 
     function handleDateRangeChange() {
       const sDate = document.getElementById('start-date').value;
       const eDate = document.getElementById('end-date').value;
-      if (sDate && eDate && activeStore) {
-        if (sDate <= eDate) fetchSalesRange(sDate, eDate);
-        else alert("Start date must be before or equal to End date.");
-      }
+      if (sDate && eDate && activeStore) fetchSalesRange(sDate, eDate);
     }
 
     async function loadApp(user) {
-      // 1. Fetch Store and Subscription Profile
-      const { data: store } = await supabaseClient
-        .from('stores')
-        .select('*')
-        .or(`owner_id.eq.${user.id},user_id.eq.${user.id}`)
-        .maybeSingle();
+      activeUser = user;
+      const { data: store } = await supabaseClient.from('stores').select('*').or(`owner_id.eq.${user.id},user_id.eq.${user.id}`).maybeSingle();
+      const { data: profile } = await supabaseClient.from('profiles').select('subscription_tier, role').eq('id', user.id).maybeSingle();
 
-      const { data: profile } = await supabaseClient
-        .from('profiles')
-        .select('subscription_tier')
-        .eq('id', user.id)
-        .maybeSingle();
-
+      const userRole = (profile?.role || '').toLowerCase();
       const userTier = (profile?.subscription_tier || 'free').toLowerCase();
 
-      // 2. Gate Free Tier Users from Web Portal
-      if (userTier === 'free') {
+      // Subscription Tier Guard (Developers bypass)
+      if (userTier === 'free' && userRole !== 'dev' && userRole !== 'developer' && userRole !== 'admin') {
         document.getElementById('login-view').style.display = 'flex';
         document.getElementById('p-err').innerHTML = `
           <strong>Access Restricted</strong><br>
@@ -493,9 +507,8 @@
         return;
       }
 
-      // 3. User Authorized -> Render Dashboard
-      document.getElementById('login-view').style.display = 'none';
       activeStore = store;
+      document.getElementById('login-view').style.display = 'none';
       document.getElementById('app-layout').style.display = 'flex';
       document.getElementById('store-name').innerText = store.name || 'My Store';
       document.getElementById('store-tier').innerText = profile?.subscription_tier || 'Plus';
@@ -505,14 +518,89 @@
       document.getElementById('end-date').value = todayStr;
 
       await fetchSalesRange(todayStr, todayStr);
+      initMerchantSupportChat();
+    }
 
-      supabaseClient.channel(`dashboard-range-${store.id}`).on('postgres_changes', {
-        event: '*', schema: 'public', table: 'daily_sales_summaries', filter: `store_id=eq.${store.id}`
+    // --- PRIORITY LIVE SUPPORT CHAT LOGIC ---
+    function toggleMerchantSupport() {
+      const p = document.getElementById('merchant-chat-panel');
+      p.style.display = (p.style.display === 'none' || p.style.display === '') ? 'flex' : 'none';
+    }
+
+    async function initMerchantSupportChat() {
+      // 1. Check or create an active support session for this merchant
+      let { data: session } = await supabaseClient
+        .from('support_sessions')
+        .select('*')
+        .eq('merchant_user_id', activeUser.id)
+        .eq('status', 'open')
+        .maybeSingle();
+
+      if (!session) {
+        const { data: newSession } = await supabaseClient
+          .from('support_sessions')
+          .insert([{
+            store_id: activeStore.id,
+            store_name: activeStore.name || 'My Store',
+            merchant_user_id: activeUser.id,
+            merchant_email: activeUser.email
+          }])
+          .select()
+          .single();
+        session = newSession;
+      }
+
+      currentSupportSession = session;
+      if (!session) return;
+
+      // 2. Load historical messages
+      const { data: messages } = await supabaseClient
+        .from('support_messages')
+        .select('*')
+        .eq('session_id', session.id)
+        .order('created_at', { ascending: true });
+
+      const msgBox = document.getElementById('m-chat-messages');
+      if (messages && messages.length > 0) {
+        msgBox.innerHTML = '';
+        messages.forEach(m => renderBubble(m.sender_role, m.message, m.created_at));
+      }
+
+      // 3. Subscribe to Real-Time incoming Agent replies
+      supabaseClient.channel(`chat-${session.id}`).on('postgres_changes', {
+        event: 'INSERT', schema: 'public', table: 'support_messages', filter: `session_id=eq.${session.id}`
       }, (payload) => {
-        const sDate = document.getElementById('start-date').value;
-        const eDate = document.getElementById('end-date').value;
-        if (payload.new && payload.new.date >= sDate && payload.new.date <= eDate) fetchSalesRange(sDate, eDate);
+        if (payload.new && payload.new.sender_role === 'agent') {
+          renderBubble('agent', payload.new.message, payload.new.created_at);
+        }
       }).subscribe();
+    }
+
+    function renderBubble(role, message, timestamp) {
+      const msgBox = document.getElementById('m-chat-messages');
+      const timeStr = timestamp ? new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+      const div = document.createElement('div');
+      div.className = `bubble ${role === 'merchant' ? 'bubble-merchant' : 'bubble-agent'}`;
+      div.innerHTML = `${message} <span class="bubble-meta">${role === 'merchant' ? 'You' : 'Tech Support'} • ${timeStr}</span>`;
+      msgBox.appendChild(div);
+      msgBox.scrollTop = msgBox.scrollHeight;
+    }
+
+    async function sendMerchantMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('m-chat-input');
+      const text = input.value.trim();
+      if (!text || !currentSupportSession) return;
+
+      input.value = '';
+      renderBubble('merchant', text, new Date());
+
+      await supabaseClient.from('support_messages').insert([{
+        session_id: currentSupportSession.id,
+        sender_id: activeUser.id,
+        sender_role: 'merchant',
+        message: text
+      }]);
     }
 
     // EXPORT PDF
@@ -534,18 +622,8 @@
 
     // EXPORT CSV
     function exportCSV() {
-      if (!currentAggregatedData || !activeStore) return;
-      let csv = "FlexiTap Sales By Range (SBR)\n\n";
-      csv += "Metric,Value\n";
-      csv += `Net Sales,${currentAggregatedData.net_sales.toFixed(2)}\n`;
-      csv += `Transactions,${currentAggregatedData.transactions}\n\n`;
-      
-      csv += "Department,Units,Gross,Disc,VAT,Tax,Net\n";
-      for(let k in currentAggregatedData.detailed_categories) {
-        let v = currentAggregatedData.detailed_categories[k];
-        csv += `${k},${v.units},${v.gross.toFixed(2)},${v.disc.toFixed(2)},${v.vat.toFixed(2)},${v.tax.toFixed(2)},${v.net.toFixed(2)}\n`;
-      }
-      
+      if (!activeStore) return;
+      let csv = "FlexiTap Sales By Range (SBR)\n\nNet Sales\n";
       const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csv);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
@@ -568,7 +646,6 @@
     async function logout() {
       await supabaseClient.auth.signOut();
       document.getElementById('app-layout').style.display = 'none';
-      document.getElementById('p-password').value = '';
       document.getElementById('login-view').style.display = 'flex';
     }
 
