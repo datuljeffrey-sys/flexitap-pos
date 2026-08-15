@@ -142,7 +142,8 @@
         <a href="#features" class="nav-link">Features</a>
         <a href="#pricing" class="nav-link">Pricing</a>
         <a href="#download" class="nav-link">Download</a>
-        <a href="https://github.com/datuljeffrey-sys/flexitapapp/tree/main" target="_blank" class="nav-link">Dev Portal ↗</a>
+        <!-- WIRED TO DEV PORTAL -->
+        <a href="dev_portal.html" class="nav-link" style="color: var(--primary);">Dev Portal ↗</a>
       </div>
 
       <div style="display: flex; align-items: center; gap: 16px;">
@@ -310,7 +311,8 @@
         <div class="footer-links">
           <a class="footer-link" onclick="openModal('terms-modal')">Terms of Service</a>
           <a class="footer-link" onclick="openModal('privacy-modal')">Privacy Policy</a>
-          <a href="https://github.com/datuljeffrey-sys/flexitapapp/tree/main" target="_blank" class="footer-link">Developer Docs</a>
+          <!-- WIRED TO DEV PORTAL -->
+          <a href="dev_portal.html" class="footer-link" style="color: var(--primary);">Developer Docs & Ops</a>
           <a class="footer-link" onclick="openModal('login-modal')">Merchant Login</a>
         </div>
       </div>
@@ -413,16 +415,23 @@
         return;
       }
 
-      // 2. Fetch Subscription Profile
+      // 2. Fetch Subscription Profile and Role
       const { data: profile } = await supabaseClient
         .from('profiles')
-        .select('subscription_tier')
+        .select('subscription_tier, role')
         .eq('id', data.user.id)
         .maybeSingle();
 
+      const userRole = (profile?.role || '').toLowerCase();
       const tier = (profile?.subscription_tier || 'free').toLowerCase();
 
-      // 3. Subscription Tier Guard: Block Free Accounts from Web Portal
+      // Developers bypass tier restrictions straight into customer portal
+      if (userRole === 'dev' || userRole === 'developer' || userRole === 'admin') {
+        window.location.href = 'portal.html';
+        return;
+      }
+
+      // Subscription Tier Guard: Block Free Accounts from Web Portal
       if (tier === 'free') {
         await supabaseClient.auth.signOut();
         btnText.innerText = 'Log In to Portal';
@@ -434,7 +443,7 @@
         return;
       }
 
-      // Authorized -> Redirect to Portal
+      // Authorized merchant -> Redirect to Portal
       window.location.href = 'portal.html';
     });
   </script>
