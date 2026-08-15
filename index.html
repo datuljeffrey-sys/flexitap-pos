@@ -600,10 +600,10 @@
       </div>
     </section>
 
-    <!-- 4. PRICING TIERS (US MARKET) -->
+    <!-- 4. PRICING TIERS (US MARKET & DIRECT WEB SAAS) -->
     <section class="pricing" id="pricing">
       <h2 class="section-title">Transparent, Flat-Rate SaaS Pricing</h2>
-      <p class="section-subtitle">Start free on a single device or upgrade for live web dashboards, multi-terminal sync, and kitchen screens.</p>
+      <p class="section-subtitle">Lock in our lowest rates directly through the FlexiTap Web Portal. Use your active subscription across any connected Android, iOS, or Windows device.</p>
 
       <div class="billing-toggle">
         <button class="toggle-btn active" id="btn-monthly" onclick="setBilling('monthly')">Monthly</button>
@@ -663,6 +663,10 @@
           <button class="btn-secondary" style="width: 100%; justify-content: center; margin-top: 20px;" onclick="openSalesChat('Pro Plan Consultation')">Contact for Pro</button>
         </div>
       </div>
+
+      <p style="font-size: 12px; color: var(--text-muted); margin-top: 20px;">
+        💡 <em>Pricing displayed reflects direct web SaaS billing through flexitapapp.com. In-app purchases via Google Play or Apple App Store may vary due to platform processing fees.</em>
+      </p>
 
       <!-- DETAILED MATRIX -->
       <div class="matrix-wrapper" id="comparison">
@@ -797,6 +801,11 @@
         <div class="faq-item" onclick="toggleFaq(this)">
           <div class="faq-question"><span>How does the Offline SQLite & 5-Second Cloud Sync work?</span><span class="faq-toggle">+</span></div>
           <div class="faq-answer">All sales, inventory, and shift ledgers write directly to a local SQLite database (<code>flexitap.db</code>) on your tablet in under 15ms. When connected to Wi-Fi/LTE, our background queue pushes transactions to Supabase every 5 seconds. If you lose internet, you can keep ringing up orders offline with zero interruptions.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question"><span>Why subscribe on the web vs. App Store / Google Play?</span><span class="faq-toggle">+</span></div>
+          <div class="faq-answer">Subscribing directly through our Web Customer Portal gives you our best flat-rate pricing ($19/mo Plus, $49/mo Pro) with zero store surcharges. Once subscribed, you can log in and activate your subscription across any connected Android, iPad, or Windows device.</div>
         </div>
 
         <div class="faq-item" onclick="toggleFaq(this)">
