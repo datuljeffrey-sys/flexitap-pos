@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FlexiTap POS — Offline-First Hybrid POS & Real-Time Analytics</title>
+  <title>FlexiTap POS — Resilient Hybrid POS & Intelligent Analytics</title>
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +26,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
     body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
 
-    /* HERO VIDEO BACKGROUND CONTAINER */
+    /* HERO VIDEO BACKGROUND */
     .hero-video-container {
       position: absolute;
       top: 0;
@@ -139,18 +139,11 @@
       border-color: rgba(255, 255, 255, 0.2);
       transform: translateY(-2px);
     }
-    .platform-card.active {
-      border-color: rgba(59, 130, 246, 0.5);
-      background: rgba(59, 130, 246, 0.08);
-    }
     .platform-icon-wrap {
       width: 28px;
       height: 28px;
       margin-bottom: 10px;
       color: var(--text-muted);
-    }
-    .platform-card.active .platform-icon-wrap {
-      color: #60a5fa;
     }
     .platform-icon-wrap svg {
       width: 100%;
@@ -166,17 +159,6 @@
       font-size: 11px;
       color: var(--text-muted);
       margin-bottom: 12px;
-    }
-    .status-badge-live {
-      align-self: flex-start;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 6px;
-      background: rgba(16, 185, 129, 0.2);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      text-transform: uppercase;
     }
     .status-badge-soon {
       align-self: flex-start;
@@ -361,7 +343,6 @@
   <!-- HERO VIDEO BACKGROUND -->
   <div class="hero-video-container">
     <video class="hero-bg-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1920&auto=format&fit=crop">
-      <!-- High-reliability, clean CDN ambient cafe POS interaction video loop -->
       <source src="https://assets.mixkit.co/videos/preview/mixkit-barista-working-behind-a-cafe-counter-43187-large.mp4" type="video/mp4">
       <source src="https://assets.mixkit.co/videos/preview/mixkit-cashier-serving-a-customer-at-a-cafe-checkout-43188-large.mp4" type="video/mp4">
     </video>
@@ -417,7 +398,7 @@
       <div class="badge">
         <span class="badge-dot"></span> Powering Your Business, Simplified.
       </div>
-      <h1>Intelligent Hybrid POS.<br>Built for Uninterrupted Commerce.</h1>
+      <h1>Offline-First Hybrid POS.<br>Built for Uninterrupted Commerce.</h1>
       <p>High-speed checkout, visual table management, kitchen routing, offline-first reliability, and real-time merchant analytics across all your devices.</p>
       
       <!-- CLEAN PRIMARY CTAs -->
@@ -426,7 +407,7 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
           Launch Merchant Portal
         </button>
-        <a href="https://github.com/datuljeffrey-sys/flexitapapp/releases" target="_blank" class="btn-secondary">
+        <a href="#" onclick="alert('Android APK direct download coming soon! Please check back shortly.'); return false;" class="btn-secondary">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download Android APK
         </a>
@@ -437,8 +418,8 @@
         <div class="platforms-label">SUPPORTED OPERATING SYSTEMS & STORE ECOSYSTEMS</div>
         <div class="platforms-grid">
           
-          <!-- ANDROID (DIRECT APK) -->
-          <a href="https://github.com/datuljeffrey-sys/flexitapapp/releases" target="_blank" class="platform-card active">
+          <!-- ANDROID (COMING SOON) -->
+          <div class="platform-card">
             <div class="platform-icon-wrap">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.996-3.4562c.0784-.1358.0321-.3096-.1038-.3881-.1362-.0787-.3101-.0321-.3885.1039l-2.0223 3.5015c-1.3787-.6304-2.9234-.988-4.3629-.988s-2.9842.3576-4.3629.988L6.6166 5.581c-.0784-.136-.2524-.1826-.3885-.1039-.1359.0785-.1822.2523-.1038.3881l1.996 3.4562C4.1611 11.2334 1.5 15.421 1.5 20.3248h21c0-4.9038-2.6611-9.0914-6.6185-11.0034"/></svg>
             </div>
@@ -446,8 +427,8 @@
               <div class="platform-name">Android Tablets & POS</div>
               <div class="platform-meta">Direct APK Build (arm64/v7a)</div>
             </div>
-            <span class="status-badge-live">● Available Now</span>
-          </a>
+            <span class="status-badge-soon">Coming Soon</span>
+          </div>
 
           <!-- GOOGLE PLAY -->
           <div class="platform-card">
@@ -807,7 +788,7 @@
             <tr>
               <td>Master/Sub Real-Time Terminal Sync</td>
               <td class="col-center"><span class="dash-icon">—</span></td>
-              <td class="col-center"><span class="dash-icon">—</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
               <td class="col-center"><span class="check-icon">✓</span></td>
             </tr>
             <tr>
@@ -1120,7 +1101,7 @@
       } else if (type === 'platforms') {
         appendMessage(`
           <strong>Supported Platforms & App Stores:</strong><br>
-          • <strong>Android:</strong> Direct APK live now (Google Play listing in review).<br>
+          • <strong>Android:</strong> Direct APK build coming soon.<br>
           • <strong>Apple iOS / iPadOS:</strong> Coming soon to the App Store.<br>
           • <strong>Windows Touchscreen:</strong> Coming soon for all-in-one desktop stations.
         `);
