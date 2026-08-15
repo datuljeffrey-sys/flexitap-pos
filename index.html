@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FlexiTap POS — Next-Gen Cloud POS & Real-Time Analytics</title>
+  <title>FlexiTap POS — Next-Gen Cloud POS & Intelligent Real-Time Analytics</title>
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -27,13 +27,14 @@
     body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
 
     .glow-top {
-      position: absolute; top: -150px; left: 50%; transform: translateX(-50%);
-      width: 700px; height: 450px; background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, rgba(9, 13, 22, 0) 70%);
+      position: absolute; top: -160px; left: 50%; transform: translateX(-50%);
+      width: 750px; height: 500px; background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, rgba(9, 13, 22, 0) 70%);
       pointer-events: none; z-index: 0;
     }
 
-    .container { max-width: 1150px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
 
+    /* HEADER */
     header {
       display: flex; justify-content: space-between; align-items: center;
       padding: 18px 0; border-bottom: 1px solid var(--card-border);
@@ -55,21 +56,113 @@
     .btn-login:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.2); }
 
     /* HERO */
-    .hero { text-align: center; padding: 80px 0 50px; }
+    .hero { text-align: center; padding: 70px 0 40px; }
     .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); padding: 6px 16px; border-radius: 9999px; font-size: 13px; font-weight: 600; color: #60a5fa; margin-bottom: 24px; }
     .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); }
     
     .hero h1 { font-size: 52px; font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -1.5px; }
-    .hero p { font-size: 19px; color: var(--text-muted); max-width: 680px; margin: 0 auto 32px; }
+    .hero p { font-size: 18.5px; color: var(--text-muted); max-width: 740px; margin: 0 auto 32px; }
     
-    .cta-group { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .cta-group { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
     .btn-primary { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35); }
     .btn-secondary { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: #fff; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
     .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
 
+    /* PROFESSIONAL MULTI-PLATFORM ECOSYSTEM STYLES */
+    .platforms-wrapper {
+      max-width: 980px;
+      margin: 20px auto 40px;
+      background: rgba(17, 24, 39, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+    }
+    .platforms-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .platforms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+      gap: 14px;
+    }
+    .platform-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+    .platform-card:hover {
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+    .platform-card.active {
+      border-color: rgba(59, 130, 246, 0.4);
+      background: rgba(59, 130, 246, 0.06);
+    }
+    .platform-icon-wrap {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 10px;
+      color: var(--text-muted);
+    }
+    .platform-card.active .platform-icon-wrap {
+      color: #60a5fa;
+    }
+    .platform-icon-wrap svg {
+      width: 100%;
+      height: 100%;
+    }
+    .platform-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .platform-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .status-badge-live {
+      align-self: flex-start;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      text-transform: uppercase;
+    }
+    .status-badge-soon {
+      align-self: flex-start;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid var(--card-border);
+      text-transform: uppercase;
+    }
+
     /* PREVIEW CARD */
-    .preview-wrapper { margin: 40px auto 80px; max-width: 850px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
+    .preview-wrapper { margin: 20px auto 80px; max-width: 850px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
     .preview-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 16px; margin-bottom: 20px; }
     .preview-title { font-size: 16px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
     .status-pill { background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); }
@@ -78,15 +171,38 @@
     .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
     .stat-val { font-size: 26px; font-weight: 800; margin-top: 6px; }
 
-    /* FEATURES */
-    .features { padding: 40px 0 80px; text-align: center; }
-    .section-title { font-size: 32px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px; }
-    .section-subtitle { color: var(--text-muted); margin-bottom: 48px; font-size: 16px; max-width: 650px; margin-left: auto; margin-right: auto; }
-    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; text-align: left; }
-    .feature-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 32px; border-radius: 16px; }
-    .icon-box { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 20px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); }
-    .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fff; }
-    .feature-card p { font-size: 14px; color: var(--text-muted); }
+    /* SECTION TITLES */
+    .section-title { font-size: 34px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px; text-align: center; }
+    .section-subtitle { color: var(--text-muted); margin-bottom: 48px; font-size: 16px; max-width: 680px; margin-left: auto; margin-right: auto; text-align: center; }
+
+    /* 6 HIGH-IMPACT MARKETING FEATURE CARDS */
+    .features { padding: 40px 0 80px; }
+    .feature-grid-6 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; text-align: left; }
+    .feature-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 28px; border-radius: 16px; transition: transform 0.2s, border-color 0.2s; }
+    .feature-card:hover { transform: translateY(-3px); border-color: rgba(59, 130, 246, 0.4); }
+    .icon-box { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 18px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); }
+    .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: #fff; }
+    .feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+    /* ADAPTIVE WORKFLOW SECTION */
+    .workflow-section { padding: 40px 0 80px; }
+    .workflow-toggle-bar { display: flex; justify-content: center; gap: 12px; margin-bottom: 36px; }
+    .workflow-btn { padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; border: 1px solid var(--card-border); background: rgba(255,255,255,0.03); color: var(--text-muted); transition: 0.2s; }
+    .workflow-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .workflow-content { display: none; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 36px; }
+    .workflow-content.active { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; animation: fadeIn 0.3s ease; }
+    .workflow-pill-item { background: rgba(15, 23, 42, 0.8); border: 1px solid var(--card-border); padding: 20px; border-radius: 12px; }
+    .workflow-pill-item strong { display: block; color: #fff; font-size: 16px; margin-bottom: 6px; }
+    .workflow-pill-item p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+    /* HARDWARE & ECOSYSTEM STRIP (8 CARDS) */
+    .hardware-section { padding: 40px 0 80px; text-align: center; }
+    .hardware-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 32px; text-align: left; }
+    .hardware-box { background: var(--card-bg); border: 1px solid var(--card-border); padding: 22px 18px; border-radius: 14px; transition: transform 0.2s; }
+    .hardware-box:hover { transform: translateY(-2px); border-color: rgba(255, 255, 255, 0.2); }
+    .hardware-box .hw-icon { font-size: 28px; margin-bottom: 8px; }
+    .hardware-box h4 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .hardware-box p { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
 
     /* PRICING */
     .pricing { padding: 40px 0 60px; text-align: center; }
@@ -101,12 +217,12 @@
     .badge-pop { position: absolute; top: 16px; right: 16px; background: var(--primary); color: white; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase; }
     .price { font-size: 40px; font-weight: 800; margin: 16px 0; color: #fff; }
     .price span { font-size: 15px; font-weight: 500; color: var(--text-muted); }
-    .pricing-list { list-style: none; margin: 24px 0; font-size: 14px; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px; }
+    .pricing-list { list-style: none; margin: 24px 0; font-size: 13.5px; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px; }
     .pricing-list li::before { content: "✓ "; color: var(--accent-green); font-weight: 800; }
 
-    /* FEATURE BREAKDOWN MATRIX */
-    .matrix-wrapper { margin-top: 50px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 32px; overflow-x: auto; }
-    .matrix-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+    /* MATRIX */
+    .matrix-wrapper { margin-top: 50px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 32px; overflow-x: auto; text-align: left; }
+    .matrix-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13.5px; }
     .matrix-table th { padding: 14px 16px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 12px; border-bottom: 1px solid var(--card-border); }
     .matrix-table td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
     .matrix-table tr:hover td { background: rgba(255,255,255,0.02); }
@@ -114,7 +230,7 @@
     .check-icon { color: var(--accent-green); font-weight: 800; font-size: 16px; }
     .dash-icon { color: var(--text-muted); font-size: 16px; }
 
-    /* SUPPORT PLAN ADDON CARD */
+    /* SUPPORT PLAN BANNER */
     .support-plan-banner {
       margin-top: 40px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
       border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 20px; padding: 32px; text-align: left;
@@ -127,7 +243,7 @@
 
     /* FAQ */
     .faq-section { padding: 40px 0 100px; }
-    .faq-container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; text-align: left; }
+    .faq-container { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; text-align: left; }
     .faq-item { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 18px 24px; cursor: pointer; transition: 0.2s; }
     .faq-item:hover { border-color: rgba(255,255,255,0.2); }
     .faq-question { font-weight: 700; font-size: 16px; color: #fff; display: flex; justify-content: space-between; align-items: center; }
@@ -166,7 +282,7 @@
     #chat-btn:hover { transform: scale(1.08); }
 
     #sales-chat-panel {
-      display: none; position: fixed; bottom: 90px; right: 24px; width: 360px; height: 500px;
+      display: none; position: fixed; bottom: 90px; right: 24px; width: 370px; height: 520px;
       background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.6); flex-direction: column; overflow: hidden; z-index: 999;
       animation: fadeIn 0.25s ease;
@@ -214,11 +330,11 @@
       </a>
       
       <div class="nav-links">
-        <a href="#features" class="nav-link">Features</a>
+        <a href="#features" class="nav-link">Capabilities</a>
+        <a href="#workflows" class="nav-link">Workflows</a>
+        <a href="#hardware" class="nav-link">Hardware</a>
         <a href="#pricing" class="nav-link">Pricing</a>
-        <a href="#comparison" class="nav-link">Feature Matrix</a>
         <a href="#faq" class="nav-link">FAQ</a>
-        <a href="#download" class="nav-link">Download</a>
         <a href="dev_portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
       </div>
 
@@ -244,18 +360,77 @@
   <main class="container">
     <section class="hero">
       <div class="badge">
-        <span class="badge-dot"></span> Real-Time Cloud Sync & Offline-First POS
+        <span class="badge-dot"></span> Powering Your Business, Simplified.
       </div>
-      <h1>Next-Gen Cloud POS.<br>Built for Fast-Paced Commerce.</h1>
-      <p>High-speed checkout, tables & kitchen tickets, offline-first reliability, and real-time merchant analytics right in your browser. Bring your own Android hardware.</p>
+      <h1>Intelligent Cloud POS.<br>Built for Uninterrupted Commerce.</h1>
+      <p>High-speed checkout, visual table management, kitchen routing, offline-first SQLite reliability, and real-time Supabase analytics across all your devices.</p>
       
+      <!-- CLEAN PRIMARY CTAs -->
       <div class="cta-group" id="download">
         <button class="btn-primary" onclick="openModal('login-modal')">
-          <span>📊</span> Launch Merchant Portal
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+          Launch Merchant Portal
         </button>
         <a href="https://github.com/datuljeffrey-sys/flexitapapp/releases" target="_blank" class="btn-secondary">
-          <span>⬇️</span> Download Android APK
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Android APK
         </a>
+      </div>
+
+      <!-- PROFESSIONAL MULTI-PLATFORM ECOSYSTEM MATRIX -->
+      <div class="platforms-wrapper">
+        <div class="platforms-label">SUPPORTED OPERATING SYSTEMS & STORE ECOSYSTEMS</div>
+        <div class="platforms-grid">
+          
+          <!-- ANDROID (DIRECT APK) -->
+          <a href="https://github.com/datuljeffrey-sys/flexitapapp/releases" target="_blank" class="platform-card active">
+            <div class="platform-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.996-3.4562c.0784-.1358.0321-.3096-.1038-.3881-.1362-.0787-.3101-.0321-.3885.1039l-2.0223 3.5015c-1.3787-.6304-2.9234-.988-4.3629-.988s-2.9842.3576-4.3629.988L6.6166 5.581c-.0784-.136-.2524-.1826-.3885-.1039-.1359.0785-.1822.2523-.1038.3881l1.996 3.4562C4.1611 11.2334 1.5 15.421 1.5 20.3248h21c0-4.9038-2.6611-9.0914-6.6185-11.0034"/></svg>
+            </div>
+            <div class="platform-details">
+              <div class="platform-name">Android Tablets & POS</div>
+              <div class="platform-meta">Direct APK Build (arm64/v7a)</div>
+            </div>
+            <span class="status-badge-live">● Available Now</span>
+          </a>
+
+          <!-- GOOGLE PLAY -->
+          <div class="platform-card">
+            <div class="platform-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.793 12 3.61 22.186c-.301-.318-.485-.75-.485-1.229V3.043c0-.479.184-.911.484-1.229zm11.306 11.307l2.42 2.42-11.89 6.842 9.47-9.262zm0-2.242L5.445 1.617l11.89 6.842-2.42 2.42zm1.536 1.536l3.815-2.194c.833-.479.833-1.258 0-1.737L16.451 10.29l-2.115 2.125 2.115 2.126v-.126z"/></svg>
+            </div>
+            <div class="platform-details">
+              <div class="platform-name">Google Play Store</div>
+              <div class="platform-meta">Android Native App Listing</div>
+            </div>
+            <span class="status-badge-soon">In Review</span>
+          </div>
+
+          <!-- APPLE IOS / IPADOS -->
+          <div class="platform-card">
+            <div class="platform-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.01c.67-.82 1.13-1.96 1.01-3.1-.97.04-2.15.65-2.85 1.47-.62.72-1.16 1.88-1.02 2.99 1.08.08 2.19-.54 2.86-1.36z"/></svg>
+            </div>
+            <div class="platform-details">
+              <div class="platform-name">Apple iOS & iPadOS</div>
+              <div class="platform-meta">App Store for iPad Counters</div>
+            </div>
+            <span class="status-badge-soon">Coming Soon</span>
+          </div>
+
+          <!-- WINDOWS -->
+          <div class="platform-card">
+            <div class="platform-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.901-1.8z"/></svg>
+            </div>
+            <div class="platform-details">
+              <div class="platform-name">Windows POS Edition</div>
+              <div class="platform-meta">All-in-One Touchscreen PCs</div>
+            </div>
+            <span class="status-badge-soon">Coming Soon</span>
+          </div>
+
+        </div>
       </div>
     </section>
 
@@ -281,35 +456,153 @@
       </div>
     </div>
 
-    <!-- FEATURES -->
+    <!-- 1. TOP 6 HIGH-IMPACT MARKETING FEATURES -->
     <section class="features" id="features">
-      <h2 class="section-title">Built for Modern US Merchants</h2>
-      <p class="section-subtitle">No proprietary terminal lock-in. Run counter checkout, food truck windows, or multi-station dining with ease.</p>
+      <h2 class="section-title">Built for Modern Fast-Paced Operations</h2>
+      <p class="section-subtitle">Everything required to streamline checkout, empower your team, and maintain total control over your business.</p>
 
-      <div class="feature-grid">
+      <div class="feature-grid-6">
         <div class="feature-card">
           <div class="icon-box">⚡</div>
-          <h3>Offline-First Architecture</h3>
-          <p>Never drop a sale during network outages. Orders write locally to SQLite in milliseconds and sync to Supabase the moment your connection restores.</p>
+          <h3>Adaptive POS for Any Business</h3>
+          <p>FlexiTap intelligently adapts to your business model, offering streamlined quick-service checkout or comprehensive table management for dine-in restaurants. Effortlessly switch modes to match your operational flow.</p>
         </div>
 
         <div class="feature-card">
-          <div class="icon-box">📱</div>
-          <h3>Live Web Customer Portal</h3>
-          <p>Check sales from anywhere in real time. Track net revenue, discounts, tips, tax totals, and tender breakdowns with exportable CSV and PDF reports.</p>
+          <div class="icon-box">🔄</div>
+          <h3>Uninterrupted Sales, Always Synced</h3>
+          <p>Process transactions seamlessly even offline. Your data is securely stored locally in SQLite and automatically syncs to the Supabase cloud every 5 seconds the moment you reconnect.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon-box">🖨️</div>
+          <h3>Connect Your Entire Ecosystem</h3>
+          <p>Integrate with a wide array of peripherals including Network/LAN, Bluetooth, Sunmi internal thermal printers, cash drawers, and barcode scanners for a fully connected setup.</p>
         </div>
 
         <div class="feature-card">
           <div class="icon-box">🍽️</div>
-          <h3>F&B & Retail Workflows</h3>
-          <p>Table layouts, modifiers, kitchen routing (KDS), split tender, custom taxes, and fast barcode scanning for retail inventory.</p>
+          <h3>Master Your Restaurant Floor</h3>
+          <p>Manage tables with visual floor plans, assign orders by seat, transfer checks, and send tickets directly to kitchen printers or digital KDS screens for flawless service.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon-box">🛡️</div>
+          <h3>Empower Your Team, Secure Your Cash</h3>
+          <p>Define roles with granular RBAC permissions (Cashier, Manager, Admin), track cash drops and paid-outs, and generate detailed X-Reading and Z-Readings for precise end-of-day reconciliation.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon-box">💳</div>
+          <h3>Modern Payments, Flexible Splitting</h3>
+          <p>Accept Cash, Card, QR Wallets, and Gift Cards. Easily split checks by seat or across multiple payment methods with full tip tracking and manager-authorized discount controls.</p>
         </div>
       </div>
     </section>
 
-    <!-- PRICING TIERS -->
+    <!-- 2. WORKFLOWS: F&B vs RETAIL ENGINE -->
+    <section class="workflow-section" id="workflows">
+      <h2 class="section-title">One Platform. Tailored Industry Workflows.</h2>
+      <p class="section-subtitle">Toggle between specialized restaurant operations and high-speed retail checkout.</p>
+
+      <div class="workflow-toggle-bar">
+        <button class="workflow-btn active" id="wf-btn-fb" onclick="switchWorkflow('fb')">🍽️ Food & Beverage (F&B)</button>
+        <button class="workflow-btn" id="wf-btn-retail" onclick="switchWorkflow('retail')">🏷️ Retail & Convenience</button>
+      </div>
+
+      <!-- F&B WORKFLOW -->
+      <div class="workflow-content active" id="wf-fb">
+        <div class="workflow-pill-item">
+          <strong>Visual Table & Floor Plan</strong>
+          <p>Interactive floor layout with live table statuses (Available/Occupied). Easily merge, split, or transfer checks between tables.</p>
+        </div>
+        <div class="workflow-pill-item">
+          <strong>Kitchen Display System (KDS) & Routing</strong>
+          <p>Route orders directly to kitchen prep stations via physical thermal tickets or digital KDS screens with real-time course timing.</p>
+        </div>
+        <div class="workflow-pill-item">
+          <strong>Seat-Based Ordering & Modifiers</strong>
+          <p>Assign items to specific seat numbers for flawless bill splitting. Customize orders with modifier groups ("extra cheese", "no onions").</p>
+        </div>
+        <div class="workflow-pill-item">
+          <strong>Tip Tracking & Gratuity</strong>
+          <p>Track tip distributions, house gratuities, and employee tips integrated straight into shift reconciliation reports.</p>
+        </div>
+      </div>
+
+      <!-- RETAIL WORKFLOW -->
+      <div class="workflow-content" id="wf-retail">
+        <div class="workflow-pill-item">
+          <strong>Integrated Barcode Scanning</strong>
+          <p>Utilize your device's built-in camera or external USB/Bluetooth scanners for rapid SKU lookups and fast checkout.</p>
+        </div>
+        <div class="workflow-pill-item">
+          <strong>Instant SKU & Item Search</strong>
+          <p>High-speed search allows cashiers to find products by SKU, name, or category within milliseconds.</p>
+        </div>
+        <div class="workflow-pill-item">
+          <strong>Cash Drawer & Ledger Security</strong>
+          <p>Automatic kick commands for completed sales, cash drop auditing, paid-outs, and manager-PIN-protected "no-sale" drawer access.</p>
+        </div>
+        <div class="workflow-pill-item">
+          <strong>Customer-Facing Display (CDS)</strong>
+          <p>Broadcast cart line items, taxes, and totals in real time to a secondary customer-facing screen for total transparency.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. HARDWARE & PERIPHERAL ECOSYSTEM (8 CARDS) -->
+    <section class="hardware-section" id="hardware">
+      <h2 class="section-title">Engineered for Universal Hardware</h2>
+      <p class="section-subtitle">No proprietary hardware lock-in. Connect the industry-standard peripherals you already own.</p>
+
+      <div class="hardware-grid">
+        <div class="hardware-box">
+          <div class="hw-icon">🖨️</div>
+          <h4>ESC/POS Printing</h4>
+          <p>Standard 58mm & 80mm receipt & kitchen thermal printers.</p>
+        </div>
+        <div class="hardware-box">
+          <div class="hw-icon">📶</div>
+          <h4>Network / LAN IP</h4>
+          <p>Direct IP communication for high-speed kitchen routing.</p>
+        </div>
+        <div class="hardware-box">
+          <div class="hw-icon">📡</div>
+          <h4>Wi-Fi Wireless</h4>
+          <p>Cordless local network communication across terminals.</p>
+        </div>
+        <div class="hardware-box">
+          <div class="hw-icon">🔵</div>
+          <h4>Bluetooth Wireless</h4>
+          <p>Seamless pairing for mobile registers and food trucks.</p>
+        </div>
+        <div class="hardware-box">
+          <div class="hw-icon">📱</div>
+          <h4>Sunmi Handheld PDA</h4>
+          <p>Optimized internal thermal printer driver support.</p>
+        </div>
+        <div class="hardware-box">
+          <div class="hw-icon">🍳</div>
+          <h4>Kitchen Display (KDS)</h4>
+          <p>Digital order routing & prep station bump screens.</p>
+        </div>
+        <div class="hardware-box">
+          <div class="hw-icon">💵</div>
+          <h4>Cash Drawers (RJ11)</h4>
+          <p>Automated kick triggers for cash sales & shift audits.</p>
+        </div>
+        <div class="hardware-box">
+          <div class="hw-icon">🖥️</div>
+          <h4>Customer Display (CDS)</h4>
+          <p>Real-time secondary screen cart broadcast.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. PRICING TIERS (US MARKET) -->
     <section class="pricing" id="pricing">
-      <h2 class="section-title">Transparent, No-Contract Pricing</h2>
+      <h2 class="section-title">Transparent, Flat-Rate SaaS Pricing</h2>
       <p class="section-subtitle">Start free on a single device or upgrade for live web dashboards, multi-terminal sync, and kitchen screens.</p>
 
       <div class="billing-toggle">
@@ -326,9 +619,10 @@
             <div class="price">$0 <span>/ mo</span></div>
             <ul class="pricing-list">
               <li>1 Standalone Android Register</li>
-              <li>Local SQLite Offline Storage</li>
-              <li>Standard ESC/POS Receipt Printing</li>
-              <li>Daily Shift & Cash Drawer Logs</li>
+              <li>Local SQLite Offline Database</li>
+              <li>ESC/POS Thermal Printing (58/80mm)</li>
+              <li>Cash Float, X-Reading & Z-Reading</li>
+              <li>Item Modifiers & Basic Discounts</li>
             </ul>
           </div>
           <a href="#download" class="btn-secondary" style="width: 100%; justify-content: center; margin-top: 20px;">Download Free APK</a>
@@ -343,7 +637,8 @@
             <div class="price" id="plus-price">$19 <span>/ mo</span></div>
             <ul class="pricing-list">
               <li><strong>Live Web Customer Portal</strong></li>
-              <li>Real-time Cloud Sync (Supabase)</li>
+              <li>Automated 5-Sec Supabase Sync</li>
+              <li>Daily Cloud Database Morning Backups</li>
               <li>Tender, Tips & Category Splits</li>
               <li>Sales by Range (PDF/CSV Exports)</li>
             </ul>
@@ -359,19 +654,20 @@
             <div class="price" id="pro-price">$49 <span>/ mo</span></div>
             <ul class="pricing-list">
               <li><strong>Unlimited Multi-Terminal Sync</strong></li>
-              <li>Kitchen Display System (KDS)</li>
-              <li>Centralized Inventory & Stock Alerts</li>
-              <li>Priority Support Live Chat Included</li>
+              <li><strong>Kitchen Display System (KDS)</strong></li>
+              <li>Visual Table Floor Plans & Seat Ordering</li>
+              <li>Centralized Multi-Station Inventory</li>
+              <li><strong>Priority Live Agent Chat Included</strong></li>
             </ul>
           </div>
           <button class="btn-secondary" style="width: 100%; justify-content: center; margin-top: 20px;" onclick="openSalesChat('Pro Plan Consultation')">Contact for Pro</button>
         </div>
       </div>
 
-      <!-- FULL PLAN FEATURE BREAKDOWN MATRIX -->
+      <!-- DETAILED MATRIX -->
       <div class="matrix-wrapper" id="comparison">
         <h3 style="font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px;">Detailed Feature Comparison</h3>
-        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Compare capabilities across FlexiTap tiers to choose the right setup for your business.</p>
+        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Compare technical capabilities across FlexiTap tiers.</p>
         
         <table class="matrix-table">
           <thead>
@@ -385,36 +681,42 @@
           <tbody>
             <tr>
               <td><strong>Target Merchant</strong></td>
-              <td class="col-center" style="color: var(--text-muted); font-size: 13px;">Solo Kiosks, Pop-ups</td>
-              <td class="col-center" style="color: #60a5fa; font-size: 13px; font-weight: 600;">Cafes, Boutiques, Bakeries</td>
-              <td class="col-center" style="color: #a855f7; font-size: 13px; font-weight: 600;">Restaurants, Multi-Station</td>
+              <td class="col-center" style="color: var(--text-muted); font-size: 12.5px;">Solo Kiosks, Pop-ups</td>
+              <td class="col-center" style="color: #60a5fa; font-size: 12.5px; font-weight: 600;">Cafes, Boutiques, Bakeries</td>
+              <td class="col-center" style="color: #a855f7; font-size: 12.5px; font-weight: 600;">Restaurants, Multi-Station</td>
             </tr>
             <tr>
-              <td>Active Android Terminals</td>
+              <td>Active Terminals per Store</td>
               <td class="col-center">1 Device</td>
               <td class="col-center">1 Primary Register</td>
               <td class="col-center"><strong>Unlimited Devices</strong></td>
             </tr>
             <tr>
-              <td>Offline-First SQLite Engine</td>
+              <td>Offline SQLite Engine (flexitap.db)</td>
               <td class="col-center"><span class="check-icon">✓</span></td>
               <td class="col-center"><span class="check-icon">✓</span></td>
               <td class="col-center"><span class="check-icon">✓</span></td>
             </tr>
             <tr>
-              <td>ESC/POS Receipt Printing (58/80mm)</td>
+              <td>Hardware: ESC/POS, Bluetooth, Wi-Fi, LAN, Sunmi</td>
               <td class="col-center"><span class="check-icon">✓</span></td>
               <td class="col-center"><span class="check-icon">✓</span></td>
               <td class="col-center"><span class="check-icon">✓</span></td>
             </tr>
             <tr>
-              <td>Cash Drawer (RJ11) & Barcode Scanner</td>
+              <td>Cash Ledger: Float, Drops, Paid-Outs, Z-Read</td>
               <td class="col-center"><span class="check-icon">✓</span></td>
               <td class="col-center"><span class="check-icon">✓</span></td>
               <td class="col-center"><span class="check-icon">✓</span></td>
             </tr>
             <tr>
-              <td>Real-time Cloud Sync (Supabase)</td>
+              <td>Automated Real-Time Cloud Sync (Supabase)</td>
+              <td class="col-center"><span class="dash-icon">—</span></td>
+              <td class="col-center"><span class="check-icon">✓ (5-Sec Queue)</span></td>
+              <td class="col-center"><span class="check-icon">✓ (5-Sec Queue)</span></td>
+            </tr>
+            <tr>
+              <td>Daily Compressed Cloud Storage Backups</td>
               <td class="col-center"><span class="dash-icon">—</span></td>
               <td class="col-center"><span class="check-icon">✓</span></td>
               <td class="col-center"><span class="check-icon">✓</span></td>
@@ -432,25 +734,19 @@
               <td class="col-center"><span class="check-icon">✓</span></td>
             </tr>
             <tr>
-              <td>Tender, Tip & Tax Detailed Splits</td>
-              <td class="col-center" style="font-size: 12px; color: var(--text-muted);">Basic Cash Only</td>
-              <td class="col-center"><span class="check-icon">✓ Full Breakdown</span></td>
-              <td class="col-center"><span class="check-icon">✓ Full Breakdown</span></td>
-            </tr>
-            <tr>
-              <td>Kitchen Display System (KDS Screen)</td>
+              <td>Visual Tables, Floor Plans & Seat Ordering</td>
               <td class="col-center"><span class="dash-icon">—</span></td>
               <td class="col-center"><span class="dash-icon">—</span></td>
               <td class="col-center"><span class="check-icon">✓</span></td>
             </tr>
             <tr>
-              <td>Multi-Terminal Master/Sub Sync</td>
+              <td>Kitchen Display System (KDS) Routing</td>
               <td class="col-center"><span class="dash-icon">—</span></td>
               <td class="col-center"><span class="dash-icon">—</span></td>
               <td class="col-center"><span class="check-icon">✓</span></td>
             </tr>
             <tr>
-              <td>Centralized Cloud Inventory Tracking</td>
+              <td>Master/Sub Real-Time Terminal Sync</td>
               <td class="col-center"><span class="dash-icon">—</span></td>
               <td class="col-center"><span class="dash-icon">—</span></td>
               <td class="col-center"><span class="check-icon">✓</span></td>
@@ -485,7 +781,7 @@
       </div>
     </section>
 
-    <!-- FAQ SECTION -->
+    <!-- 5. FAQ SECTION -->
     <section class="faq-section" id="faq">
       <div style="text-align: center; margin-bottom: 32px;">
         <h2 class="section-title">Frequently Asked Questions</h2>
@@ -494,23 +790,23 @@
 
       <div class="faq-container">
         <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-question"><span>Can I use my own tablet and receipt printers?</span><span class="faq-toggle">+</span></div>
-          <div class="faq-answer">Yes! FlexiTap is 100% Bring-Your-Own-Device (BYOD). It runs smoothly on standard Android tablets and phones. Connect to standard 58mm or 80mm ESC/POS thermal printers via Bluetooth, USB OTG, or Network/LAN.</div>
+          <div class="faq-question"><span>Can I bring my own tablet and thermal receipt printers?</span><span class="faq-toggle">+</span></div>
+          <div class="faq-answer">Yes! FlexiTap is 100% Bring-Your-Own-Device (BYOD). It runs on standard Android tablets, with iOS (iPads) and Windows touchscreen editions currently in development. Connect to standard 58mm or 80mm ESC/POS thermal printers via Bluetooth, Wi-Fi, Network/LAN, or Sunmi handheld internal printers.</div>
         </div>
 
         <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-question"><span>What happens if my Wi-Fi or cellular network drops?</span><span class="faq-toggle">+</span></div>
-          <div class="faq-answer">FlexiTap is built with an offline-first SQLite database. You can ring up sales, take cash, and print customer receipts with zero interruption. The instant connectivity returns, sales summaries automatically sync to the cloud.</div>
+          <div class="faq-question"><span>How does the Offline SQLite & 5-Second Cloud Sync work?</span><span class="faq-toggle">+</span></div>
+          <div class="faq-answer">All sales, inventory, and shift ledgers write directly to a local SQLite database (<code>flexitap.db</code>) on your tablet in under 15ms. When connected to Wi-Fi/LTE, our background queue pushes transactions to Supabase every 5 seconds. If you lose internet, you can keep ringing up orders offline with zero interruptions.</div>
         </div>
 
         <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-question"><span>How do I access the Web Customer Portal?</span><span class="faq-toggle">+</span></div>
-          <div class="faq-answer">The Live Web Analytics Portal is included with Plus and Pro plans. Log in from any desktop or mobile browser using your store owner credentials to view real-time sales, tax totals, and export CSV/PDF reports.</div>
+          <div class="faq-question"><span>What happens if a device breaks or crashes?</span><span class="faq-toggle">+</span></div>
+          <div class="faq-answer">FlexiTap performs daily compressed database backups to secure Supabase cloud storage. With our Safe-Boot Restoration engine, you can log into a new master device and restore the latest cloud state in minutes.</div>
         </div>
 
         <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-question"><span>Are there any long-term contracts or cancellation fees?</span><span class="faq-toggle">+</span></div>
-          <div class="faq-answer">None. FlexiTap is a transparent SaaS subscription. You can upgrade, downgrade, or cancel anytime directly from your dashboard.</div>
+          <div class="faq-question"><span>Are there long-term contracts or cancellation fees?</span><span class="faq-toggle">+</span></div>
+          <div class="faq-answer">None. FlexiTap is a transparent SaaS subscription. You can switch between Monthly and Annual billing or cancel anytime with zero penalties.</div>
         </div>
       </div>
     </section>
@@ -571,12 +867,13 @@
 
     <div class="chat-body" id="chat-messages">
       <div class="chat-msg">
-        👋 <strong>Welcome to FlexiTap!</strong> How can we help you set up or scale your store today?
+        👋 <strong>Welcome to FlexiTap POS!</strong> Looking for the right setup for your business?
       </div>
       <div class="chat-options" id="chat-quick-options">
         <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Plus ($19) vs Pro ($49) Plans</button>
-        <button class="chat-chip" onclick="handleChatSelect('hardware')">🖨️ Tablet & Printer Compatibility</button>
-        <button class="chat-chip" onclick="handleChatSelect('sync')">⚡ Offline Reliability & Cloud Sync</button>
+        <button class="chat-chip" onclick="handleChatSelect('platforms')">📱 iOS, iPad, Android & Windows Availability</button>
+        <button class="chat-chip" onclick="handleChatSelect('sync')">⚡ Offline SQLite & 5-Sec Cloud Sync</button>
+        <button class="chat-chip" onclick="handleChatSelect('hardware')">🖨️ Thermal Printers, Wi-Fi & Sunmi</button>
         <button class="chat-chip" onclick="handleChatSelect('contact')" style="background: rgba(16,185,129,0.1); color: #34d399; border-color: rgba(16,185,129,0.3);">✉️ Contact Sales / Request Demo</button>
       </div>
     </div>
@@ -641,6 +938,20 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // --- WORKFLOW SWITCHER ---
+    function switchWorkflow(type) {
+      document.querySelectorAll('.workflow-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.workflow-content').forEach(c => c.classList.remove('active'));
+      
+      if (type === 'fb') {
+        document.getElementById('wf-btn-fb').classList.add('active');
+        document.getElementById('wf-fb').classList.add('active');
+      } else {
+        document.getElementById('wf-btn-retail').classList.add('active');
+        document.getElementById('wf-retail').classList.add('active');
+      }
+    }
+
     // --- BILLING TOGGLE ---
     function setBilling(cycle) {
       const btnM = document.getElementById('btn-monthly');
@@ -685,7 +996,7 @@
       toggleSign.textContent = item.classList.contains('open') ? '×' : '+';
     }
 
-    // --- SALES CHAT WIDGET ---
+    // --- SALES CHAT ENGINE ---
     function toggleSalesChat() {
       const p = document.getElementById('sales-chat-panel');
       p.style.display = (p.style.display === 'none' || p.style.display === '') ? 'flex' : 'none';
@@ -711,22 +1022,28 @@
       if (type === 'pricing') {
         appendMessage(`
           <strong>US Plan Breakdown:</strong><br>
-          • <strong>Free ($0):</strong> 1 offline Android register, SQLite storage.<br>
-          • <strong>Plus ($19/mo):</strong> Live Web Portal, tender splits & CSV/PDF reports.<br>
-          • <strong>Pro ($49/mo):</strong> Multi-register sync, KDS screens & inventory.<br>
-          • <strong>Support Plan ($15/mo):</strong> Remote device diagnostics & priority queue.
+          • <strong>Free ($0):</strong> 1 offline Android register, SQLite database, ESC/POS printing.<br>
+          • <strong>Plus ($19/mo):</strong> Live Web Portal, 5-sec Supabase sync, CSV/PDF reports.<br>
+          • <strong>Pro ($49/mo):</strong> Unlimited multi-register sync, KDS kitchen screens & floor plans.<br>
+          • <strong>Support Add-on ($15/mo):</strong> Remote device diagnostics & priority queue.
         `);
-      } else if (type === 'hardware') {
+      } else if (type === 'platforms') {
         appendMessage(`
-          <strong>Hardware Compatibility:</strong><br>
-          Bring your own Android tablet or phone.<br>
-          • Printers: 58mm / 80mm ESC/POS (Bluetooth, USB OTG, Network LAN).<br>
-          • Scanners & Drawers: USB barcode scanners and RJ11 cash drawers.
+          <strong>Supported Platforms & App Stores:</strong><br>
+          • <strong>Android:</strong> Direct APK live now (Google Play listing in review).<br>
+          • <strong>Apple iOS / iPadOS:</strong> Coming soon to the App Store.<br>
+          • <strong>Windows Touchscreen:</strong> Coming soon for all-in-one desktop stations.
         `);
       } else if (type === 'sync') {
         appendMessage(`
-          <strong>Offline-First Reliability:</strong><br>
-          Sales record to local SQLite immediately. When connected to Wi-Fi/LTE, changes sync to Supabase in real time with zero duplicate transactions.
+          <strong>Offline-First Architecture:</strong><br>
+          Transactions write locally to SQLite (<code>flexitap.db</code>) in under 15ms. Once online, a background daemon pushes records to Supabase every 5 seconds. Includes daily compressed morning backups and safe-boot disaster recovery.
+        `);
+      } else if (type === 'hardware') {
+        appendMessage(`
+          <strong>Supported Peripherals:</strong><br>
+          • Thermal Printers: ESC/POS (Network/LAN IP, Wi-Fi Wireless, Bluetooth, Sunmi Handheld PDAs).<br>
+          • Peripherals: Automatic RJ11 cash drawers, camera/USB barcode scanners, and Customer-Facing Displays (CDS).
         `);
       } else if (type === 'contact') {
         appendMessage(`
