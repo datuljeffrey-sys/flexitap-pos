@@ -413,6 +413,8 @@
     let activeDevUser = null;
     let cachedStores = [];
     let selectedSession = null;
+    let sessionsChannelSubscribed = false;
+    let currentChatChannel = null;
 
     const views = {
       clients: { title: 'Merchant Clients & Support Hub', subtitle: 'Search merchant stores, troubleshoot terminal fleets, and override subscription tiers.' },
@@ -524,7 +526,7 @@
           <td><span style="font-family: monospace; font-size: 0.8rem; color: var(--primary);">${s.owner_id || s.user_id || 'N/A'}</span></td>
           <td>${s.created_at ? new Date(s.created_at).toLocaleDateString() : 'N/A'}</td>
           <td>
-            <button class="action-btn" onclick="openChatForStore('${s.id}', '${s.name || 'Store'}')">Open Support Chat</button>
+            <button class="action-btn" onclick="openChatForStore('${s.id}', '${(s.name || 'Store').replace(/'/g, "\\'")}')">Open Support Chat</button>
           </td>
         </tr>
       `).join('');
@@ -544,6 +546,7 @@
       const { data: sessions } = await supabaseClient
         .from('support_sessions')
         .select('*')
+        .eq('status', 'open')
         .order('updated_at', { ascending: false });
 
       const container = document.getElementById('support-sessions-list');
@@ -553,16 +556,19 @@
       }
 
       container.innerHTML = sessions.map(s => `
-        <div class="session-item ${selectedSession?.id === s.id ? 'active' : ''}" onclick="selectSession('${s.id}', '${s.store_name}', '${s.merchant_email}')">
+        <div class="session-item ${selectedSession?.id === s.id ? 'active' : ''}" onclick="selectSession('${s.id}', '${s.store_name.replace(/'/g, "\\'")}', '${s.merchant_email}')">
           <div class="session-store-title">${s.store_name}</div>
           <div class="session-merchant-email">${s.merchant_email}</div>
         </div>
       `).join('');
 
-      // Listen for new sessions in real-time
-      supabaseClient.channel('dev-sessions').on('postgres_changes', {
-        event: 'INSERT', schema: 'public', table: 'support_sessions'
-      }, () => loadSupportDeskSessions()).subscribe();
+      // Single subscription guard to avoid listener loop
+      if (!sessionsChannelSubscribed) {
+        sessionsChannelSubscribed = true;
+        supabaseClient.channel('dev-sessions').on('postgres_changes', {
+          event: '*', schema: 'public', table: 'support_sessions'
+        }, () => loadSupportDeskSessions()).subscribe();
+      }
     }
 
     async function selectSession(sessionId, storeName, merchantEmail) {
@@ -588,8 +594,13 @@
         messages.forEach(m => renderDeskBubble(m.sender_role, m.message, m.created_at));
       }
 
+      // Unsubscribe previous message listener if switching sessions
+      if (currentChatChannel) {
+        supabaseClient.removeChannel(currentChatChannel);
+      }
+
       // Realtime incoming from merchant
-      supabaseClient.channel(`desk-${sessionId}`).on('postgres_changes', {
+      currentChatChannel = supabaseClient.channel(`desk-${sessionId}`).on('postgres_changes', {
         event: 'INSERT', schema: 'public', table: 'support_messages', filter: `session_id=eq.${sessionId}`
       }, (payload) => {
         if (payload.new && payload.new.sender_role === 'merchant') {
