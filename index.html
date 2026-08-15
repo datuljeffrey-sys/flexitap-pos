@@ -23,7 +23,7 @@
       --text-muted: #94a3b8;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
     body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
 
     .glow-top {
@@ -85,7 +85,7 @@
     .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fff; }
     .feature-card p { font-size: 14px; color: var(--text-muted); }
 
-    .pricing { padding: 40px 0 100px; text-align: center; }
+    .pricing { padding: 40px 0 80px; text-align: center; }
     .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 40px; text-align: left; }
     .pricing-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 32px; border-radius: 20px; position: relative; }
     .pricing-card.popular { border-color: var(--primary); box-shadow: 0 0 30px -5px rgba(59, 130, 246, 0.3); }
@@ -95,12 +95,25 @@
     .pricing-list { list-style: none; margin: 24px 0; font-size: 14px; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px; }
     .pricing-list li::before { content: "✓ "; color: var(--accent-green); font-weight: 800; }
 
+    /* FAQ SECTION */
+    .faq-section { padding: 40px 0 100px; }
+    .faq-container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; text-align: left; }
+    .faq-item { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 18px 24px; cursor: pointer; transition: 0.2s; }
+    .faq-item:hover { border-color: rgba(255,255,255,0.2); }
+    .faq-question { font-weight: 700; font-size: 16px; color: #fff; display: flex; justify-content: space-between; align-items: center; }
+    .faq-answer { display: none; margin-top: 10px; font-size: 14px; color: var(--text-muted); line-height: 1.6; border-top: 1px solid var(--card-border); padding-top: 10px; }
+    .faq-item.open .faq-answer { display: block; }
+    .faq-item.open .faq-toggle { transform: rotate(45deg); }
+    .faq-toggle { font-size: 20px; transition: transform 0.2s; color: var(--primary); }
+
+    /* FOOTER */
     footer { border-top: 1px solid var(--card-border); padding: 40px 0; color: var(--text-muted); font-size: 14px; }
     .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
     .footer-links { display: flex; gap: 20px; align-items: center; }
     .footer-link { color: var(--text-muted); text-decoration: none; cursor: pointer; }
     .footer-link:hover { color: #fff; }
 
+    /* MODALS */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; }
     .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); padding: 36px; border-radius: 20px; width: 100%; max-width: 440px; position: relative; text-align: center; }
     .modal-card.wide { max-width: 650px; max-height: 80vh; overflow-y: auto; text-align: left; }
@@ -113,11 +126,42 @@
     .submit-btn:hover { background: var(--primary-hover); }
     .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
 
+    /* FLOATING SALES CHAT WIDGET */
+    #chat-btn {
+      position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), #2563eb); border: 1px solid rgba(255,255,255,0.25);
+      color: #fff; font-size: 24px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center; z-index: 990; transition: transform 0.2s;
+    }
+    #chat-btn:hover { transform: scale(1.08); }
+
+    #sales-chat-panel {
+      display: none; position: fixed; bottom: 90px; right: 24px; width: 360px; height: 500px;
+      background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6); flex-direction: column; overflow: hidden; z-index: 999;
+      animation: fadeIn 0.25s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .chat-header {
+      background: rgba(255,255,255,0.03); padding: 14px 18px; border-bottom: 1px solid var(--card-border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 13px; }
+    .chat-msg { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; color: #f8fafc; }
+    .chat-options { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    .chat-chip {
+      padding: 9px 12px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25);
+      color: #60a5fa; border-radius: 8px; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer; transition: 0.2s;
+    }
+    .chat-chip:hover { background: rgba(59,130,246,0.2); border-color: var(--primary); color: #fff; }
+
     @media(max-width: 768px) {
       .hero h1 { font-size: 36px; }
       .preview-grid { grid-template-columns: 1fr; }
       .nav-links { display: none; }
       .footer-content { flex-direction: column; text-align: center; }
+      #sales-chat-panel { width: calc(100vw - 32px); right: 16px; bottom: 84px; height: 480px; }
     }
   </style>
 </head>
@@ -141,8 +185,8 @@
       <div class="nav-links">
         <a href="#features" class="nav-link">Features</a>
         <a href="#pricing" class="nav-link">Pricing</a>
+        <a href="#faq" class="nav-link">FAQ</a>
         <a href="#download" class="nav-link">Download</a>
-        <!-- WIRED TO DEV PORTAL -->
         <a href="dev_portal.html" class="nav-link" style="color: var(--primary);">Dev Portal ↗</a>
       </div>
 
@@ -226,7 +270,7 @@
         <div class="feature-card">
           <div class="icon-box">🍽️</div>
           <h3>Multi-Industry Engine</h3>
-          <p>Tailored workflows for F&B (table management, order modifiers) and Retail (barcode scanning, stock alerts).</p>
+          <p>Tailored workflows for F&B (table management, order modifiers, KDS) and Retail (barcode scanning, stock alerts).</p>
         </div>
       </div>
     </section>
@@ -274,7 +318,37 @@
             <li>Advanced Cloud Inventory</li>
             <li>Priority 24/7 Support</li>
           </ul>
-          <button class="btn-secondary" style="width: 100%; justify-content: center;" onclick="openModal('login-modal')">Contact for Pro</button>
+          <button class="btn-secondary" style="width: 100%; justify-content: center;" onclick="openSalesChat('Pro Plan Consultation')">Contact for Pro</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section class="faq-section" id="faq">
+      <div style="text-align: center; margin-bottom: 32px;">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-subtitle">Common questions about FlexiTap POS hardware, sync, and subscriptions.</p>
+      </div>
+
+      <div class="faq-container">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question"><span>Do I need an internet connection to ring up sales?</span><span class="faq-toggle">+</span></div>
+          <div class="faq-answer">No! FlexiTap operates on an offline-first SQLite database. You can take orders, process cash, and print receipts completely offline. Transactions will automatically sync to your cloud portal once internet reconnects.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question"><span>What hardware and thermal printers are supported?</span><span class="faq-toggle">+</span></div>
+          <div class="faq-answer">FlexiTap runs on standard Android tablets and phones. It connects to ESC/POS thermal printers via Bluetooth, USB, or Network/LAN, and supports standard barcode scanners and RJ11 cash drawers.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question"><span>How do I access the Web Customer Portal?</span><span class="faq-toggle">+</span></div>
+          <div class="faq-answer">The Live Web Analytics Portal is included with Plus and Pro plans. You can log in from any web browser using your merchant owner credentials to view real-time revenue, gross/net summaries, and category splits.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question"><span>Can I upgrade or downgrade anytime?</span><span class="faq-toggle">+</span></div>
+          <div class="faq-answer">Yes, FlexiTap is subscription-based without lock-in contracts. You can switch between Free, Plus, and Pro tiers as your business scales.</div>
         </div>
       </div>
     </section>
@@ -292,7 +366,7 @@
         </svg>
         <div>
           <div style="font-weight: 700; color: #fff; margin-bottom: 2px;">FlexiTap POS</div>
-          <div>&copy; 2026 FlexiTap POS System. All rights reserved.</div>
+          <div>&copy; 2026 FlexiTap POS System. Sales: <a href="mailto:sales@flexitapapp.com" style="color: var(--primary); text-decoration: none;">sales@flexitapapp.com</a></div>
         </div>
       </div>
 
@@ -311,7 +385,6 @@
         <div class="footer-links">
           <a class="footer-link" onclick="openModal('terms-modal')">Terms of Service</a>
           <a class="footer-link" onclick="openModal('privacy-modal')">Privacy Policy</a>
-          <!-- WIRED TO DEV PORTAL -->
           <a href="dev_portal.html" class="footer-link" style="color: var(--primary);">Developer Docs & Ops</a>
           <a class="footer-link" onclick="openModal('login-modal')">Merchant Login</a>
         </div>
@@ -319,7 +392,35 @@
     </div>
   </footer>
 
-  <!-- 1. AUTH LOGIN MODAL -->
+  <!-- FLOATING INQUIRY & SALES CHAT WIDGET -->
+  <button id="chat-btn" onclick="toggleSalesChat()" title="Sales & Inquiries Chat">💬</button>
+
+  <div id="sales-chat-panel">
+    <div class="chat-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="width: 10px; height: 10px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></div>
+        <div>
+          <div style="font-size: 13px; font-weight: 800; color: #fff;">FlexiTap Sales & Inquiry</div>
+          <div style="font-size: 11px; color: var(--text-muted);">sales@flexitapapp.com</div>
+        </div>
+      </div>
+      <button onclick="toggleSalesChat()" style="background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer;">&times;</button>
+    </div>
+
+    <div class="chat-body" id="chat-messages">
+      <div class="chat-msg">
+        👋 <strong>Hi there!</strong> Welcome to FlexiTap POS. How can we help you set up or scale your store?
+      </div>
+      <div class="chat-options" id="chat-quick-options">
+        <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Plus vs Pro Plan Breakdown</button>
+        <button class="chat-chip" onclick="handleChatSelect('hardware')">🖨️ Printer & Device Compatibility</button>
+        <button class="chat-chip" onclick="handleChatSelect('sync')">⚡ How Offline Cloud Sync Works</button>
+        <button class="chat-chip" onclick="handleChatSelect('contact')" style="background: rgba(16,185,129,0.1); color: #34d399; border-color: rgba(16,185,129,0.3);">✉️ Contact Sales / Request Demo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTH LOGIN MODAL -->
   <div class="modal-overlay" id="login-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
@@ -347,7 +448,7 @@
     </div>
   </div>
 
-  <!-- 2. TERMS MODAL -->
+  <!-- TERMS MODAL -->
   <div class="modal-overlay" id="terms-modal">
     <div class="modal-card wide">
       <button class="close-btn" onclick="closeModal('terms-modal')">&times;</button>
@@ -360,7 +461,7 @@
     </div>
   </div>
 
-  <!-- 3. PRIVACY MODAL -->
+  <!-- PRIVACY MODAL -->
   <div class="modal-overlay" id="privacy-modal">
     <div class="modal-card wide">
       <button class="close-btn" onclick="closeModal('privacy-modal')">&times;</button>
@@ -378,15 +479,14 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // --- MODAL CONTROLS ---
     function openModal(id) {
-      const modalId = id || 'login-modal';
-      const el = document.getElementById(modalId);
+      const el = document.getElementById(id || 'login-modal');
       if (el) el.style.display = 'flex';
     }
     
     function closeModal(id) {
-      const modalId = id || 'login-modal';
-      const el = document.getElementById(modalId);
+      const el = document.getElementById(id || 'login-modal');
       if (el) el.style.display = 'none';
     }
 
@@ -396,6 +496,91 @@
       });
     });
 
+    // --- FAQ ACCORDION ---
+    function toggleFaq(item) {
+      item.classList.toggle('open');
+      const toggleSign = item.querySelector('.faq-toggle');
+      toggleSign.textContent = item.classList.contains('open') ? '×' : '+';
+    }
+
+    // --- SALES CHAT WIDGET ENGINE ---
+    function toggleSalesChat() {
+      const p = document.getElementById('sales-chat-panel');
+      p.style.display = (p.style.display === 'none' || p.style.display === '') ? 'flex' : 'none';
+    }
+
+    function openSalesChat(topic) {
+      const p = document.getElementById('sales-chat-panel');
+      p.style.display = 'flex';
+      appendMessage(`Let's talk about the <strong>${topic}</strong>! Leave your email below or reach us directly at <a href="mailto:sales@flexitapapp.com" style="color:var(--primary);">sales@flexitapapp.com</a>.`);
+      showLeadForm();
+    }
+
+    function appendMessage(html) {
+      const box = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = 'chat-msg';
+      div.innerHTML = html;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function handleChatSelect(type) {
+      if (type === 'pricing') {
+        appendMessage(`
+          <strong>Tier Breakdown:</strong><br>
+          • <strong>Free:</strong> Local SQLite register & basic shift logs.<br>
+          • <strong>Plus (₱499/mo):</strong> Live Web Portal, payment splits, and historical analytics.<br>
+          • <strong>Pro (₱999/mo):</strong> Multi-register sync, KDS screens, and inventory.
+        `);
+      } else if (type === 'hardware') {
+        appendMessage(`
+          <strong>Hardware Support:</strong><br>
+          FlexiTap works on standard Android tablets & phones.<br>
+          • Thermal Printers: 58mm & 80mm ESC/POS (Bluetooth/USB/LAN)<br>
+          • Cash Drawers (RJ11) & USB/Bluetooth Barcode Scanners.
+        `);
+      } else if (type === 'sync') {
+        appendMessage(`
+          <strong>Offline Cloud Sync:</strong><br>
+          Sales write to SQLite in under 15ms. The instant your device reconnects to Wi-Fi/4G, the background daemon pushes records to Supabase with zero duplicate transactions.
+        `);
+      } else if (type === 'contact') {
+        appendMessage(`
+          <strong>Direct Sales Inquiry:</strong><br>
+          You can email our team directly at <a href="mailto:sales@flexitapapp.com" style="color:var(--primary); font-weight:700;">sales@flexitapapp.com</a> or drop your details below:
+        `);
+        showLeadForm();
+      }
+    }
+
+    function showLeadForm() {
+      appendMessage(`
+        <form onsubmit="submitSalesInquiry(event)" style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+          <input type="text" id="lead-name" placeholder="Your Name / Business Name" required style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0;" />
+          <input type="email" id="lead-email" placeholder="Email (e.g. store@gmail.com)" required style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0;" />
+          <input type="tel" id="lead-phone" placeholder="Phone Number" required style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0;" />
+          <button type="submit" style="padding:8px; background:var(--accent-green); color:#fff; border:none; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px;">Send Inquiry</button>
+        </form>
+      `);
+    }
+
+    async function submitSalesInquiry(e) {
+      e.preventDefault();
+      const name = document.getElementById('lead-name').value;
+      const email = document.getElementById('lead-email').value;
+      const phone = document.getElementById('lead-phone').value;
+
+      try {
+        await supabaseClient.from('leads').insert([{ business_name: name, contact_email: email, contact_phone: phone }]);
+      } catch (err) {
+        console.log('Lead cached locally.');
+      }
+
+      appendMessage(`✅ <strong>Thank you, ${name}!</strong> Your inquiry has been sent to <strong>sales@flexitapapp.com</strong>. We will get back to you shortly.`);
+    }
+
+    // --- AUTH LOGIN SUBMIT ---
     document.getElementById('portal-login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('modal-email').value.trim();
@@ -406,7 +591,6 @@
       errorDiv.innerText = '';
       btnText.innerText = 'Verifying account...';
 
-      // 1. Authenticate user
       const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
       
       if (error) {
@@ -415,7 +599,6 @@
         return;
       }
 
-      // 2. Fetch Subscription Profile and Role
       const { data: profile } = await supabaseClient
         .from('profiles')
         .select('subscription_tier, role')
@@ -425,13 +608,13 @@
       const userRole = (profile?.role || '').toLowerCase();
       const tier = (profile?.subscription_tier || 'free').toLowerCase();
 
-      // Developers bypass tier restrictions straight into customer portal
+      // Developers bypass tier restrictions straight to customer portal
       if (userRole === 'dev' || userRole === 'developer' || userRole === 'admin') {
         window.location.href = 'portal.html';
         return;
       }
 
-      // Subscription Tier Guard: Block Free Accounts from Web Portal
+      // Subscription Tier Guard
       if (tier === 'free') {
         await supabaseClient.auth.signOut();
         btnText.innerText = 'Log In to Portal';
@@ -443,7 +626,6 @@
         return;
       }
 
-      // Authorized merchant -> Redirect to Portal
       window.location.href = 'portal.html';
     });
   </script>
