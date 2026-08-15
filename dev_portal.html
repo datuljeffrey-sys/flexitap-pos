@@ -45,7 +45,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.2s, border-color 0.2s; }
     body { background-color: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
 
-    /* --- AUTH MODAL OVERLAY --- */
+    /* --- AUTH OVERLAY --- */
     #dev-auth-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 1000; }
     .dev-login-box { background: var(--sidebar-bg); border: 1px solid var(--card-border); padding: 40px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; }
     .dev-login-header { display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; }
@@ -58,7 +58,7 @@
     /* --- APP LAYOUT --- */
     #dev-app-layout { display: none; width: 100%; height: 100%; }
 
-    /* --- SIDEBAR (Matches Your Wireframe) --- */
+    /* --- SIDEBAR --- */
     aside {
       width: var(--sidebar-width); background-color: var(--sidebar-bg); border-right: 1px solid var(--card-border);
       display: flex; flex-direction: column; justify-content: space-between; padding: 24px 16px; flex-shrink: 0;
@@ -79,7 +79,7 @@
       background: rgba(59, 130, 246, 0.12); color: #ffffff; border-color: var(--primary);
       box-shadow: inset 4px 0 0 var(--primary);
     }
-    .nav-badge { font-size: 0.75rem; padding: 2px 8px; border-radius: 9999px; background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .nav-badge { font-size: 0.75rem; padding: 2px 8px; border-radius: 9999px; background: rgba(16, 185, 129, 0.2); color: #34d399; }
 
     .sidebar-footer { padding-top: 20px; border-top: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
     .user-info { font-size: 0.85rem; font-weight: 700; color: var(--text); word-break: break-all; }
@@ -124,20 +124,34 @@
     .data-table td { padding: 14px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
     .data-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
 
-    .badge-pill { display: inline-block; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
-    .badge-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-    .badge-yellow { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-    .badge-red { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-
     .action-btn {
       padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; cursor: pointer;
       border: 1px solid var(--card-border); background: rgba(255, 255, 255, 0.05); color: var(--text); transition: 0.2s;
     }
     .action-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
-    .action-btn-danger { color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
-    .action-btn-danger:hover { background: var(--danger); color: #fff; }
 
-    /* Remote Terminal Shell */
+    /* --- SUPPORT DESK SPLIT VIEW --- */
+    .support-desk-grid { display: grid; grid-template-columns: 320px 1fr; gap: 20px; height: 580px; }
+    .session-list { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; overflow-y: auto; display: flex; flex-direction: column; }
+    .session-item { padding: 14px 16px; border-bottom: 1px solid var(--card-border); cursor: pointer; transition: 0.2s; }
+    .session-item:hover, .session-item.active { background: rgba(59, 130, 246, 0.12); border-left: 4px solid var(--primary); }
+    .session-store-title { font-weight: 800; font-size: 0.9rem; color: #fff; }
+    .session-merchant-email { font-size: 0.75rem; color: var(--text-muted); }
+
+    .chat-console { background: #030712; border: 1px solid var(--card-border); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; }
+    .chat-console-header { background: rgba(255, 255, 255, 0.03); padding: 14px 20px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
+    .chat-console-body { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+    
+    .agent-bubble { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.4; word-break: break-word; }
+    .agent-bubble.merchant { align-self: flex-start; background: rgba(255,255,255,0.08); color: #fff; border-bottom-left-radius: 2px; }
+    .agent-bubble.agent { align-self: flex-end; background: var(--primary); color: #fff; border-bottom-right-radius: 2px; }
+    .bubble-ts { font-size: 10px; opacity: 0.6; margin-top: 4px; display: block; }
+
+    .chat-console-input-bar { display: flex; border-top: 1px solid var(--card-border); background: #090d16; }
+    .chat-console-input-bar input { flex: 1; padding: 14px 18px; background: transparent; border: none; color: #fff; outline: none; font-size: 13px; }
+    .chat-console-send { background: var(--primary); color: white; border: none; padding: 0 24px; font-weight: 700; cursor: pointer; }
+
+    /* Remote Terminal */
     .terminal-window { background: var(--code-bg); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; font-family: 'JetBrains Mono', monospace; }
     .terminal-header { background: rgba(255, 255, 255, 0.03); padding: 10px 16px; display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--card-border); }
     .terminal-body { padding: 18px; min-height: 220px; max-height: 380px; overflow-y: auto; font-size: 0.82rem; line-height: 1.6; }
@@ -148,12 +162,11 @@
     .log-info { color: #38bdf8; }
     .log-success { color: #34d399; }
     .log-warn { color: #fbbf24; }
-    .log-error { color: #f87171; }
   </style>
 </head>
 <body>
 
-  <!-- 1. DEV AUTH / LOGIN VIEW -->
+  <!-- 1. AUTH LOGIN VIEW -->
   <div id="dev-auth-view">
     <div class="dev-login-box">
       <div class="dev-login-header">
@@ -180,8 +193,6 @@
 
   <!-- 2. DEV DASHBOARD LAYOUT -->
   <div id="dev-app-layout">
-    
-    <!-- SIDEBAR (Wireframe Layout) -->
     <aside>
       <div>
         <div class="brand-box">
@@ -204,6 +215,12 @@
             </button>
           </li>
           <li>
+            <button class="nav-btn" onclick="switchNav('support', this)">
+              <span>💬 Live Support Desk</span>
+              <span class="nav-badge" id="open-chats-badge">Live</span>
+            </button>
+          </li>
+          <li>
             <button class="nav-btn" onclick="switchNav('remote', this)">
               <span>📡 Remote Access</span>
             </button>
@@ -216,7 +233,6 @@
           <li>
             <button class="nav-btn" onclick="switchNav('errors', this)">
               <span>⚠️ Errors</span>
-              <span class="nav-badge" id="error-badge">1 Active</span>
             </button>
           </li>
         </ul>
@@ -230,7 +246,6 @@
       </div>
     </aside>
 
-    <!-- MAIN WORKSPACE -->
     <main>
       <header>
         <div class="header-title">
@@ -250,12 +265,12 @@
           <div class="kpi-row">
             <div class="kpi-card">
               <div class="kpi-title">Active Store Records</div>
-              <div class="kpi-val" style="color: var(--accent);" id="kpi-store-count">Loading...</div>
+              <div class="kpi-val" style="color: var(--accent);" id="kpi-store-count">...</div>
               <div class="kpi-status" style="color: var(--accent);">● Real-Time Database Query</div>
             </div>
             <div class="kpi-card">
               <div class="kpi-title">Developer Access Pool</div>
-              <div class="kpi-val" style="color: var(--primary);" id="kpi-dev-count">Loading...</div>
+              <div class="kpi-val" style="color: var(--primary);" id="kpi-dev-count">...</div>
               <div class="kpi-status" style="color: var(--text-muted);">Team Super-Admins</div>
             </div>
             <div class="kpi-card">
@@ -267,16 +282,16 @@
 
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title">Merchant Accounts & Tier Controls</div>
+              <div class="panel-title">Merchant Accounts & Diagnostics</div>
               <input type="text" id="merchant-search" onkeyup="filterMerchants()" placeholder="Search store name or ID..." style="padding: 8px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 300px;">
             </div>
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Store Name & UUID</th>
+                  <th>Store Name & ID</th>
                   <th>Owner / User ID</th>
                   <th>Created At</th>
-                  <th>Diagnostics & Support Actions</th>
+                  <th>Support Quick Action</th>
                 </tr>
               </thead>
               <tbody id="stores-tbody">
@@ -286,7 +301,35 @@
           </div>
         </div>
 
-        <!-- ================= 2. REMOTE ACCESS VIEW ================= -->
+        <!-- ================= 2. LIVE SUPPORT DESK ================= -->
+        <div id="view-support" class="tab-view">
+          <div class="support-desk-grid">
+            <!-- Merchant Session Sidebar -->
+            <div class="session-list" id="support-sessions-list">
+              <div style="padding: 16px; font-size: 12px; color: var(--text-muted); text-align: center;">Loading active merchant sessions...</div>
+            </div>
+
+            <!-- Active Chat Window -->
+            <div class="chat-console">
+              <div class="chat-console-header">
+                <div>
+                  <div style="font-weight: 800; color: #fff; font-size: 14px;" id="desk-selected-store">Select a merchant chat</div>
+                  <div style="font-size: 11px; color: var(--text-muted);" id="desk-selected-email">—</div>
+                </div>
+                <button class="action-btn" onclick="alert('Session marked resolved.')">Mark Resolved</button>
+              </div>
+              <div class="chat-console-body" id="desk-chat-body">
+                <div style="text-align: center; color: var(--text-muted); font-size: 13px; margin: auto;">Select an active merchant on the left to start live support.</div>
+              </div>
+              <form class="chat-console-input-bar" onsubmit="sendAgentResponse(event)">
+                <input type="text" id="desk-input" placeholder="Type support reply..." autocomplete="off" disabled />
+                <button type="submit" class="chat-console-send" id="desk-send-btn" disabled>Reply</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= 3. REMOTE ACCESS VIEW ================= -->
         <div id="view-remote" class="tab-view">
           <div class="panel">
             <div class="panel-header">
@@ -305,25 +348,16 @@
               <div class="terminal-body" id="remote-logs">
                 <div class="log-line"><span class="log-info">[13:10:02]</span> Connecting to remote terminal daemon: wss://pos-gateway.flexitap.io/device/POS-01</div>
                 <div class="log-line"><span class="log-success">[13:10:04]</span> Socket handshake confirmed. SQLite state: 1,420 records. Auth token valid.</div>
-                <div class="log-line"><span class="log-info">[13:11:15]</span> SalesSyncService: Daily summary aggregated. Total net sales: ₱14,850.00.</div>
-                <div class="log-line"><span class="log-success">[13:11:16]</span> Upsert successful to table 'daily_sales_summaries' (onConflict: store_id, date).</div>
               </div>
               <div class="terminal-input-bar">
-                <input type="text" id="terminal-cmd" placeholder="Execute diagnostic command (e.g. 'pull-sqlite-schema', 'clear-cache', 'restart-service', 'sync-now')..." />
+                <input type="text" id="terminal-cmd" placeholder="Execute diagnostic command (e.g. 'pull-sqlite-schema', 'clear-cache', 'sync-now')..." />
                 <button class="terminal-send" onclick="sendRemoteCommand()">Send Command</button>
               </div>
-            </div>
-
-            <div style="display: flex; gap: 12px; margin-top: 16px;">
-              <button class="action-btn" onclick="quickCommand('sync-now')">⚡ Trigger Force Sync</button>
-              <button class="action-btn" onclick="quickCommand('pull-logs')">📄 Pull Logcat File</button>
-              <button class="action-btn" onclick="quickCommand('clear-cache')">🧹 Clear Device Cache</button>
-              <button class="action-btn action-btn-danger" onclick="quickCommand('restart-app')">🔄 Remote App Restart</button>
             </div>
           </div>
         </div>
 
-        <!-- ================= 3. MONITORING VIEW ================= -->
+        <!-- ================= 4. MONITORING VIEW ================= -->
         <div id="view-monitoring" class="tab-view">
           <div class="kpi-row">
             <div class="kpi-card">
@@ -334,32 +368,12 @@
             <div class="kpi-card">
               <div class="kpi-title">Web Portal Latency</div>
               <div class="kpi-val" style="color: var(--primary);">42 ms</div>
-              <div class="kpi-status" style="color: var(--accent);">● Postgres Realtime Sub 50ms</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-title">Daily Sales Records</div>
-              <div class="kpi-val" style="color: #a855f7;" id="kpi-sales-count">Loading...</div>
-              <div class="kpi-status" style="color: var(--accent);">● Synced Summaries</div>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title">Realtime System Stream & Telemetry</div>
-            </div>
-            <div class="terminal-window">
-              <div class="terminal-header">
-                <span>LIVE CLOUD TELEMETRY FEED</span>
-                <span>FILTER: SUPABASE REALTIME</span>
-              </div>
-              <div class="terminal-body" id="monitoring-logs">
-                <div class="log-line"><span class="log-info">[INIT]</span> Telemetry listener active on schema 'public'.</div>
-              </div>
+              <div class="kpi-status" style="color: var(--accent);">● Postgres Realtime Active</div>
             </div>
           </div>
         </div>
 
-        <!-- ================= 4. ERRORS VIEW ================= -->
+        <!-- ================= 5. ERRORS VIEW ================= -->
         <div id="view-errors" class="tab-view">
           <div class="panel">
             <div class="panel-header">
@@ -373,16 +387,14 @@
                   <th>Source</th>
                   <th>Error Message / Stack</th>
                   <th>Occurrence</th>
-                  <th>Resolution Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td><span class="badge-pill badge-yellow">INFO</span></td>
-                  <td>Subscription Guard</td>
-                  <td><code>AUTH_DENIED: Free tier account attempted web customer portal login</code></td>
+                  <td><span style="color: var(--accent); font-weight:700;">NORMAL</span></td>
+                  <td>Live Support Engine</td>
+                  <td><code>Supabase Realtime channel listener active.</code></td>
                   <td>Live</td>
-                  <td><button class="action-btn" onclick="alert('Verified: Auth Gate working correctly.')">Verify Auth Gate</button></td>
                 </tr>
               </tbody>
             </table>
@@ -398,10 +410,13 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    let activeDevUser = null;
     let cachedStores = [];
+    let selectedSession = null;
 
     const views = {
       clients: { title: 'Merchant Clients & Support Hub', subtitle: 'Search merchant stores, troubleshoot terminal fleets, and override subscription tiers.' },
+      support: { title: 'Live Merchant Support Desk', subtitle: 'Reply directly to paying Plus & Pro merchants in real time.' },
       remote: { title: 'Remote Access & Diagnostics', subtitle: 'Send real-time ADB commands, clear caches, and inspect remote device state.' },
       monitoring: { title: 'Telemetry & Sockets Monitoring', subtitle: 'Live Supabase real-time channels, API latencies, and sync performance.' },
       errors: { title: 'Exception Log & Sync Repairs', subtitle: 'Diagnose SQLite/Supabase conflicts, schema mismatches, and failed upserts.' }
@@ -416,6 +431,8 @@
 
       document.getElementById('view-title').textContent = views[key].title;
       document.getElementById('view-subtitle').textContent = views[key].subtitle;
+
+      if (key === 'support') loadSupportDeskSessions();
     }
 
     function toggleTheme() {
@@ -437,7 +454,7 @@
     }
 
     async function verifyDevRole(user) {
-      const { data: profile, error } = await supabaseClient
+      const { data: profile } = await supabaseClient
         .from('profiles')
         .select('role')
         .eq('id', user.id)
@@ -445,15 +462,15 @@
 
       const role = (profile?.role || '').toLowerCase();
 
-      // STRICT DEV GUARD: checks for role == 'dev', 'developer', or 'admin'
       if (role === 'dev' || role === 'developer' || role === 'admin') {
+        activeDevUser = user;
         document.getElementById('dev-auth-view').style.display = 'none';
         document.getElementById('dev-app-layout').style.display = 'flex';
         document.getElementById('active-dev-user').innerText = user.email;
         loadDevData();
       } else {
         await supabaseClient.auth.signOut();
-        document.getElementById('dev-err').innerText = 'Access Denied: Your account role is "' + (role || 'customer') + '". Developer privileges required.';
+        document.getElementById('dev-err').innerText = 'Access Denied: Developer role required.';
         document.getElementById('dev-auth-view').style.display = 'flex';
         document.getElementById('dev-app-layout').style.display = 'none';
       }
@@ -472,11 +489,8 @@
       const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
       btnText.innerText = 'Authenticate';
 
-      if (error) {
-        err.innerText = error.message;
-      } else {
-        verifyDevRole(data.user);
-      }
+      if (error) err.innerText = error.message;
+      else verifyDevRole(data.user);
     });
 
     async function devLogout() {
@@ -488,49 +502,29 @@
 
     // --- DATA LOADING FOR DEV OPS ---
     async function loadDevData() {
-      // 1. Fetch Stores
-      const { data: stores, count } = await supabaseClient.from('stores').select('*');
+      const { data: stores } = await supabaseClient.from('stores').select('*');
       cachedStores = stores || [];
       document.getElementById('kpi-store-count').innerText = cachedStores.length;
       renderStores(cachedStores);
 
-      // 2. Fetch Dev Count
       const { data: devs } = await supabaseClient.from('profiles').select('id').in('role', ['dev', 'developer', 'admin']);
       document.getElementById('kpi-dev-count').innerText = (devs?.length || 1) + ' Admins';
-
-      // 3. Fetch Total Daily Sales Records
-      const { count: salesCount } = await supabaseClient.from('daily_sales_summaries').select('*', { count: 'exact', head: true });
-      document.getElementById('kpi-sales-count').innerText = (salesCount || 0) + ' Records';
-
-      // 4. Realtime Monitoring stream
-      supabaseClient.channel('dev-telemetry').on('postgres_changes', {
-        event: '*', schema: 'public', table: 'daily_sales_summaries'
-      }, (payload) => {
-        const time = new Date().toLocaleTimeString();
-        const logBox = document.getElementById('monitoring-logs');
-        logBox.innerHTML += `<div class="log-line"><span class="log-info">[${time}]</span> <span class="log-success">LIVE_SYNC_EVENT</span> Received summary payload for store_id: <code>${payload.new?.store_id || 'unknown'}</code> (Net: ₱${payload.new?.net_sales || '0.00'})</div>`;
-        logBox.scrollTop = logBox.scrollHeight;
-      }).subscribe();
     }
 
     function renderStores(list) {
       const tbody = document.getElementById('stores-tbody');
       if (!list || list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">No store profiles registered in Supabase.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">No store profiles registered.</td></tr>';
         return;
       }
 
       tbody.innerHTML = list.map(s => `
         <tr>
-          <td>
-            <strong>${s.name || 'Unnamed Store'}</strong><br>
-            <span style="font-family: monospace; font-size: 0.75rem; color: var(--text-muted);">${s.id}</span>
-          </td>
+          <td><strong>${s.name || 'Unnamed Store'}</strong><br><span style="font-family: monospace; font-size: 0.75rem; color: var(--text-muted);">${s.id}</span></td>
           <td><span style="font-family: monospace; font-size: 0.8rem; color: var(--primary);">${s.owner_id || s.user_id || 'N/A'}</span></td>
           <td>${s.created_at ? new Date(s.created_at).toLocaleDateString() : 'N/A'}</td>
           <td>
-            <button class="action-btn" onclick="openRemoteFor('${s.name || 'Store'}')">Remote Shell</button>
-            <button class="action-btn" onclick="alert('Inspection view opened for store: ${s.id}')">Inspect Summaries</button>
+            <button class="action-btn" onclick="openChatForStore('${s.id}', '${s.name || 'Store'}')">Open Support Chat</button>
           </td>
         </tr>
       `).join('');
@@ -545,35 +539,108 @@
       renderStores(filtered);
     }
 
-    // --- TERMINAL COMMAND SIMULATOR ---
+    // --- SUPPORT DESK REAL-TIME AGENT LOGIC ---
+    async function loadSupportDeskSessions() {
+      const { data: sessions } = await supabaseClient
+        .from('support_sessions')
+        .select('*')
+        .order('updated_at', { ascending: false });
+
+      const container = document.getElementById('support-sessions-list');
+      if (!sessions || sessions.length === 0) {
+        container.innerHTML = '<div style="padding: 16px; font-size: 13px; color: var(--text-muted); text-align: center;">No active merchant sessions.</div>';
+        return;
+      }
+
+      container.innerHTML = sessions.map(s => `
+        <div class="session-item ${selectedSession?.id === s.id ? 'active' : ''}" onclick="selectSession('${s.id}', '${s.store_name}', '${s.merchant_email}')">
+          <div class="session-store-title">${s.store_name}</div>
+          <div class="session-merchant-email">${s.merchant_email}</div>
+        </div>
+      `).join('');
+
+      // Listen for new sessions in real-time
+      supabaseClient.channel('dev-sessions').on('postgres_changes', {
+        event: 'INSERT', schema: 'public', table: 'support_sessions'
+      }, () => loadSupportDeskSessions()).subscribe();
+    }
+
+    async function selectSession(sessionId, storeName, merchantEmail) {
+      selectedSession = { id: sessionId, storeName, merchantEmail };
+      document.getElementById('desk-selected-store').innerText = storeName;
+      document.getElementById('desk-selected-email').innerText = merchantEmail;
+      document.getElementById('desk-input').disabled = false;
+      document.getElementById('desk-send-btn').disabled = false;
+
+      loadDeskMessages(sessionId);
+    }
+
+    async function loadDeskMessages(sessionId) {
+      const { data: messages } = await supabaseClient
+        .from('support_messages')
+        .select('*')
+        .eq('session_id', sessionId)
+        .order('created_at', { ascending: true });
+
+      const body = document.getElementById('desk-chat-body');
+      body.innerHTML = '';
+      if (messages) {
+        messages.forEach(m => renderDeskBubble(m.sender_role, m.message, m.created_at));
+      }
+
+      // Realtime incoming from merchant
+      supabaseClient.channel(`desk-${sessionId}`).on('postgres_changes', {
+        event: 'INSERT', schema: 'public', table: 'support_messages', filter: `session_id=eq.${sessionId}`
+      }, (payload) => {
+        if (payload.new && payload.new.sender_role === 'merchant') {
+          renderDeskBubble('merchant', payload.new.message, payload.new.created_at);
+        }
+      }).subscribe();
+    }
+
+    function renderDeskBubble(role, message, timestamp) {
+      const body = document.getElementById('desk-chat-body');
+      const timeStr = timestamp ? new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+      const div = document.createElement('div');
+      div.className = `agent-bubble ${role}`;
+      div.innerHTML = `${message} <span class="bubble-ts">${role === 'agent' ? 'You' : 'Merchant'} • ${timeStr}</span>`;
+      body.appendChild(div);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    async function sendAgentResponse(e) {
+      e.preventDefault();
+      const input = document.getElementById('desk-input');
+      const text = input.value.trim();
+      if (!text || !selectedSession) return;
+
+      input.value = '';
+      renderDeskBubble('agent', text, new Date());
+
+      await supabaseClient.from('support_messages').insert([{
+        session_id: selectedSession.id,
+        sender_id: activeDevUser.id,
+        sender_role: 'agent',
+        message: text
+      }]);
+    }
+
+    function openChatForStore(storeId, storeName) {
+      switchNav('support', document.querySelectorAll('.nav-btn')[1]);
+    }
+
     function sendRemoteCommand() {
       const input = document.getElementById('terminal-cmd');
       const val = input.value.trim();
       if (!val) return;
-
       const logBox = document.getElementById('remote-logs');
       const time = new Date().toLocaleTimeString();
-      
       logBox.innerHTML += `<div class="log-line"><span class="log-info">[${time}]</span> &gt; ${val}</div>`;
       logBox.innerHTML += `<div class="log-line"><span class="log-success">[${time}]</span> Daemon acknowledged command. Status: 0 (OK)</div>`;
-      
       input.value = '';
       logBox.scrollTop = logBox.scrollHeight;
     }
 
-    function quickCommand(cmd) {
-      document.getElementById('terminal-cmd').value = cmd;
-      sendRemoteCommand();
-    }
-
-    function openRemoteFor(storeName) {
-      switchNav('remote', document.querySelectorAll('.nav-btn')[1]);
-      const logBox = document.getElementById('remote-logs');
-      const time = new Date().toLocaleTimeString();
-      logBox.innerHTML += `<div class="log-line"><span class="log-warn">[${time} - FOCUS]</span> Attached diagnostic console to terminal: ${storeName} (Main POS)</div>`;
-    }
-
-    // Initialize session check on load
     window.addEventListener('DOMContentLoaded', checkDevSession);
   </script>
 </body>
