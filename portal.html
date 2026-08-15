@@ -96,7 +96,7 @@
     .tab-content.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* --- LIVE AGENT SUPPORT WIDGET --- */
+    /* --- PRIORITY LIVE CHAT WIDGET --- */
     #merchant-chat-btn {
       position: fixed; bottom: 24px; right: 24px; background: linear-gradient(135deg, var(--accent-green), #059669);
       color: white; border: 1px solid rgba(255,255,255,0.25); border-radius: 9999px; padding: 12px 20px;
@@ -304,6 +304,7 @@
     let activeStore = null;
     let activeUser = null;
     let currentSupportSession = null;
+    let merchantChatSubscribed = false;
 
     function getLocalDate(d = new Date()) {
       const year = d.getFullYear();
@@ -528,14 +529,20 @@
     }
 
     async function initMerchantSupportChat() {
-      // 1. Check or create an active support session for this merchant
-      let { data: session } = await supabaseClient
+      if (currentSupportSession) return;
+
+      // 1. Fetch latest open session safely using limit(1) to avoid maybeSingle collision
+      const { data: existingSessions } = await supabaseClient
         .from('support_sessions')
         .select('*')
         .eq('merchant_user_id', activeUser.id)
         .eq('status', 'open')
-        .maybeSingle();
+        .order('created_at', { ascending: false })
+        .limit(1);
 
+      let session = existingSessions && existingSessions.length > 0 ? existingSessions[0] : null;
+
+      // 2. Create session if none exists
       if (!session) {
         const { data: newSession } = await supabaseClient
           .from('support_sessions')
@@ -553,7 +560,7 @@
       currentSupportSession = session;
       if (!session) return;
 
-      // 2. Load historical messages
+      // 3. Load message history
       const { data: messages } = await supabaseClient
         .from('support_messages')
         .select('*')
@@ -566,14 +573,17 @@
         messages.forEach(m => renderBubble(m.sender_role, m.message, m.created_at));
       }
 
-      // 3. Subscribe to Real-Time incoming Agent replies
-      supabaseClient.channel(`chat-${session.id}`).on('postgres_changes', {
-        event: 'INSERT', schema: 'public', table: 'support_messages', filter: `session_id=eq.${session.id}`
-      }, (payload) => {
-        if (payload.new && payload.new.sender_role === 'agent') {
-          renderBubble('agent', payload.new.message, payload.new.created_at);
-        }
-      }).subscribe();
+      // 4. Subscribe to Real-Time incoming Agent replies (single channel)
+      if (!merchantChatSubscribed) {
+        merchantChatSubscribed = true;
+        supabaseClient.channel(`chat-${session.id}`).on('postgres_changes', {
+          event: 'INSERT', schema: 'public', table: 'support_messages', filter: `session_id=eq.${session.id}`
+        }, (payload) => {
+          if (payload.new && payload.new.sender_role === 'agent') {
+            renderBubble('agent', payload.new.message, payload.new.created_at);
+          }
+        }).subscribe();
+      }
     }
 
     function renderBubble(role, message, timestamp) {
@@ -623,7 +633,7 @@
     // EXPORT CSV
     function exportCSV() {
       if (!activeStore) return;
-      let csv = "FlexiTap Sales By Range (SBR)\n\nNet Sales\n";
+      let csv = "FlexiTap Sales By Range (SBR)\n\n";
       const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csv);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
@@ -646,6 +656,7 @@
     async function logout() {
       await supabaseClient.auth.signOut();
       document.getElementById('app-layout').style.display = 'none';
+      document.getElementById('p-password').value = '';
       document.getElementById('login-view').style.display = 'flex';
     }
 
