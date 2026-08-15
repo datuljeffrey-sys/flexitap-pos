@@ -54,19 +54,21 @@
     .btn-login { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border); color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; }
     .btn-login:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.2); }
 
+    /* HERO */
     .hero { text-align: center; padding: 80px 0 50px; }
     .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); padding: 6px 16px; border-radius: 9999px; font-size: 13px; font-weight: 600; color: #60a5fa; margin-bottom: 24px; }
     .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); }
     
     .hero h1 { font-size: 52px; font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -1.5px; }
-    .hero p { font-size: 19px; color: var(--text-muted); max-width: 650px; margin: 0 auto 32px; }
+    .hero p { font-size: 19px; color: var(--text-muted); max-width: 680px; margin: 0 auto 32px; }
     
     .cta-group { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
     .btn-primary { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
-    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35); }
     .btn-secondary { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: #fff; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
     .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
 
+    /* PREVIEW CARD */
     .preview-wrapper { margin: 40px auto 80px; max-width: 850px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
     .preview-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 16px; margin-bottom: 20px; }
     .preview-title { font-size: 16px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
@@ -76,26 +78,54 @@
     .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
     .stat-val { font-size: 26px; font-weight: 800; margin-top: 6px; }
 
+    /* FEATURES */
     .features { padding: 40px 0 80px; text-align: center; }
     .section-title { font-size: 32px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px; }
-    .section-subtitle { color: var(--text-muted); margin-bottom: 48px; font-size: 16px; }
+    .section-subtitle { color: var(--text-muted); margin-bottom: 48px; font-size: 16px; max-width: 650px; margin-left: auto; margin-right: auto; }
     .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; text-align: left; }
     .feature-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 32px; border-radius: 16px; }
     .icon-box { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 20px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); }
     .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fff; }
     .feature-card p { font-size: 14px; color: var(--text-muted); }
 
-    .pricing { padding: 40px 0 80px; text-align: center; }
-    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 40px; text-align: left; }
-    .pricing-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 32px; border-radius: 20px; position: relative; }
+    /* PRICING */
+    .pricing { padding: 40px 0 60px; text-align: center; }
+    .billing-toggle { display: inline-flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.05); padding: 6px 16px; border-radius: 9999px; border: 1px solid var(--card-border); margin-bottom: 36px; font-size: 14px; font-weight: 700; }
+    .toggle-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-weight: 700; font-size: 14px; padding: 6px 12px; border-radius: 9999px; transition: 0.2s; }
+    .toggle-btn.active { background: var(--primary); color: #fff; }
+    .save-badge { background: rgba(16,185,129,0.2); color: #34d399; font-size: 11px; padding: 2px 8px; border-radius: 9999px; margin-left: 4px; }
+
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; text-align: left; }
+    .pricing-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 32px; border-radius: 20px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
     .pricing-card.popular { border-color: var(--primary); box-shadow: 0 0 30px -5px rgba(59, 130, 246, 0.3); }
     .badge-pop { position: absolute; top: 16px; right: 16px; background: var(--primary); color: white; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase; }
-    .price { font-size: 36px; font-weight: 800; margin: 16px 0; color: #fff; }
-    .price span { font-size: 14px; font-weight: 500; color: var(--text-muted); }
+    .price { font-size: 40px; font-weight: 800; margin: 16px 0; color: #fff; }
+    .price span { font-size: 15px; font-weight: 500; color: var(--text-muted); }
     .pricing-list { list-style: none; margin: 24px 0; font-size: 14px; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px; }
     .pricing-list li::before { content: "✓ "; color: var(--accent-green); font-weight: 800; }
 
-    /* FAQ SECTION */
+    /* FEATURE BREAKDOWN MATRIX */
+    .matrix-wrapper { margin-top: 50px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 32px; overflow-x: auto; }
+    .matrix-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+    .matrix-table th { padding: 14px 16px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 12px; border-bottom: 1px solid var(--card-border); }
+    .matrix-table td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+    .matrix-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .col-center { text-align: center; }
+    .check-icon { color: var(--accent-green); font-weight: 800; font-size: 16px; }
+    .dash-icon { color: var(--text-muted); font-size: 16px; }
+
+    /* SUPPORT PLAN ADDON CARD */
+    .support-plan-banner {
+      margin-top: 40px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+      border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 20px; padding: 32px; text-align: left;
+      display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: center;
+    }
+    .support-plan-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .support-plan-desc { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+    .support-perks { list-style: none; margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; color: #cbd5e1; }
+    .support-perks li::before { content: "🛡️ "; }
+
+    /* FAQ */
     .faq-section { padding: 40px 0 100px; }
     .faq-container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; text-align: left; }
     .faq-item { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 18px 24px; cursor: pointer; transition: 0.2s; }
@@ -126,7 +156,7 @@
     .submit-btn:hover { background: var(--primary-hover); }
     .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
 
-    /* FLOATING SALES CHAT WIDGET */
+    /* SALES CHAT WIDGET */
     #chat-btn {
       position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%;
       background: linear-gradient(135deg, var(--primary), #2563eb); border: 1px solid rgba(255,255,255,0.25);
@@ -160,6 +190,7 @@
       .hero h1 { font-size: 36px; }
       .preview-grid { grid-template-columns: 1fr; }
       .nav-links { display: none; }
+      .support-plan-banner { grid-template-columns: 1fr; }
       .footer-content { flex-direction: column; text-align: center; }
       #sales-chat-panel { width: calc(100vw - 32px); right: 16px; bottom: 84px; height: 480px; }
     }
@@ -185,9 +216,10 @@
       <div class="nav-links">
         <a href="#features" class="nav-link">Features</a>
         <a href="#pricing" class="nav-link">Pricing</a>
+        <a href="#comparison" class="nav-link">Feature Matrix</a>
         <a href="#faq" class="nav-link">FAQ</a>
         <a href="#download" class="nav-link">Download</a>
-        <a href="dev_portal.html" class="nav-link" style="color: var(--primary);">Dev Portal ↗</a>
+        <a href="dev_portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
       </div>
 
       <div style="display: flex; align-items: center; gap: 16px;">
@@ -203,7 +235,7 @@
           </a>
         </div>
 
-        <button class="btn-login" onclick="openModal('login-modal')">Store Owner Login</button>
+        <button class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
       </div>
     </div>
   </header>
@@ -212,14 +244,14 @@
   <main class="container">
     <section class="hero">
       <div class="badge">
-        <span class="badge-dot"></span> Real-Time Cloud Sync & Offline-First Engine
+        <span class="badge-dot"></span> Real-Time Cloud Sync & Offline-First POS
       </div>
-      <h1>Smarter POS Register.<br>Instant Business Intelligence.</h1>
-      <p>High-speed checkout, table management, offline-first reliability, and real-time merchant analytics right in your browser.</p>
+      <h1>Next-Gen Cloud POS.<br>Built for Fast-Paced Commerce.</h1>
+      <p>High-speed checkout, tables & kitchen tickets, offline-first reliability, and real-time merchant analytics right in your browser. Bring your own Android hardware.</p>
       
       <div class="cta-group" id="download">
         <button class="btn-primary" onclick="openModal('login-modal')">
-          <span>📊</span> Launch Customer Portal
+          <span>📊</span> Launch Merchant Portal
         </button>
         <a href="https://github.com/datuljeffrey-sys/flexitapapp/releases" target="_blank" class="btn-secondary">
           <span>⬇️</span> Download Android APK
@@ -236,89 +268,219 @@
       <div class="preview-grid">
         <div class="stat-box">
           <div class="stat-label">Today's Net Sales</div>
-          <div class="stat-val" style="color: var(--accent-green);">₱14,850.00</div>
+          <div class="stat-val" style="color: var(--accent-green);">$3,485.50</div>
         </div>
         <div class="stat-box">
           <div class="stat-label">Transactions</div>
-          <div class="stat-val" style="color: var(--primary);">48</div>
+          <div class="stat-val" style="color: var(--primary);">124</div>
         </div>
         <div class="stat-box">
           <div class="stat-label">Average Ticket</div>
-          <div class="stat-val" style="color: var(--accent-purple);">₱309.37</div>
+          <div class="stat-val" style="color: var(--accent-purple);">$28.10</div>
         </div>
       </div>
     </div>
 
     <!-- FEATURES -->
     <section class="features" id="features">
-      <h2 class="section-title">Built for High-Speed Commerce</h2>
-      <p class="section-subtitle">Everything you need to run counter checkout, kitchen tickets, or retail inventory.</p>
+      <h2 class="section-title">Built for Modern US Merchants</h2>
+      <p class="section-subtitle">No proprietary terminal lock-in. Run counter checkout, food truck windows, or multi-station dining with ease.</p>
 
       <div class="feature-grid">
         <div class="feature-card">
           <div class="icon-box">⚡</div>
           <h3>Offline-First Architecture</h3>
-          <p>Keep ringing up sales even when Wi-Fi drops. Orders save locally to SQLite and sync to Supabase the moment you're back online.</p>
+          <p>Never drop a sale during network outages. Orders write locally to SQLite in milliseconds and sync to Supabase the moment your connection restores.</p>
         </div>
 
         <div class="feature-card">
           <div class="icon-box">📱</div>
-          <h3>Live Web Portal</h3>
-          <p>Monitor real-time revenue, gross/net sales, discounts, and GCash/Card payment splits anywhere in real time.</p>
+          <h3>Live Web Customer Portal</h3>
+          <p>Check sales from anywhere in real time. Track net revenue, discounts, tips, tax totals, and tender breakdowns with exportable CSV and PDF reports.</p>
         </div>
 
         <div class="feature-card">
           <div class="icon-box">🍽️</div>
-          <h3>Multi-Industry Engine</h3>
-          <p>Tailored workflows for F&B (table management, order modifiers, KDS) and Retail (barcode scanning, stock alerts).</p>
+          <h3>F&B & Retail Workflows</h3>
+          <p>Table layouts, modifiers, kitchen routing (KDS), split tender, custom taxes, and fast barcode scanning for retail inventory.</p>
         </div>
       </div>
     </section>
 
     <!-- PRICING TIERS -->
     <section class="pricing" id="pricing">
-      <h2 class="section-title">Transparent Freemium Pricing</h2>
-      <p class="section-subtitle">Start free on a single register or upgrade for real-time cloud sync and analytics.</p>
+      <h2 class="section-title">Transparent, No-Contract Pricing</h2>
+      <p class="section-subtitle">Start free on a single device or upgrade for live web dashboards, multi-terminal sync, and kitchen screens.</p>
+
+      <div class="billing-toggle">
+        <button class="toggle-btn active" id="btn-monthly" onclick="setBilling('monthly')">Monthly</button>
+        <button class="toggle-btn" id="btn-annual" onclick="setBilling('annual')">Annual <span class="save-badge">Save 2 Mo</span></button>
+      </div>
 
       <div class="pricing-grid">
+        <!-- FREE TIER -->
         <div class="pricing-card">
-          <h3>Free</h3>
-          <p style="color: var(--text-muted); font-size: 13px;">For solo pop-ups & kiosks</p>
-          <div class="price">₱0 <span>/ month</span></div>
-          <ul class="pricing-list">
-            <li>Single Standalone Register</li>
-            <li>Local SQLite Offline Storage</li>
-            <li>Standard Receipt Printing</li>
-            <li>Basic Shift Summaries</li>
-          </ul>
-          <a href="#download" class="btn-secondary" style="width: 100%; justify-content: center;">Get Started Free</a>
+          <div>
+            <h3>Free</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">For solo pop-ups, farmers markets & kiosks</p>
+            <div class="price">$0 <span>/ mo</span></div>
+            <ul class="pricing-list">
+              <li>1 Standalone Android Register</li>
+              <li>Local SQLite Offline Storage</li>
+              <li>Standard ESC/POS Receipt Printing</li>
+              <li>Daily Shift & Cash Drawer Logs</li>
+            </ul>
+          </div>
+          <a href="#download" class="btn-secondary" style="width: 100%; justify-content: center; margin-top: 20px;">Download Free APK</a>
         </div>
 
+        <!-- PLUS TIER -->
         <div class="pricing-card popular">
-          <span class="badge-pop">Popular</span>
-          <h3>Plus</h3>
-          <p style="color: var(--text-muted); font-size: 13px;">For growing retail & cafes</p>
-          <div class="price">₱499 <span>/ month</span></div>
-          <ul class="pricing-list">
-            <li><strong>Live Web Customer Portal</strong></li>
-            <li>Real-time Cloud Sync (Supabase)</li>
-            <li>Payment Method & Category Breakdown</li>
-            <li>Historical Date Picker Reports</li>
-          </ul>
-          <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="openModal('login-modal')">Upgrade to Plus</button>
+          <div>
+            <span class="badge-pop">Popular</span>
+            <h3>Plus</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">For growing cafes, boutiques & food trucks</p>
+            <div class="price" id="plus-price">$19 <span>/ mo</span></div>
+            <ul class="pricing-list">
+              <li><strong>Live Web Customer Portal</strong></li>
+              <li>Real-time Cloud Sync (Supabase)</li>
+              <li>Tender, Tips & Category Splits</li>
+              <li>Sales by Range (PDF/CSV Exports)</li>
+            </ul>
+          </div>
+          <button class="btn-primary" style="width: 100%; justify-content: center; margin-top: 20px;" onclick="openModal('login-modal')">Upgrade to Plus</button>
         </div>
 
+        <!-- PRO TIER -->
         <div class="pricing-card">
-          <h3>Pro</h3>
-          <p style="color: var(--text-muted); font-size: 13px;">For multi-terminal businesses</p>
-          <div class="price">₱999 <span>/ month</span></div>
-          <ul class="pricing-list">
-            <li>Multi-terminal Master/Sub sync</li>
-            <li>Kitchen Display System (KDS)</li>
-            <li>Advanced Cloud Inventory</li>
-            <li>Priority 24/7 Support</li>
+          <div>
+            <h3>Pro</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">For multi-station venues & restaurants</p>
+            <div class="price" id="pro-price">$49 <span>/ mo</span></div>
+            <ul class="pricing-list">
+              <li><strong>Unlimited Multi-Terminal Sync</strong></li>
+              <li>Kitchen Display System (KDS)</li>
+              <li>Centralized Inventory & Stock Alerts</li>
+              <li>Priority Support Live Chat Included</li>
+            </ul>
+          </div>
+          <button class="btn-secondary" style="width: 100%; justify-content: center; margin-top: 20px;" onclick="openSalesChat('Pro Plan Consultation')">Contact for Pro</button>
+        </div>
+      </div>
+
+      <!-- FULL PLAN FEATURE BREAKDOWN MATRIX -->
+      <div class="matrix-wrapper" id="comparison">
+        <h3 style="font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px;">Detailed Feature Comparison</h3>
+        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Compare capabilities across FlexiTap tiers to choose the right setup for your business.</p>
+        
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th style="width: 40%;">Core Feature / Capability</th>
+              <th class="col-center" style="width: 20%;">Free ($0)</th>
+              <th class="col-center" style="width: 20%; color: #60a5fa;">Plus ($19/mo)</th>
+              <th class="col-center" style="width: 20%; color: #a855f7;">Pro ($49/mo)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Target Merchant</strong></td>
+              <td class="col-center" style="color: var(--text-muted); font-size: 13px;">Solo Kiosks, Pop-ups</td>
+              <td class="col-center" style="color: #60a5fa; font-size: 13px; font-weight: 600;">Cafes, Boutiques, Bakeries</td>
+              <td class="col-center" style="color: #a855f7; font-size: 13px; font-weight: 600;">Restaurants, Multi-Station</td>
+            </tr>
+            <tr>
+              <td>Active Android Terminals</td>
+              <td class="col-center">1 Device</td>
+              <td class="col-center">1 Primary Register</td>
+              <td class="col-center"><strong>Unlimited Devices</strong></td>
+            </tr>
+            <tr>
+              <td>Offline-First SQLite Engine</td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+            </tr>
+            <tr>
+              <td>ESC/POS Receipt Printing (58/80mm)</td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+            </tr>
+            <tr>
+              <td>Cash Drawer (RJ11) & Barcode Scanner</td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+            </tr>
+            <tr>
+              <td>Real-time Cloud Sync (Supabase)</td>
+              <td class="col-center"><span class="dash-icon">—</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+            </tr>
+            <tr>
+              <td>Live Web Customer Analytics Portal</td>
+              <td class="col-center"><span class="dash-icon">—</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+            </tr>
+            <tr>
+              <td>Sales by Range (PDF & CSV Exports)</td>
+              <td class="col-center"><span class="dash-icon">—</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+            </tr>
+            <tr>
+              <td>Tender, Tip & Tax Detailed Splits</td>
+              <td class="col-center" style="font-size: 12px; color: var(--text-muted);">Basic Cash Only</td>
+              <td class="col-center"><span class="check-icon">✓ Full Breakdown</span></td>
+              <td class="col-center"><span class="check-icon">✓ Full Breakdown</span></td>
+            </tr>
+            <tr>
+              <td>Kitchen Display System (KDS Screen)</td>
+              <td class="col-center"><span class="dash-icon">—</span></td>
+              <td class="col-center"><span class="dash-icon">—</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+            </tr>
+            <tr>
+              <td>Multi-Terminal Master/Sub Sync</td>
+              <td class="col-center"><span class="dash-icon">—</span></td>
+              <td class="col-center"><span class="dash-icon">—</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+            </tr>
+            <tr>
+              <td>Centralized Cloud Inventory Tracking</td>
+              <td class="col-center"><span class="dash-icon">—</span></td>
+              <td class="col-center"><span class="dash-icon">—</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
+            </tr>
+            <tr>
+              <td>Priority Live Tech Support (In-Portal)</td>
+              <td class="col-center"><span class="dash-icon">—</span></td>
+              <td class="col-center" style="font-size: 12px; color: var(--text-muted);">$15/mo Add-on</td>
+              <td class="col-center"><span class="check-icon">✓ Included Priority</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- TECH SUPPORT PLAN BANNER -->
+      <div class="support-plan-banner">
+        <div>
+          <div class="support-plan-title">🛡️ Priority Tech Support & Uptime Assurance</div>
+          <div class="support-plan-desc">Need peace of mind during peak service hours? Add our dedicated technical support plan to keep your hardware, database, and sync pipeline in optimal health.</div>
+          <ul class="support-perks">
+            <li>Remote Device ADB Diagnostics</li>
+            <li>In-Portal Live Agent Fast-Lane</li>
+            <li>Cloud SQLite Desync Repair</li>
+            <li>Direct Technical Hotline (Soon)</li>
           </ul>
-          <button class="btn-secondary" style="width: 100%; justify-content: center;" onclick="openSalesChat('Pro Plan Consultation')">Contact for Pro</button>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 28px; font-weight: 800; color: #fff;">$15 <span style="font-size: 14px; font-weight: 500; color: var(--text-muted);">/ month</span></div>
+          <p style="font-size: 12px; color: var(--accent-green); margin-bottom: 12px;">$10/mo when bundled with Pro</p>
+          <button class="btn-secondary" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);" onclick="openSalesChat('Priority Support Add-on')">Add Support Plan</button>
         </div>
       </div>
     </section>
@@ -327,28 +489,28 @@
     <section class="faq-section" id="faq">
       <div style="text-align: center; margin-bottom: 32px;">
         <h2 class="section-title">Frequently Asked Questions</h2>
-        <p class="section-subtitle">Common questions about FlexiTap POS hardware, sync, and subscriptions.</p>
+        <p class="section-subtitle">Everything you need to know about hardware, offline mode, and subscriptions.</p>
       </div>
 
       <div class="faq-container">
         <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-question"><span>Do I need an internet connection to ring up sales?</span><span class="faq-toggle">+</span></div>
-          <div class="faq-answer">No! FlexiTap operates on an offline-first SQLite database. You can take orders, process cash, and print receipts completely offline. Transactions will automatically sync to your cloud portal once internet reconnects.</div>
+          <div class="faq-question"><span>Can I use my own tablet and receipt printers?</span><span class="faq-toggle">+</span></div>
+          <div class="faq-answer">Yes! FlexiTap is 100% Bring-Your-Own-Device (BYOD). It runs smoothly on standard Android tablets and phones. Connect to standard 58mm or 80mm ESC/POS thermal printers via Bluetooth, USB OTG, or Network/LAN.</div>
         </div>
 
         <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-question"><span>What hardware and thermal printers are supported?</span><span class="faq-toggle">+</span></div>
-          <div class="faq-answer">FlexiTap runs on standard Android tablets and phones. It connects to ESC/POS thermal printers via Bluetooth, USB, or Network/LAN, and supports standard barcode scanners and RJ11 cash drawers.</div>
+          <div class="faq-question"><span>What happens if my Wi-Fi or cellular network drops?</span><span class="faq-toggle">+</span></div>
+          <div class="faq-answer">FlexiTap is built with an offline-first SQLite database. You can ring up sales, take cash, and print customer receipts with zero interruption. The instant connectivity returns, sales summaries automatically sync to the cloud.</div>
         </div>
 
         <div class="faq-item" onclick="toggleFaq(this)">
           <div class="faq-question"><span>How do I access the Web Customer Portal?</span><span class="faq-toggle">+</span></div>
-          <div class="faq-answer">The Live Web Analytics Portal is included with Plus and Pro plans. You can log in from any web browser using your merchant owner credentials to view real-time revenue, gross/net summaries, and category splits.</div>
+          <div class="faq-answer">The Live Web Analytics Portal is included with Plus and Pro plans. Log in from any desktop or mobile browser using your store owner credentials to view real-time sales, tax totals, and export CSV/PDF reports.</div>
         </div>
 
         <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-question"><span>Can I upgrade or downgrade anytime?</span><span class="faq-toggle">+</span></div>
-          <div class="faq-answer">Yes, FlexiTap is subscription-based without lock-in contracts. You can switch between Free, Plus, and Pro tiers as your business scales.</div>
+          <div class="faq-question"><span>Are there any long-term contracts or cancellation fees?</span><span class="faq-toggle">+</span></div>
+          <div class="faq-answer">None. FlexiTap is a transparent SaaS subscription. You can upgrade, downgrade, or cancel anytime directly from your dashboard.</div>
         </div>
       </div>
     </section>
@@ -385,7 +547,7 @@
         <div class="footer-links">
           <a class="footer-link" onclick="openModal('terms-modal')">Terms of Service</a>
           <a class="footer-link" onclick="openModal('privacy-modal')">Privacy Policy</a>
-          <a href="dev_portal.html" class="footer-link" style="color: var(--primary);">Developer Docs & Ops</a>
+          <a href="dev_portal.html" class="footer-link" style="color: var(--primary);">Developer & Ops</a>
           <a class="footer-link" onclick="openModal('login-modal')">Merchant Login</a>
         </div>
       </div>
@@ -400,7 +562,7 @@
       <div style="display: flex; align-items: center; gap: 8px;">
         <div style="width: 10px; height: 10px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></div>
         <div>
-          <div style="font-size: 13px; font-weight: 800; color: #fff;">FlexiTap Sales & Inquiry</div>
+          <div style="font-size: 13px; font-weight: 800; color: #fff;">FlexiTap Sales Assistant</div>
           <div style="font-size: 11px; color: var(--text-muted);">sales@flexitapapp.com</div>
         </div>
       </div>
@@ -409,12 +571,12 @@
 
     <div class="chat-body" id="chat-messages">
       <div class="chat-msg">
-        👋 <strong>Hi there!</strong> Welcome to FlexiTap POS. How can we help you set up or scale your store?
+        👋 <strong>Welcome to FlexiTap!</strong> How can we help you set up or scale your store today?
       </div>
       <div class="chat-options" id="chat-quick-options">
-        <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Plus vs Pro Plan Breakdown</button>
-        <button class="chat-chip" onclick="handleChatSelect('hardware')">🖨️ Printer & Device Compatibility</button>
-        <button class="chat-chip" onclick="handleChatSelect('sync')">⚡ How Offline Cloud Sync Works</button>
+        <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Plus ($19) vs Pro ($49) Plans</button>
+        <button class="chat-chip" onclick="handleChatSelect('hardware')">🖨️ Tablet & Printer Compatibility</button>
+        <button class="chat-chip" onclick="handleChatSelect('sync')">⚡ Offline Reliability & Cloud Sync</button>
         <button class="chat-chip" onclick="handleChatSelect('contact')" style="background: rgba(16,185,129,0.1); color: #34d399; border-color: rgba(16,185,129,0.3);">✉️ Contact Sales / Request Demo</button>
       </div>
     </div>
@@ -469,7 +631,7 @@
       <p style="margin-bottom: 16px;">Effective Date: August 2026</p>
       <div style="font-size: 14px; color: var(--text-muted); display: flex; flex-direction: column; gap: 12px;">
         <p><strong style="color: #fff;">1. Row Level Security:</strong> All sales data is partitioned per merchant using database RLS.</p>
-        <p><strong style="color: #fff;">2. No Third-Party Sales:</strong> Your store sales figures are never shared or sold.</p>
+        <p><strong style="color: #fff;">2. Data Privacy:</strong> Your store sales figures are never shared or sold.</p>
       </div>
     </div>
   </div>
@@ -478,6 +640,26 @@
     const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // --- BILLING TOGGLE ---
+    function setBilling(cycle) {
+      const btnM = document.getElementById('btn-monthly');
+      const btnA = document.getElementById('btn-annual');
+      const plusP = document.getElementById('plus-price');
+      const proP = document.getElementById('pro-price');
+
+      if (cycle === 'annual') {
+        btnA.classList.add('active');
+        btnM.classList.remove('active');
+        plusP.innerHTML = '$190 <span>/ year</span>';
+        proP.innerHTML = '$490 <span>/ year</span>';
+      } else {
+        btnM.classList.add('active');
+        btnA.classList.remove('active');
+        plusP.innerHTML = '$19 <span>/ mo</span>';
+        proP.innerHTML = '$49 <span>/ mo</span>';
+      }
+    }
 
     // --- MODAL CONTROLS ---
     function openModal(id) {
@@ -503,7 +685,7 @@
       toggleSign.textContent = item.classList.contains('open') ? '×' : '+';
     }
 
-    // --- SALES CHAT WIDGET ENGINE ---
+    // --- SALES CHAT WIDGET ---
     function toggleSalesChat() {
       const p = document.getElementById('sales-chat-panel');
       p.style.display = (p.style.display === 'none' || p.style.display === '') ? 'flex' : 'none';
@@ -512,7 +694,7 @@
     function openSalesChat(topic) {
       const p = document.getElementById('sales-chat-panel');
       p.style.display = 'flex';
-      appendMessage(`Let's talk about the <strong>${topic}</strong>! Leave your email below or reach us directly at <a href="mailto:sales@flexitapapp.com" style="color:var(--primary);">sales@flexitapapp.com</a>.`);
+      appendMessage(`Let's discuss the <strong>${topic}</strong>! Leave your details below or email us directly at <a href="mailto:sales@flexitapapp.com" style="color:var(--primary); font-weight:700;">sales@flexitapapp.com</a>.`);
       showLeadForm();
     }
 
@@ -528,27 +710,28 @@
     function handleChatSelect(type) {
       if (type === 'pricing') {
         appendMessage(`
-          <strong>Tier Breakdown:</strong><br>
-          • <strong>Free:</strong> Local SQLite register & basic shift logs.<br>
-          • <strong>Plus (₱499/mo):</strong> Live Web Portal, payment splits, and historical analytics.<br>
-          • <strong>Pro (₱999/mo):</strong> Multi-register sync, KDS screens, and inventory.
+          <strong>US Plan Breakdown:</strong><br>
+          • <strong>Free ($0):</strong> 1 offline Android register, SQLite storage.<br>
+          • <strong>Plus ($19/mo):</strong> Live Web Portal, tender splits & CSV/PDF reports.<br>
+          • <strong>Pro ($49/mo):</strong> Multi-register sync, KDS screens & inventory.<br>
+          • <strong>Support Plan ($15/mo):</strong> Remote device diagnostics & priority queue.
         `);
       } else if (type === 'hardware') {
         appendMessage(`
-          <strong>Hardware Support:</strong><br>
-          FlexiTap works on standard Android tablets & phones.<br>
-          • Thermal Printers: 58mm & 80mm ESC/POS (Bluetooth/USB/LAN)<br>
-          • Cash Drawers (RJ11) & USB/Bluetooth Barcode Scanners.
+          <strong>Hardware Compatibility:</strong><br>
+          Bring your own Android tablet or phone.<br>
+          • Printers: 58mm / 80mm ESC/POS (Bluetooth, USB OTG, Network LAN).<br>
+          • Scanners & Drawers: USB barcode scanners and RJ11 cash drawers.
         `);
       } else if (type === 'sync') {
         appendMessage(`
-          <strong>Offline Cloud Sync:</strong><br>
-          Sales write to SQLite in under 15ms. The instant your device reconnects to Wi-Fi/4G, the background daemon pushes records to Supabase with zero duplicate transactions.
+          <strong>Offline-First Reliability:</strong><br>
+          Sales record to local SQLite immediately. When connected to Wi-Fi/LTE, changes sync to Supabase in real time with zero duplicate transactions.
         `);
       } else if (type === 'contact') {
         appendMessage(`
-          <strong>Direct Sales Inquiry:</strong><br>
-          You can email our team directly at <a href="mailto:sales@flexitapapp.com" style="color:var(--primary); font-weight:700;">sales@flexitapapp.com</a> or drop your details below:
+          <strong>Contact Sales Team:</strong><br>
+          Direct Email: <a href="mailto:sales@flexitapapp.com" style="color:var(--primary); font-weight:700;">sales@flexitapapp.com</a> or leave your contact information below:
         `);
         showLeadForm();
       }
@@ -557,9 +740,9 @@
     function showLeadForm() {
       appendMessage(`
         <form onsubmit="submitSalesInquiry(event)" style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
-          <input type="text" id="lead-name" placeholder="Your Name / Business Name" required style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0;" />
-          <input type="email" id="lead-email" placeholder="Email (e.g. store@gmail.com)" required style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0;" />
-          <input type="tel" id="lead-phone" placeholder="Phone Number" required style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0;" />
+          <input type="text" id="lead-name" placeholder="Business Name / Contact Name" required style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0;" />
+          <input type="email" id="lead-email" placeholder="Email (e.g. owner@cafe.com)" required style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0;" />
+          <input type="tel" id="lead-phone" placeholder="Phone Number (Optional)" style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0;" />
           <button type="submit" style="padding:8px; background:var(--accent-green); color:#fff; border:none; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px;">Send Inquiry</button>
         </form>
       `);
@@ -577,7 +760,7 @@
         console.log('Lead cached locally.');
       }
 
-      appendMessage(`✅ <strong>Thank you, ${name}!</strong> Your inquiry has been sent to <strong>sales@flexitapapp.com</strong>. We will get back to you shortly.`);
+      appendMessage(`✅ <strong>Thank you, ${name}!</strong> Your inquiry has been routed to <strong>sales@flexitapapp.com</strong>. We will get back to you shortly.`);
     }
 
     // --- AUTH LOGIN SUBMIT ---
@@ -589,7 +772,7 @@
       const btnText = document.getElementById('login-btn-text');
 
       errorDiv.innerText = '';
-      btnText.innerText = 'Verifying account...';
+      btnText.innerText = 'Verifying credentials...';
 
       const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
       
@@ -608,13 +791,13 @@
       const userRole = (profile?.role || '').toLowerCase();
       const tier = (profile?.subscription_tier || 'free').toLowerCase();
 
-      // Developers bypass tier restrictions straight to customer portal
+      // Devs bypass tier restrictions
       if (userRole === 'dev' || userRole === 'developer' || userRole === 'admin') {
         window.location.href = 'portal.html';
         return;
       }
 
-      // Subscription Tier Guard
+      // Subscription Guard
       if (tier === 'free') {
         await supabaseClient.auth.signOut();
         btnText.innerText = 'Log In to Portal';
