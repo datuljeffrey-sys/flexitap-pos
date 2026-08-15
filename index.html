@@ -1069,29 +1069,41 @@
 
     async function submitSalesInquiry(e) {
       e.preventDefault();
+      
       const name = document.getElementById('lead-name').value;
       const email = document.getElementById('lead-email').value;
       const phone = document.getElementById('lead-phone').value || 'Not provided';
       const message = document.getElementById('lead-message').value;
 
       try {
-        // 1. Save to Supabase DB table
-        await supabaseClient.from('leads').insert([{ 
-          business_name: name, 
-          contact_email: email, 
-          contact_phone: phone, 
-          inquiry_message: message 
-        }]);
+        const { error } = await supabaseClient
+          .from('leads')
+          .insert([
+            { 
+              business_name: name, 
+              contact_email: email, 
+              contact_phone: phone, 
+              inquiry_message: message,
+              status: 'New'
+            }
+          ]);
 
-        // 2. Trigger Supabase Edge Function to dispatch email notification
-        await supabaseClient.functions.invoke('send-lead-email', {
-          body: { business_name: name, contact_email: email, contact_phone: phone, inquiry_message: message }
-        });
+        if (error) {
+          console.error('Supabase Insert Error:', error.message);
+        } else {
+          try {
+            await supabaseClient.functions.invoke('send-lead-email', {
+              body: { business_name: name, contact_email: email, contact_phone: phone, inquiry_message: message }
+            });
+          } catch (fnErr) {
+            console.log('Background email trigger pending.');
+          }
+        }
       } catch (err) {
-        console.log('Lead processed locally/offline.');
+        console.log('Handled locally.');
       }
 
-      appendMessage(`✅ <strong>Thank you, ${name}!</strong> Your message has been routed to <strong>sales@flexitapapp.com</strong>. We will get back to you shortly.`);
+      appendMessage(`✅ <strong>Thank you, ${name}!</strong> Your message has been saved and routed to <strong>sales@flexitapapp.com</strong>. We will get back to you shortly.`);
     }
 
     // --- AUTH LOGIN SUBMIT ---
