@@ -634,12 +634,12 @@
             <span class="badge-pop">Popular</span>
             <h3>Plus</h3>
             <p style="color: var(--text-muted); font-size: 13px;">For growing cafes, boutiques & food trucks</p>
-            <div class="price" id="plus-price">$19 <span>/ mo</span></div>
+            <div class="price" id="plus-price">$49 <span>/ mo</span></div>
             <ul class="pricing-list">
+              <li><strong>Up to 3 Terminals per Store</strong></li>
               <li><strong>Live Web Customer Portal</strong></li>
               <li>Automated Real-Time Cloud Sync</li>
               <li>Daily Automated Cloud Backups</li>
-              <li>Tender, Tips & Category Splits</li>
               <li>Sales by Range (PDF/CSV Exports)</li>
             </ul>
           </div>
@@ -651,7 +651,7 @@
           <div>
             <h3>Pro</h3>
             <p style="color: var(--text-muted); font-size: 13px;">For multi-station venues & restaurants</p>
-            <div class="price" id="pro-price">$49 <span>/ mo</span></div>
+            <div class="price" id="pro-price">$99 <span>/ mo</span></div>
             <ul class="pricing-list">
               <li><strong>Unlimited Multi-Terminal Sync</strong></li>
               <li><strong>Kitchen Display System (KDS)</strong></li>
@@ -678,8 +678,8 @@
             <tr>
               <th style="width: 40%;">Core Feature / Capability</th>
               <th class="col-center" style="width: 20%;">Free ($0)</th>
-              <th class="col-center" style="width: 20%; color: #60a5fa;">Plus ($19/mo)</th>
-              <th class="col-center" style="width: 20%; color: #a855f7;">Pro ($49/mo)</th>
+              <th class="col-center" style="width: 20%; color: #60a5fa;">Plus ($49/mo)</th>
+              <th class="col-center" style="width: 20%; color: #a855f7;">Pro ($99/mo)</th>
             </tr>
           </thead>
           <tbody>
@@ -692,7 +692,7 @@
             <tr>
               <td>Active Terminals per Store</td>
               <td class="col-center">1 Device</td>
-              <td class="col-center">1 Primary Register</td>
+              <td class="col-center"><strong>Up to 3 Terminals</strong></td>
               <td class="col-center"><strong>Unlimited Devices</strong></td>
             </tr>
             <tr>
@@ -752,13 +752,13 @@
             <tr>
               <td>Master/Sub Real-Time Terminal Sync</td>
               <td class="col-center"><span class="dash-icon">—</span></td>
-              <td class="col-center"><span class="dash-icon">—</span></td>
+              <td class="col-center"><span class="check-icon">✓</span></td>
               <td class="col-center"><span class="check-icon">✓</span></td>
             </tr>
             <tr>
               <td>Priority Live Tech Support (In-Portal)</td>
               <td class="col-center"><span class="dash-icon">—</span></td>
-              <td class="col-center" style="font-size: 12px; color: var(--text-muted);">$15/mo Add-on</td>
+              <td class="col-center" style="font-size: 12px; color: var(--text-muted);">$20/mo Add-on</td>
               <td class="col-center"><span class="check-icon">✓ Included Priority</span></td>
             </tr>
           </tbody>
@@ -778,8 +778,8 @@
           </ul>
         </div>
         <div style="text-align: right;">
-          <div style="font-size: 28px; font-weight: 800; color: #fff;">$15 <span style="font-size: 14px; font-weight: 500; color: var(--text-muted);">/ month</span></div>
-          <p style="font-size: 12px; color: var(--accent-green); margin-bottom: 12px;">$10/mo when bundled with Pro</p>
+          <div style="font-size: 28px; font-weight: 800; color: #fff;">$20 <span style="font-size: 14px; font-weight: 500; color: var(--text-muted);">/ month</span></div>
+          <p style="font-size: 12px; color: var(--accent-green); margin-bottom: 12px;">Included natively in Pro</p>
           <button class="btn-secondary" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);" onclick="openSalesChat('Priority Support Add-on')">Add Support Plan</button>
         </div>
       </div>
@@ -805,7 +805,7 @@
 
         <div class="faq-item" onclick="toggleFaq(this)">
           <div class="faq-question"><span>Why subscribe on the web vs. App Store / Google Play?</span><span class="faq-toggle">+</span></div>
-          <div class="faq-answer">Subscribing directly through our Web Customer Portal gives you our best flat-rate pricing ($19/mo Plus, $49/mo Pro) with zero store surcharges. Once subscribed, you can log in and activate your subscription across any connected Android, iPad, or Windows device.</div>
+          <div class="faq-answer">Subscribing directly through our Web Customer Portal gives you our best flat-rate pricing ($49/mo Plus, $99/mo Pro) with zero store surcharges. Once subscribed, you can log in and activate your subscription across any connected Android, iPad, or Windows device.</div>
         </div>
 
         <div class="faq-item" onclick="toggleFaq(this)">
@@ -879,7 +879,7 @@
         👋 <strong>Welcome to FlexiTap POS!</strong> Looking for the right setup for your business?
       </div>
       <div class="chat-options" id="chat-quick-options">
-        <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Plus ($19) vs Pro ($49) Plans</button>
+        <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Plus ($49) vs Pro ($99) Plans</button>
         <button class="chat-chip" onclick="handleChatSelect('platforms')">📱 iOS, iPad, Android & Windows Availability</button>
         <button class="chat-chip" onclick="handleChatSelect('sync')">⚡ Offline Reliability & Real-Time Cloud Sync</button>
         <button class="chat-chip" onclick="handleChatSelect('hardware')">🖨️ Thermal Printers, Wi-Fi & Sunmi</button>
@@ -971,13 +971,13 @@
       if (cycle === 'annual') {
         btnA.classList.add('active');
         btnM.classList.remove('active');
-        plusP.innerHTML = '$190 <span>/ year</span>';
-        proP.innerHTML = '$490 <span>/ year</span>';
+        plusP.innerHTML = '$490 <span>/ year</span>';
+        proP.innerHTML = '$990 <span>/ year</span>';
       } else {
         btnM.classList.add('active');
         btnA.classList.remove('active');
-        plusP.innerHTML = '$19 <span>/ mo</span>';
-        proP.innerHTML = '$49 <span>/ mo</span>';
+        plusP.innerHTML = '$49 <span>/ mo</span>';
+        proP.innerHTML = '$99 <span>/ mo</span>';
       }
     }
 
@@ -1032,9 +1032,9 @@
         appendMessage(`
           <strong>US Plan Breakdown:</strong><br>
           • <strong>Free ($0):</strong> 1 offline register terminal, on-device storage, ESC/POS printing.<br>
-          • <strong>Plus ($19/mo):</strong> Live Web Portal, real-time sync, CSV/PDF reports.<br>
-          • <strong>Pro ($49/mo):</strong> Unlimited multi-register sync, KDS kitchen screens & floor plans.<br>
-          • <strong>Support Add-on ($15/mo):</strong> Remote device diagnostics & priority queue.
+          • <strong>Plus ($49/mo):</strong> Up to 3 terminals, Live Web Portal, real-time sync, CSV/PDF reports.<br>
+          • <strong>Pro ($99/mo):</strong> Unlimited multi-register sync, KDS kitchen screens & floor plans.<br>
+          • <strong>Support Add-on ($20/mo):</strong> Remote device diagnostics & priority queue (Included in Pro).
         `);
       } else if (type === 'platforms') {
         appendMessage(`
