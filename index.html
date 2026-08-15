@@ -28,30 +28,13 @@
 
     /* HERO VIDEO BACKGROUND */
     .hero-video-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 850px;
-      overflow: hidden;
-      z-index: 0;
-      pointer-events: none;
+      position: absolute; top: 0; left: 0; width: 100%; height: 850px; overflow: hidden; z-index: 0; pointer-events: none;
     }
-
     .hero-bg-video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.38;
-      filter: saturate(1.2) contrast(1.1);
+      width: 100%; height: 100%; object-fit: cover; opacity: 0.38; filter: saturate(1.2) contrast(1.1);
     }
-
     .hero-video-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
       background: linear-gradient(180deg, rgba(9, 13, 22, 0.65) 0%, rgba(9, 13, 22, 0.85) 60%, var(--bg) 100%);
     }
 
@@ -100,76 +83,23 @@
 
     /* PROFESSIONAL MULTI-PLATFORM ECOSYSTEM STYLES */
     .platforms-wrapper {
-      max-width: 980px;
-      margin: 20px auto 40px;
-      background: rgba(15, 23, 42, 0.75);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 24px;
-      backdrop-filter: blur(16px);
+      max-width: 980px; margin: 20px auto 40px; background: rgba(15, 23, 42, 0.75);
+      border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; backdrop-filter: blur(16px);
     }
-    .platforms-label {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--text-muted);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-      text-align: center;
-    }
-    .platforms-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
-      gap: 14px;
-    }
+    .platforms-label { font-size: 11px; font-weight: 800; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; text-align: center; }
+    .platforms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 14px; }
     .platform-card {
-      background: rgba(9, 13, 22, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 12px;
-      padding: 14px 16px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      text-align: left;
+      background: rgba(9, 13, 22, 0.7); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 14px 16px;
+      display: flex; flex-direction: column; justify-content: space-between; text-decoration: none; transition: all 0.2s ease; text-align: left;
     }
-    .platform-card:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.2);
-      transform: translateY(-2px);
-    }
-    .platform-icon-wrap {
-      width: 28px;
-      height: 28px;
-      margin-bottom: 10px;
-      color: var(--text-muted);
-    }
-    .platform-icon-wrap svg {
-      width: 100%;
-      height: 100%;
-    }
-    .platform-name {
-      font-size: 13.5px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 2px;
-    }
-    .platform-meta {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-    }
+    .platform-card:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
+    .platform-icon-wrap { width: 28px; height: 28px; margin-bottom: 10px; color: var(--text-muted); }
+    .platform-icon-wrap svg { width: 100%; height: 100%; }
+    .platform-name { font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .platform-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
     .status-badge-soon {
-      align-self: flex-start;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-muted);
-      border: 1px solid var(--card-border);
-      text-transform: uppercase;
+      align-self: flex-start; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid var(--card-border); text-transform: uppercase;
     }
 
     /* PREVIEW CARD */
@@ -307,7 +237,7 @@
     #chat-btn:hover { transform: scale(1.08); }
 
     #sales-chat-panel {
-      display: none; position: fixed; bottom: 90px; right: 24px; width: 370px; height: 520px;
+      display: none; position: fixed; bottom: 90px; right: 24px; width: 370px; height: 540px;
       background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.6); flex-direction: column; overflow: hidden; z-index: 999;
       animation: fadeIn 0.25s ease;
@@ -334,7 +264,7 @@
       .support-plan-banner { grid-template-columns: 1fr; }
       .about-card { grid-template-columns: 1fr; padding: 28px; }
       .footer-content { flex-direction: column; text-align: center; }
-      #sales-chat-panel { width: calc(100vw - 32px); right: 16px; bottom: 84px; height: 480px; }
+      #sales-chat-panel { width: calc(100vw - 32px); right: 16px; bottom: 84px; height: 500px; }
     }
   </style>
 </head>
@@ -418,7 +348,7 @@
         <div class="platforms-label">SUPPORTED OPERATING SYSTEMS & STORE ECOSYSTEMS</div>
         <div class="platforms-grid">
           
-          <!-- ANDROID (COMING SOON) -->
+          <!-- ANDROID -->
           <div class="platform-card">
             <div class="platform-icon-wrap">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.996-3.4562c.0784-.1358.0321-.3096-.1038-.3881-.1362-.0787-.3101-.0321-.3885.1039l-2.0223 3.5015c-1.3787-.6304-2.9234-.988-4.3629-.988s-2.9842.3576-4.3629.988L6.6166 5.581c-.0784-.136-.2524-.1826-.3885-.1039-.1359.0785-.1822.2523-.1038.3881l1.996 3.4562C4.1611 11.2334 1.5 15.421 1.5 20.3248h21c0-4.9038-2.6611-9.0914-6.6185-11.0034"/></svg>
@@ -587,7 +517,7 @@
       </div>
     </section>
 
-    <!-- 3. HARDWARE & PERIPHERAL ECOSYSTEM (8 CARDS) -->
+    <!-- 3. HARDWARE & PERIPHERAL ECOSYSTEM -->
     <section class="hardware-section" id="hardware">
       <h2 class="section-title">Engineered for Universal Hardware</h2>
       <p class="section-subtitle">No proprietary hardware lock-in. Connect the industry-standard peripherals you already own.</p>
@@ -1131,7 +1061,8 @@
           <input type="text" id="lead-name" placeholder="Business Name / Contact Name" required style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0;" />
           <input type="email" id="lead-email" placeholder="Email (e.g. owner@cafe.com)" required style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0;" />
           <input type="tel" id="lead-phone" placeholder="Phone Number (Optional)" style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0;" />
-          <button type="submit" style="padding:8px; background:var(--accent-green); color:#fff; border:none; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px;">Send Inquiry</button>
+          <textarea id="lead-message" placeholder="Type your inquiry or hardware setup details here..." required rows="3" style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0; resize:vertical; font-family:inherit;"></textarea>
+          <button type="submit" style="padding:9px; background:var(--accent-green); color:#fff; border:none; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px;">Send Message to Sales</button>
         </form>
       `);
     }
@@ -1140,15 +1071,27 @@
       e.preventDefault();
       const name = document.getElementById('lead-name').value;
       const email = document.getElementById('lead-email').value;
-      const phone = document.getElementById('lead-phone').value;
+      const phone = document.getElementById('lead-phone').value || 'Not provided';
+      const message = document.getElementById('lead-message').value;
 
       try {
-        await supabaseClient.from('leads').insert([{ business_name: name, contact_email: email, contact_phone: phone }]);
+        // 1. Save to Supabase DB table
+        await supabaseClient.from('leads').insert([{ 
+          business_name: name, 
+          contact_email: email, 
+          contact_phone: phone, 
+          inquiry_message: message 
+        }]);
+
+        // 2. Trigger Supabase Edge Function to dispatch email notification
+        await supabaseClient.functions.invoke('send-lead-email', {
+          body: { business_name: name, contact_email: email, contact_phone: phone, inquiry_message: message }
+        });
       } catch (err) {
-        console.log('Lead cached locally.');
+        console.log('Lead processed locally/offline.');
       }
 
-      appendMessage(`✅ <strong>Thank you, ${name}!</strong> Your inquiry has been routed to <strong>sales@flexitapapp.com</strong>. We will get back to you shortly.`);
+      appendMessage(`✅ <strong>Thank you, ${name}!</strong> Your message has been routed to <strong>sales@flexitapapp.com</strong>. We will get back to you shortly.`);
     }
 
     // --- AUTH LOGIN SUBMIT ---
@@ -1179,13 +1122,11 @@
       const userRole = (profile?.role || '').toLowerCase();
       const tier = (profile?.subscription_tier || 'free').toLowerCase();
 
-      // Devs bypass tier restrictions
       if (userRole === 'dev' || userRole === 'developer' || userRole === 'admin') {
         window.location.href = 'portal.html';
         return;
       }
 
-      // Subscription Guard
       if (tier === 'free') {
         await supabaseClient.auth.signOut();
         btnText.innerText = 'Log In to Portal';
