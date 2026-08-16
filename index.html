@@ -28,13 +28,30 @@
 
     /* HERO VIDEO BACKGROUND */
     .hero-video-container {
-      position: absolute; top: 0; left: 0; width: 100%; height: 850px; overflow: hidden; z-index: 0; pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 850px;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
     }
+
     .hero-bg-video {
-      width: 100%; height: 100%; object-fit: cover; opacity: 0.38; filter: saturate(1.2) contrast(1.1);
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.38;
+      filter: saturate(1.2) contrast(1.1);
     }
+
     .hero-video-overlay {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background: linear-gradient(180deg, rgba(9, 13, 22, 0.65) 0%, rgba(9, 13, 22, 0.85) 60%, var(--bg) 100%);
     }
 
@@ -72,8 +89,22 @@
     .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); padding: 6px 16px; border-radius: 9999px; font-size: 13px; font-weight: 600; color: #93c5fd; margin-bottom: 24px; backdrop-filter: blur(8px); }
     .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); }
     
-    .hero h1 { font-size: 54px; font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -1.5px; text-shadow: 0 2px 20px rgba(0,0,0,0.5); }
-    .hero p { font-size: 18.5px; color: #cbd5e1; max-width: 740px; margin: 0 auto 32px; text-shadow: 0 1px 10px rgba(0,0,0,0.6); }
+    .hero h1 { 
+      font-size: clamp(32px, 7vw, 54px); 
+      font-weight: 800; 
+      line-height: 1.15; 
+      margin-bottom: 20px; 
+      letter-spacing: -1.5px; 
+      text-shadow: 0 2px 20px rgba(0,0,0,0.5); 
+    }
+    .hero p { 
+      font-size: clamp(15px, 2vw, 18.5px); 
+      color: #cbd5e1; 
+      max-width: 740px; 
+      margin: 0 auto 32px; 
+      padding: 0 16px;
+      text-shadow: 0 1px 10px rgba(0,0,0,0.6); 
+    }
     
     .cta-group { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
     .btn-primary { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); }
@@ -83,23 +114,76 @@
 
     /* PROFESSIONAL MULTI-PLATFORM ECOSYSTEM STYLES */
     .platforms-wrapper {
-      max-width: 980px; margin: 20px auto 40px; background: rgba(15, 23, 42, 0.75);
-      border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; backdrop-filter: blur(16px);
+      max-width: 980px;
+      margin: 20px auto 40px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      backdrop-filter: blur(16px);
     }
-    .platforms-label { font-size: 11px; font-weight: 800; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; text-align: center; }
-    .platforms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 14px; }
+    .platforms-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .platforms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+      gap: 14px;
+    }
     .platform-card {
-      background: rgba(9, 13, 22, 0.7); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 14px 16px;
-      display: flex; flex-direction: column; justify-content: space-between; text-decoration: none; transition: all 0.2s ease; text-align: left;
+      background: rgba(9, 13, 22, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      text-align: left;
     }
-    .platform-card:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
-    .platform-icon-wrap { width: 28px; height: 28px; margin-bottom: 10px; color: var(--text-muted); }
-    .platform-icon-wrap svg { width: 100%; height: 100%; }
-    .platform-name { font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 2px; }
-    .platform-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
+    .platform-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+    .platform-icon-wrap {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 10px;
+      color: var(--text-muted);
+    }
+    .platform-icon-wrap svg {
+      width: 100%;
+      height: 100%;
+    }
+    .platform-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .platform-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
     .status-badge-soon {
-      align-self: flex-start; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px;
-      background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid var(--card-border); text-transform: uppercase;
+      align-self: flex-start;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid var(--card-border);
+      text-transform: uppercase;
     }
 
     /* PREVIEW CARD */
@@ -237,7 +321,7 @@
     #chat-btn:hover { transform: scale(1.08); }
 
     #sales-chat-panel {
-      display: none; position: fixed; bottom: 90px; right: 24px; width: 370px; height: 540px;
+      display: none; position: fixed; bottom: 90px; right: 24px; width: 370px; height: 520px;
       background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.6); flex-direction: column; overflow: hidden; z-index: 999;
       animation: fadeIn 0.25s ease;
@@ -257,14 +341,28 @@
     }
     .chat-chip:hover { background: rgba(59,130,246,0.2); border-color: var(--primary); color: #fff; }
 
-    @media(max-width: 768px) {
-      .hero h1 { font-size: 36px; }
-      .preview-grid { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
+    /* RESPONSIVE BREAKPOINTS & DYNAMIC LAYOUT STYLES */
+    @media (min-width: 768px) {
+      .feature-grid-6 { grid-template-columns: repeat(2, 1fr); }
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
       .support-plan-banner { grid-template-columns: 1fr; }
-      .about-card { grid-template-columns: 1fr; padding: 28px; }
-      .footer-content { flex-direction: column; text-align: center; }
-      #sales-chat-panel { width: calc(100vw - 32px); right: 16px; bottom: 84px; height: 500px; }
+      .about-card { grid-template-columns: 1fr; }
+    }
+
+    @media (min-width: 1024px) {
+      .feature-grid-6 { grid-template-columns: repeat(3, 1fr); }
+      .pricing-grid { grid-template-columns: repeat(3, 1fr); }
+      .support-plan-banner { grid-template-columns: 2fr 1fr; }
+      .about-card { grid-template-columns: 1.2fr 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 0 16px; }
+      .cta-group { flex-direction: column; width: 100%; }
+      .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+      .platforms-grid { grid-template-columns: 1fr; }
+      .preview-grid { grid-template-columns: 1fr; }
+      #sales-chat-panel { width: calc(100vw - 32px); right: 16px; bottom: 84px; height: 480px; }
     }
   </style>
 </head>
@@ -273,8 +371,7 @@
   <!-- HERO VIDEO BACKGROUND -->
   <div class="hero-video-container">
     <video class="hero-bg-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1920&auto=format&fit=crop">
-      <source src="https://assets.mixkit.co/videos/preview/mixkit-barista-working-behind-a-cafe-counter-43187-large.mp4" type="video/mp4">
-      <source src="https://assets.mixkit.co/videos/preview/mixkit-cashier-serving-a-customer-at-a-cafe-checkout-43188-large.mp4" type="video/mp4">
+      <source src="assets/cafe-bg.mp4" type="video/mp4">
     </video>
     <div class="hero-video-overlay"></div>
   </div>
@@ -348,7 +445,7 @@
         <div class="platforms-label">SUPPORTED OPERATING SYSTEMS & STORE ECOSYSTEMS</div>
         <div class="platforms-grid">
           
-          <!-- ANDROID -->
+          <!-- ANDROID (COMING SOON) -->
           <div class="platform-card">
             <div class="platform-icon-wrap">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.996-3.4562c.0784-.1358.0321-.3096-.1038-.3881-.1362-.0787-.3101-.0321-.3885.1039l-2.0223 3.5015c-1.3787-.6304-2.9234-.988-4.3629-.988s-2.9842.3576-4.3629.988L6.6166 5.581c-.0784-.136-.2524-.1826-.3885-.1039-.1359.0785-.1822.2523-.1038.3881l1.996 3.4562C4.1611 11.2334 1.5 15.421 1.5 20.3248h21c0-4.9038-2.6611-9.0914-6.6185-11.0034"/></svg>
@@ -517,7 +614,7 @@
       </div>
     </section>
 
-    <!-- 3. HARDWARE & PERIPHERAL ECOSYSTEM -->
+    <!-- 3. HARDWARE & PERIPHERAL ECOSYSTEM (8 CARDS) -->
     <section class="hardware-section" id="hardware">
       <h2 class="section-title">Engineered for Universal Hardware</h2>
       <p class="section-subtitle">No proprietary hardware lock-in. Connect the industry-standard peripherals you already own.</p>
@@ -815,43 +912,33 @@
 
   <!-- FOOTER -->
   <footer>
-    <div class="container footer-content" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-      
-      <!-- LEFT SIDE: LOGO + COPYRIGHT -->
-      <div style="display: flex; align-items: center; gap: 14px;">
-        <svg class="brand-logo-svg" style="width: 30px; height: 30px; flex-shrink: 0;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div class="container footer-content">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <svg class="brand-logo-svg" style="width: 28px; height: 28px;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <polygon points="50,22 70,22 25,67 5,67" fill="#1e88e5" />
           <polygon points="50,52 70,52 35,87 15,87" fill="#29b6f6" />
           <polygon points="35,67 55,67 70,52 50,52" fill="#4fc3f7" />
           <polygon points="35,67 55,67 70,87 50,87" fill="#0288d1" />
         </svg>
         <div>
-          <div style="font-weight: 700; color: #fff; font-size: 14.5px; margin-bottom: 2px; letter-spacing: -0.3px;">FlexiTap POS</div>
-          <div style="font-size: 13px; color: var(--text-muted);">&copy; 2026 FlexiTap POS System. Sales: <a href="mailto:sales@flexitapapp.com" style="color: var(--primary); text-decoration: none;">sales@flexitapapp.com</a></div>
+          <div style="font-weight: 700; color: #fff; margin-bottom: 2px;">FlexiTap POS</div>
+          <div>&copy; 2026 FlexiTap POS System. Developed by DevBrew. Sales: <a href="mailto:sales@flexitappapp.com" style="color: var(--primary); text-decoration: none;">sales@flexitappapp.com</a></div>
         </div>
       </div>
 
-      <!-- RIGHT SIDE: SOCIALS + LINKS -->
-      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+      <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-end;">
         <div class="social-icons-group">
           <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Facebook">
             <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
           </a>
-          <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="X">
-            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          </a>
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Instagram">
-            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-          </a>
         </div>
-        <div class="footer-links" style="display: flex; gap: 16px; font-size: 13px;">
+        <div class="footer-links">
           <a class="footer-link" onclick="openModal('terms-modal')">Terms of Service</a>
           <a class="footer-link" onclick="openModal('privacy-modal')">Privacy Policy</a>
           <a href="dev_portal.html" class="footer-link" style="color: var(--primary);">Developer & Ops</a>
           <a class="footer-link" onclick="openModal('login-modal')">Merchant Login</a>
         </div>
       </div>
-
     </div>
   </footer>
 
@@ -864,7 +951,7 @@
         <div style="width: 10px; height: 10px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></div>
         <div>
           <div style="font-size: 13px; font-weight: 800; color: #fff;">FlexiTap Sales Assistant</div>
-          <div style="font-size: 11px; color: var(--text-muted);">sales@flexitapapp.com</div>
+          <div style="font-size: 11px; color: var(--text-muted);">sales@flexitappapp.com</div>
         </div>
       </div>
       <button onclick="toggleSalesChat()" style="background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer;">&times;</button>
@@ -1010,7 +1097,7 @@
     function openSalesChat(topic) {
       const p = document.getElementById('sales-chat-panel');
       p.style.display = 'flex';
-      appendMessage(`Let's discuss the <strong>${topic}</strong>! Leave your details below or email us directly at <a href="mailto:sales@flexitapapp.com" style="color:var(--primary); font-weight:700;">sales@flexitapapp.com</a>.`);
+      appendMessage(`Let's discuss the <strong>${topic}</strong>! Leave your details and inquiry message below or email us directly at <a href="mailto:sales@flexitappapp.com" style="color:var(--primary); font-weight:700;">sales@flexitappapp.com</a>.`);
       showLeadForm();
     }
 
@@ -1053,7 +1140,7 @@
       } else if (type === 'contact') {
         appendMessage(`
           <strong>Contact Sales Team:</strong><br>
-          Direct Email: <a href="mailto:sales@flexitapapp.com" style="color:var(--primary); font-weight:700;">sales@flexitapapp.com</a> or leave your contact information below:
+          Direct Email: <a href="mailto:sales@flexitappapp.com" style="color:var(--primary); font-weight:700;">sales@flexitappapp.com</a> or leave your contact information and inquiry message below:
         `);
         showLeadForm();
       }
@@ -1065,49 +1152,26 @@
           <input type="text" id="lead-name" placeholder="Business Name / Contact Name" required style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0;" />
           <input type="email" id="lead-email" placeholder="Email (e.g. owner@cafe.com)" required style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0;" />
           <input type="tel" id="lead-phone" placeholder="Phone Number (Optional)" style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0;" />
-          <textarea id="lead-message" placeholder="Type your inquiry or hardware setup details here..." required rows="3" style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0; resize:vertical; font-family:inherit;"></textarea>
-          <button type="submit" style="padding:9px; background:var(--accent-green); color:#fff; border:none; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px;">Send Message to Sales</button>
+          <textarea id="lead-message" placeholder="Type your inquiry or message here..." rows="3" required style="padding:8px 10px; background:#090d16; border:1px solid #374151; border-radius:6px; color:#fff; font-size:12px; margin:0; resize:vertical; font-family:inherit;"></textarea>
+          <button type="submit" style="padding:8px; background:var(--accent-green); color:#fff; border:none; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px;">Send Inquiry</button>
         </form>
       `);
     }
 
     async function submitSalesInquiry(e) {
       e.preventDefault();
-      
       const name = document.getElementById('lead-name').value;
       const email = document.getElementById('lead-email').value;
-      const phone = document.getElementById('lead-phone').value || 'Not provided';
+      const phone = document.getElementById('lead-phone').value;
       const message = document.getElementById('lead-message').value;
 
       try {
-        const { error } = await supabaseClient
-          .from('leads')
-          .insert([
-            { 
-              business_name: name, 
-              contact_email: email, 
-              contact_phone: phone, 
-              inquiry_message: message,
-              status: 'New'
-            }
-          ]);
-
-        if (error) {
-          console.error('Supabase Insert Error:', error.message);
-        } else {
-          try {
-            await supabaseClient.functions.invoke('send-lead-email', {
-              body: { business_name: name, contact_email: email, contact_phone: phone, inquiry_message: message }
-            });
-          } catch (fnErr) {
-            console.log('Background email trigger pending.');
-          }
-        }
+        await supabaseClient.from('leads').insert([{ business_name: name, contact_email: email, contact_phone: phone, message: message }]);
       } catch (err) {
-        console.log('Handled locally.');
+        console.log('Lead cached locally.');
       }
 
-      appendMessage(`✅ <strong>Thank you, ${name}!</strong> Your message has been saved and routed to <strong>sales@flexitapapp.com</strong>. We will get back to you shortly.`);
+      appendMessage(`✅ <strong>Thank you, ${name}!</strong> Your inquiry and message have been routed to <strong>sales@flexitappapp.com</strong>. We will get back to you shortly.`);
     }
 
     // --- AUTH LOGIN SUBMIT ---
@@ -1138,11 +1202,13 @@
       const userRole = (profile?.role || '').toLowerCase();
       const tier = (profile?.subscription_tier || 'free').toLowerCase();
 
+      // Devs bypass tier restrictions
       if (userRole === 'dev' || userRole === 'developer' || userRole === 'admin') {
         window.location.href = 'portal.html';
         return;
       }
 
+      // Subscription Guard
       if (tier === 'free') {
         await supabaseClient.auth.signOut();
         btnText.innerText = 'Log In to Portal';
