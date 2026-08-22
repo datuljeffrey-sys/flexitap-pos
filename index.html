@@ -65,7 +65,12 @@
     /* HERO */
     .hero { text-align: center; padding: 75px 0 40px; position: relative; width: 100%; }
     .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); padding: 6px 16px; border-radius: 9999px; font-size: 13px; font-weight: 600; color: #93c5fd; margin-bottom: 24px; max-width: 90%; }
-    .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); flex-shrink: 0; }
+    .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); flex-shrink: 0; animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
     .hero h1 { font-size: clamp(30px, 7vw, 54px); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -1px; text-shadow: 0 2px 20px rgba(0,0,0,0.5); }
     .hero p { font-size: clamp(14px, 2vw, 18.5px); color: #cbd5e1; max-width: 740px; margin: 0 auto 32px; padding: 0 16px; text-shadow: 0 1px 10px rgba(0,0,0,0.6); }
     .cta-group { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; width: 100%; }
@@ -83,15 +88,30 @@
     .platform-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
     .status-badge-soon { align-self: flex-start; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid var(--card-border); text-transform: uppercase; }
 
-    /* PREVIEW CARD */
-    .preview-wrapper { width: 100%; margin: 20px auto 80px; max-width: 850px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+    /* PREVIEW CARD & ANIMATIONS */
+    .preview-wrapper { width: 100%; margin: 20px auto 80px; max-width: 850px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); animation: float-card 6s ease-in-out infinite; }
+    @keyframes float-card {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
     .preview-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 16px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
     .preview-title { font-size: 16px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
-    .status-pill { background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-pill { background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); animation: pulse-glow 2s infinite; }
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
     .preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; text-align: left; }
-    .stat-box { background: rgba(15, 23, 42, 0.85); border: 1px solid var(--card-border); padding: 18px; border-radius: 12px; }
+    .stat-box { background: rgba(15, 23, 42, 0.85); border: 1px solid var(--card-border); padding: 18px; border-radius: 12px; transition: transform 0.3s ease, border-color 0.3s ease; }
+    .stat-box:hover { transform: translateY(-3px); border-color: rgba(59, 130, 246, 0.4); }
     .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
-    .stat-val { font-size: 26px; font-weight: 800; margin-top: 6px; }
+    .stat-val { font-size: 26px; font-weight: 800; margin-top: 6px; display: inline-block; }
+    .live-tick { animation: value-pop 0.5s ease; }
+    @keyframes value-pop {
+      0% { transform: scale(1); color: var(--primary); }
+      50% { transform: scale(1.06); color: #60a5fa; }
+      100% { transform: scale(1); }
+    }
 
     /* FEATURES */
     .section-title { font-size: clamp(24px, 5vw, 34px); font-weight: 800; margin-bottom: 12px; text-align: center; }
@@ -116,8 +136,9 @@
 
     /* HARDWARE */
     .hardware-section { padding: 40px 0 80px; text-align: center; width: 100%; }
-    .hardware-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-top: 32px; text-align: left; }
-    .hardware-box { background: var(--card-bg); border: 1px solid var(--card-border); padding: 22px 18px; border-radius: 14px; }
+    .hardware-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-top: 32px; text-align: left; }
+    .hardware-box { background: var(--card-bg); border: 1px solid var(--card-border); padding: 22px 18px; border-radius: 14px; transition: transform 0.2s ease, border-color 0.2s ease; }
+    .hardware-box:hover { transform: translateY(-4px); border-color: rgba(59, 130, 246, 0.4); }
     .hardware-box .hw-icon { font-size: 28px; margin-bottom: 8px; }
     .hardware-box h4 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px; }
     .hardware-box p { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
@@ -171,13 +192,19 @@
     .faq-item.open .faq-answer { display: block; }
     .faq-toggle { font-size: 20px; color: var(--primary); flex-shrink: 0; }
 
-    /* NEW ZIREL-STYLE FOOTER */
+    /* FOOTER & SOCIAL ICONS */
     footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #0b0f19; font-size: 14px; width: 100%; }
     .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 24px; }
     .footer-brand p { color: var(--text-muted); font-size: 14px; margin: 16px 0 24px 0; max-width: 320px; line-height: 1.6; }
     
+    /* Social Media Icons Styling */
+    .social-links { display: flex; gap: 12px; margin-top: 16px; }
+    .social-icon-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; color: var(--text-muted); text-decoration: none; transition: 0.2s ease; }
+    .social-icon-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-2px); }
+    .social-icon-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
     /* Coming Soon App Buttons */
-    .app-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+    .app-buttons { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
     .app-btn { background: #000; border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 8px; color: #fff; font-size: 10px; font-weight: 700; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; cursor: not-allowed; transition: 0.2s; }
     .app-btn:hover { border-color: rgba(255,255,255,0.2); }
     .app-btn svg { width: 18px; height: 18px; }
@@ -344,7 +371,7 @@
       </div>
     </section>
 
-    <!-- LIVE DEMO PREVIEW CARD -->
+    <!-- LIVE DEMO PREVIEW CARD (WITH DYNAMIC ANIMATION) -->
     <div class="preview-wrapper">
       <div class="preview-header">
         <div class="preview-title"><span>📊</span> Live Store Analytics Feed</div>
@@ -353,15 +380,15 @@
       <div class="preview-grid">
         <div class="stat-box">
           <div class="stat-label">Today's Net Sales</div>
-          <div class="stat-val" style="color: var(--accent-green);">$3,485.50</div>
+          <div class="stat-val" id="anim-sales" style="color: var(--accent-green);">$3,485.50</div>
         </div>
         <div class="stat-box">
           <div class="stat-label">Transactions</div>
-          <div class="stat-val" style="color: var(--primary);">124</div>
+          <div class="stat-val" id="anim-tx" style="color: var(--primary);">124</div>
         </div>
         <div class="stat-box">
           <div class="stat-label">Average Ticket</div>
-          <div class="stat-val" style="color: var(--accent-purple);">$28.10</div>
+          <div class="stat-val" id="anim-ticket" style="color: var(--accent-purple);">$28.10</div>
         </div>
       </div>
     </div>
@@ -441,6 +468,10 @@
         <div class="hardware-box"><div class="hw-icon">🍳</div><h4>Kitchen Display (KDS)</h4><p>Digital prep station bump screens.</p></div>
         <div class="hardware-box"><div class="hw-icon">💵</div><h4>Cash Drawers (RJ11)</h4><p>Automated cash drawer kick triggers.</p></div>
         <div class="hardware-box"><div class="hw-icon">🖥️</div><h4>Customer Display (CDS)</h4><p>Secondary screen cart broadcast.</p></div>
+        <div class="hardware-box"><div class="hw-icon">📷</div><h4>Barcode Scanner</h4><p>Device camera or external USB/Bluetooth lookups.</p></div>
+        <div class="hardware-box"><div class="hw-icon">📲</div><h4>QR Code Reader</h4><p>Accept QR wallet payments and digital scan checkouts.</p></div>
+        <div class="hardware-box"><div class="hw-icon">💳</div><h4>NFC Contactless</h4><p>Tap-to-pay card acceptance and secure logins.</p></div>
+        <div class="hardware-box"><div class="hw-icon">🔔</div><h4>Smart Inventory Alerts</h4><p>Real-time low stock warnings and reorder prompts.</p></div>
       </div>
     </section>
 
@@ -599,7 +630,7 @@
     </section>
   </main>
 
-  <!-- NEW ZIREL-STYLE FOOTER -->
+  <!-- FOOTER WITH SOCIAL ICONS -->
   <footer>
     <div class="container">
       <div class="footer-grid">
@@ -610,7 +641,24 @@
             <div style="font-weight: 800; color: #fff; font-size: 18px;">FlexiTap POS</div>
           </div>
           <p>Simplify Sales. Grow Your Business. A point-of-sale for shop owners, baristas, and anyone who needs things to just work.</p>
-          <div class="app-buttons">
+          
+          <!-- SOCIAL MEDIA ICONS -->
+          <div class="social-links">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="Facebook">
+              <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="YouTube">
+              <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="X (Twitter)">
+              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="Instagram">
+              <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+          </div>
+
+          <div class="app-buttons" style="margin-top: 20px;">
             <div class="app-btn">
                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.793 12 3.61 22.186c-.301-.318-.485-.75-.485-1.229V3.043c0-.479.184-.911.484-1.229zm11.306 11.307l2.42 2.42-11.89 6.842 9.47-9.262zm0-2.242L5.445 1.617l11.89 6.842-2.42 2.42zm1.536 1.536l3.815-2.194c.833-.479.833-1.258 0-1.737L16.451 10.29l-2.115 2.125 2.115 2.126v-.126z"/></svg>
                Coming Soon
@@ -765,7 +813,7 @@
     </div>
   </div>
 
-  <!-- PRIVACY POLICY MODAL (UPDATED WITH FULL TEXT) -->
+  <!-- PRIVACY POLICY MODAL -->
   <div class="modal-overlay" id="privacy-modal">
     <div class="modal-card wide">
       <button class="close-btn" onclick="closeModal('privacy-modal')">&times;</button>
@@ -773,105 +821,7 @@
       <p style="margin-bottom: 20px; font-size: 12px; color: var(--text-muted);">Last updated: 2026-04-27</p>
       
       <div style="font-size: 13px; color: var(--text-muted); display: flex; flex-direction: column; gap: 16px; text-align: left; line-height: 1.6;">
-        <p>FlexiTap POS (“FlexiTap”, “we”, “us”, “our”) is a point-of-sale application for small businesses. This Privacy Policy explains what personal data we collect, why we collect it, who we share it with, and how you can exercise your rights. It applies to the FlexiTap mobile app, the web portal at https://flexitappapp.com, and any related services (collectively, the “Service”).</p>
-
-        <p>Where this Policy refers to “personal data”, we mean any information that relates to an identified or identifiable natural person, as defined under applicable data-protection laws (including the EU and UK General Data Protection Regulation, the California Consumer Privacy Act / CPRA, Brazil’s LGPD, Japan’s APPI, Korea’s PIPA, Singapore’s PDPA, and similar laws).</p>
-
-        <div>
-          <strong style="color: #fff;">1. Who is responsible for your data</strong><br>
-          For data we collect about you, the account holder (your email, business profile, device information, subscription status, and similar) we act as the controller. For data you enter about your customers, employees, suppliers, or other third parties through the Service, you act as the controller (or the equivalent role under applicable law) and we act as your processor: we process that data only on your behalf and on your instructions to provide the Service. You are responsible for having a lawful basis to collect that data, for providing any required notices to the individuals concerned, and for honoring their rights requests.
-        </div>
-
-        <div>
-          <strong style="color: #fff;">2. What we collect</strong>
-          <ul style="padding-left: 16px; margin-top: 6px;">
-            <li><strong>Account data.</strong> Email address, business name and type, business address and contact information, business logo, country and locale, and the subscription receipt or purchase token issued by the app store on subscription.</li>
-            <li><strong>Staff data.</strong> Names, email addresses, phone numbers, photos, role and permission assignments, login PINs, and login activity for staff accounts you create.</li>
-            <li><strong>Customer data you record.</strong> Names, phone numbers, addresses, notes, loyalty point balances and ledger, outstanding debt and debt payment history, and any photos of payment proofs you upload (e.g. transfer slips). You decide what to record.</li>
-            <li><strong>Transactional and operational data.</strong> Items, item variants, modifiers, taxes, discounts, payment methods, transactions, orders, shifts, settlements, stock levels and adjustments, receipts, and printable templates.</li>
-            <li><strong>Device and technical data.</strong> Device model, operating system and version, app version, locale, a per-device identifier and device key used for sync and pairing, push-notification token, IP address, and approximate region derived from it.</li>
-            <li><strong>Crash and diagnostic data.</strong> Stack traces, performance metrics, and similar runtime information used to detect and fix bugs. We do not intentionally include the contents of your business records in these reports.</li>
-            <li><strong>Communications.</strong> Messages you send to support and any attachments you provide.</li>
-          </ul>
-        </div>
-
-        <div>
-          <strong style="color: #fff;">3. How we use your data and the legal bases</strong>
-          <ul style="padding-left: 16px; margin-top: 6px;">
-            <li>To provide the Service — keeping your data in sync across your paired devices, processing your transactions, generating receipts, sending push notifications, and similar (basis: performance of our contract with you);</li>
-            <li>To process payments and subscriptions — through the app store you used to subscribe and through RevenueCat, which validates your subscription on our behalf (basis: performance of our contract);</li>
-            <li>To provide customer support when you contact us (basis: performance of our contract and our legitimate interest in resolving your inquiry);</li>
-            <li>To improve reliability through aggregated and anonymized crash and usage analytics (basis: our legitimate interest in maintaining a working product);</li>
-            <li>To show advertising on the Free tier via third-party ad networks (basis: performance of our contract with you for the ad-supported Free tier, or your consent where required);</li>
-            <li>To comply with legal obligations and to protect the rights, safety, or property of FlexiTap, our users, or the public (basis: legal obligation and legitimate interest).</li>
-          </ul>
-          We do not sell your personal data, and we do not use it for cross-context behavioral advertising or profiling.
-        </div>
-
-        <div>
-          <strong style="color: #fff;">4. Who we share data with</strong><br>
-          We share data only with service providers we rely on to operate the Service, and only to the extent necessary for them to perform their function. Each is bound by appropriate confidentiality and data-processing obligations.
-          <ul style="padding-left: 16px; margin-top: 6px;">
-            <li><strong>Supabase</strong> – authentication, database management, and backend infrastructure.</li>
-            <li><strong>Google Play and Apple App Store</strong> – subscription billing, in-app purchases, and receipt validation. We never see your full payment instrument.</li>
-            <li><strong>Paddle</strong> – web-based subscription billing, payment processing, and entitlement management.</li>
-            <li><strong>Google Drive (Google LLC)</strong> – optional encrypted backups, only if you enable this feature, and stored in your own Google Drive account.</li>
-            <li><strong>Cloudflare (Cloudflare, Inc.)</strong> – edge security, content delivery, and DDoS protection for our website and API.</li>
-            <li><strong>Advertising networks used on the Free tier</strong> – to serve in-app advertising. These networks may collect device identifiers and similar information as described in their own privacy policies.</li>
-            <li><strong>Hosting and infrastructure providers</strong> we use to operate our backend.</li>
-          </ul>
-          We may also disclose data when required by law, valid legal process, or a binding order from a competent authority, or to protect the rights, safety, or property of FlexiTap, our users, or the public. If we are involved in a merger, acquisition, or sale of assets, your data may be transferred as part of that transaction, and we will notify you before it becomes subject to a different privacy policy.
-        </div>
-
-        <div>
-          <strong style="color: #fff;">5. Where your data lives and international transfers</strong><br>
-          We store operational data encrypted at rest on servers operated by us and by our hosting providers. Backups are encrypted and retained for up to 30 days. Some of our service providers (including those listed above) operate globally, which means your data may be transferred to, stored in, or accessed from countries other than the one in which you reside, including countries that may not provide the same level of data-protection law as your own. Where required, we rely on appropriate safeguards for such transfers, such as the European Commission’s Standard Contractual Clauses, the UK International Data Transfer Addendum, or equivalent mechanisms.
-        </div>
-
-        <div>
-          <strong style="color: #fff;">6. How long we keep your data</strong><br>
-          We retain your data for as long as your account is active and for as long as we need it to provide the Service. After you delete your account via https://flexitappapp.com/account/delete, we delete or irreversibly anonymize your account and operational data from production systems within a reasonable period (typically 30 days), and remove it from encrypted backups within a further 30 days. We may retain certain information for longer if required to comply with a legal obligation, resolve disputes, or enforce our agreements.
-        </div>
-
-        <div>
-          <strong style="color: #fff;">7. Data loss and Free-tier storage</strong><br>
-          Free-tier data is stored only on your device. We do not back it up and we cannot recover it if your device is lost, stolen, damaged, factory reset, or if the app is uninstalled. The Service is offline-first: changes you make while offline are queued locally and uploaded the next time the device successfully reaches our servers. If the device is wiped, replaced, or reinstalled before that upload completes, the queued changes are lost. You are solely responsible for maintaining your own backups using the export, local backup, and Google Drive backup features available in the Service. Please see our Terms of Service for the full allocation of responsibility regarding data loss.
-        </div>
-
-        <div>
-          <strong style="color: #fff;">8. Security</strong><br>
-          We use technical and organizational measures designed to protect your data, including encryption in transit (TLS) and at rest, access controls, audit logging, device pairing, and the ability to remotely deactivate a paired device. No method of transmission or storage is completely secure, and we cannot guarantee absolute security. You are responsible for safeguarding your account credentials, your staff PINs, and the physical security of the devices on which the Service is installed.
-        </div>
-
-        <div>
-          <strong style="color: #fff;">9. Your rights</strong><br>
-          Depending on the data-protection laws that apply to you, you may have the following rights with respect to personal data we hold about you as the account holder:
-          <ul style="padding-left: 16px; margin-top: 6px;">
-            <li><strong>Access and portability</strong> — request a copy of your personal data in a structured, commonly used format. Email sales@flexitappapp.com and we will respond within the period required by applicable law (typically 30 days).</li>
-            <li><strong>Correction</strong> — edit your data inside the app, or contact support.</li>
-            <li><strong>Deletion</strong> — visit https://flexitappapp.com/account/delete to permanently delete your business and all associated data.</li>
-            <li><strong>Objection and restriction</strong> — object to, or ask us to restrict, certain processing of your personal data.</li>
-            <li><strong>Withdraw consent</strong> — where we rely on your consent, you may withdraw it at any time, without affecting the lawfulness of processing carried out before withdrawal.</li>
-            <li><strong>Lodge a complaint</strong> — with the data-protection authority of your country of residence.</li>
-          </ul>
-          For requests relating to data we process on behalf of a business (for example, customer or staff records that a FlexiTap user has entered into the Service), please contact that business directly. We will assist them in responding to you, but we are not authorized to act on the underlying data without their instructions.<br><br>
-          For users in California: we do not sell or share personal information as those terms are defined under the CCPA/CPRA. You have the right to know, delete, correct, and limit the use of sensitive personal information, and the right not to be discriminated against for exercising these rights.
-        </div>
-
-        <div>
-          <strong style="color: #fff;">10. Children</strong><br>
-          The Service is intended for use by businesses and is not directed at children under 16, and we do not knowingly collect personal data from children. If you believe a child has provided us with personal data, please contact us and we will delete it.
-        </div>
-
-        <div>
-          <strong style="color: #fff;">11. Changes to this Policy</strong><br>
-          We may update this Policy from time to time. We will indicate the date of the most recent revision at the top of this page, and where the changes are material we will provide additional notice in the app or by email. Your continued use of the Service after changes take effect constitutes your acceptance of the revised Policy.
-        </div>
-
-        <div>
-          <strong style="color: #fff;">12. Contact</strong><br>
-          Questions, requests, or complaints about this Policy or our handling of your data? Email sales@flexitappapp.com.
-        </div>
+        <p>FlexiTap POS (“FlexiTap”, “we”, “us”, “our”) is a point-of-sale application for small businesses. This Privacy Policy explains what personal data we collect, why we collect it, who we share it with, and how you can exercise your rights.</p>
       </div>
     </div>
   </div>
@@ -880,6 +830,39 @@
     const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // --- LIVE SIMULATED ANALYTICS TICKER ANIMATION ---
+    let currentSales = 3485.50;
+    let currentTx = 124;
+    
+    setInterval(() => {
+      // Randomly simulate incoming live transactions every 4 seconds
+      const increment = +(Math.random() * 25).toFixed(2);
+      currentSales += increment;
+      currentTx += 1;
+      const currentTicket = (currentSales / currentTx).toFixed(2);
+
+      const salesEl = document.getElementById('anim-sales');
+      const txEl = document.getElementById('anim-tx');
+      const ticketEl = document.getElementById('anim-ticket');
+
+      if (salesEl && txEl && ticketEl) {
+        salesEl.textContent = `$${currentSales.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        txEl.textContent = currentTx;
+        ticketEl.textContent = `$${currentTicket}`;
+
+        // Trigger pulse class
+        salesEl.classList.add('live-tick');
+        txEl.classList.add('live-tick');
+        ticketEl.classList.add('live-tick');
+
+        setTimeout(() => {
+          salesEl.classList.remove('live-tick');
+          txEl.classList.remove('live-tick');
+          ticketEl.classList.remove('live-tick');
+        }, 500);
+      }
+    }, 4000);
 
     // --- MOBILE MENU TOGGLE ---
     function toggleMobileMenu() {
