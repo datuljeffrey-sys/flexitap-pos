@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>FlexiTap POS — Resilient Hybrid POS & Intelligent Analytics</title>
+  
+  <!-- Supabase Official JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(22, 30, 49, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent-green: #10b981;
+      --accent-purple: #8b5cf6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+    
+    /* MOBILE OPTIMIZATION: Prevents horizontal blowout */
+    html, body { 
+      background-color: var(--bg); 
+      color: var(--text-main); 
+      line-height: 1.6; 
+      width: 100%; 
+      max-width: 100vw; 
+      overflow-x: clip; 
+      position: relative; 
+    }
+
+    /* HERO VIDEO BACKGROUND */
+    .hero-video-container { position: absolute; top: 0; left: 0; width: 100%; height: 850px; overflow: hidden; z-index: 0; pointer-events: none; }
+    .hero-bg-video { width: 100%; height: 100%; object-fit: cover; opacity: 0.38; filter: saturate(1.2) contrast(1.1); }
+    .hero-video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(9, 13, 22, 0.65) 0%, rgba(9, 13, 22, 0.85) 60%, var(--bg) 100%); }
+    .glow-top { position: absolute; top: -160px; left: 50%; transform: translateX(-50%); width: min(750px, 100vw); height: 500px; background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(9, 13, 22, 0) 70%); pointer-events: none; z-index: 1; }
+    
+    .container { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+
+    /* HEADER & NAV */
+    header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: rgba(9, 13, 22, 0.92); backdrop-filter: blur(12px); z-index: 100; width: 100%; }
+    header .container { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 12px; }
+    .logo { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 800; color: #ffffff; text-decoration: none; letter-spacing: -0.5px; }
+    .brand-logo-svg { width: 34px; height: 34px; flex-shrink: 0; display: block; border-radius: 50%; object-fit: contain; }
+    
+    .nav-links { display: flex; align-items: center; gap: 20px; }
+    .nav-link { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.2s; }
+    .nav-link:hover { color: #fff; }
+    .mobile-menu-toggle { display: none; background: none; border: 1px solid var(--card-border); padding: 4px 8px; border-radius: 8px; color: #fff; font-size: 24px; cursor: pointer; }
+
+    .btn-login { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border); color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; }
+    .btn-login:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.2); }
+    .btn-signup { background: var(--primary); border: none; color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; }
+    .btn-signup:hover { background: var(--primary-hover); }
+
+    /* HERO */
+    .hero { text-align: center; padding: 75px 0 40px; position: relative; width: 100%; }
+    .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); padding: 6px 16px; border-radius: 9999px; font-size: 13px; font-weight: 600; color: #93c5fd; margin-bottom: 24px; max-width: 90%; }
+    .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); flex-shrink: 0; animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .hero h1 { font-size: clamp(30px, 7vw, 54px); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -1px; text-shadow: 0 2px 20px rgba(0,0,0,0.5); }
+    .hero p { font-size: clamp(14px, 2vw, 18.5px); color: #cbd5e1; max-width: 740px; margin: 0 auto 32px; padding: 0 16px; text-shadow: 0 1px 10px rgba(0,0,0,0.6); }
+    .cta-group { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; width: 100%; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); }
+    .btn-secondary { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.18); color: #fff; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+
+    /* PLATFORMS */
+    .platforms-wrapper { width: 100%; max-width: 980px; margin: 20px auto 40px; background: rgba(15, 23, 42, 0.75); border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; }
+    .platforms-label { font-size: 11px; font-weight: 800; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; text-align: center; }
+    .platforms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+    .platform-card { background: rgba(9, 13, 22, 0.7); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; justify-content: space-between; text-align: left; }
+    .platform-icon-wrap { width: 28px; height: 28px; margin-bottom: 10px; color: var(--text-muted); }
+    .platform-icon-wrap svg { width: 100%; height: 100%; }
+    .platform-name { font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .platform-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
+    .status-badge-soon { align-self: flex-start; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid var(--card-border); text-transform: uppercase; }
+
+    /* PREVIEW CARD & ANIMATIONS */
+    .preview-wrapper { width: 100%; margin: 20px auto 80px; max-width: 850px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); animation: float-card 6s ease-in-out infinite; }
+    @keyframes float-card {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .preview-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 16px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+    .preview-title { font-size: 16px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
+    .status-pill { background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); animation: pulse-glow 2s infinite; }
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    .preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; text-align: left; }
+    .stat-box { background: rgba(15, 23, 42, 0.85); border: 1px solid var(--card-border); padding: 18px; border-radius: 12px; transition: transform 0.3s ease, border-color 0.3s ease; }
+    .stat-box:hover { transform: translateY(-3px); border-color: rgba(59, 130, 246, 0.4); }
+    .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
+    .stat-val { font-size: 26px; font-weight: 800; margin-top: 6px; display: inline-block; }
+    .live-tick { animation: value-pop 0.5s ease; }
+    @keyframes value-pop {
+      0% { transform: scale(1); color: var(--primary); }
+      50% { transform: scale(1.06); color: #60a5fa; }
+      100% { transform: scale(1); }
+    }
+
+    /* FOOTER & SOCIAL ICONS */
+    footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #0b0f19; font-size: 14px; width: 100%; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 24px; }
+    .footer-brand p { color: var(--text-muted); font-size: 14px; margin: 16px 0 24px 0; max-width: 320px; line-height: 1.6; }
+    
+    /* Social Media Icons Styling */
+    .social-links { display: flex; gap: 12px; margin-top: 16px; }
+    .social-icon-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; color: var(--text-muted); text-decoration: none; transition: 0.2s ease; }
+    .social-icon-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-2px); }
+    .social-icon-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* Coming Soon App Buttons */
+    .app-buttons { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+    .app-btn { background: #000; border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 8px; color: #fff; font-size: 10px; font-weight: 700; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; cursor: not-allowed; transition: 0.2s; }
+    .app-btn:hover { border-color: rgba(255,255,255,0.2); }
+    .app-btn svg { width: 18px; height: 18px; }
+
+    .footer-col h4 { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 12px; }
+    .footer-col ul li a { color: var(--text-muted); text-decoration: none; font-size: 14px; cursor: pointer; transition: 0.2s; }
+    .footer-col ul li a:hover { color: #fff; }
+    
+    .footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--text-muted); font-size: 13px; }
+
+    /* MODALS */
+    .modal-overlay { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; padding: 16px; box-sizing: border-box; }
+    .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); padding: 36px 24px; border-radius: 20px; width: 100%; max-width: 440px; position: relative; text-align: center; margin: auto; max-height: 90vh; overflow-y: auto; }
+    .modal-card.wide { max-width: 700px; text-align: left; }
+    .modal-header-logo { display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; }
+    .close-btn { position: absolute; top: 18px; right: 18px; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
+    label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
+    input, select { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; color: white; font-size: 15px; box-sizing: border-box; }
+    .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; }
+    .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
+
+    /* SALES CHAT WIDGET */
+    #chat-btn { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #2563eb); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 24px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 990; transition: transform 0.2s; }
+    #sales-chat-panel { display: none; position: fixed; bottom: 90px; right: 24px; width: min(90vw, 370px); height: 520px; background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); flex-direction: column; overflow: hidden; z-index: 999; }
+    .chat-header { background: rgba(255,255,255,0.03); padding: 14px 18px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
+    .chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 13px; }
+    .chat-msg { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; color: #f8fafc; }
+    .chat-options { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    .chat-chip { padding: 9px 12px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); color: #60a5fa; border-radius: 8px; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer; }
+    .chat-form-container { background-color: #1a1d24; padding: 16px; border-radius: 8px; border: 1px solid #2d323d; margin-top: 8px; }
+    .chat-form-container input, .chat-form-container textarea { width: 100%; padding: 10px; margin-bottom: 12px; background-color: #242933; border: 1px solid #3b4252; border-radius: 6px; color: #ffffff; font-family: inherit; font-size: 13px; box-sizing: border-box; }
+    .chat-form-container textarea { resize: vertical; min-height: 80px; }
+    .chat-form-container button { width: 100%; padding: 10px; background-color: #10b981; border: none; border-radius: 6px; color: #ffffff; font-weight: 700; cursor: pointer; }
+
+    /* RESPONSIVE MOBILE BREAKPOINTS */
+    @media (max-width: 1023px) {
+      .nav-links { display: none; width: 100%; flex-direction: column; align-items: flex-start; background: rgba(15, 23, 42, 0.98); padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); margin-top: 10px; box-sizing: border-box; }
+      .nav-links.mobile-open { display: flex; }
+      .mobile-menu-toggle { display: block; }
+      header { padding: 12px 16px; }
+    }
+    @media (max-width: 768px) {
+      .platforms-grid, .preview-grid { grid-template-columns: 1fr !important; }
+      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+      .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 8px; }
+    }
+    @media (max-width: 480px) {
+      .container { padding: 0 16px; }
+      .cta-group { flex-direction: column; width: 100%; padding: 0; }
+      .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+      #sales-chat-panel { width: calc(100vw - 32px) !important; right: 16px !important; bottom: 85px !important; height: 460px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO VIDEO BACKGROUND -->
+  <div class="hero-video-container">
+    <video class="hero-bg-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1920&auto=format&fit=crop">
+      <source src="assets/cafe-bg.mp4" type="video/mp4">
+    </video>
+    <div class="hero-video-overlay"></div>
+  </div>
+
+  <div class="glow-top"></div>
+
+  <!-- NAVBAR -->
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" />
+        <span>FlexiTap POS</span>
+      </a>
+      
+      <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">☰</button>
+
+      <div class="nav-links" id="navLinksContainer">
+        <a href="features.html" class="nav-link" onclick="toggleMobileMenu()">Capabilities</a>
+        <a href="pricing.html" class="nav-link" onclick="toggleMobileMenu()">Pricing</a>
+        <a href="about.html" class="nav-link" onclick="toggleMobileMenu()">About Us & FAQ</a>
+        <a href="dev_portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <button class="btn-signup" onclick="openModal('signup-modal')">Get Started</button>
+        <button class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <main class="container">
+    <section class="hero">
+      <div class="badge">
+        <span class="badge-dot"></span> Powering Your Business, Simplified.
+      </div>
+      <h1>Offline-First Hybrid POS.<br>Built for Uninterrupted Commerce.</h1>
+      <p>High-speed checkout, visual table management, kitchen routing, offline-first reliability, and real-time merchant analytics across all your devices.</p>
+      
+      <div class="cta-group" id="download">
+        <button class="btn-primary" onclick="openModal('signup-modal')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+          Create Store Account
+        </button>
+        <a href="#" onclick="alert('Android APK direct download coming soon! Please check back shortly.'); return false;" class="btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Android APK
+        </a>
+      </div>
+
+      <!-- PROFESSIONAL MULTI-PLATFORM ECOSYSTEM MATRIX -->
+      <div class="platforms-wrapper">
+        <div class="platforms-label">SUPPORTED OPERATING SYSTEMS & STORE ECOSYSTEMS</div>
+        <div class="platforms-grid">
+          <div class="platform-card">
+            <div class="platform-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.996-3.4562c.0784-.1358.0321-.3096-.1038-.3881-.1362-.0787-.3101-.0321-.3885.1039l-2.0223 3.5015c-1.3787-.6304-2.9234-.988-4.3629-.988s-2.9842.3576-4.3629.988L6.6166 5.581c-.0784-.136-.2524-.1826-.3885-.1039-.1359.0785-.1822.2523-.1038.3881l1.996 3.4562C4.1611 11.2334 1.5 15.421 1.5 20.3248h21c0-4.9038-2.6611-9.0914-6.6185-11.0034"/></svg>
+            </div>
+            <div class="platform-details">
+              <div class="platform-name">Android Tablets & POS</div>
+              <div class="platform-meta">Direct APK Build (arm64/v7a)</div>
+            </div>
+            <span class="status-badge-soon">Coming Soon</span>
+          </div>
+          <div class="platform-card">
+            <div class="platform-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.793 12 3.61 22.186c-.301-.318-.485-.75-.485-1.229V3.043c0-.479.184-.911.484-1.229zm11.306 11.307l2.42 2.42-11.89 6.842 9.47-9.262zm0-2.242L5.445 1.617l11.89 6.842-2.42 2.42zm1.536 1.536l3.815-2.194c.833-.479.833-1.258 0-1.737L16.451 10.29l-2.115 2.125 2.115 2.126v-.126z"/></svg>
+            </div>
+            <div class="platform-details">
+              <div class="platform-name">Google Play Store</div>
+              <div class="platform-meta">Android Native App Listing</div>
+            </div>
+            <span class="status-badge-soon">In Review</span>
+          </div>
+          <div class="platform-card">
+            <div class="platform-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.01c.67-.82 1.13-1.96 1.01-3.1-.97.04-2.15.65-2.85 1.47-.62.72-1.16 1.88-1.02 2.99 1.08.08 2.19-.54 2.86-1.36z"/></svg>
+            </div>
+            <div class="platform-details">
+              <div class="platform-name">Apple iOS & iPadOS</div>
+              <div class="platform-meta">App Store for iPad Counters</div>
+            </div>
+            <span class="status-badge-soon">Coming Soon</span>
+          </div>
+          <div class="platform-card">
+            <div class="platform-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.901-1.8z"/></svg>
+            </div>
+            <div class="platform-details">
+              <div class="platform-name">Windows POS Edition</div>
+              <div class="platform-meta">All-in-One Touchscreen PCs</div>
+            </div>
+            <span class="status-badge-soon">Coming Soon</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIVE DEMO PREVIEW CARD (WITH DYNAMIC ANIMATION) -->
+    <div class="preview-wrapper">
+      <div class="preview-header">
+        <div class="preview-title"><span>📊</span> Live Store Analytics Feed</div>
+        <span class="status-pill">&bull; Cloud Connected (Live)</span>
+      </div>
+      <div class="preview-grid">
+        <div class="stat-box">
+          <div class="stat-label">Today's Net Sales</div>
+          <div class="stat-val" id="anim-sales" style="color: var(--accent-green);">$3,485.50</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Transactions</div>
+          <div class="stat-val" id="anim-tx" style="color: var(--primary);">124</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Average Ticket</div>
+          <div class="stat-val" id="anim-ticket" style="color: var(--accent-purple);">$28.10</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER WITH SOCIAL ICONS -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <!-- BRANDING COLUMN -->
+        <div class="footer-brand">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 26px; height: 26px;" />
+            <div style="font-weight: 800; color: #fff; font-size: 18px;">FlexiTap POS</div>
+          </div>
+          <p>Simplify Sales. Grow Your Business. A point-of-sale for shop owners, baristas, and anyone who needs things to just work.</p>
+          
+          <!-- SOCIAL MEDIA ICONS -->
+          <div class="social-links">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="Facebook">
+              <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="YouTube">
+              <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="X (Twitter)">
+              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="Instagram">
+              <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+          </div>
+
+          <div class="app-buttons" style="margin-top: 20px;">
+            <div class="app-btn">
+               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.793 12 3.61 22.186c-.301-.318-.485-.75-.485-1.229V3.043c0-.479.184-.911.484-1.229zm11.306 11.307l2.42 2.42-11.89 6.842 9.47-9.262zm0-2.242L5.445 1.617l11.89 6.842-2.42 2.42zm1.536 1.536l3.815-2.194c.833-.479.833-1.258 0-1.737L16.451 10.29l-2.115 2.125 2.115 2.126v-.126z"/></svg>
+               Coming Soon
+            </div>
+            <div class="app-btn">
+               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.01c.67-.82 1.13-1.96 1.01-3.1-.97.04-2.15.65-2.85 1.47-.62.72-1.16 1.88-1.02 2.99 1.08.08 2.19-.54 2.86-1.36z"/></svg>
+               Coming Soon
+            </div>
+          </div>
+        </div>
+
+        <!-- PRODUCT LINKS -->
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="features.html">Capabilities</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="about.html">FAQ</a></li>
+            <li><a href="#" onclick="alert('Android APK direct download coming soon!'); return false;">Download</a></li>
+          </ul>
+        </div>
+
+        <!-- LEGAL LINKS -->
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a onclick="openModal('privacy-modal')">Privacy Policy</a></li>
+            <li><a onclick="openModal('terms-modal')">Terms of Service</a></li>
+            <li><a onclick="openSalesChat('Contact Us')">Contact Us</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- COPYRIGHT ROW -->
+      <div class="footer-bottom">
+        <div>&copy; 2026 FlexiTap POS. All rights reserved.</div>
+        <div>www.flexitappapp.com</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING INQUIRY & SALES CHAT WIDGET -->
+  <button id="chat-btn" onclick="toggleSalesChat()" title="Sales & Inquiries Chat">💬</button>
+
+  <div id="sales-chat-panel">
+    <div class="chat-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="width: 10px; height: 10px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></div>
+        <div>
+          <div style="font-size: 13px; font-weight: 800; color: #fff;">FlexiTap Sales Assistant</div>
+          <div style="font-size: 11px; color: var(--text-muted);">sales@flexitappapp.com</div>
+        </div>
+      </div>
+      <button onclick="toggleSalesChat()" style="background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer;">&times;</button>
+    </div>
+
+    <div class="chat-body" id="chat-messages">
+      <div class="chat-msg">
+        👋 <strong>Welcome to FlexiTap POS!</strong> Looking for the right setup for your business?
+      </div>
+      <div class="chat-options" id="chat-quick-options">
+        <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Plus ($49) vs Pro ($99) Plans</button>
+        <button class="chat-chip" onclick="handleChatSelect('platforms')">📱 iOS, iPad, Android & Windows Availability</button>
+        <button class="chat-chip" onclick="handleChatSelect('sync')">⚡ Offline Reliability & Real-Time Cloud Sync</button>
+        <button class="chat-chip" onclick="handleChatSelect('hardware')">🖨️ Thermal Printers, Wi-Fi & Sunmi</button>
+        <button class="chat-chip" onclick="handleChatSelect('contact')" style="background: rgba(16,185,129,0.1); color: #34d399; border-color: rgba(16,185,129,0.3);">✉️ Contact Sales / Request Demo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MERCHANT SIGN UP MODAL -->
+  <div class="modal-overlay" id="signup-modal">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('signup-modal')">&times;</button>
+      <div class="modal-header-logo">
+        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 36px; height: 36px;" />
+        <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Create Your Store</h2>
+      </div>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Register your account and select your plan.</p>
+
+      <!-- FORM STATE -->
+      <div id="signup-form-state">
+        <form id="portal-signup-form">
+          <label for="signup-business">Business Name</label>
+          <input type="text" id="signup-business" required placeholder="My Awesome Cafe" />
+
+          <label for="signup-email">Owner Email</label>
+          <input type="email" id="signup-email" required placeholder="owner@cafe.com" autocomplete="email" />
+
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" required placeholder="At least 6 characters" autocomplete="new-password" />
+
+          <label for="signup-tier">Select Plan</label>
+          <select id="signup-tier">
+            <option value="free">Free ($0 / mo)</option>
+            <option value="plus">Plus ($49 / mo)</option>
+            <option value="pro">Pro ($99 / mo)</option>
+          </select>
+
+          <button type="submit" class="submit-btn" id="signup-btn-text">Create Account</button>
+        </form>
+        <div id="signup-modal-error" class="error-msg"></div>
+      </div>
+
+      <!-- SUCCESS STATE -->
+      <div id="signup-success-state" style="display: none; text-align: center; padding: 20px 0;">
+        <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+        <h3 style="color: #fff; font-size: 22px; margin-bottom: 12px;">Account Created!</h3>
+        <p style="color: var(--text-muted); font-size: 14.5px; margin-bottom: 24px; line-height: 1.6;">
+          Your FlexiTap account has been secured.<br><br>
+          <strong>To initialize your store database and complete setup, please download the FlexiTap app on your primary POS terminal.</strong>
+        </p>
+        <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="alert('Android APK direct download starting...'); closeModal('signup-modal');">Download FlexiTap App</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- AUTH LOGIN MODAL -->
+  <div class="modal-overlay" id="login-modal">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
+      <div class="modal-header-logo">
+        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 36px; height: 36px;" />
+        <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Merchant Portal</h2>
+      </div>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Log in with your FlexiTap account credentials.</p>
+
+      <form id="portal-login-form">
+        <label for="modal-email">Owner Email</label>
+        <input type="email" id="modal-email" required placeholder="merchant@example.com" autocomplete="username" />
+
+        <label for="modal-password">Password</label>
+        <input type="password" id="modal-password" required placeholder="••••••••" autocomplete="current-password" />
+
+        <button type="submit" class="submit-btn" id="login-btn-text">Log In to Portal</button>
+      </form>
+      <div id="modal-error" class="error-msg"></div>
+    </div>
+  </div>
+
+  <!-- TERMS OF SERVICE MODAL -->
+  <div class="modal-overlay" id="terms-modal">
+    <div class="modal-card wide">
+      <button class="close-btn" onclick="closeModal('terms-modal')">&times;</button>
+      <h2 style="font-size: 20px; color: #fff; margin-bottom: 4px;">FlexiTap POS — Terms of Service</h2>
+      <p style="margin-bottom: 20px; font-size: 12px; color: var(--text-muted);">Last updated: 2026-04-27</p>
+      
+      <div style="font-size: 13px; color: var(--text-muted); display: flex; flex-direction: column; gap: 16px; text-align: left; line-height: 1.6; max-height: 65vh; overflow-y: auto; padding-right: 8px;">
+        <p>These Terms of Service (“Terms”) govern your access to and use of FlexiTap POS (“FlexiTap”, “we”, “us”, “our”), including the mobile application, the web portal at https://flexitappapp.com, and any related services (collectively, the “Service”). By installing, accessing, or using the Service you agree to these Terms. If you do not agree, do not use the Service.</p>
+
+        <div>
+          <strong style="color: #fff;">1. The Service</strong><br>
+          FlexiTap is an offline-first point-of-sale application provided to small businesses on a software-as-a-service basis. The Service is provided on an “as is” and “as available” basis. We continue to develop, improve, and modify the Service over time, and features may be added, changed, or removed without prior notice.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">2. Eligibility and your account</strong><br>
+          You must be at least 18 years old (or the age of majority in your country of residence, whichever is greater) and legally authorized to act for the business you register.<br>
+          You are responsible for the accuracy of the information you provide, for keeping your login credentials and staff PINs secure, and for all activity that occurs under your account or the accounts of staff to whom you grant access.<br>
+          You must promptly notify us of any unauthorized use of your account or any other suspected breach of security.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">3. Acceptable use</strong><br>
+          You agree not to, and not to permit any staff member or third party to:
+          <ul style="padding-left: 16px; margin-top: 6px;">
+            <li>Use the Service for any unlawful, fraudulent, or deceptive purpose;</li>
+            <li>Record, store, or process personal data of customers, employees, or third parties without a lawful basis to do so under applicable data protection laws in your jurisdiction;</li>
+            <li>Falsify transaction, sales, settlement, tax, or accounting records, or use the Service to facilitate tax evasion, money laundering, or any other illegal activity;</li>
+            <li>Use the Service for predatory, abusive, or unlawful debt collection;</li>
+            <li>Attempt to disrupt, overload, reverse-engineer, decompile, or circumvent any technical measure of the Service, or probe its security;</li>
+            <li>Access or attempt to access another business’s data, or share your account, device key, or staff PINs with anyone outside your authorized staff;</li>
+            <li>Resell, sublicense, white-label, or otherwise commercially exploit the Service without our prior written consent.</li>
+          </ul>
+        </div>
+
+        <div>
+          <strong style="color: #fff;">4. Subscriptions and payments</strong><br>
+          FlexiTap offers a Free tier and one or more paid tiers. Paid tiers are billed by Google Play, the Apple App Store, or another platform we may designate, in accordance with that platform’s billing terms. You may cancel at any time through the platform that processes your subscription; access to paid features ends at the end of the then-current billing period. Except where required by law or by the platform’s own policies, all payments are non-refundable. Subscription fees, included quotas, and feature availability per tier may change from time to time and will take effect on the next renewal.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">5. Free tier and tier changes</strong><br>
+          The Free tier is provided at no cost and is subject to feature limits (including, without limitation, item, customer, staff, device, and location caps; in-app advertising; and the absence of cloud sync). The Free tier stores your data only on your device and does not back it up to our servers. If your paid subscription expires, lapses, or is downgraded, the Service will revert to the limits of the Free tier; cloud-synced data exceeding those limits may become read-only or inaccessible from within the app, and you remain responsible for exporting any data you wish to retain before such transition.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">6. Data ownership and your responsibility to back up</strong><br>
+          As between you and us, you own the operational data you enter into the Service (items, customers, transactions, staff, reports, images, and the like). We store and process that data only as necessary to provide the Service, as further described in our Privacy Policy. You may delete your account and associated cloud data at any time via https://flexitappapp.com/account/delete.<br>
+          You acknowledge and agree that:
+          <ul style="padding-left: 16px; margin-top: 6px;">
+            <li>The Free tier stores all data only on your device. There is no cloud backup, no server-side copy, and no recovery mechanism if the device is lost, stolen, damaged, factory-reset, or if the app is uninstalled. We cannot recover Free-tier data under any circumstances.</li>
+            <li>The Service is offline-first. Changes you make while offline are queued locally and uploaded the next time the device successfully reaches our servers. If the device is wiped, replaced, reinstalled, or otherwise loses its local storage before that upload completes, the queued changes are permanently lost.</li>
+            <li>Cloud sync is not a backup service. It mirrors your most recent state across paired devices. Deletes, edits, and conflicting writes propagate, and on conflict the most recent write wins. We do not retain prior versions beyond what is described in our Privacy Policy.</li>
+            <li>You are solely responsible for maintaining your own backups using the export, local backup, and Google Drive backup features available in the Service. We strongly recommend that you create regular backups and store at least one copy outside the device.</li>
+            <li>Account deletion is permanent and irreversible. Once initiated, the deleted data cannot be recovered, including by us.</li>
+            <li>To the maximum extent permitted by applicable law, we disclaim all liability for any loss, corruption, inaccessibility, or unrecoverability of your data, whether caused by: (a) device loss, theft, damage, malfunction, or factory reset; (b) uninstallation or reinstallation of the Service; (c) operating-system updates, third-party application interference, malware, or unauthorized access via shared credentials or staff PINs; (d) actions or omissions of you or your staff, including accidental deletion, void, refund, or misconfigured permissions; (e) interruptions or failures of internet connectivity, push-notification delivery, app stores, payment processors, cloud-storage providers, or any other third-party service we depend on; (f) the inherent limitations of an offline-first architecture, including last-write-wins conflict resolution; (g) expiration, downgrade, suspension, or cancellation of a paid subscription; or (h) any event outside our reasonable control. Our role is to provide the software; the preservation of your business records is your responsibility as the operator of your business.</li>
+          </ul>
+        </div>
+
+        <div>
+          <strong style="color: #fff;">7. Customer data and your role as controller</strong><br>
+          When you record information about your own customers, employees, suppliers, or other third parties in the Service, you act as the data controller (or equivalent role under applicable law) for that information, and we act as your processor and process it solely on your documented instructions to provide the Service. You represent and warrant that you have a valid lawful basis to collect and process such information, that you have provided any required notices to the individuals concerned, and that you will respond to their access, rectification, deletion, and other rights requests as required by applicable law. You are solely responsible for the lawfulness of the data you enter into the Service.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">8. Tax, accounting, and legal compliance</strong><br>
+          Receipts, invoices, settlements, sales reports, debt records, and other documents generated by the Service are operational records intended to help you run your business. They are not certified tax invoices, statutory accounting records, or audited financial statements, and they may not, without further action by you, satisfy invoicing, e-invoicing, fiscalization, tax-reporting, or record-retention requirements that apply to your business in any particular jurisdiction. You are solely responsible for determining what records you are required to keep, in what format, and for how long, and for complying with all tax, accounting, consumer-protection, employment, and other laws applicable to your business.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">9. Third-party services</strong><br>
+          The Service depends on third-party platforms and providers, including without limitation Google Firebase (authentication, push messaging, crash reporting), Google Play and Apple App Store (subscription billing), RevenueCat (subscription validation), Google Drive (optional backup), Cloudflare (edge security and content delivery), and the advertising networks used on the Free tier. Those services are governed by their own terms and privacy policies. We are not responsible for their availability, performance, or acts and omissions, and any interruption or change to those services may affect the Service.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">10. Service availability</strong><br>
+          Core point-of-sale functions are designed to work without internet access. Cloud sync, the web portal, push notifications, and certain other features require internet connectivity and may have planned or unplanned downtime, including for maintenance, upgrades, or events outside our control. We do not guarantee that the Service will be uninterrupted, error-free, or available at any particular time, and we do not provide any service-level commitment unless expressly stated in a separate written agreement signed by us.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">11. Termination</strong><br>
+          You may stop using the Service at any time and delete your account via https://flexitappapp.com/account/delete. We may suspend, restrict, or terminate your access to the Service, in whole or in part, at any time and without prior notice if we reasonably believe that you have violated these Terms, that your use poses a security, legal, or reputational risk, or that we are required to do so by law. On termination, your right to use the Service ends, and the provisions of these Terms that by their nature should survive termination will survive.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">12. Disclaimer of warranties</strong><br>
+          To the maximum extent permitted by applicable law, the Service is provided “as is” and “as available”, without warranties of any kind, whether express, implied, statutory, or otherwise. We expressly disclaim all warranties of merchantability, fitness for a particular purpose, title, non-infringement, accuracy, completeness, reliability of any reports or calculations, uninterrupted operation, compatibility with any specific hardware, printer, or operating system, and any warranties arising from course of dealing or usage of trade. We do not warrant that the Service will meet your requirements, that defects will be corrected, or that the Service is free of viruses or other harmful components.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">13. Limitation of liability</strong><br>
+          To the maximum extent permitted by applicable law, in no event will we, our affiliates, or our suppliers be liable for any indirect, incidental, special, consequential, exemplary, or punitive damages, or for any loss of profits, revenue, goodwill, customers, business opportunities, or data, however caused and under any theory of liability, even if we have been advised of the possibility of such damages. Our total cumulative liability arising out of or relating to these Terms or the Service will not exceed the greater of (a) the fees you actually paid to us for the Service in the twelve (12) months immediately preceding the event giving rise to the claim, or (b) USD 100. The limitations in this section apply whether or not the remedies provided in these Terms fail of their essential purpose. Some jurisdictions do not allow the exclusion or limitation of certain damages; in those jurisdictions our liability is limited to the smallest extent permitted by law.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">14. Indemnification</strong><br>
+          You agree to defend, indemnify, and hold harmless FlexiTap, its affiliates, and their respective officers, directors, employees, and agents from and against any and all claims, demands, actions, losses, liabilities, damages, costs, and expenses (including reasonable legal fees) arising out of or related to: (a) your or your staff’s use of the Service; (b) your violation of these Terms or of any applicable law; (c) the data, content, or instructions you submit to or process through the Service, including any claim by your customers, employees, tax authorities, regulators, or other third parties relating to that data; or (d) your acts or omissions as the controller of personal data processed through the Service.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">15. Force majeure</strong><br>
+          We will not be liable for any failure or delay in performance caused by events beyond our reasonable control, including without limitation acts of God, natural disasters, war, terrorism, riots, civil unrest, government action, labor disputes, internet or telecommunications outages, power failures, denial-of-service attacks, or failures of third-party platforms or providers on which the Service depends.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">16. Governing law and disputes</strong><br>
+          These Terms are governed by the laws of the Republic of Indonesia, without regard to its conflict-of-laws principles. The courts located in Jakarta, Indonesia have exclusive jurisdiction over any dispute arising out of or relating to these Terms or the Service, and you consent to the personal jurisdiction of those courts. Nothing in this section deprives you of the protection of any mandatory consumer-protection laws of the country in which you reside, where those laws cannot be excluded by agreement.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">17. Changes to these Terms</strong><br>
+          We may update these Terms from time to time. We will indicate the date of the most recent revision at the top of this page, and where the changes are material we will provide additional notice in the app or by email. Your continued use of the Service after changes take effect constitutes your acceptance of the revised Terms. If you do not agree with the changes, you must stop using the Service.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">18. Miscellaneous</strong><br>
+          These Terms, together with the Privacy Policy and any other policies we publish on this website, constitute the entire agreement between you and us regarding the Service. If any provision is found unenforceable, the remaining provisions will remain in full force and effect. Our failure to enforce any right or provision is not a waiver. You may not assign these Terms without our prior written consent; we may assign them without restriction. These Terms do not create any agency, partnership, joint venture, or employment relationship.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">19. Contact</strong><br>
+          Questions about these Terms? Email support@flexitappapp.com.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIVACY POLICY MODAL -->
+  <div class="modal-overlay" id="privacy-modal">
+    <div class="modal-card wide">
+      <button class="close-btn" onclick="closeModal('privacy-modal')">&times;</button>
+      <h2 style="font-size: 20px; color: #fff; margin-bottom: 4px;">Privacy Policy</h2>
+      <p style="margin-bottom: 20px; font-size: 12px; color: var(--text-muted);">Last updated: 2026-04-27</p>
+      
+      <div style="font-size: 13px; color: var(--text-muted); display: flex; flex-direction: column; gap: 16px; text-align: left; line-height: 1.6; max-height: 65vh; overflow-y: auto; padding-right: 8px;">
+        <p>FlexiTap POS (“FlexiTap”, “we”, “us”, “our”) is a point-of-sale application for small businesses. This Privacy Policy explains what personal data we collect, why we collect it, who we share it with, and how you can exercise your rights. It applies to the FlexiTap mobile app, the web portal at https://flexitappapp.com, and any related services (collectively, the “Service”).</p>
+
+        <p>Where this Policy refers to “personal data”, we mean any information that relates to an identified or identifiable natural person, as defined under applicable data-protection laws (including the EU and UK General Data Protection Regulation, the California Consumer Privacy Act / CPRA, Brazil's LGPD, Japan's APPI, Korea's PIPA, Singapore's PDPA, and similar laws).</p>
+
+        <div>
+          <strong style="color: #fff;">1. Who is responsible for your data</strong><br>
+          For data we collect about you, the account holder (your email, business profile, device information, subscription status, and similar) we act as the controller. For data you enter about your customers, employees, suppliers, or other third parties through the Service, you act as the controller (or the equivalent role under applicable law) and we act as your processor: we process that data only on your behalf and on your instructions to provide the Service. You are responsible for having a lawful basis to collect that data, for providing any required notices to the individuals concerned, and for honoring their rights requests.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">2. What we collect</strong>
+          <ul style="padding-left: 16px; margin-top: 6px;">
+            <li><strong>Account data.</strong> Email address, business name and type, business address and contact information, business logo, country and locale, and the subscription receipt or purchase token issued by the app store on subscription.</li>
+            <li><strong>Staff data.</strong> Names, email addresses, phone numbers, photos, role and permission assignments, login PINs, and login activity for staff accounts you create.</li>
+            <li><strong>Customer data you record.</strong> Names, phone numbers, addresses, notes, loyalty point balances and ledger, outstanding debt and debt payment history, and any photos of payment proofs you upload (e.g. transfer slips). You decide what to record.</li>
+            <li><strong>Transactional and operational data.</strong> Items, item variants, modifiers, taxes, discounts, payment methods, transactions, orders, shifts, settlements, stock levels and adjustments, receipts, and printable templates.</li>
+            <li><strong>Device and technical data.</strong> Device model, operating system and version, app version, locale, a per-device identifier and device key used for sync and pairing, push-notification token, IP address, and approximate region derived from it.</li>
+            <li><strong>Crash and diagnostic data.</strong> Stack traces, performance metrics, and similar runtime information used to detect and fix bugs. We do not intentionally include the contents of your business records in these reports.</li>
+            <li><strong>Communications.</strong> Messages you send to support and any attachments you provide.</li>
+          </ul>
+        </div>
+
+        <div>
+          <strong style="color: #fff;">3. How we use your data and the legal bases</strong>
+          <ul style="padding-left: 16px; margin-top: 6px;">
+            <li>To provide the Service — keeping your data in sync across your paired devices, processing your transactions, generating receipts, sending push notifications, and similar (basis: performance of our contract with you);</li>
+            <li>To process payments and subscriptions — through the app store you used to subscribe and through RevenueCat, which validates your subscription on our behalf (basis: performance of our contract);</li>
+            <li>To provide customer support when you contact us (basis: performance of our contract and our legitimate interest in resolving your inquiry);</li>
+            <li>To improve reliability through aggregated and anonymized crash and usage analytics (basis: our legitimate interest in maintaining a working product);</li>
+            <li>To show advertising on the Free tier via third-party ad networks (basis: performance of our contract with you for the ad-supported Free tier, or your consent where required);</li>
+            <li>To comply with legal obligations and to protect the rights, safety, or property of FlexiTap, our users, or the public (basis: legal obligation and legitimate interest).</li>
+          </ul>
+          We do not sell your personal data, and we do not use it for cross-context behavioral advertising or profiling.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">4. Who we share data with</strong><br>
+          We share data only with service providers we rely on to operate the Service, and only to the extent necessary for them to perform their function. Each is bound by appropriate confidentiality and data-processing obligations.
+          <ul style="padding-left: 16px; margin-top: 6px;">
+            <li><strong>Supabase</strong> – authentication, database management, and backend infrastructure.</li>
+            <li><strong>Google Play and Apple App Store</strong> – subscription billing, in-app purchases, and receipt validation. We never see your full payment instrument.</li>
+            <li><strong>Paddle</strong> – web-based subscription billing, payment processing, and entitlement management.</li>
+            <li><strong>Google Drive (Google LLC)</strong> – optional encrypted backups, only if you enable this feature, and stored in your own Google Drive account.</li>
+            <li><strong>Cloudflare (Cloudflare, Inc.)</strong> – edge security, content delivery, and DDoS protection for our website and API.</li>
+            <li><strong>Advertising networks used on the Free tier</strong> – to serve in-app advertising. These networks may collect device identifiers and similar information as described in their own privacy policies.</li>
+            <li><strong>Hosting and infrastructure providers</strong> we use to operate our backend.</li>
+          </ul>
+          We may also disclose data when required by law, valid legal process, or a binding order from a competent authority, or to protect the rights, safety, or property of FlexiTap, our users, or the public. If we are involved in a merger, acquisition, or sale of assets, your data may be transferred as part of that transaction, and we will notify you before it becomes subject to a different privacy policy.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">5. Where your data lives and international transfers</strong><br>
+          We store operational data encrypted at rest on servers operated by us and by our hosting providers. Backups are encrypted and retained for up to 30 days. Some of our service providers (including those listed above) operate globally, which means your data may be transferred to, stored in, or accessed from countries other than the one in which you reside, including countries that may not provide the same level of data-protection law as your own. Where required, we rely on appropriate safeguards for such transfers, such as the European Commission's Standard Contractual Clauses, the UK International Data Transfer Addendum, or equivalent mechanisms.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">6. How long we keep your data</strong><br>
+          We retain your data for as long as your account is active and for as long as we need it to provide the Service. After you delete your account via https://flexitappapp.com/account/delete, we delete or irreversibly anonymize your account and operational data from production systems within a reasonable period (typically 30 days), and remove it from encrypted backups within a further 30 days. We may retain certain information for longer if required to comply with a legal obligation, resolve disputes, or enforce our agreements.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">7. Data loss and Free-tier storage</strong><br>
+          Free-tier data is stored only on your device. We do not back it up and we cannot recover it if your device is lost, stolen, damaged, factory reset, or if the app is uninstalled. The Service is offline-first: changes you make while offline are queued locally and uploaded the next time the device successfully reaches our servers. If the device is wiped, replaced, or reinstalled before that upload completes, the queued changes are lost. You are solely responsible for maintaining your own backups using the export, local backup, and Google Drive backup features available in the Service. Please see our Terms of Service for the full allocation of responsibility regarding data loss.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">8. Security</strong><br>
+          We use technical and organizational measures designed to protect your data, including encryption in transit (TLS) and at rest, access controls, audit logging, device pairing, and the ability to remotely deactivate a paired device. No method of transmission or storage is completely secure, and we cannot guarantee absolute security. You are responsible for safeguarding your account credentials, your staff PINs, and the physical security of the devices on which the Service is installed.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">9. Your rights</strong><br>
+          Depending on the data-protection laws that apply to you, you may have the following rights with respect to personal data we hold about you as the account holder:
+          <ul style="padding-left: 16px; margin-top: 6px;">
+            <li><strong>Access and portability</strong> — request a copy of your personal data in a structured, commonly used format. Email sales@flexitappapp.com and we will respond within the period required by applicable law (typically 30 days).</li>
+            <li><strong>Correction</strong> — edit your data inside the app, or contact support.</li>
+            <li><strong>Deletion</strong> — visit https://flexitappapp.com/account/delete to permanently delete your business and all associated data.</li>
+            <li><strong>Objection and restriction</strong> — object to, or ask us to restrict, certain processing of your personal data.</li>
+            <li><strong>Withdraw consent</strong> — where we rely on your consent, you may withdraw it at any time, without affecting the lawfulness of processing carried out before withdrawal.</li>
+            <li><strong>Lodge a complaint</strong> — with the data-protection authority of your country of residence.</li>
+          </ul>
+          For requests relating to data we process on behalf of a business (for example, customer or staff records that a FlexiTap user has entered into the Service), please contact that business directly. We will assist them in responding to you, but we are not authorized to act on the underlying data without their instructions.<br><br>
+          For users in California: we do not sell or share personal information as those terms are defined under the CCPA/CPRA. You have the right to know, delete, correct, and limit the use of sensitive personal information, and the right not to be discriminated against for exercising these rights.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">10. Children</strong><br>
+          The Service is intended for use by businesses and is not directed at children under 16, and we do not knowingly collect personal data from children. If you believe a child has provided us with personal data, please contact us and we will delete it.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">11. Changes to this Policy</strong><br>
+          We may update this Policy from time to time. We will indicate the date of the most recent revision at the top of this page, and where the changes are material we will provide additional notice in the app or by email. Your continued use of the Service after changes take effect constitutes your acceptance of the revised Policy.
+        </div>
+
+        <div>
+          <strong style="color: #fff;">12. Contact</strong><br>
+          Questions, requests, or complaints about this Policy or our handling of your data? Email sales@flexitappapp.com.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // --- LIVE SIMULATED ANALYTICS TICKER ANIMATION ---
+    let currentSales = 3485.50;
+    let currentTx = 124;
+    
+    setInterval(() => {
+      const increment = +(Math.random() * 25).toFixed(2);
+      currentSales += increment;
+      currentTx += 1;
+      const currentTicket = (currentSales / currentTx).toFixed(2);
+
+      const salesEl = document.getElementById('anim-sales');
+      const txEl = document.getElementById('anim-tx');
+      const ticketEl = document.getElementById('anim-ticket');
+
+      if (salesEl && txEl && ticketEl) {
+        salesEl.textContent = `$${currentSales.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        txEl.textContent = currentTx;
+        ticketEl.textContent = `$${currentTicket}`;
+
+        salesEl.classList.add('live-tick');
+        txEl.classList.add('live-tick');
+        ticketEl.classList.add('live-tick');
+
+        setTimeout(() => {
+          salesEl.classList.remove('live-tick');
+          txEl.classList.remove('live-tick');
+          ticketEl.classList.remove('live-tick');
+        }, 500);
+      }
+    }, 4000);
+
+    // --- MOBILE MENU TOGGLE ---
+    function toggleMobileMenu() {
+      const nav = document.getElementById('navLinksContainer');
+      nav.classList.toggle('mobile-open');
+    }
+
+    // --- MODAL CONTROLS ---
+    function openModal(id) {
+      const el = document.getElementById(id || 'login-modal');
+      if (el) el.style.display = 'flex';
+    }
+    
+    function closeModal(id) {
+      const el = document.getElementById(id || 'login-modal');
+      if (el) el.style.display = 'none';
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach((overlay) => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.style.display = 'none';
+      });
+    });
+
+    // --- SALES CHAT ENGINE ---
+    function toggleSalesChat() {
+      const p = document.getElementById('sales-chat-panel');
+      p.style.display = (p.style.display === 'none' || p.style.display === '') ? 'flex' : 'none';
+    }
+
+    function openSalesChat(topic) {
+      const p = document.getElementById('sales-chat-panel');
+      p.style.display = 'flex';
+      appendMessage(`Let's discuss the <strong>${topic}</strong>! Leave your details and inquiry message below or email us directly at <a href="mailto:sales@flexitappapp.com" style="color:var(--primary); font-weight:700;">sales@flexitappapp.com</a>.`);
+      showLeadForm();
+    }
+
+    function appendMessage(html) {
+      const box = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = 'chat-msg';
+      div.innerHTML = html;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function handleChatSelect(type) {
+      if (type === 'pricing') {
+        appendMessage(`<strong>US Plan Breakdown:</strong><br>• <strong>Free ($0):</strong> 1 offline register terminal, on-device storage, ESC/POS printing.<br>• <strong>Plus ($49/mo):</strong> Up to 3 terminals, Live Web Portal, real-time sync, CSV/PDF reports.<br>• <strong>Pro ($99/mo):</strong> Unlimited multi-register sync, KDS kitchen screens & floor plans.`);
+      } else if (type === 'platforms') {
+        appendMessage(`<strong>Supported Platforms & App Stores:</strong><br>• <strong>Android:</strong> Direct APK build coming soon.<br>• <strong>Apple iOS / iPadOS:</strong> Coming soon to the App Store.<br>• <strong>Windows Touchscreen:</strong> Coming soon.`);
+      } else if (type === 'sync') {
+        appendMessage(`<strong>Offline-First Architecture:</strong><br>Transactions write locally in milliseconds on your device. Once online, sales automatically synchronize to the cloud.`);
+      } else if (type === 'hardware') {
+        appendMessage(`<strong>Supported Peripherals:</strong><br>• Thermal Printers: ESC/POS (Network/LAN IP, Wi-Fi Wireless, Bluetooth, Sunmi Handheld PDAs).<br>• Peripherals: Automatic RJ11 cash drawers, camera/USB barcode scanners, and Customer-Facing Displays (CDS).`);
+      } else if (type === 'contact') {
+        appendMessage(`<strong>Contact Sales Team:</strong><br>Direct Email: <a href="mailto:sales@flexitappapp.com" style="color:var(--primary); font-weight:700;">sales@flexitappapp.com</a> or leave your contact information and inquiry message below:`);
+        showLeadForm();
+      }
+    }
+
+    function showLeadForm() {
+      appendMessage(`
+        <div class="chat-form-container">
+          <form onsubmit="submitSalesInquiry(event)">
+            <input type="text" id="lead-name" placeholder="Business Name / Contact Name" required />
+            <input type="email" id="lead-email" placeholder="Email (e.g. owner@cafe.com)" required />
+            <input type="tel" id="lead-phone" placeholder="Phone Number (Optional)" />
+            <textarea id="lead-message" placeholder="Type your inquiry or message here..." required></textarea>
+            <button type="submit">Send Inquiry</button>
+          </form>
+        </div>
+      `);
+    }
+
+    async function submitSalesInquiry(e) {
+      e.preventDefault();
+      const name = document.getElementById('lead-name').value;
+      const email = document.getElementById('lead-email').value;
+      const phone = document.getElementById('lead-phone').value;
+      const message = document.getElementById('lead-message').value;
+
+      const btn = e.target.querySelector('button');
+      btn.innerText = 'Sending...';
+      btn.disabled = true;
+
+      try {
+        const { error } = await supabaseClient
+          .from('leads')
+          .insert([{ business_name: name, contact_email: email, contact_phone: phone, message: message }]);
+
+        if (error) {
+          console.error("Supabase Error:", error);
+          appendMessage(`❌ <strong>Error:</strong> Failed to send inquiry. Please try emailing directly.`);
+        } else {
+          appendMessage(`✅ <strong>Thank you, ${name}!</strong> Your inquiry and message have been routed to <strong>sales@flexitappapp.com</strong>. We will get back to you shortly.`);
+          e.target.reset(); 
+        }
+      } catch (err) {
+        console.error('Network Error:', err);
+        appendMessage(`❌ <strong>Error:</strong> Network issue. Please check your connection.`);
+      } finally {
+        btn.innerText = 'Send Inquiry';
+        btn.disabled = false;
+      }
+    }
+
+    // --- MERCHANT SIGN UP SUBMIT ---
+    document.getElementById('portal-signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const businessName = document.getElementById('signup-business').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const tier = document.getElementById('signup-tier').value;
+      const errorDiv = document.getElementById('signup-modal-error');
+      const btnText = document.getElementById('signup-btn-text');
+
+      errorDiv.innerText = '';
+      btnText.innerText = 'Creating account...';
+
+      const { data, error } = await supabaseClient.auth.signUp({ email, password });
+      
+      if (error) {
+        errorDiv.innerText = error.message;
+        btnText.innerText = 'Create Account';
+        return;
+      }
+
+      const userId = data.user?.id;
+
+      if (userId) {
+        const { error: profileError } = await supabaseClient.from('profiles').upsert([
+          { 
+            id: userId, 
+            store_name: businessName, 
+            subscription_tier: tier,
+            role: 'owner',
+            onboarding_completed: false 
+          }
+        ]);
+
+        if (profileError) {
+          errorDiv.innerText = 'Account created, but failed to save profile: ' + profileError.message;
+          btnText.innerText = 'Create Account';
+          return;
+        }
+      }
+
+      document.getElementById('signup-form-state').style.display = 'none';
+      document.getElementById('signup-success-state').style.display = 'block';
+    });
+
+    // --- AUTH LOGIN SUBMIT ---
+    document.getElementById('portal-login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('modal-email').value.trim();
+      const password = document.getElementById('modal-password').value;
+      const errorDiv = document.getElementById('modal-error');
+      const btnText = document.getElementById('login-btn-text');
+
+      errorDiv.innerText = '';
+      btnText.innerText = 'Verifying credentials...';
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      
+      if (error) {
+        errorDiv.innerText = error.message;
+        btnText.innerText = 'Log In to Portal';
+        return;
+      }
+
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('subscription_tier, role')
+        .eq('id', data.user.id)
+        .maybeSingle();
+
+      const userRole = (profile?.role || '').toLowerCase();
+      const tier = (profile?.subscription_tier || 'free').toLowerCase();
+
+      if (userRole === 'dev' || userRole === 'developer' || userRole === 'admin') {
+        window.location.href = 'portal.html';
+        return;
+      }
+
+      if (tier === 'free') {
+        await supabaseClient.auth.signOut();
+        btnText.innerText = 'Log In to Portal';
+        errorDiv.innerHTML = `
+          <strong>Plus/Pro Feature</strong><br>
+          Your account is currently on the <strong>Free</strong> tier.<br>
+          <a href="pricing.html" style="color: var(--primary); font-weight:700; text-decoration:underline; display:inline-block; margin-top:8px;">Upgrade to Plus or Pro</a>
+        `;
+        return;
+      }
+
+      window.location.href = 'portal.html';
+    });
+  </script>
+</body>
+</html>

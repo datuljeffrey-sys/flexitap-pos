@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>FlexiTap POS — Transparent SaaS Pricing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16; --card-bg: rgba(22, 30, 49, 0.75); --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #3b82f6; --primary-hover: #2563eb; --accent-green: #10b981; --accent-purple: #8b5cf6;
+      --text-main: #f8fafc; --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    html, body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; width: 100%; max-width: 100vw; overflow-x: clip; }
+    .container { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: rgba(9, 13, 22, 0.92); backdrop-filter: blur(12px); z-index: 100; width: 100%; }
+    header .container { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 12px; }
+    .logo { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 800; color: #ffffff; text-decoration: none; letter-spacing: -0.5px; }
+    .brand-logo-svg { width: 34px; height: 34px; flex-shrink: 0; border-radius: 50%; object-fit: contain; }
+    .nav-links { display: flex; align-items: center; gap: 20px; }
+    .nav-link { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.2s; }
+    .nav-link:hover, .nav-link.active { color: #fff; }
+    .pricing { padding: 60px 0; text-align: center; width: 100%; }
+    .section-title { font-size: clamp(24px, 5vw, 34px); font-weight: 800; margin-bottom: 12px; text-align: center; }
+    .section-subtitle { color: var(--text-muted); margin-bottom: 48px; font-size: 16px; max-width: 680px; margin-left: auto; margin-right: auto; text-align: center; }
+    .billing-toggle { display: inline-flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.05); padding: 6px 16px; border-radius: 9999px; border: 1px solid var(--card-border); margin-bottom: 36px; font-size: 14px; font-weight: 700; }
+    .toggle-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-weight: 700; font-size: 14px; padding: 6px 12px; border-radius: 9999px; }
+    .toggle-btn.active { background: var(--primary); color: #fff; }
+    .save-badge { background: rgba(16,185,129,0.2); color: #34d399; font-size: 11px; padding: 2px 8px; border-radius: 9999px; margin-left: 4px; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; text-align: left; }
+    .pricing-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 32px; border-radius: 20px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+    .pricing-card.popular { border-color: var(--primary); }
+    .badge-pop { position: absolute; top: 16px; right: 16px; background: var(--primary); color: white; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase; }
+    .price { font-size: 40px; font-weight: 800; margin: 16px 0; color: #fff; }
+    .price span { font-size: 15px; font-weight: 500; color: var(--text-muted); }
+    .pricing-list { list-style: none; margin: 24px 0; font-size: 13.5px; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px; }
+    .pricing-list li::before { content: "✓ "; color: var(--accent-green); font-weight: 800; }
+    .btn-signup, .btn-primary, .btn-secondary { background: var(--primary); border: none; color: #fff; padding: 12px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; transition: 0.2s ease; }
+    .btn-secondary { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.18); }
+    .matrix-wrapper { width: 100%; margin-top: 50px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 32px; overflow-x: auto; text-align: left; }
+    .matrix-table { width: 100%; min-width: 600px; border-collapse: collapse; text-align: left; font-size: 13.5px; }
+    .matrix-table th { padding: 14px 16px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 12px; border-bottom: 1px solid var(--card-border); }
+    .matrix-table td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+    .col-center { text-align: center; }
+    .check-icon { color: var(--accent-green); font-weight: 800; font-size: 16px; }
+    .dash-icon { color: var(--text-muted); font-size: 16px; }
+    .support-plan-banner { width: 100%; margin-top: 40px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 20px; padding: 32px; text-align: left; display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: center; }
+    footer { border-top: 1px solid var(--card-border); padding: 40px 0; background: #0b0f19; text-align: center; color: var(--text-muted); font-size: 13px; margin-top: 60px; }
+    @media(max-width: 768px) { .support-plan-banner { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" />
+        <span>FlexiTap POS</span>
+      </a>
+      <div class="nav-links">
+        <a href="features.html" class="nav-link">Capabilities</a>
+        <a href="pricing.html" class="nav-link active">Pricing</a>
+        <a href="about.html" class="nav-link">About Us & FAQ</a>
+        <a href="dev_portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="pricing">
+      <h2 class="section-title">Transparent, Flat-Rate SaaS Pricing</h2>
+      <p class="section-subtitle">Lock in our lowest rates directly through the web portal across any Android, iOS, or Windows device.</p>
+      <div class="billing-toggle">
+        <button class="toggle-btn active" id="btn-monthly" onclick="setBilling('monthly')">Monthly</button>
+        <button class="toggle-btn" id="btn-annual" onclick="setBilling('annual')">Annual <span class="save-badge">Save 2 Mo</span></button>
+      </div>
+
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div>
+            <h3>Free</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">For solo pop-ups, markets & kiosks</p>
+            <div class="price">$0 <span>/ mo</span></div>
+            <ul class="pricing-list">
+              <li>1 Standalone Register Terminal</li>
+              <li>Complete Offline Functionality</li>
+              <li>ESC/POS Thermal Printing (58/80mm)</li>
+              <li>Cash Float, X & Z-Reading</li>
+              <li>Item Modifiers & Basic Discounts</li>
+            </ul>
+          </div>
+          <a href="index.html" class="btn-signup" style="width: 100%; margin-top: 20px;">Get Started Free</a>
+        </div>
+
+        <div class="pricing-card popular">
+          <div>
+            <span class="badge-pop">Popular</span>
+            <h3>Plus</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">For growing cafes & food trucks</p>
+            <div class="price" id="plus-price">$49 <span>/ mo</span></div>
+            <ul class="pricing-list">
+              <li><strong>Up to 3 Terminals per Store</strong></li>
+              <li><strong>Live Web Customer Portal</strong></li>
+              <li>Automated Real-Time Cloud Sync</li>
+              <li>Daily Automated Cloud Backups</li>
+              <li>Sales by Range (PDF/CSV Exports)</li>
+            </ul>
+          </div>
+          <a href="index.html" class="btn-primary" style="width: 100%; margin-top: 20px;">Start Plus Trial</a>
+        </div>
+
+        <div class="pricing-card">
+          <div>
+            <h3>Pro</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">For multi-station restaurants</p>
+            <div class="price" id="pro-price">$99 <span>/ mo</span></div>
+            <ul class="pricing-list">
+              <li><strong>Unlimited Multi-Terminal Sync</strong></li>
+              <li><strong>Kitchen Display System (KDS)</strong></li>
+              <li>Visual Table Floor Plans & Seat Ordering</li>
+              <li>Centralized Multi-Station Inventory</li>
+              <li><strong>Priority Live Agent Chat Included</strong></li>
+            </ul>
+          </div>
+          <a href="index.html" class="btn-secondary" style="width: 100%; margin-top: 20px;">Contact for Pro</a>
+        </div>
+      </div>
+
+      <div class="matrix-wrapper">
+        <h3 style="font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px;">Detailed Feature Comparison</h3>
+        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Compare technical capabilities across FlexiTap tiers.</p>
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th style="width: 40%;">Core Feature / Capability</th>
+              <th class="col-center" style="width: 20%;">Free ($0)</th>
+              <th class="col-center" style="width: 20%; color: #60a5fa;">Plus ($49/mo)</th>
+              <th class="col-center" style="width: 20%; color: #a855f7;">Pro ($99/mo)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Target Merchant</strong></td><td class="col-center" style="color: var(--text-muted);">Solo Kiosks</td><td class="col-center" style="color: #60a5fa;">Cafes, Boutiques</td><td class="col-center" style="color: #a855f7;">Restaurants</td></tr>
+            <tr><td>Active Terminals per Store</td><td class="col-center">1 Device</td><td class="col-center"><strong>Up to 3 Terminals</strong></td><td class="col-center"><strong>Unlimited Devices</strong></td></tr>
+            <tr><td>Offline-First Architecture</td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>Hardware: ESC/POS, Bluetooth, LAN, Sunmi</td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>Cash Ledger: Float, Drops, Z-Read</td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>Automated Real-Time Cloud Sync</td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
+            <tr><td>Live Web Customer Analytics Portal</td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>Visual Tables & KDS Routing</td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="support-plan-banner">
+        <div>
+          <div style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">🛡️ Priority Tech Support & Uptime Assurance</div>
+          <div style="font-size: 14px; color: var(--text-muted); line-height: 1.5;">Keep your devices, network, and cloud sync pipeline in optimal health during rush hours.</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 28px; font-weight: 800; color: #fff;">$20 <span style="font-size: 14px; font-weight: 500; color: var(--text-muted);">/ month</span></div>
+          <p style="font-size: 12px; color: var(--accent-green);">Included natively in Pro</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">&copy; 2026 FlexiTap POS. All rights reserved.</div>
+  </footer>
+
+  <script>
+    function setBilling(cycle) {
+      const btnM = document.getElementById('btn-monthly');
+      const btnA = document.getElementById('btn-annual');
+      const plusP = document.getElementById('plus-price');
+      const proP = document.getElementById('pro-price');
+      if (cycle === 'annual') {
+        btnA.classList.add('active');
+        btnM.classList.remove('active');
+        plusP.innerHTML = '$490 <span>/ year</span>';
+        proP.innerHTML = '$990 <span>/ year</span>';
+      } else {
+        btnM.classList.add('active');
+        btnA.classList.remove('active');
+        plusP.innerHTML = '$49 <span>/ mo</span>';
+        proP.innerHTML = '$99 <span>/ mo</span>';
+      }
+    }
+  </script>
+</body>
+</html>
