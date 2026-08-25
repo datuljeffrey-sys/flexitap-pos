@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>FlexiTap POS — Transparent SaaS Pricing</title>
+  <title>FlexiTap POS — Founders VIP Annual Pass & Pricing</title>
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,21 +44,33 @@
 
     .pricing { padding: 60px 0; text-align: center; width: 100%; }
     .section-title { font-size: clamp(24px, 5vw, 34px); font-weight: 800; margin-bottom: 12px; text-align: center; }
-    .section-subtitle { color: var(--text-muted); margin-bottom: 48px; font-size: 16px; max-width: 680px; margin-left: auto; margin-right: auto; text-align: center; }
+    .section-subtitle { color: var(--text-muted); margin-bottom: 32px; font-size: 16px; max-width: 680px; margin-left: auto; margin-right: auto; text-align: center; }
     
-    .billing-toggle { display: inline-flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.05); padding: 6px 16px; border-radius: 9999px; border: 1px solid var(--card-border); margin-bottom: 36px; font-size: 14px; font-weight: 700; }
-    .toggle-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-weight: 700; font-size: 14px; padding: 6px 12px; border-radius: 9999px; }
-    .toggle-btn.active { background: var(--primary); color: #fff; }
-    .save-badge { background: rgba(16,185,129,0.2); color: #34d399; font-size: 11px; padding: 2px 8px; border-radius: 9999px; margin-left: 4px; }
+    /* PROMINENT SEPARATE PUBLIC NOTICE BANNER */
+    .public-announcement-banner { background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15)); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 24px; max-width: 900px; margin: 0 auto 48px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .public-announcement-banner h4 { color: #fff; font-size: 18px; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .public-announcement-banner p { color: #cbd5e1; font-size: 14.5px; line-height: 1.6; max-width: 780px; margin: 0 auto; }
 
     .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; text-align: left; }
     .pricing-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 32px; border-radius: 20px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
-    .pricing-card.popular { border-color: var(--primary); }
+    .pricing-card.popular { border-color: var(--primary); box-shadow: 0 0 25px rgba(59, 130, 246, 0.15); }
     .badge-pop { position: absolute; top: 16px; right: 16px; background: var(--primary); color: white; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase; }
-    .price { font-size: 40px; font-weight: 800; margin: 16px 0; color: #fff; }
+    
+    .price-container { margin: 16px 0; }
+    .original-price { font-size: 20px; font-weight: 700; color: var(--text-muted); text-decoration: line-through; margin-right: 8px; }
+    .price { font-size: 40px; font-weight: 800; color: #34d399; display: inline-block; }
     .price span { font-size: 15px; font-weight: 500; color: var(--text-muted); }
+    
     .pricing-list { list-style: none; margin: 24px 0; font-size: 13.5px; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px; }
     .pricing-list li::before { content: "✓ "; color: var(--accent-green); font-weight: 800; }
+
+    /* FOUNDERS PERKS SECTION */
+    .founders-perks-section { margin-top: 60px; text-align: left; background: rgba(22, 30, 49, 0.5); border: 1px solid var(--card-border); border-radius: 20px; padding: 40px; }
+    .perks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 32px; }
+    .perk-card { background: rgba(15, 23, 42, 0.7); border: 1px solid var(--card-border); padding: 24px; border-radius: 14px; }
+    .perk-icon { font-size: 28px; margin-bottom: 12px; display: inline-block; }
+    .perk-card h4 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .perk-card p { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
 
     .matrix-wrapper { width: 100%; margin-top: 50px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 32px; overflow-x: auto; text-align: left; }
     .matrix-table { width: 100%; min-width: 600px; border-collapse: collapse; text-align: left; font-size: 13.5px; }
@@ -68,7 +80,9 @@
     .check-icon { color: var(--accent-green); font-weight: 800; font-size: 16px; }
     .dash-icon { color: var(--text-muted); font-size: 16px; }
 
-    .support-plan-banner { width: 100%; margin-top: 40px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 20px; padding: 32px; text-align: left; display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: center; }
+    .support-plan-banner { width: 100%; margin-top: 40px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 20px; padding: 36px; text-align: left; display: grid; grid-template-columns: 2fr 1.2fr; gap: 24px; align-items: center; }
+    .support-features-list { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--text-muted); }
+    .support-features-list li::before { content: "✓ "; color: var(--accent-green); font-weight: 800; }
 
     /* FOOTER & SOCIAL ICONS */
     footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #0b0f19; font-size: 14px; width: 100%; }
@@ -147,20 +161,24 @@
   <!-- MAIN PRICING CONTENT -->
   <main class="container">
     <section class="pricing">
-      <h2 class="section-title">Transparent, Flat-Rate SaaS Pricing</h2>
-      <p class="section-subtitle">Lock in our lowest rates directly through the web portal across any Android, iOS, or Windows device.</p>
+      <h2 class="section-title">Founders VIP Annual Pass</h2>
+      <p class="section-subtitle">Lock in exclusive early-adopter fixed annual rates today. Your payment secures your Founders VIP spot, but your official 12-month subscription and renewal cycle begin only when you complete onboarding inside the app on or after launch day (November 13, 2026).</p>
       
-      <div class="billing-toggle">
-        <button class="toggle-btn active" id="btn-monthly" onclick="setBilling('monthly')">Monthly</button>
-        <button class="toggle-btn" id="btn-annual" onclick="setBilling('annual')">Annual <span class="save-badge">Save 2 Mo</span></button>
+      <!-- PROMINENT PUBLIC ANNOUNCEMENT BANNER -->
+      <div class="public-announcement-banner">
+        <h4>🚀 Official Launch: November 13, 2026</h4>
+        <p>Standard monthly and annual subscription plans will officially unlock when FlexiTap goes live on launch day. Right now, during pre-launch, you can secure our exclusive <strong>Founders VIP Annual Pass</strong> to lock in maximum savings and 1-week early access!</p>
       </div>
 
       <div class="pricing-grid">
+        <!-- FREE TIER -->
         <div class="pricing-card">
           <div>
             <h3>Free</h3>
             <p style="color: var(--text-muted); font-size: 13px;">For solo pop-ups, markets & kiosks</p>
-            <div class="price">$0 <span>/ mo</span></div>
+            <div class="price-container">
+              <div class="price">$0 <span>/ mo</span></div>
+            </div>
             <ul class="pricing-list">
               <li>1 Standalone Register Terminal</li>
               <li>Complete Offline Functionality</li>
@@ -172,12 +190,16 @@
           <button class="btn-signup" style="width: 100%; margin-top: 20px;" onclick="openModal('signup-modal')">Get Started Free</button>
         </div>
 
+        <!-- PLUS TIER (FOUNDERS VIP) -->
         <div class="pricing-card popular">
           <div>
-            <span class="badge-pop">Popular</span>
+            <span class="badge-pop">Founders VIP</span>
             <h3>Plus</h3>
             <p style="color: var(--text-muted); font-size: 13px;">For growing cafes & food trucks</p>
-            <div class="price" id="plus-price">$49 <span>/ mo</span></div>
+            <div class="price-container">
+              <span class="original-price">$490</span>
+              <div class="price">$290 <span>/ year fixed</span></div>
+            </div>
             <ul class="pricing-list">
               <li><strong>Up to 3 Terminals per Store</strong></li>
               <li><strong>Live Web Customer Portal</strong></li>
@@ -186,14 +208,19 @@
               <li>Sales by Range (PDF/CSV Exports)</li>
             </ul>
           </div>
-          <button class="btn-signup" style="width: 100%; margin-top: 20px;" onclick="openModal('signup-modal')">Start Plus Trial</button>
+          <button class="btn-signup" style="width: 100%; margin-top: 20px;" onclick="openModal('signup-modal')">Claim Founders Plus</button>
         </div>
 
+        <!-- PRO TIER (FOUNDERS VIP) -->
         <div class="pricing-card">
           <div>
+            <span class="badge-pop" style="background: var(--accent-purple);">VIP Elite</span>
             <h3>Pro</h3>
             <p style="color: var(--text-muted); font-size: 13px;">For multi-station restaurants</p>
-            <div class="price" id="pro-price">$99 <span>/ mo</span></div>
+            <div class="price-container">
+              <span class="original-price">$990</span>
+              <div class="price" style="color: var(--accent-purple);">$590 <span>/ year fixed</span></div>
+            </div>
             <ul class="pricing-list">
               <li><strong>Unlimited Multi-Terminal Sync</strong></li>
               <li><strong>Kitchen Display System (KDS)</strong></li>
@@ -202,7 +229,31 @@
               <li><strong>Priority Live Agent Chat Included</strong></li>
             </ul>
           </div>
-          <button class="btn-login" style="width: 100%; margin-top: 20px;" onclick="openModal('signup-modal')">Contact for Pro</button>
+          <button class="btn-login" style="width: 100%; margin-top: 20px; background: var(--accent-purple);" onclick="openModal('signup-modal')">Claim Founders Pro</button>
+        </div>
+      </div>
+
+      <!-- WHY JOIN FOUNDERS VIP SECTION -->
+      <div class="founders-perks-section">
+        <h3 style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px; text-align: center;">Why Join as a Founders VIP?</h3>
+        <p style="color: var(--text-muted); font-size: 14.5px; text-align: center; max-width: 600px; margin: 0 auto;">Beyond locking in our lowest rates, our founding partners receive exclusive privileges and white-glove support.</p>
+        
+        <div class="perks-grid">
+          <div class="perk-card">
+            <div class="perk-icon">🚀</div>
+            <h4>1-Week Early Access</h4>
+            <p>Get your hands on FlexiTap a full week before the public release. Download the app, configure your menu, and test your hardware with zero rush.</p>
+          </div>
+          <div class="perk-card">
+            <div class="perk-icon">🎯</div>
+            <h4>Direct Feature Requests</h4>
+            <p>Founders VIP members get direct access to our product team. Have a specific workflow or hardware requirement? Your feedback shapes our development roadmap.</p>
+          </div>
+          <div class="perk-card">
+            <div class="perk-icon">⭐</div>
+            <h4>VIP Onboarding Priority</h4>
+            <p>Skip the queue during launch week. Get white-glove assistance setting up your store database, printer pairings, and inventory.</p>
+          </div>
         </div>
       </div>
 
@@ -216,8 +267,8 @@
             <tr>
               <th style="width: 40%;">Core Feature / Capability</th>
               <th class="col-center" style="width: 20%;">Free ($0)</th>
-              <th class="col-center" style="width: 20%; color: #60a5fa;">Plus ($49/mo)</th>
-              <th class="col-center" style="width: 20%; color: #a855f7;">Pro ($99/mo)</th>
+              <th class="col-center" style="width: 20%; color: #60a5fa;">Plus (VIP $290/yr)</th>
+              <th class="col-center" style="width: 20%; color: #a855f7;">Pro (VIP $590/yr)</th>
             </tr>
           </thead>
           <tbody>
@@ -236,12 +287,16 @@
       <!-- SUPPORT PLAN BANNER -->
       <div class="support-plan-banner">
         <div>
-          <div style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">🛡️ Priority Tech Support & Uptime Assurance</div>
-          <div style="font-size: 14px; color: var(--text-muted); line-height: 1.5;">Keep your devices, network, and cloud sync pipeline in optimal health during rush hours.</div>
+          <div style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">🛡️ Priority Support & Secure Remote Diagnostics</div>
+          <div style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px;">Keep your registers, network, and cloud sync pipelines in peak health during peak service hours with white-glove technical assistance.</div>
+          <ul class="support-features-list">
+            <li>24/7 Priority Support via Phone, Live Chat & Email</li>
+            <li>Secure Remote Access & Terminal Diagnostics</li>
+          </ul>
         </div>
         <div style="text-align: right;">
-          <div style="font-size: 28px; font-weight: 800; color: #fff;">$20 <span style="font-size: 14px; font-weight: 500; color: var(--text-muted);">/ month</span></div>
-          <p style="font-size: 12px; color: var(--accent-green);">Included natively in Pro</p>
+          <div style="font-size: 28px; font-weight: 800; color: #fff;">$200 <span style="font-size: 14px; font-weight: 500; color: var(--text-muted);">/ year</span></div>
+          <p style="font-size: 12px; color: var(--accent-green); margin-top: 4px;">Included natively in Pro</p>
         </div>
       </div>
     </section>
@@ -304,7 +359,7 @@
       <div style="font-size: 13px; font-weight: 800; color: #fff;">FlexiTap Sales Assistant</div>
       <button onclick="toggleSalesChat()" style="background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer;">&times;</button>
     </div>
-    <div class="chat-body"><div class="chat-msg">👋 Welcome! Need help choosing a pricing plan?</div></div>
+    <div class="chat-body"><div class="chat-msg">👋 Welcome! Need help claiming your Founders VIP rate?</div></div>
   </div>
 
   <div class="modal-overlay" id="signup-modal">
@@ -334,12 +389,6 @@
 
   <script>
     function toggleMobileMenu() { document.getElementById('navLinksContainer').classList.toggle('mobile-open'); }
-    function setBilling(cycle) {
-      document.getElementById('btn-monthly').classList.toggle('active', cycle === 'monthly');
-      document.getElementById('btn-annual').classList.toggle('active', cycle === 'annual');
-      document.getElementById('plus-price').innerHTML = cycle === 'annual' ? '$490 <span>/ year</span>' : '$49 <span>/ mo</span>';
-      document.getElementById('pro-price').innerHTML = cycle === 'annual' ? '$990 <span>/ year</span>' : '$99 <span>/ mo</span>';
-    }
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function toggleSalesChat() { const p = document.getElementById('sales-chat-panel'); p.style.display = (p.style.display === 'flex' ? 'none' : 'flex'); }
