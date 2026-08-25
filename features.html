@@ -96,6 +96,7 @@
 
     .app-buttons { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
     .app-btn { background: #000; border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 8px; color: #fff; font-size: 10px; font-weight: 700; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; cursor: not-allowed; transition: 0.2s; }
+    .app-btn:hover { border-color: rgba(255,255,255,0.2); }
     .app-btn svg { width: 18px; height: 18px; }
 
     .footer-col h4 { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
@@ -261,9 +262,9 @@
         <div class="footer-col">
           <h4>Legal</h4>
           <ul>
-            <li><a onclick="openModal('privacy-modal')">Privacy Policy</a></li>
-            <li><a onclick="openModal('terms-modal')">Terms of Service</a></li>
-            <li><a onclick="openSalesChat('Contact Us')">Contact Us</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="refunds.html">Refund Policy</a></li>
           </ul>
         </div>
       </div>
@@ -275,33 +276,23 @@
     </div>
   </footer>
 
-  <!-- FLOATING CHAT WIDGET & MODALS -->
-  <button id="chat-btn" onclick="toggleSalesChat()" title="Sales & Inquiries Chat">💬</button>
+  <!-- MODALS & CHAT -->
+  <button id="chat-btn" onclick="toggleSalesChat()" title="Sales Chat">💬</button>
   <div id="sales-chat-panel">
     <div class="chat-header">
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <div style="width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></div>
-        <div style="font-size: 13px; font-weight: 800; color: #fff;">FlexiTap Sales Assistant</div>
-      </div>
-      <button onclick="toggleSalesChat()" style="background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer;">&times;</button>
+      <div style="font-size: 13px; font-weight: 800; color: #fff;">FlexiTap Sales Assistant</div>
+      <button onclick="toggleSalesChat()" style="background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer;">&times;</button>
     </div>
-    <div class="chat-body" id="chat-messages">
-      <div class="chat-msg">👋 <strong>Welcome to FlexiTap POS!</strong> Looking for the right setup for your business?</div>
-      <div class="chat-options">
-        <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Plus ($49) vs Pro ($99) Plans</button>
-        <button class="chat-chip" onclick="handleChatSelect('platforms')">📱 iOS, iPad, Android & Windows Availability</button>
-        <button class="chat-chip" onclick="handleChatSelect('contact')" style="background: rgba(16,185,129,0.1); color: #34d399;">✉️ Contact Sales / Request Demo</button>
-      </div>
-    </div>
+    <div class="chat-body"><div class="chat-msg">👋 Welcome! Got questions about our team or system?</div></div>
   </div>
 
   <div class="modal-overlay" id="signup-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeModal('signup-modal')">&times;</button>
       <h2>Create Your Store</h2>
-      <form id="portal-signup-form" onsubmit="event.preventDefault(); alert('Account creation simulation success!'); closeModal('signup-modal');">
-        <label>Business Name</label><input type="text" required placeholder="My Cafe">
-        <label>Owner Email</label><input type="email" required placeholder="owner@cafe.com">
+      <form onsubmit="event.preventDefault(); alert('Success!'); closeModal('signup-modal');">
+        <label>Business Name</label><input type="text" required placeholder="Cafe Name">
+        <label>Email</label><input type="email" required placeholder="owner@cafe.com">
         <label>Password</label><input type="password" required placeholder="••••••••">
         <button type="submit" class="submit-btn">Create Account</button>
       </form>
@@ -312,7 +303,7 @@
     <div class="modal-card">
       <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
       <h2>Merchant Login</h2>
-      <form id="portal-login-form" onsubmit="event.preventDefault(); alert('Login simulation success!'); closeModal('login-modal');">
+      <form onsubmit="event.preventDefault(); alert('Success!'); closeModal('login-modal');">
         <label>Email</label><input type="email" required placeholder="owner@cafe.com">
         <label>Password</label><input type="password" required placeholder="••••••••">
         <button type="submit" class="submit-btn">Log In</button>
@@ -331,14 +322,6 @@
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function toggleSalesChat() { const p = document.getElementById('sales-chat-panel'); p.style.display = (p.style.display === 'flex' ? 'none' : 'flex'); }
-    function handleChatSelect(type) {
-      const box = document.getElementById('chat-messages');
-      const div = document.createElement('div');
-      div.className = 'chat-msg';
-      div.innerHTML = type === 'pricing' ? 'Plus is $49/mo and Pro is $99/mo.' : 'Contact us at sales@flexitappapp.com';
-      box.appendChild(div);
-      box.scrollTop = box.scrollHeight;
-    }
   </script>
 </body>
 </html>
