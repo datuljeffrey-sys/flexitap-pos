@@ -158,36 +158,43 @@
     <div class="policy-container">
       <h1>Refund & Cancellation Policy</h1>
       <div class="policy-body">
-        <p>FlexiTap POS (“FlexiTap”, “we”, “us”, “our”) provides point-of-sale software and related services on a software-as-a-service (SaaS) basis. This Refund Policy outlines our terms regarding subscription cancellations and refund eligibility.</p>
+        <p>FlexiTap POS (“FlexiTap”, “we”, “us”, “our”) provides point-of-sale software and related services on a software-as-a-service (SaaS) basis. All payments, merchant of record tax compliance, and billing transactions are processed globally via our authorized payment merchant and reseller, <strong>Paddle</strong>.</p>
 
         <div>
           <strong>1. Subscription Cancellations</strong><br>
-          You may cancel your monthly or annual SaaS subscription at any time through your account portal, billing dashboard, or via our payment merchant platform (such as Paddle).<br><br>
+          You may cancel your SaaS subscription at any time through your account portal, billing dashboard, or directly via our payment merchant platform (Paddle).<br><br>
           When you cancel, your subscription will remain active until the end of your current paid billing period, after which it will not auto-renew. You will retain access to your paid features until that period expires.
         </div>
 
         <div>
-          <strong>2. General No-Refund Policy</strong><br>
-          Except where required by applicable law or by specific platform policies (such as Google Play or Apple App Store terms), all subscription fees, setup charges, and add-on fees are non-refundable.<br><br>
-          Once a billing cycle has commenced, we do not provide refunds or credits for partial months or unused portions of a subscription.
+          <strong>2. Founders VIP Annual Pass & Pre-Launch Terms</strong><br>
+          During the pre-launch phase leading up to our official release on <strong>November 13, 2026</strong>, customers may purchase an exclusive Founders VIP Annual Pass via Paddle to lock in discounted early-adopter rates and 1-week early access.<br><br>
+          Although payment is collected upfront to secure your VIP spot, your official 12-month subscription and renewal cycle <strong>do not start on the purchase date</strong>—they are strictly tied to and activate only when you download the app and complete your onboarding process on or after launch day (November 13, 2026).
         </div>
 
         <div>
-          <strong>3. Exceptions and Review Process</strong><br>
-          We review refund requests on a strict case-by-case basis and may issue a refund at our sole discretion under the following limited circumstances:
+          <strong>3. General No-Refund Policy</strong><br>
+          Except where required by applicable law (such as mandatory statutory cooling-off periods) or through Paddle's standard dispute and refund guidelines, all subscription fees, setup charges, and add-on fees processed via Paddle are non-refundable.<br><br>
+          Once an active billing or subscription cycle has commenced, we do not provide refunds or credits for partial months or unused portions of a subscription.
+        </div>
+
+        <div>
+          <strong>4. Exceptions and Review Process</strong><br>
+          We review refund requests on a strict case-by-case basis (in coordination with Paddle) and may issue a refund at our sole discretion under the following limited circumstances:
           <ul>
-            <li><strong>Technical Incompatibility / Failure:</strong> Verified technical failures or severe core software incompatibilities directly attributable to FlexiTap that prevent normal usage, reported within the first 7 days of your initial subscription purchase.</li>
-            <li><strong>Billing Errors:</strong> Documented duplicate billings or erroneous overcharges caused by our payment processor.</li>
+            <li><strong>Technical Incompatibility / Failure:</strong> Verified technical failures or severe core software incompatibilities directly attributable to FlexiTap that prevent normal usage, reported within the first 7 days of initial app onboarding.</li>
+            <li><strong>Pre-Launch Founders VIP Requests:</strong> Refund requests for pre-launch Founders VIP passes submitted prior to app activation/onboarding launch will be evaluated on a case-by-case basis.</li>
+            <li><strong>Billing Errors:</strong> Documented duplicate billings or erroneous overcharges caused by our payment processor (Paddle).</li>
           </ul>
         </div>
 
         <div>
-          <strong>4. How to Request Assistance or Inquiries</strong><br>
-          If you believe you qualify for an exception under Section 3 or have questions regarding your billing cycle, please contact our support and sales team directly at <a href="mailto:sales@flexitappapp.com">sales@flexitappapp.com</a> with your registered business name, account email, and detailed reason for your request. Approved refunds will be processed back to your original payment method within a reasonable timeframe.
+          <strong>5. How to Request Assistance or Inquiries</strong><br>
+          If you believe you qualify for an exception under Section 4, need help managing your Paddle subscription, or have questions regarding your billing cycle, please contact our support and sales team directly at <a href="mailto:sales@flexitappapp.com">sales@flexitappapp.com</a> (or manage your billing directly via your Paddle receipt link) with your registered business name, account email, and detailed reason for your request. Approved refunds will be processed back to your original payment method within Paddle's standard processing timeframes.
         </div>
 
         <div>
-          <strong>5. Changes to This Policy</strong><br>
+          <strong>6. Changes to This Policy</strong><br>
           We may update this Refund Policy from time to time. The most current version will always be posted on our website, and continued use of the Service after any changes take effect constitutes your acceptance of the revised policy.
         </div>
       </div>
@@ -284,7 +291,7 @@
         👋 <strong>Welcome to FlexiTap POS!</strong> Looking for the right setup for your business?
       </div>
       <div class="chat-options" id="chat-quick-options">
-        <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Plus ($49) vs Pro ($99) Plans</button>
+        <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Founders VIP Pass Details</button>
         <button class="chat-chip" onclick="handleChatSelect('platforms')">📱 iOS, iPad, Android & Windows Availability</button>
         <button class="chat-chip" onclick="handleChatSelect('sync')">⚡ Offline Reliability & Real-Time Cloud Sync</button>
         <button class="chat-chip" onclick="handleChatSelect('contact')" style="background: rgba(16,185,129,0.1); color: #34d399; border-color: rgba(16,185,129,0.3);">✉️ Contact Sales / Request Demo</button>
@@ -315,9 +322,9 @@
 
           <label for="signup-tier">Select Plan</label>
           <select id="signup-tier">
-            <option value="free">Free ($0 / mo)</option>
-            <option value="plus">Plus ($49 / mo)</option>
-            <option value="pro">Pro ($99 / mo)</option>
+            <option value="free">Free ($0 / mo - Available Nov 13)</option>
+            <option value="plus">Plus Founders VIP ($290 / year fixed)</option>
+            <option value="pro">Pro Founders VIP ($590 / year fixed)</option>
           </select>
 
           <button type="submit" class="submit-btn" id="signup-btn-text">Create Account</button>
@@ -330,9 +337,9 @@
         <h3 style="color: #fff; font-size: 22px; margin-bottom: 12px;">Account Created!</h3>
         <p style="color: var(--text-muted); font-size: 14.5px; margin-bottom: 24px; line-height: 1.6;">
           Your FlexiTap account has been secured.<br><br>
-          <strong>To initialize your store database and complete setup, please download the FlexiTap app on your primary POS terminal.</strong>
+          <strong>Your 12-month Founders VIP subscription will automatically activate when you complete onboarding on or after launch day (November 13, 2026).</strong>
         </p>
-        <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="alert('Android APK direct download starting...'); closeModal('signup-modal');">Download FlexiTap App</button>
+        <button class="submit-btn" onclick="closeModal('signup-modal')">Got It</button>
       </div>
     </div>
   </div>
@@ -405,7 +412,7 @@
 
     function handleChatSelect(type) {
       if (type === 'pricing') {
-        appendMessage(`<strong>US Plan Breakdown:</strong><br>• <strong>Free ($0):</strong> 1 offline register terminal, on-device storage, ESC/POS printing.<br>• <strong>Plus ($49/mo):</strong> Up to 3 terminals, Live Web Portal, real-time sync, CSV/PDF reports.<br>• <strong>Pro ($99/mo):</strong> Unlimited multi-register sync, KDS kitchen screens & floor plans.`);
+        appendMessage(`<strong>Founders VIP Pass:</strong><br>• <strong>Plus ($290/yr):</strong> Save $200. Up to 3 terminals, web portal, cloud sync & backups.<br>• <strong>Pro ($590/yr):</strong> Save $400. Unlimited terminals, KDS, floor plans & priority support.`);
       } else if (type === 'platforms') {
         appendMessage(`<strong>Supported Platforms & App Stores:</strong><br>• <strong>Android:</strong> Direct APK build coming soon.<br>• <strong>Apple iOS / iPadOS:</strong> Coming soon to the App Store.<br>• <strong>Windows Touchscreen:</strong> Coming soon.`);
       } else if (type === 'sync') {
@@ -537,17 +544,6 @@
 
       if (userRole === 'dev' || userRole === 'developer' || userRole === 'admin') {
         window.location.href = 'portal.html';
-        return;
-      }
-
-      if (tier === 'free') {
-        await supabaseClient.auth.signOut();
-        btnText.innerText = 'Log In to Portal';
-        errorDiv.innerHTML = `
-          <strong>Plus/Pro Feature</strong><br>
-          Your account is currently on the <strong>Free</strong> tier.<br>
-          <a href="pricing.html" style="color: var(--primary); font-weight:700; text-decoration:underline; display:inline-block; margin-top:8px;">Upgrade to Plus or Pro</a>
-        `;
         return;
       }
 
