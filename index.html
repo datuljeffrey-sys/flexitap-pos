@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>FlexiTap POS — Resilient Hybrid POS & Intelligent Analytics</title>
+  <title>FlexiTap POS — Resilient Hybrid POS & Founders VIP Access</title>
   
   <!-- Supabase Official JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -75,6 +75,13 @@
     .cta-group { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; width: 100%; }
     .btn-primary { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); }
     .btn-secondary { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.18); color: #fff; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+
+    /* PUBLIC ANNOUNCEMENT BANNER */
+    .home-announcement { background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15)); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 20px 24px; max-width: 850px; margin: 0 auto 40px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .home-announcement h4 { color: #fff; font-size: 17px; font-weight: 800; margin-bottom: 6px; }
+    .home-announcement p { color: #cbd5e1; font-size: 14px; line-height: 1.6; margin: 0; }
+    .home-announcement a { color: #60a5fa; font-weight: 700; text-decoration: none; }
+    .home-announcement a:hover { text-decoration: underline; }
 
     /* PLATFORMS */
     .platforms-wrapper { width: 100%; max-width: 980px; margin: 20px auto 40px; background: rgba(15, 23, 42, 0.75); border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; }
@@ -217,15 +224,21 @@
   <main class="container">
     <section class="hero">
       <div class="badge">
-        <span class="badge-dot"></span> Powering Your Business, Simplified.
+        <span class="badge-dot"></span> Founders VIP Pre-Launch Active
       </div>
       <h1>Offline-First Hybrid POS.<br>Built for Uninterrupted Commerce.</h1>
       <p>High-speed checkout, visual table management, kitchen routing, offline-first reliability, and real-time merchant analytics across all your devices.</p>
       
+      <!-- PUBLIC LAUNCH NOTICE BANNER -->
+      <div class="home-announcement">
+        <h4>🚀 Official Launch: November 13, 2026</h4>
+        <p>Standard monthly and annual subscription plans will unlock on launch day. Right now during pre-launch, <a href="pricing.html">secure your Founders VIP Annual Pass</a> to lock in maximum savings, priority onboarding, and 1-week early access!</p>
+      </div>
+
       <div class="cta-group" id="download">
         <button class="btn-primary" onclick="openModal('signup-modal')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-          Create Store Account
+          Claim Founders VIP Pass
         </button>
         <a href="#" onclick="alert('Android APK direct download coming soon! Please check back shortly.'); return false;" class="btn-secondary">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -355,7 +368,7 @@
           </ul>
         </div>
 
-        <!-- LEGAL LINKS (UPDATED TO LINK TO SEPARATE PAGES) -->
+        <!-- LEGAL LINKS -->
         <div class="footer-col">
           <h4>Legal</h4>
           <ul>
@@ -394,7 +407,7 @@
         👋 <strong>Welcome to FlexiTap POS!</strong> Looking for the right setup for your business?
       </div>
       <div class="chat-options" id="chat-quick-options">
-        <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Plus ($49) vs Pro ($99) Plans</button>
+        <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Founders VIP Annual Pass Details</button>
         <button class="chat-chip" onclick="handleChatSelect('platforms')">📱 iOS, iPad, Android & Windows Availability</button>
         <button class="chat-chip" onclick="handleChatSelect('sync')">⚡ Offline Reliability & Real-Time Cloud Sync</button>
         <button class="chat-chip" onclick="handleChatSelect('contact')" style="background: rgba(16,185,129,0.1); color: #34d399; border-color: rgba(16,185,129,0.3);">✉️ Contact Sales / Request Demo</button>
@@ -425,9 +438,9 @@
 
           <label for="signup-tier">Select Plan</label>
           <select id="signup-tier">
-            <option value="free">Free ($0 / mo)</option>
-            <option value="plus">Plus ($49 / mo)</option>
-            <option value="pro">Pro ($99 / mo)</option>
+            <option value="free">Free ($0 / mo - Available Nov 13)</option>
+            <option value="plus">Plus Founders VIP ($290 / year fixed)</option>
+            <option value="pro">Pro Founders VIP ($590 / year fixed)</option>
           </select>
 
           <button type="submit" class="submit-btn" id="signup-btn-text">Create Account</button>
@@ -440,9 +453,9 @@
         <h3 style="color: #fff; font-size: 22px; margin-bottom: 12px;">Account Created!</h3>
         <p style="color: var(--text-muted); font-size: 14.5px; margin-bottom: 24px; line-height: 1.6;">
           Your FlexiTap account has been secured.<br><br>
-          <strong>To initialize your store database and complete setup, please download the FlexiTap app on your primary POS terminal.</strong>
+          <strong>Your 12-month Founders VIP subscription will automatically activate when you complete onboarding on or after launch day (November 13, 2026).</strong>
         </p>
-        <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="alert('Android APK direct download starting...'); closeModal('signup-modal');">Download FlexiTap App</button>
+        <button class="submit-btn" onclick="closeModal('signup-modal')">Got It</button>
       </div>
     </div>
   </div>
@@ -546,7 +559,7 @@
 
     function handleChatSelect(type) {
       if (type === 'pricing') {
-        appendMessage(`<strong>US Plan Breakdown:</strong><br>• <strong>Free ($0):</strong> 1 offline register terminal, on-device storage, ESC/POS printing.<br>• <strong>Plus ($49/mo):</strong> Up to 3 terminals, Live Web Portal, real-time sync, CSV/PDF reports.<br>• <strong>Pro ($99/mo):</strong> Unlimited multi-register sync, KDS kitchen screens & floor plans.`);
+        appendMessage(`<strong>Founders VIP Annual Pass:</strong><br>• <strong>Plus ($290/yr):</strong> Save $200. Up to 3 terminals, web portal, cloud sync & backups.<br>• <strong>Pro ($590/yr):</strong> Save $400. Unlimited terminals, KDS, floor plans & priority support.<br><em>Note: Subscription activates when you complete onboarding on or after launch day (Nov 13, 2026).</em>`);
       } else if (type === 'platforms') {
         appendMessage(`<strong>Supported Platforms & App Stores:</strong><br>• <strong>Android:</strong> Direct APK build coming soon.<br>• <strong>Apple iOS / iPadOS:</strong> Coming soon to the App Store.<br>• <strong>Windows Touchscreen:</strong> Coming soon.`);
       } else if (type === 'sync') {
@@ -678,17 +691,6 @@
 
       if (userRole === 'dev' || userRole === 'developer' || userRole === 'admin') {
         window.location.href = 'portal.html';
-        return;
-      }
-
-      if (tier === 'free') {
-        await supabaseClient.auth.signOut();
-        btnText.innerText = 'Log In to Portal';
-        errorDiv.innerHTML = `
-          <strong>Plus/Pro Feature</strong><br>
-          Your account is currently on the <strong>Free</strong> tier.<br>
-          <a href="pricing.html" style="color: var(--primary); font-weight:700; text-decoration:underline; display:inline-block; margin-top:8px;">Upgrade to Plus or Pro</a>
-        `;
         return;
       }
 
