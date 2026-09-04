@@ -143,10 +143,12 @@
       // Initialize Supabase Client
       supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      // Initialize Paddle Sandbox
+      // Initialize Paddle Live (Removed sandbox mode & updated with live token)
       if (typeof Paddle !== 'undefined') {
-        Paddle.Environment.set("sandbox");
-        Paddle.Initialize({ token: "test_23abed683ff730bdd866ca081c1" });
+        Paddle.Initialize({ 
+          token: "live_17e1c64de79e3d9fc9179cc475a",
+          pwCustomer: { id: localStorage.getItem('flexitap_paddle_customer_id') || undefined }
+        });
       }
     });
 
@@ -169,10 +171,11 @@
       let tierName = 'free';
       let paymentStatus = 'free';
 
-      if (priceId.includes('wxg0tvswcrxbgqdyas60w1')) {
+      // Updated with your new Live Price IDs from the dashboard screenshots
+      if (priceId.includes('pri_01m1pb8szpcf4vapm28yfzw9aq')) {
         tierName = 'plus';
         paymentStatus = 'unpaid';
-      } else if (priceId.includes('wxe643v3yrcqxwyag6xq6w')) {
+      } else if (priceId.includes('pri_01m1pb6ba15axyr7acv0hswynd')) {
         tierName = 'pro';
         paymentStatus = 'unpaid';
       }
@@ -195,7 +198,6 @@
       });
       
       if (error) {
-        // If user already exists (e.g. cancelled previous checkout), gracefully sign them in instead of failing
         if (error.message.toLowerCase().includes('already registered')) {
           console.log('User already exists. Recovering session...');
           
@@ -221,21 +223,18 @@
       }
 
       if (userId) {
-        // 2. Check existing profile payment status in Supabase
         const { data: profile } = await supabaseClient
           .from('profiles')
           .select('payment_status')
           .eq('id', userId)
           .single();
 
-        // If they already completed payment previously, redirect straight to dashboard
         if (profile && profile.payment_status === 'paid') {
           closeModal('signup-modal');
           window.location.href = '/dashboard';
           return;
         }
 
-        // Otherwise upsert / update profile status
         const { error: profileError } = await supabaseClient.from('profiles').upsert([
           { 
             id: userId, 
@@ -254,18 +253,15 @@
         }
       }
 
-      // Close modal
       closeModal('signup-modal');
       btnText.innerText = 'Create Account & Pay';
       document.getElementById('portal-signup-form').reset();
 
-      // 3. If Free tier, do not open Paddle checkout
       if (tierName === 'free') {
         alert("Account created successfully! Welcome to FlexiTap Free.");
         return;
       }
 
-      // 4. Launch Paddle Checkout
       if (typeof Paddle === 'undefined') {
         alert("Account created successfully! Paddle checkout is loading. Please try again.");
         return;
@@ -372,7 +368,7 @@
               <li>Sales by Range (PDF/CSV Exports)</li>
             </ul>
           </div>
-          <button class="btn-signup" style="width: 100%; margin-top: 20px;" onclick="openSignupModalWithPlan('pri_01m0wxg0tvswcrxbgqdyas60w1')">Claim Founders Plus</button>
+          <button class="btn-signup" style="width: 100%; margin-top: 20px;" onclick="openSignupModalWithPlan('pri_01m1pb8szpcf4vapm28yfzw9aq')">Claim Founders Plus</button>
         </div>
 
         <!-- PRO TIER (FOUNDERS VIP) -->
@@ -394,7 +390,7 @@
               <li><strong>Priority Live Agent Chat Included</strong></li>
             </ul>
           </div>
-          <button class="btn-login" style="width: 100%; margin-top: 20px; background: var(--accent-purple);" onclick="openSignupModalWithPlan('pri_01m0wxe643v3yrcqxwyag6xq6w')">Claim Founders Pro</button>
+          <button class="btn-login" style="width: 100%; margin-top: 20px; background: var(--accent-purple);" onclick="openSignupModalWithPlan('pri_01m1pb6ba15axyr7acv0hswynd')">Claim Founders Pro</button>
         </div>
       </div>
 
@@ -454,7 +450,7 @@
       <div class="support-plan-banner">
         <div>
           <div style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">🛡️ Priority Support & Secure Remote Diagnostics</div>
-          <div style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px;">Keep your registers, network, and cloud sync pipelines in peak health during peak service hours with white-glove technical assistance.</div>
+          <div style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px;">Keep your registers, network, and cloud sync pipelines in peak health during peak service hours with white-glove support.</div>
           <ul class="support-features-list">
             <li>24/7 Priority Support via Phone, Live Chat & Email</li>
             <li>Secure Remote Access & Terminal Diagnostics</li>
@@ -538,8 +534,8 @@
         <label>Select Plan</label>
         <select id="signup-tier" required>
           <option value="free">Free ($0 / mo)</option>
-          <option value="pri_01m0wxg0tvswcrxbgqdyas60w1">Plus Founders VIP ($290 / year fixed)</option>
-          <option value="pri_01m0wxe643v3yrcqxwyag6xq6w">Pro Founders VIP ($590 / year fixed)</option>
+          <option value="pri_01m1pb8szpcf4vapm28yfzw9aq">Plus Founders VIP ($290 / year fixed)</option>
+          <option value="pri_01m1pb6ba15axyr7acv0hswynd">Pro Founders VIP ($590 / year fixed)</option>
         </select>
 
         <button type="submit" class="submit-btn" id="signup-btn-text" style="margin-top: 10px;">Create Account & Pay</button>
