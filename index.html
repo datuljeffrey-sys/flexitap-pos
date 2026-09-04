@@ -7,6 +7,8 @@
   
   <!-- Supabase Official JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Include Paddle.js -->
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,9 +58,9 @@
     .nav-link:hover { color: #fff; }
     .mobile-menu-toggle { display: none; background: none; border: 1px solid var(--card-border); padding: 4px 8px; border-radius: 8px; color: #fff; font-size: 24px; cursor: pointer; }
 
-    .btn-login { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border); color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; }
+    .btn-login { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border); color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; text-decoration: none; display: inline-flex; align-items: center; }
     .btn-login:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.2); }
-    .btn-signup { background: var(--primary); border: none; color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; }
+    .btn-signup { background: var(--primary); border: none; color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; text-decoration: none; display: inline-flex; align-items: center; }
     .btn-signup:hover { background: var(--primary-hover); }
 
     /* HERO */
@@ -73,7 +75,8 @@
     .hero h1 { font-size: clamp(30px, 7vw, 54px); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -1px; text-shadow: 0 2px 20px rgba(0,0,0,0.5); }
     .hero p { font-size: clamp(14px, 2vw, 18.5px); color: #cbd5e1; max-width: 740px; margin: 0 auto 32px; padding: 0 16px; text-shadow: 0 1px 10px rgba(0,0,0,0.6); }
     .cta-group { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; width: 100%; }
-    .btn-primary { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); transition: 0.2s ease; }
+    .btn-primary:hover { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
     .btn-secondary { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.18); color: #fff; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
 
     /* PUBLIC ANNOUNCEMENT BANNER */
@@ -142,7 +145,7 @@
     
     .footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--text-muted); font-size: 13px; }
 
-    /* MODALS */
+    /* LOGIN MODAL ONLY */
     .modal-overlay { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; padding: 16px; box-sizing: border-box; }
     .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); padding: 36px 24px; border-radius: 20px; width: 100%; max-width: 440px; position: relative; text-align: center; margin: auto; max-height: 90vh; overflow-y: auto; }
     .modal-header-logo { display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; }
@@ -214,7 +217,7 @@
       </div>
 
       <div style="display: flex; align-items: center; gap: 10px;">
-        <button class="btn-signup" onclick="openModal('signup-modal')">Get Started</button>
+        <a href="pricing.html" class="btn-signup">Get Started</a>
         <button class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
       </div>
     </div>
@@ -236,10 +239,10 @@
       </div>
 
       <div class="cta-group" id="download">
-        <button class="btn-primary" onclick="openModal('signup-modal')">
+        <a href="pricing.html" class="btn-primary">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
           Claim Founders VIP Pass
-        </button>
+        </a>
         <a href="#" onclick="alert('Android APK direct download coming soon! Please check back shortly.'); return false;" class="btn-secondary">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download Android APK
@@ -415,51 +418,6 @@
     </div>
   </div>
 
-  <!-- MERCHANT SIGN UP MODAL -->
-  <div class="modal-overlay" id="signup-modal">
-    <div class="modal-card">
-      <button class="close-btn" onclick="closeModal('signup-modal')">&times;</button>
-      <div class="modal-header-logo">
-        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 36px; height: 36px;" />
-        <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Create Your Store</h2>
-      </div>
-      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Register your account and select your plan.</p>
-
-      <div id="signup-form-state">
-        <form id="portal-signup-form">
-          <label for="signup-business">Business Name</label>
-          <input type="text" id="signup-business" required placeholder="My Awesome Cafe" />
-
-          <label for="signup-email">Owner Email</label>
-          <input type="email" id="signup-email" required placeholder="owner@cafe.com" autocomplete="email" />
-
-          <label for="signup-password">Password</label>
-          <input type="password" id="signup-password" required placeholder="At least 6 characters" autocomplete="new-password" />
-
-          <label for="signup-tier">Select Plan</label>
-          <select id="signup-tier">
-            <option value="free">Free ($0 / mo - Available Nov 13)</option>
-            <option value="plus">Plus Founders VIP ($290 / year fixed)</option>
-            <option value="pro">Pro Founders VIP ($590 / year fixed)</option>
-          </select>
-
-          <button type="submit" class="submit-btn" id="signup-btn-text">Create Account</button>
-        </form>
-        <div id="signup-modal-error" class="error-msg"></div>
-      </div>
-
-      <div id="signup-success-state" style="display: none; text-align: center; padding: 20px 0;">
-        <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
-        <h3 style="color: #fff; font-size: 22px; margin-bottom: 12px;">Account Created!</h3>
-        <p style="color: var(--text-muted); font-size: 14.5px; margin-bottom: 24px; line-height: 1.6;">
-          Your FlexiTap account has been secured.<br><br>
-          <strong>Your 12-month Founders VIP subscription will automatically activate when you complete onboarding on or after launch day (November 13, 2026).</strong>
-        </p>
-        <button class="submit-btn" onclick="closeModal('signup-modal')">Got It</button>
-      </div>
-    </div>
-  </div>
-
   <!-- AUTH LOGIN MODAL -->
   <div class="modal-overlay" id="login-modal">
     <div class="modal-card">
@@ -486,7 +444,12 @@
   <script>
     const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let supabaseClient;
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // Initialize Supabase Client
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    });
 
     // --- LIVE SIMULATED ANALYTICS TICKER ANIMATION ---
     let currentSales = 3485.50;
@@ -616,51 +579,6 @@
       }
     }
 
-    // --- MERCHANT SIGN UP SUBMIT ---
-    document.getElementById('portal-signup-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const businessName = document.getElementById('signup-business').value.trim();
-      const email = document.getElementById('signup-email').value.trim();
-      const password = document.getElementById('signup-password').value;
-      const tier = document.getElementById('signup-tier').value;
-      const errorDiv = document.getElementById('signup-modal-error');
-      const btnText = document.getElementById('signup-btn-text');
-
-      errorDiv.innerText = '';
-      btnText.innerText = 'Creating account...';
-
-      const { data, error } = await supabaseClient.auth.signUp({ email, password });
-      
-      if (error) {
-        errorDiv.innerText = error.message;
-        btnText.innerText = 'Create Account';
-        return;
-      }
-
-      const userId = data.user?.id;
-
-      if (userId) {
-        const { error: profileError } = await supabaseClient.from('profiles').upsert([
-          { 
-            id: userId, 
-            store_name: businessName, 
-            subscription_tier: tier,
-            role: 'owner',
-            onboarding_completed: false 
-          }
-        ]);
-
-        if (profileError) {
-          errorDiv.innerText = 'Account created, but failed to save profile: ' + profileError.message;
-          btnText.innerText = 'Create Account';
-          return;
-        }
-      }
-
-      document.getElementById('signup-form-state').style.display = 'none';
-      document.getElementById('signup-success-state').style.display = 'block';
-    });
-
     // --- AUTH LOGIN SUBMIT ---
     document.getElementById('portal-login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -687,7 +605,6 @@
         .maybeSingle();
 
       const userRole = (profile?.role || '').toLowerCase();
-      const tier = (profile?.subscription_tier || 'free').toLowerCase();
 
       if (userRole === 'dev' || userRole === 'developer' || userRole === 'admin') {
         window.location.href = 'portal.html';

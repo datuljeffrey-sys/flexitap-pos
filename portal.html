@@ -32,7 +32,7 @@
 
     /* --- LOGIN VIEW --- */
     #login-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-    .login-box { background: var(--sidebar-bg); border: 1px solid var(--card-border); padding: 40px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; }
+    .login-box { background: var(--sidebar-bg); border: 1px solid var(--card-border); padding: 40px; border-radius: 16px; width: 100%; max-width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; }
     .login-header-logo { display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; }
     .login-box label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
     .login-box input { width: 100%; padding: 12px; margin-bottom: 20px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: white; outline: none; }
@@ -145,7 +145,7 @@
         <input type="password" id="p-password" required placeholder="••••••••" />
         <button type="submit" class="btn-submit" id="p-btn">Sign In</button>
       </form>
-      <p id="p-err" style="color: #ef4444; font-size: 13px; margin-top: 12px; text-align: center;"></p>
+      <p id="p-err" style="color: #ef4444; font-size: 13px; margin-top: 12px; text-align: center; line-height: 1.5;"></p>
     </div>
   </div>
 
@@ -485,18 +485,18 @@
     async function loadApp(user) {
       activeUser = user;
       const { data: store } = await supabaseClient.from('stores').select('*').or(`owner_id.eq.${user.id},user_id.eq.${user.id}`).maybeSingle();
-      const { data: profile } = await supabaseClient.from('profiles').select('subscription_tier, role').eq('id', user.id).maybeSingle();
+      const { data: profile } = await supabaseClient.from('profiles').select('subscription_tier, role, payment_status').eq('id', user.id).maybeSingle();
 
       const userRole = (profile?.role || '').toLowerCase();
-      const userTier = (profile?.subscription_tier || 'free').toLowerCase();
 
-      // Subscription Tier Guard (Developers bypass)
-      if (userTier === 'free' && userRole !== 'dev' && userRole !== 'developer' && userRole !== 'admin') {
+      // Development Stage Guard: Only allow dev / developer / admin roles
+      const isDevOrAdmin = userRole === 'dev' || userRole === 'developer' || userRole === 'admin';
+
+      if (!isDevOrAdmin) {
         document.getElementById('login-view').style.display = 'flex';
         document.getElementById('p-err').innerHTML = `
-          <strong>Access Restricted</strong><br>
-          The Web Portal is available for <strong>Plus</strong> and <strong>Pro</strong> accounts.<br>
-          <a href="index.html#pricing" style="color: var(--primary); text-decoration: underline; margin-top: 8px; display: inline-block; font-weight:700;">View Upgrade Plans</a>
+          <strong>Pre-Launch Mode</strong><br><br>
+          Merchant portal access will be available on official launch day (November 13, 2026). Thank you for being an early partner!
         `;
         await supabaseClient.auth.signOut();
         return;

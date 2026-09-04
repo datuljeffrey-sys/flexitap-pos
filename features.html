@@ -7,7 +7,9 @@
   
   <!-- Supabase Official JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
+  <!-- Include Paddle.js -->
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -52,7 +54,7 @@
 
     .btn-login { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border); color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; }
     .btn-login:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.2); }
-    .btn-signup { background: var(--primary); border: none; color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; }
+    .btn-signup { background: var(--primary); border: none; color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; text-decoration: none; display: inline-flex; align-items: center; }
     .btn-signup:hover { background: var(--primary-hover); }
 
     /* SECTION STYLES */
@@ -110,8 +112,6 @@
     /* MODALS & CHAT WIDGET */
     .modal-overlay { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; padding: 16px; box-sizing: border-box; }
     .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); padding: 36px 24px; border-radius: 20px; width: 100%; max-width: 440px; position: relative; text-align: center; margin: auto; max-height: 90vh; overflow-y: auto; }
-    .modal-card.wide { max-width: 700px; text-align: left; }
-    .modal-header-logo { display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; }
     .close-btn { position: absolute; top: 18px; right: 18px; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
     label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
     input, select { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; color: white; font-size: 15px; box-sizing: border-box; }
@@ -123,12 +123,6 @@
     .chat-header { background: rgba(255,255,255,0.03); padding: 14px 18px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
     .chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 13px; }
     .chat-msg { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; color: #f8fafc; }
-    .chat-options { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
-    .chat-chip { padding: 9px 12px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); color: #60a5fa; border-radius: 8px; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer; }
-    .chat-form-container { background-color: #1a1d24; padding: 16px; border-radius: 8px; border: 1px solid #2d323d; margin-top: 8px; }
-    .chat-form-container input, .chat-form-container textarea { width: 100%; padding: 10px; margin-bottom: 12px; background-color: #242933; border: 1px solid #3b4252; border-radius: 6px; color: #ffffff; font-family: inherit; font-size: 13px; box-sizing: border-box; }
-    .chat-form-container textarea { resize: vertical; min-height: 80px; }
-    .chat-form-container button { width: 100%; padding: 10px; background-color: #10b981; border: none; border-radius: 6px; color: #ffffff; font-weight: 700; cursor: pointer; }
 
     @media (max-width: 1023px) {
       .nav-links { display: none; width: 100%; flex-direction: column; align-items: flex-start; background: rgba(15, 23, 42, 0.98); padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); margin-top: 10px; box-sizing: border-box; }
@@ -141,6 +135,39 @@
       .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 8px; }
     }
   </style>
+
+  <script>
+    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+    let supabaseClient;
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // Initialize Supabase Client
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    });
+
+    // --- AUTH LOGIN SUBMIT ---
+    async function handleStoreLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorDiv = document.getElementById('login-modal-error');
+      const btnText = document.getElementById('login-btn-text');
+
+      errorDiv.innerText = '';
+      btnText.innerText = 'Verifying credentials...';
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      
+      if (error) {
+        errorDiv.innerText = error.message;
+        btnText.innerText = 'Log In';
+        return;
+      }
+
+      window.location.href = 'portal.html';
+    }
+  </script>
 </head>
 <body>
 
@@ -162,7 +189,7 @@
       </div>
 
       <div style="display: flex; align-items: center; gap: 10px;">
-        <button class="btn-signup" onclick="openModal('signup-modal')">Get Started</button>
+        <a href="pricing.html" class="btn-signup">Get Started</a>
         <button class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
       </div>
     </div>
@@ -286,28 +313,23 @@
     <div class="chat-body"><div class="chat-msg">👋 Welcome! Got questions about our team or system?</div></div>
   </div>
 
-  <div class="modal-overlay" id="signup-modal">
-    <div class="modal-card">
-      <button class="close-btn" onclick="closeModal('signup-modal')">&times;</button>
-      <h2>Create Your Store</h2>
-      <form onsubmit="event.preventDefault(); alert('Success!'); closeModal('signup-modal');">
-        <label>Business Name</label><input type="text" required placeholder="Cafe Name">
-        <label>Email</label><input type="email" required placeholder="owner@cafe.com">
-        <label>Password</label><input type="password" required placeholder="••••••••">
-        <button type="submit" class="submit-btn">Create Account</button>
-      </form>
-    </div>
-  </div>
-
+  <!-- LOGIN MODAL -->
   <div class="modal-overlay" id="login-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
       <h2>Merchant Login</h2>
-      <form onsubmit="event.preventDefault(); alert('Success!'); closeModal('login-modal');">
-        <label>Email</label><input type="email" required placeholder="owner@cafe.com">
-        <label>Password</label><input type="password" required placeholder="••••••••">
-        <button type="submit" class="submit-btn">Log In</button>
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Log in with your FlexiTap account credentials.</p>
+      
+      <form id="portal-login-form" onsubmit="handleStoreLogin(event)">
+        <label>Email</label>
+        <input type="email" id="login-email" required placeholder="owner@cafe.com">
+        
+        <label>Password</label>
+        <input type="password" id="login-password" required placeholder="••••••••">
+
+        <button type="submit" class="submit-btn" id="login-btn-text">Log In</button>
       </form>
+      <div id="login-modal-error" class="error-msg"></div>
     </div>
   </div>
 

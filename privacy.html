@@ -7,7 +7,9 @@
   
   <!-- Supabase Official JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
+  <!-- Include Paddle.js -->
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -52,7 +54,7 @@
 
     .btn-login { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border); color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; }
     .btn-login:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.2); }
-    .btn-signup { background: var(--primary); border: none; color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; }
+    .btn-signup { background: var(--primary); border: none; color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; text-decoration: none; display: inline-flex; align-items: center; }
     .btn-signup:hover { background: var(--primary-hover); }
 
     /* POLICY CONTENT CONTAINER */
@@ -87,7 +89,7 @@
     
     .footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--text-muted); font-size: 13px; }
 
-    /* MODALS */
+    /* MODALS & CHAT WIDGET */
     .modal-overlay { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; padding: 16px; box-sizing: border-box; }
     .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); padding: 36px 24px; border-radius: 20px; width: 100%; max-width: 440px; position: relative; text-align: center; margin: auto; max-height: 90vh; overflow-y: auto; }
     .modal-header-logo { display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; }
@@ -97,18 +99,11 @@
     .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; }
     .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
 
-    /* SALES CHAT WIDGET */
     #chat-btn { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #2563eb); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 24px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 990; transition: transform 0.2s; }
     #sales-chat-panel { display: none; position: fixed; bottom: 90px; right: 24px; width: min(90vw, 370px); height: 520px; background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); flex-direction: column; overflow: hidden; z-index: 999; }
     .chat-header { background: rgba(255,255,255,0.03); padding: 14px 18px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
     .chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 13px; }
     .chat-msg { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; color: #f8fafc; }
-    .chat-options { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
-    .chat-chip { padding: 9px 12px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); color: #60a5fa; border-radius: 8px; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer; }
-    .chat-form-container { background-color: #1a1d24; padding: 16px; border-radius: 8px; border: 1px solid #2d323d; margin-top: 8px; }
-    .chat-form-container input, .chat-form-container textarea { width: 100%; padding: 10px; margin-bottom: 12px; background-color: #242933; border: 1px solid #3b4252; border-radius: 6px; color: #ffffff; font-family: inherit; font-size: 13px; box-sizing: border-box; }
-    .chat-form-container textarea { resize: vertical; min-height: 80px; }
-    .chat-form-container button { width: 100%; padding: 10px; background-color: #10b981; border: none; border-radius: 6px; color: #ffffff; font-weight: 700; cursor: pointer; }
 
     @media (max-width: 1023px) {
       .nav-links { display: none; width: 100%; flex-direction: column; align-items: flex-start; background: rgba(15, 23, 42, 0.98); padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); margin-top: 10px; box-sizing: border-box; }
@@ -126,6 +121,39 @@
       #sales-chat-panel { width: calc(100vw - 32px) !important; right: 16px !important; bottom: 85px !important; height: 460px; }
     }
   </style>
+
+  <script>
+    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+    let supabaseClient;
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // Initialize Supabase Client
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    });
+
+    // --- AUTH LOGIN SUBMIT ---
+    async function handleStoreLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorDiv = document.getElementById('login-modal-error');
+      const btnText = document.getElementById('login-btn-text');
+
+      errorDiv.innerText = '';
+      btnText.innerText = 'Verifying credentials...';
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      
+      if (error) {
+        errorDiv.innerText = error.message;
+        btnText.innerText = 'Log In';
+        return;
+      }
+
+      window.location.href = 'portal.html';
+    }
+  </script>
 </head>
 <body>
 
@@ -147,7 +175,7 @@
       </div>
 
       <div style="display: flex; align-items: center; gap: 10px;">
-        <button class="btn-signup" onclick="openModal('signup-modal')">Get Started</button>
+        <a href="pricing.html" class="btn-signup">Get Started</a>
         <button class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
       </div>
     </div>
@@ -329,107 +357,30 @@
     </div>
   </footer>
 
-  <!-- FLOATING INQUIRY & SALES CHAT WIDGET -->
-  <button id="chat-btn" onclick="toggleSalesChat()" title="Sales & Inquiries Chat">💬</button>
-
-  <div id="sales-chat-panel">
-    <div class="chat-header">
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <div style="width: 10px; height: 10px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></div>
-        <div>
-          <div style="font-size: 13px; font-weight: 800; color: #fff;">FlexiTap Sales Assistant</div>
-          <div style="font-size: 11px; color: var(--text-muted);">sales@flexitappapp.com</div>
-        </div>
-      </div>
-      <button onclick="toggleSalesChat()" style="background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer;">&times;</button>
-    </div>
-
-    <div class="chat-body" id="chat-messages">
-      <div class="chat-msg">
-        👋 <strong>Welcome to FlexiTap POS!</strong> Looking for the right setup for your business?
-      </div>
-      <div class="chat-options" id="chat-quick-options">
-        <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Plus ($49) vs Pro ($99) Plans</button>
-        <button class="chat-chip" onclick="handleChatSelect('platforms')">📱 iOS, iPad, Android & Windows Availability</button>
-        <button class="chat-chip" onclick="handleChatSelect('sync')">⚡ Offline Reliability & Real-Time Cloud Sync</button>
-        <button class="chat-chip" onclick="handleChatSelect('contact')" style="background: rgba(16,185,129,0.1); color: #34d399; border-color: rgba(16,185,129,0.3);">✉️ Contact Sales / Request Demo</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MERCHANT SIGN UP MODAL -->
-  <div class="modal-overlay" id="signup-modal">
-    <div class="modal-card">
-      <button class="close-btn" onclick="closeModal('signup-modal')">&times;</button>
-      <div class="modal-header-logo">
-        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 36px; height: 36px;" />
-        <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Create Your Store</h2>
-      </div>
-      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Register your account and select your plan.</p>
-
-      <div id="signup-form-state">
-        <form id="portal-signup-form">
-          <label for="signup-business">Business Name</label>
-          <input type="text" id="signup-business" required placeholder="My Awesome Cafe" />
-
-          <label for="signup-email">Owner Email</label>
-          <input type="email" id="signup-email" required placeholder="owner@cafe.com" autocomplete="email" />
-
-          <label for="signup-password">Password</label>
-          <input type="password" id="signup-password" required placeholder="At least 6 characters" autocomplete="new-password" />
-
-          <label for="signup-tier">Select Plan</label>
-          <select id="signup-tier">
-            <option value="free">Free ($0 / mo)</option>
-            <option value="plus">Plus ($49 / mo)</option>
-            <option value="pro">Pro ($99 / mo)</option>
-          </select>
-
-          <button type="submit" class="submit-btn" id="signup-btn-text">Create Account</button>
-        </form>
-        <div id="signup-modal-error" class="error-msg"></div>
-      </div>
-
-      <div id="signup-success-state" style="display: none; text-align: center; padding: 20px 0;">
-        <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
-        <h3 style="color: #fff; font-size: 22px; margin-bottom: 12px;">Account Created!</h3>
-        <p style="color: var(--text-muted); font-size: 14.5px; margin-bottom: 24px; line-height: 1.6;">
-          Your FlexiTap account has been secured.<br><br>
-          <strong>To initialize your store database and complete setup, please download the FlexiTap app on your primary POS terminal.</strong>
-        </p>
-        <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="alert('Android APK direct download starting...'); closeModal('signup-modal');">Download FlexiTap App</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- AUTH LOGIN MODAL -->
+  <!-- LOGIN MODAL -->
   <div class="modal-overlay" id="login-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
       <div class="modal-header-logo">
         <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 36px; height: 36px;" />
-        <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Merchant Portal</h2>
+        <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Merchant Login</h2>
       </div>
       <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Log in with your FlexiTap account credentials.</p>
 
-      <form id="portal-login-form">
-        <label for="modal-email">Owner Email</label>
-        <input type="email" id="modal-email" required placeholder="merchant@example.com" autocomplete="username" />
+      <form id="portal-login-form" onsubmit="handleStoreLogin(event)">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" required placeholder="owner@cafe.com" />
 
-        <label for="modal-password">Password</label>
-        <input type="password" id="modal-password" required placeholder="••••••••" autocomplete="current-password" />
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" required placeholder="••••••••" />
 
-        <button type="submit" class="submit-btn" id="login-btn-text">Log In to Portal</button>
+        <button type="submit" class="submit-btn" id="login-btn-text">Log In</button>
       </form>
-      <div id="modal-error" class="error-msg"></div>
+      <div id="login-modal-error" class="error-msg"></div>
     </div>
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
     // --- MOBILE MENU TOGGLE ---
     function toggleMobileMenu() {
       const nav = document.getElementById('navLinksContainer');
@@ -451,172 +402,6 @@
       overlay.addEventListener('click', (e) => {
         if (e.target === overlay) overlay.style.display = 'none';
       });
-    });
-
-    // --- SALES CHAT ENGINE ---
-    function toggleSalesChat() {
-      const p = document.getElementById('sales-chat-panel');
-      p.style.display = (p.style.display === 'none' || p.style.display === '') ? 'flex' : 'none';
-    }
-
-    function appendMessage(html) {
-      const box = document.getElementById('chat-messages');
-      const div = document.createElement('div');
-      div.className = 'chat-msg';
-      div.innerHTML = html;
-      box.appendChild(div);
-      box.scrollTop = box.scrollHeight;
-    }
-
-    function handleChatSelect(type) {
-      if (type === 'pricing') {
-        appendMessage(`<strong>US Plan Breakdown:</strong><br>• <strong>Free ($0):</strong> 1 offline register terminal, on-device storage, ESC/POS printing.<br>• <strong>Plus ($49/mo):</strong> Up to 3 terminals, Live Web Portal, real-time sync, CSV/PDF reports.<br>• <strong>Pro ($99/mo):</strong> Unlimited multi-register sync, KDS kitchen screens & floor plans.`);
-      } else if (type === 'platforms') {
-        appendMessage(`<strong>Supported Platforms & App Stores:</strong><br>• <strong>Android:</strong> Direct APK build coming soon.<br>• <strong>Apple iOS / iPadOS:</strong> Coming soon to the App Store.<br>• <strong>Windows Touchscreen:</strong> Coming soon.`);
-      } else if (type === 'sync') {
-        appendMessage(`<strong>Offline-First Architecture:</strong><br>Transactions write locally in milliseconds on your device. Once online, sales automatically synchronize to the cloud.`);
-      } else if (type === 'contact') {
-        appendMessage(`<strong>Contact Sales Team:</strong><br>Direct Email: <a href="mailto:sales@flexitappapp.com" style="color:var(--primary); font-weight:700;">sales@flexitappapp.com</a> or leave your contact information and inquiry message below:`);
-        showLeadForm();
-      }
-    }
-
-    function showLeadForm() {
-      appendMessage(`
-        <div class="chat-form-container">
-          <form onsubmit="submitSalesInquiry(event)">
-            <input type="text" id="lead-name" placeholder="Business Name / Contact Name" required />
-            <input type="email" id="lead-email" placeholder="Email (e.g. owner@cafe.com)" required />
-            <input type="tel" id="lead-phone" placeholder="Phone Number (Optional)" />
-            <textarea id="lead-message" placeholder="Type your inquiry or message here..." required></textarea>
-            <button type="submit">Send Inquiry</button>
-          </form>
-        </div>
-      `);
-    }
-
-    async function submitSalesInquiry(e) {
-      e.preventDefault();
-      const name = document.getElementById('lead-name').value;
-      const email = document.getElementById('lead-email').value;
-      const phone = document.getElementById('lead-phone').value;
-      const message = document.getElementById('lead-message').value;
-
-      const btn = e.target.querySelector('button');
-      btn.innerText = 'Sending...';
-      btn.disabled = true;
-
-      try {
-        const { error } = await supabaseClient
-          .from('leads')
-          .insert([{ business_name: name, contact_email: email, contact_phone: phone, message: message }]);
-
-        if (error) {
-          console.error("Supabase Error:", error);
-          appendMessage(`❌ <strong>Error:</strong> Failed to send inquiry. Please try emailing directly.`);
-        } else {
-          appendMessage(`✅ <strong>Thank you, ${name}!</strong> Your inquiry and message have been routed to <strong>sales@flexitappapp.com</strong>. We will get back to you shortly.`);
-          e.target.reset(); 
-        }
-      } catch (err) {
-        console.error('Network Error:', err);
-        appendMessage(`❌ <strong>Error:</strong> Network issue. Please check your connection.`);
-      } finally {
-        btn.innerText = 'Send Inquiry';
-        btn.disabled = false;
-      }
-    }
-
-    // --- MERCHANT SIGN UP SUBMIT ---
-    document.getElementById('portal-signup-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const businessName = document.getElementById('signup-business').value.trim();
-      const email = document.getElementById('signup-email').value.trim();
-      const password = document.getElementById('signup-password').value;
-      const tier = document.getElementById('signup-tier').value;
-      const errorDiv = document.getElementById('signup-modal-error');
-      const btnText = document.getElementById('signup-btn-text');
-
-      errorDiv.innerText = '';
-      btnText.innerText = 'Creating account...';
-
-      const { data, error } = await supabaseClient.auth.signUp({ email, password });
-      
-      if (error) {
-        errorDiv.innerText = error.message;
-        btnText.innerText = 'Create Account';
-        return;
-      }
-
-      const userId = data.user?.id;
-
-      if (userId) {
-        const { error: profileError } = await supabaseClient.from('profiles').upsert([
-          { 
-            id: userId, 
-            store_name: businessName, 
-            subscription_tier: tier,
-            role: 'owner',
-            onboarding_completed: false 
-          }
-        ]);
-
-        if (profileError) {
-          errorDiv.innerText = 'Account created, but failed to save profile: ' + profileError.message;
-          btnText.innerText = 'Create Account';
-          return;
-        }
-      }
-
-      document.getElementById('signup-form-state').style.display = 'none';
-      document.getElementById('signup-success-state').style.display = 'block';
-    });
-
-    // --- AUTH LOGIN SUBMIT ---
-    document.getElementById('portal-login-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('modal-email').value.trim();
-      const password = document.getElementById('modal-password').value;
-      const errorDiv = document.getElementById('modal-error');
-      const btnText = document.getElementById('login-btn-text');
-
-      errorDiv.innerText = '';
-      btnText.innerText = 'Verifying credentials...';
-
-      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      
-      if (error) {
-        errorDiv.innerText = error.message;
-        btnText.innerText = 'Log In to Portal';
-        return;
-      }
-
-      const { data: profile } = await supabaseClient
-        .from('profiles')
-        .select('subscription_tier, role')
-        .eq('id', data.user.id)
-        .maybeSingle();
-
-      const userRole = (profile?.role || '').toLowerCase();
-      const tier = (profile?.subscription_tier || 'free').toLowerCase();
-
-      if (userRole === 'dev' || userRole === 'developer' || userRole === 'admin') {
-        window.location.href = 'portal.html';
-        return;
-      }
-
-      if (tier === 'free') {
-        await supabaseClient.auth.signOut();
-        btnText.innerText = 'Log In to Portal';
-        errorDiv.innerHTML = `
-          <strong>Plus/Pro Feature</strong><br>
-          Your account is currently on the <strong>Free</strong> tier.<br>
-          <a href="pricing.html" style="color: var(--primary); font-weight:700; text-decoration:underline; display:inline-block; margin-top:8px;">Upgrade to Plus or Pro</a>
-        `;
-        return;
-      }
-
-      window.location.href = 'portal.html';
     });
   </script>
 </body>

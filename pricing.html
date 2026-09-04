@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>FlexiTap POS — Founders VIP Annual Pass & Pricing</title>
   
+  <!-- Supabase Official JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Include Paddle.js -->
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -39,14 +43,13 @@
 
     .btn-login { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border); color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; }
     .btn-login:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.2); }
-    .btn-signup { background: var(--primary); border: none; color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; }
+    .btn-signup { background: var(--primary); border: none; color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; text-decoration: none; display: inline-flex; align-items: center; }
     .btn-signup:hover { background: var(--primary-hover); }
 
     .pricing { padding: 60px 0; text-align: center; width: 100%; }
     .section-title { font-size: clamp(24px, 5vw, 34px); font-weight: 800; margin-bottom: 12px; text-align: center; }
     .section-subtitle { color: var(--text-muted); margin-bottom: 32px; font-size: 16px; max-width: 680px; margin-left: auto; margin-right: auto; text-align: center; }
     
-    /* PROMINENT SEPARATE PUBLIC NOTICE BANNER */
     .public-announcement-banner { background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15)); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 24px; max-width: 900px; margin: 0 auto 48px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
     .public-announcement-banner h4 { color: #fff; font-size: 18px; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .public-announcement-banner p { color: #cbd5e1; font-size: 14.5px; line-height: 1.6; max-width: 780px; margin: 0 auto; }
@@ -60,11 +63,11 @@
     .original-price { font-size: 20px; font-weight: 700; color: var(--text-muted); text-decoration: line-through; margin-right: 8px; }
     .price { font-size: 40px; font-weight: 800; color: #34d399; display: inline-block; }
     .price span { font-size: 15px; font-weight: 500; color: var(--text-muted); }
+    .vat-note { font-size: 11px; color: var(--text-muted); margin-top: 2px; font-style: italic; }
     
     .pricing-list { list-style: none; margin: 24px 0; font-size: 13.5px; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px; }
     .pricing-list li::before { content: "✓ "; color: var(--accent-green); font-weight: 800; }
 
-    /* FOUNDERS PERKS SECTION */
     .founders-perks-section { margin-top: 60px; text-align: left; background: rgba(22, 30, 49, 0.5); border: 1px solid var(--card-border); border-radius: 20px; padding: 40px; }
     .perks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 32px; }
     .perk-card { background: rgba(15, 23, 42, 0.7); border: 1px solid var(--card-border); padding: 24px; border-radius: 14px; }
@@ -84,7 +87,6 @@
     .support-features-list { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--text-muted); }
     .support-features-list li::before { content: "✓ "; color: var(--accent-green); font-weight: 800; }
 
-    /* FOOTER & SOCIAL ICONS */
     footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #0b0f19; font-size: 14px; width: 100%; }
     .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 24px; }
     .footer-brand p { color: var(--text-muted); font-size: 14px; margin: 16px 0 24px 0; max-width: 320px; line-height: 1.6; }
@@ -107,13 +109,13 @@
     
     .footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--text-muted); font-size: 13px; }
 
-    /* MODALS & CHAT WIDGET */
     .modal-overlay { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; padding: 16px; box-sizing: border-box; }
     .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); padding: 36px 24px; border-radius: 20px; width: 100%; max-width: 440px; position: relative; text-align: center; margin: auto; max-height: 90vh; overflow-y: auto; }
     .close-btn { position: absolute; top: 18px; right: 18px; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
     label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
     input, select { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; color: white; font-size: 15px; box-sizing: border-box; }
     .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; }
+    .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
 
     #chat-btn { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #2563eb); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 24px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 990; }
     #sales-chat-panel { display: none; position: fixed; bottom: 90px; right: 24px; width: min(90vw, 370px); height: 520px; background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); flex-direction: column; overflow: hidden; z-index: 999; }
@@ -131,6 +133,167 @@
       .support-plan-banner, .footer-grid { grid-template-columns: 1fr; }
     }
   </style>
+
+  <script>
+    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+    let supabaseClient;
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // Initialize Supabase Client
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // Initialize Paddle Sandbox
+      if (typeof Paddle !== 'undefined') {
+        Paddle.Environment.set("sandbox");
+        Paddle.Initialize({ token: "test_23abed683ff730bdd866ca081c1" });
+      }
+    });
+
+    function openSignupModalWithPlan(priceId) {
+      const selectEl = document.getElementById('signup-tier');
+      if (selectEl) {
+        selectEl.value = priceId;
+      }
+      openModal('signup-modal');
+    }
+
+    async function handleStoreSignup(event) {
+      event.preventDefault();
+      
+      const businessName = document.getElementById('signup-business').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const priceId = document.getElementById('signup-tier').value;
+      
+      let tierName = 'free';
+      let paymentStatus = 'free';
+
+      if (priceId.includes('wxg0tvswcrxbgqdyas60w1')) {
+        tierName = 'plus';
+        paymentStatus = 'unpaid';
+      } else if (priceId.includes('wxe643v3yrcqxwyag6xq6w')) {
+        tierName = 'pro';
+        paymentStatus = 'unpaid';
+      }
+
+      const errorDiv = document.getElementById('signup-modal-error');
+      const btnText = document.getElementById('signup-btn-text');
+
+      errorDiv.innerText = '';
+      btnText.innerText = 'Processing...';
+
+      let userId;
+
+      // 1. Attempt to sign up user in Supabase Auth
+      const { data, error } = await supabaseClient.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          data: { business_name: businessName }
+        }
+      });
+      
+      if (error) {
+        // If user already exists (e.g. cancelled previous checkout), gracefully sign them in instead of failing
+        if (error.message.toLowerCase().includes('already registered')) {
+          console.log('User already exists. Recovering session...');
+          
+          const { data: loginData, error: loginError } = await supabaseClient.auth.signInWithPassword({
+            email,
+            password,
+          });
+
+          if (loginError) {
+            errorDiv.innerText = 'An account with this email already exists, but the password was incorrect. Please log in.';
+            btnText.innerText = 'Create Account & Pay';
+            return;
+          }
+          
+          userId = loginData.user.id;
+        } else {
+          errorDiv.innerText = error.message;
+          btnText.innerText = 'Create Account & Pay';
+          return;
+        }
+      } else {
+        userId = data.user?.id;
+      }
+
+      if (userId) {
+        // 2. Check existing profile payment status in Supabase
+        const { data: profile } = await supabaseClient
+          .from('profiles')
+          .select('payment_status')
+          .eq('id', userId)
+          .single();
+
+        // If they already completed payment previously, redirect straight to dashboard
+        if (profile && profile.payment_status === 'paid') {
+          closeModal('signup-modal');
+          window.location.href = '/dashboard';
+          return;
+        }
+
+        // Otherwise upsert / update profile status
+        const { error: profileError } = await supabaseClient.from('profiles').upsert([
+          { 
+            id: userId, 
+            store_name: businessName, 
+            subscription_tier: tierName, 
+            payment_status: paymentStatus,
+            role: 'owner',
+            onboarding_completed: false 
+          }
+        ]);
+
+        if (profileError) {
+          errorDiv.innerText = 'Failed to save profile: ' + profileError.message;
+          btnText.innerText = 'Create Account & Pay';
+          return;
+        }
+      }
+
+      // Close modal
+      closeModal('signup-modal');
+      btnText.innerText = 'Create Account & Pay';
+      document.getElementById('portal-signup-form').reset();
+
+      // 3. If Free tier, do not open Paddle checkout
+      if (tierName === 'free') {
+        alert("Account created successfully! Welcome to FlexiTap Free.");
+        return;
+      }
+
+      // 4. Launch Paddle Checkout
+      if (typeof Paddle === 'undefined') {
+        alert("Account created successfully! Paddle checkout is loading. Please try again.");
+        return;
+      }
+
+      Paddle.Checkout.open({
+        items: [
+          {
+            priceId: priceId,
+            quantity: 1
+          }
+        ],
+        customer: {
+          email: email
+        },
+        customData: {
+          business_name: businessName,
+          supabase_user_id: userId,
+          customer_email: email
+        },
+        successCallback: function(checkoutData) {
+          console.log("Checkout success:", checkoutData);
+          alert("Account created and payment successful! Welcome to FlexiTap Founders VIP.");
+          window.location.href = '/dashboard';
+        }
+      });
+    }
+  </script>
 </head>
 <body>
 
@@ -152,7 +315,7 @@
       </div>
 
       <div style="display: flex; align-items: center; gap: 10px;">
-        <button class="btn-signup" onclick="openModal('signup-modal')">Get Started</button>
+        <a href="pricing.html" class="btn-signup">Get Started</a>
         <button class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
       </div>
     </div>
@@ -162,7 +325,7 @@
   <main class="container">
     <section class="pricing">
       <h2 class="section-title">Founders VIP Annual Pass</h2>
-      <p class="section-subtitle">Lock in exclusive early-adopter fixed annual rates today. Your payment secures your Founders VIP spot, but your official 12-month subscription and renewal cycle begin only when you complete onboarding inside the app on or after launch day (November 13, 2026).</p>
+      <p class="section-subtitle">Lock in exclusive early-adopter fixed annual rates today. Your payment secures your Founders VIP spot, and our system automatically adjusts your billing cycle so your full 12-month subscription begins on launch day (November 13, 2026) and renews on November 13, 2027.</p>
       
       <!-- PROMINENT PUBLIC ANNOUNCEMENT BANNER -->
       <div class="public-announcement-banner">
@@ -199,6 +362,7 @@
             <div class="price-container">
               <span class="original-price">$490</span>
               <div class="price">$290 <span>/ year fixed</span></div>
+              <div class="vat-note">VAT not included</div>
             </div>
             <ul class="pricing-list">
               <li><strong>Up to 3 Terminals per Store</strong></li>
@@ -208,7 +372,7 @@
               <li>Sales by Range (PDF/CSV Exports)</li>
             </ul>
           </div>
-          <button class="btn-signup" style="width: 100%; margin-top: 20px;" onclick="openModal('signup-modal')">Claim Founders Plus</button>
+          <button class="btn-signup" style="width: 100%; margin-top: 20px;" onclick="openSignupModalWithPlan('pri_01m0wxg0tvswcrxbgqdyas60w1')">Claim Founders Plus</button>
         </div>
 
         <!-- PRO TIER (FOUNDERS VIP) -->
@@ -220,6 +384,7 @@
             <div class="price-container">
               <span class="original-price">$990</span>
               <div class="price" style="color: var(--accent-purple);">$590 <span>/ year fixed</span></div>
+              <div class="vat-note">VAT not included</div>
             </div>
             <ul class="pricing-list">
               <li><strong>Unlimited Multi-Terminal Sync</strong></li>
@@ -229,7 +394,7 @@
               <li><strong>Priority Live Agent Chat Included</strong></li>
             </ul>
           </div>
-          <button class="btn-login" style="width: 100%; margin-top: 20px; background: var(--accent-purple);" onclick="openModal('signup-modal')">Claim Founders Pro</button>
+          <button class="btn-login" style="width: 100%; margin-top: 20px; background: var(--accent-purple);" onclick="openSignupModalWithPlan('pri_01m0wxe643v3yrcqxwyag6xq6w')">Claim Founders Pro</button>
         </div>
       </div>
 
@@ -280,6 +445,7 @@
             <tr><td>Automated Real-Time Cloud Sync</td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
             <tr><td>Live Web Customer Analytics Portal</td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
             <tr><td>Visual Tables & KDS Routing</td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>CDS Customer Display Screen Support</td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -352,26 +518,33 @@
     </div>
   </footer>
 
-  <!-- MODALS & CHAT -->
-  <button id="chat-btn" onclick="toggleSalesChat()" title="Sales Chat">💬</button>
-  <div id="sales-chat-panel">
-    <div class="chat-header">
-      <div style="font-size: 13px; font-weight: 800; color: #fff;">FlexiTap Sales Assistant</div>
-      <button onclick="toggleSalesChat()" style="background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer;">&times;</button>
-    </div>
-    <div class="chat-body"><div class="chat-msg">👋 Welcome! Need help claiming your Founders VIP rate?</div></div>
-  </div>
-
+  <!-- SIGNUP MODAL -->
   <div class="modal-overlay" id="signup-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeModal('signup-modal')">&times;</button>
       <h2>Create Your Store</h2>
-      <form onsubmit="event.preventDefault(); alert('Success!'); closeModal('signup-modal');">
-        <label>Business Name</label><input type="text" required placeholder="Cafe Name">
-        <label>Email</label><input type="email" required placeholder="owner@cafe.com">
-        <label>Password</label><input type="password" required placeholder="••••••••">
-        <button type="submit" class="submit-btn">Create Account</button>
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Register your account and select your plan.</p>
+      
+      <form id="portal-signup-form" onsubmit="handleStoreSignup(event)">
+        <label>Business Name</label>
+        <input type="text" id="signup-business" required placeholder="My Awesome Cafe">
+        
+        <label>Owner Email</label>
+        <input type="email" id="signup-email" required placeholder="owner@cafe.com">
+        
+        <label>Password</label>
+        <input type="password" id="signup-password" required placeholder="At least 6 characters">
+        
+        <label>Select Plan</label>
+        <select id="signup-tier" required>
+          <option value="free">Free ($0 / mo)</option>
+          <option value="pri_01m0wxg0tvswcrxbgqdyas60w1">Plus Founders VIP ($290 / year fixed)</option>
+          <option value="pri_01m0wxe643v3yrcqxwyag6xq6w">Pro Founders VIP ($590 / year fixed)</option>
+        </select>
+
+        <button type="submit" class="submit-btn" id="signup-btn-text" style="margin-top: 10px;">Create Account & Pay</button>
       </form>
+      <div id="signup-modal-error" class="error-msg"></div>
     </div>
   </div>
 
@@ -391,7 +564,6 @@
     function toggleMobileMenu() { document.getElementById('navLinksContainer').classList.toggle('mobile-open'); }
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    function toggleSalesChat() { const p = document.getElementById('sales-chat-panel'); p.style.display = (p.style.display === 'flex' ? 'none' : 'flex'); }
   </script>
 </body>
 </html>
