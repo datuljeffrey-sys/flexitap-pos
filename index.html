@@ -40,10 +40,42 @@
     }
 
     /* HERO VIDEO BACKGROUND */
-    .hero-video-container { position: absolute; top: 0; left: 0; width: 100%; height: 850px; overflow: hidden; z-index: 0; pointer-events: none; }
-    .hero-bg-video { width: 100%; height: 100%; object-fit: cover; opacity: 0.38; filter: saturate(1.2) contrast(1.1); }
-    .hero-video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(9, 13, 22, 0.65) 0%, rgba(9, 13, 22, 0.85) 60%, var(--bg) 100%); }
-    .glow-top { position: absolute; top: -160px; left: 50%; transform: translateX(-50%); width: min(750px, 100vw); height: 500px; background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(9, 13, 22, 0) 70%); pointer-events: none; z-index: 1; }
+    .hero-video-container { 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 850px; 
+      overflow: hidden; 
+      z-index: 0; 
+      pointer-events: none; 
+    }
+    .hero-bg-video { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+      opacity: 0.38; 
+      filter: saturate(1.2) contrast(1.1); 
+    }
+    .hero-video-overlay { 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: linear-gradient(180deg, rgba(9, 13, 22, 0.65) 0%, rgba(9, 13, 22, 0.85) 60%, var(--bg) 100%); 
+    }
+    .glow-top { 
+      position: absolute; 
+      top: -160px; 
+      left: 50%; 
+      transform: translateX(-50%); 
+      width: min(750px, 100vw); 
+      height: 500px; 
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(9, 13, 22, 0) 70%); 
+      pointer-events: none; 
+      z-index: 1; 
+    }
     
     .container { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
 
@@ -64,7 +96,7 @@
     .btn-signup:hover { background: var(--primary-hover); }
 
     /* HERO */
-    .hero { text-align: center; padding: 75px 0 40px; position: relative; width: 100%; }
+    .hero { text-align: center; padding: 75px 0 60px; position: relative; width: 100%; }
     .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); padding: 6px 16px; border-radius: 9999px; font-size: 13px; font-weight: 600; color: #93c5fd; margin-bottom: 24px; max-width: 90%; }
     .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); flex-shrink: 0; animation: pulse-dot 2s infinite; }
     @keyframes pulse-dot {
@@ -77,7 +109,6 @@
     .cta-group { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; width: 100%; }
     .btn-primary { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); transition: 0.2s ease; }
     .btn-primary:hover { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
-    .btn-secondary { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.18); color: #fff; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
 
     /* PUBLIC ANNOUNCEMENT BANNER */
     .home-announcement { background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15)); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 20px 24px; max-width: 850px; margin: 0 auto 40px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
@@ -85,42 +116,6 @@
     .home-announcement p { color: #cbd5e1; font-size: 14px; line-height: 1.6; margin: 0; }
     .home-announcement a { color: #60a5fa; font-weight: 700; text-decoration: none; }
     .home-announcement a:hover { text-decoration: underline; }
-
-    /* PLATFORMS */
-    .platforms-wrapper { width: 100%; max-width: 980px; margin: 20px auto 40px; background: rgba(15, 23, 42, 0.75); border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; }
-    .platforms-label { font-size: 11px; font-weight: 800; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; text-align: center; }
-    .platforms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
-    .platform-card { background: rgba(9, 13, 22, 0.7); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; justify-content: space-between; text-align: left; }
-    .platform-icon-wrap { width: 28px; height: 28px; margin-bottom: 10px; color: var(--text-muted); }
-    .platform-icon-wrap svg { width: 100%; height: 100%; }
-    .platform-name { font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 2px; }
-    .platform-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
-    .status-badge-soon { align-self: flex-start; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid var(--card-border); text-transform: uppercase; }
-
-    /* PREVIEW CARD & ANIMATIONS */
-    .preview-wrapper { width: 100%; margin: 20px auto 80px; max-width: 850px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); animation: float-card 6s ease-in-out infinite; }
-    @keyframes float-card {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
-    .preview-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 16px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-    .preview-title { font-size: 16px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
-    .status-pill { background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); animation: pulse-glow 2s infinite; }
-    @keyframes pulse-glow {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
-    }
-    .preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; text-align: left; }
-    .stat-box { background: rgba(15, 23, 42, 0.85); border: 1px solid var(--card-border); padding: 18px; border-radius: 12px; transition: transform 0.3s ease, border-color 0.3s ease; }
-    .stat-box:hover { transform: translateY(-3px); border-color: rgba(59, 130, 246, 0.4); }
-    .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
-    .stat-val { font-size: 26px; font-weight: 800; margin-top: 6px; display: inline-block; }
-    .live-tick { animation: value-pop 0.5s ease; }
-    @keyframes value-pop {
-      0% { transform: scale(1); color: var(--primary); }
-      50% { transform: scale(1.06); color: #60a5fa; }
-      100% { transform: scale(1); }
-    }
 
     /* FOOTER & SOCIAL ICONS */
     footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #0b0f19; font-size: 14px; width: 100%; }
@@ -175,14 +170,13 @@
       header { padding: 12px 16px; }
     }
     @media (max-width: 768px) {
-      .platforms-grid, .preview-grid { grid-template-columns: 1fr !important; }
       .footer-grid { grid-template-columns: 1fr; gap: 30px; }
       .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 8px; }
     }
     @media (max-width: 480px) {
       .container { padding: 0 16px; }
       .cta-group { flex-direction: column; width: 100%; padding: 0; }
-      .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+      .btn-primary { width: 100%; justify-content: center; }
       #sales-chat-panel { width: calc(100vw - 32px) !important; right: 16px !important; bottom: 85px !important; height: 460px; }
     }
   </style>
@@ -191,8 +185,8 @@
 
   <!-- HERO VIDEO BACKGROUND -->
   <div class="hero-video-container">
-    <video class="hero-bg-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1920&auto=format&fit=crop">
-      <source src="assets/cafe-bg.mp4" type="video/mp4">
+    <video class="hero-bg-video" autoplay muted loop playsinline preload="auto">
+      <source src="video.mp4" type="video/mp4">
     </video>
     <div class="hero-video-overlay"></div>
   </div>
@@ -238,86 +232,13 @@
         <p>Standard monthly and annual subscription plans will unlock on launch day. Right now during pre-launch, <a href="pricing.html">secure your Founders VIP Annual Pass</a> to lock in maximum savings, priority onboarding, and 1-week early access!</p>
       </div>
 
-      <div class="cta-group" id="download">
+      <div class="cta-group">
         <a href="pricing.html" class="btn-primary">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
           Claim Founders VIP Pass
         </a>
-        <a href="#" onclick="alert('Android APK direct download coming soon! Please check back shortly.'); return false;" class="btn-secondary">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Download Android APK
-        </a>
-      </div>
-
-      <!-- PROFESSIONAL MULTI-PLATFORM ECOSYSTEM MATRIX -->
-      <div class="platforms-wrapper">
-        <div class="platforms-label">SUPPORTED OPERATING SYSTEMS & STORE ECOSYSTEMS</div>
-        <div class="platforms-grid">
-          <div class="platform-card">
-            <div class="platform-icon-wrap">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.996-3.4562c.0784-.1358.0321-.3096-.1038-.3881-.1362-.0787-.3101-.0321-.3885.1039l-2.0223 3.5015c-1.3787-.6304-2.9234-.988-4.3629-.988s-2.9842.3576-4.3629.988L6.6166 5.581c-.0784-.136-.2524-.1826-.3885-.1039-.1359.0785-.1822.2523-.1038.3881l1.996 3.4562C4.1611 11.2334 1.5 15.421 1.5 20.3248h21c0-4.9038-2.6611-9.0914-6.6185-11.0034"/></svg>
-            </div>
-            <div class="platform-details">
-              <div class="platform-name">Android Tablets & POS</div>
-              <div class="platform-meta">Direct APK Build (arm64/v7a)</div>
-            </div>
-            <span class="status-badge-soon">Coming Soon</span>
-          </div>
-          <div class="platform-card">
-            <div class="platform-icon-wrap">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.793 12 3.61 22.186c-.301-.318-.485-.75-.485-1.229V3.043c0-.479.184-.911.484-1.229zm11.306 11.307l2.42 2.42-11.89 6.842 9.47-9.262zm0-2.242L5.445 1.617l11.89 6.842-2.42 2.42zm1.536 1.536l3.815-2.194c.833-.479.833-1.258 0-1.737L16.451 10.29l-2.115 2.125 2.115 2.126v-.126z"/></svg>
-            </div>
-            <div class="platform-details">
-              <div class="platform-name">Google Play Store</div>
-              <div class="platform-meta">Android Native App Listing</div>
-            </div>
-            <span class="status-badge-soon">In Review</span>
-          </div>
-          <div class="platform-card">
-            <div class="platform-icon-wrap">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.01c.67-.82 1.13-1.96 1.01-3.1-.97.04-2.15.65-2.85 1.47-.62.72-1.16 1.88-1.02 2.99 1.08.08 2.19-.54 2.86-1.36z"/></svg>
-            </div>
-            <div class="platform-details">
-              <div class="platform-name">Apple iOS & iPadOS</div>
-              <div class="platform-meta">App Store for iPad Counters</div>
-            </div>
-            <span class="status-badge-soon">Coming Soon</span>
-          </div>
-          <div class="platform-card">
-            <div class="platform-icon-wrap">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.901-1.8z"/></svg>
-            </div>
-            <div class="platform-details">
-              <div class="platform-name">Windows POS Edition</div>
-              <div class="platform-meta">All-in-One Touchscreen PCs</div>
-            </div>
-            <span class="status-badge-soon">Coming Soon</span>
-          </div>
-        </div>
       </div>
     </section>
-
-    <!-- LIVE DEMO PREVIEW CARD (WITH DYNAMIC ANIMATION) -->
-    <div class="preview-wrapper">
-      <div class="preview-header">
-        <div class="preview-title"><span>📊</span> Live Store Analytics Feed</div>
-        <span class="status-pill">&bull; Cloud Connected (Live)</span>
-      </div>
-      <div class="preview-grid">
-        <div class="stat-box">
-          <div class="stat-label">Today's Net Sales</div>
-          <div class="stat-val" id="anim-sales" style="color: var(--accent-green);">$3,485.50</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Transactions</div>
-          <div class="stat-val" id="anim-tx" style="color: var(--primary);">124</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Average Ticket</div>
-          <div class="stat-val" id="anim-ticket" style="color: var(--accent-purple);">$28.10</div>
-        </div>
-      </div>
-    </div>
   </main>
 
   <!-- FOOTER WITH SOCIAL ICONS -->
@@ -367,7 +288,6 @@
             <li><a href="features.html">Capabilities</a></li>
             <li><a href="pricing.html">Pricing</a></li>
             <li><a href="about.html">FAQ</a></li>
-            <li><a href="#" onclick="alert('Android APK direct download coming soon!'); return false;">Download</a></li>
           </ul>
         </div>
 
@@ -450,37 +370,6 @@
       // Initialize Supabase Client
       supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     });
-
-    // --- LIVE SIMULATED ANALYTICS TICKER ANIMATION ---
-    let currentSales = 3485.50;
-    let currentTx = 124;
-    
-    setInterval(() => {
-      const increment = +(Math.random() * 25).toFixed(2);
-      currentSales += increment;
-      currentTx += 1;
-      const currentTicket = (currentSales / currentTx).toFixed(2);
-
-      const salesEl = document.getElementById('anim-sales');
-      const txEl = document.getElementById('anim-tx');
-      const ticketEl = document.getElementById('anim-ticket');
-
-      if (salesEl && txEl && ticketEl) {
-        salesEl.textContent = `$${currentSales.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        txEl.textContent = currentTx;
-        ticketEl.textContent = `$${currentTicket}`;
-
-        salesEl.classList.add('live-tick');
-        txEl.classList.add('live-tick');
-        ticketEl.classList.add('live-tick');
-
-        setTimeout(() => {
-          salesEl.classList.remove('live-tick');
-          txEl.classList.remove('live-tick');
-          ticketEl.classList.remove('live-tick');
-        }, 500);
-      }
-    }, 4000);
 
     // --- MOBILE MENU TOGGLE ---
     function toggleMobileMenu() {
