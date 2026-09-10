@@ -414,20 +414,24 @@
     function openCalendarBooking(e) {
       if (e) e.preventDefault();
 
-      if (GOOGLE_CALENDAR_URL === 'https://calendar.app.google/JxzMk7ZExrWYzNoo8') {
-        alert('Please paste your Google Calendar Appointment Schedule URL into index.html (constant GOOGLE_CALENDAR_URL).');
+      // Check if URL is properly set
+      if (!GOOGLE_CALENDAR_URL || GOOGLE_CALENDAR_URL === '') {
+        alert('Google Calendar URL is not configured.');
         return;
       }
 
-      // Check if Google's scheduling script loaded popup support
-      if (window.calendar && window.calendar.schedulingButton) {
-        window.calendar.schedulingButton.load({
-          url: GOOGLE_CALENDAR_URL
-        });
-      } else {
-        // Fallback popup if script hasn't finished loading
-        window.open(GOOGLE_CALENDAR_URL, '_blank', 'width=750,height=650,scrollbars=yes');
-      }
+      // Calculate centered popup coordinates for a clean focused modal
+      const width = 760;
+      const height = 700;
+      const left = window.screen.width ? (window.screen.width - width) / 2 : 100;
+      const top = window.screen.height ? (window.screen.height - height) / 2 : 100;
+
+      // Opens scheduling link directly in a clean modal popup window
+      window.open(
+        GOOGLE_CALENDAR_URL,
+        'GoogleCalendarBooking',
+        `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`
+      );
     }
 
     // --- MOBILE MENU TOGGLE ---
