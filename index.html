@@ -9,6 +9,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Include Paddle.js -->
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+
+  <!-- Google Calendar Appointment Scheduling Styles & SDK -->
+  <link href="https://calendar.google.com/calendar/scheduling-button-script.css" rel="stylesheet">
+  <script src="https://calendar.google.com/calendar/scheduling-button-script.js" async></script>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,7 +43,7 @@
       position: relative; 
     }
 
-    /* HERO VIDEO BACKGROUND — ENHANCED VISIBILITY */
+    /* HERO VIDEO BACKGROUND */
     .hero-video-container { 
       position: absolute; 
       top: 0; 
@@ -54,7 +58,7 @@
       width: 100%; 
       height: 100%; 
       object-fit: cover; 
-      opacity: 0.85; /* Increased from 0.38 to make the video clearly visible */
+      opacity: 0.85; 
       filter: saturate(1.1) contrast(1.05); 
     }
     .hero-video-overlay { 
@@ -63,7 +67,6 @@
       left: 0; 
       width: 100%; 
       height: 100%; 
-      /* Softened dark gradient so the video shines through while gently fading into the dark body below */
       background: linear-gradient(180deg, rgba(9, 13, 22, 0.25) 0%, rgba(9, 13, 22, 0.45) 60%, var(--bg) 100%); 
     }
     .glow-top { 
@@ -107,9 +110,34 @@
     }
     .hero h1 { font-size: clamp(30px, 7vw, 54px); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -1px; text-shadow: 0 4px 24px rgba(0,0,0,0.85); }
     .hero p { font-size: clamp(14px, 2vw, 18.5px); color: #f1f5f9; max-width: 740px; margin: 0 auto 32px; padding: 0 16px; text-shadow: 0 2px 14px rgba(0,0,0,0.9); }
-    .cta-group { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; width: 100%; }
+    
+    .cta-group { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; width: 100%; }
     .btn-primary { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); transition: 0.2s ease; }
     .btn-primary:hover { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+    
+    /* BOOK A DEMO BUTTON */
+    .btn-demo { 
+      background: rgba(15, 23, 42, 0.75); 
+      backdrop-filter: blur(10px); 
+      border: 1px solid rgba(255, 255, 255, 0.25); 
+      color: #fff; 
+      padding: 14px 26px; 
+      border-radius: 12px; 
+      font-size: 15px; 
+      font-weight: 700; 
+      cursor: pointer; 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 10px; 
+      text-decoration: none; 
+      transition: 0.2s ease; 
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); 
+    }
+    .btn-demo:hover { 
+      background: rgba(30, 41, 59, 0.9); 
+      border-color: rgba(255, 255, 255, 0.45); 
+      transform: translateY(-1px); 
+    }
 
     /* PUBLIC ANNOUNCEMENT BANNER */
     .home-announcement { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 20px 24px; max-width: 850px; margin: 0 auto 40px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -177,7 +205,7 @@
     @media (max-width: 480px) {
       .container { padding: 0 16px; }
       .cta-group { flex-direction: column; width: 100%; padding: 0; }
-      .btn-primary { width: 100%; justify-content: center; }
+      .btn-primary, .btn-demo { width: 100%; justify-content: center; }
       #sales-chat-panel { width: calc(100vw - 32px) !important; right: 16px !important; bottom: 85px !important; height: 460px; }
     }
   </style>
@@ -208,6 +236,7 @@
         <a href="features.html" class="nav-link" onclick="toggleMobileMenu()">Capabilities</a>
         <a href="pricing.html" class="nav-link" onclick="toggleMobileMenu()">Pricing</a>
         <a href="about.html" class="nav-link" onclick="toggleMobileMenu()">About Us & FAQ</a>
+        <a href="#" class="nav-link" onclick="openCalendarBooking(event)">Schedule Demo ↗</a>
         <a href="dev_portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
       </div>
 
@@ -238,6 +267,10 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
           Claim Founders VIP Pass
         </a>
+        <button onclick="openCalendarBooking(event)" class="btn-demo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Book a Live Demo
+        </button>
       </div>
     </section>
   </main>
@@ -289,6 +322,7 @@
             <li><a href="features.html">Capabilities</a></li>
             <li><a href="pricing.html">Pricing</a></li>
             <li><a href="about.html">FAQ</a></li>
+            <li><a href="#" onclick="openCalendarBooking(event)">Book a Live Demo</a></li>
           </ul>
         </div>
 
@@ -331,10 +365,11 @@
         👋 <strong>Welcome to FlexiTap POS!</strong> Looking for the right setup for your business?
       </div>
       <div class="chat-options" id="chat-quick-options">
+        <button class="chat-chip" onclick="handleChatSelect('demo')" style="background: rgba(16,185,129,0.1); color: #34d399; border-color: rgba(16,185,129,0.3);">📅 Book a Live 1-on-1 Demo</button>
         <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Founders VIP Annual Pass Details</button>
         <button class="chat-chip" onclick="handleChatSelect('platforms')">📱 iOS, iPad, Android & Windows Availability</button>
         <button class="chat-chip" onclick="handleChatSelect('sync')">⚡ Offline Reliability & Real-Time Cloud Sync</button>
-        <button class="chat-chip" onclick="handleChatSelect('contact')" style="background: rgba(16,185,129,0.1); color: #34d399; border-color: rgba(16,185,129,0.3);">✉️ Contact Sales / Request Demo</button>
+        <button class="chat-chip" onclick="handleChatSelect('contact')">✉️ Send Message to Sales</button>
       </div>
     </div>
   </div>
@@ -367,10 +402,33 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
     let supabaseClient;
 
+    // Google Calendar Schedule Link from your Workspace
+    const GOOGLE_CALENDAR_URL = 'YOUR_APPOINTMENT_SCHEDULE_URL';
+
     document.addEventListener("DOMContentLoaded", function() {
       // Initialize Supabase Client
       supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     });
+
+    // --- GOOGLE CALENDAR MODAL / POPUP HANDLER ---
+    function openCalendarBooking(e) {
+      if (e) e.preventDefault();
+
+      if (GOOGLE_CALENDAR_URL === 'https://calendar.google.com/calendar/embed?src=c_9739fb7e83b3b8ca1aa5e98b2178f0e032298a20b0c3d36bda573fdc0d8ff83a%40group.calendar.google.com&ctz=UTC') {
+        alert('Please paste your Google Calendar Appointment Schedule URL into index.html (constant GOOGLE_CALENDAR_URL).');
+        return;
+      }
+
+      // Check if Google's scheduling script loaded popup support
+      if (window.calendar && window.calendar.schedulingButton) {
+        window.calendar.schedulingButton.load({
+          url: GOOGLE_CALENDAR_URL
+        });
+      } else {
+        // Fallback popup if script hasn't finished loading
+        window.open(GOOGLE_CALENDAR_URL, '_blank', 'width=750,height=650,scrollbars=yes');
+      }
+    }
 
     // --- MOBILE MENU TOGGLE ---
     function toggleMobileMenu() {
@@ -411,7 +469,9 @@
     }
 
     function handleChatSelect(type) {
-      if (type === 'pricing') {
+      if (type === 'demo') {
+        appendMessage(`<strong>Book a Live Demo:</strong><br>Pick a date and time that fits your calendar. A Google Meet link will be generated automatically.<br><br><button onclick="openCalendarBooking(event)" style="background:var(--primary); color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">📅 Select Time on Google Calendar</button>`);
+      } else if (type === 'pricing') {
         appendMessage(`<strong>Founders VIP Annual Pass:</strong><br>• <strong>Plus ($290/yr):</strong> Save $200. Up to 3 terminals, web portal, cloud sync & backups.<br>• <strong>Pro ($590/yr):</strong> Save $400. Unlimited terminals, KDS, floor plans & priority support.<br><em>Note: Subscription activates when you complete onboarding on or after launch day (Nov 13, 2026).</em>`);
       } else if (type === 'platforms') {
         appendMessage(`<strong>Supported Platforms & App Stores:</strong><br>• <strong>Android:</strong> Direct APK build coming soon.<br>• <strong>Apple iOS / iPadOS:</strong> Coming soon to the App Store.<br>• <strong>Windows Touchscreen:</strong> Coming soon.`);
