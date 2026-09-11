@@ -81,7 +81,7 @@
     .matrix-table td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
     .col-center { text-align: center; }
     .check-icon { color: var(--accent-green); font-weight: 800; font-size: 16px; }
-    .dash-icon { color: var(--text-muted); font-size: 16px; }
+    .dash-icon { color: #f87171; font-weight: 700; font-size: 15px; }
 
     .support-plan-banner { width: 100%; margin-top: 40px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 20px; padding: 36px; text-align: left; display: grid; grid-template-columns: 2fr 1.2fr; gap: 24px; align-items: center; }
     .support-features-list { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--text-muted); }
@@ -376,7 +376,7 @@
       let tierName = 'free';
       let paymentStatus = 'free';
 
-      // Updated with your new Live Price IDs from the dashboard screenshots
+      // Live Price IDs from the dashboard
       if (priceId.includes('pri_01m1pb8szpcf4vapm28yfzw9aq')) {
         tierName = 'plus';
         paymentStatus = 'unpaid';
@@ -543,11 +543,13 @@
               <div class="price">$0 <span>/ mo</span></div>
             </div>
             <ul class="pricing-list">
-              <li>1 Standalone Register Terminal</li>
+              <li><strong>1 Active Terminal Device</strong></li>
+              <li><strong>1 User Account</strong></li>
+              <li><strong>Local Device Sales & Daily Reports</strong></li>
+              <li>Customer Loyalty Program</li>
               <li>Complete Offline Functionality</li>
-              <li>ESC/POS Thermal Printing (58/80mm)</li>
-              <li>Cash Float, X & Z-Reading</li>
-              <li>Item Modifiers & Basic Discounts</li>
+              <li>Local Device Backup Only</li>
+              <li>Community & FAQ Support</li>
             </ul>
           </div>
           <button class="btn-signup" style="width: 100%; margin-top: 20px;" onclick="openModal('signup-modal')">Get Started Free</button>
@@ -565,11 +567,14 @@
               <div class="vat-note">VAT not included</div>
             </div>
             <ul class="pricing-list">
-              <li><strong>Up to 3 Terminals per Store</strong></li>
-              <li><strong>Live Web Customer Portal</strong></li>
-              <li>Automated Real-Time Cloud Sync</li>
-              <li>Daily Automated Cloud Backups</li>
-              <li>Sales by Range (PDF/CSV Exports)</li>
+              <li><strong>Up to 3 Devices per Store</strong></li>
+              <li><strong>Up to 5 Users</strong></li>
+              <li><strong>Local Device & Web Portal Analytics</strong></li>
+              <li><strong>Automated Cloud Backup Included</strong></li>
+              <li><strong>Live Chat Technical Support</strong></li>
+              <li>KDS, CDS & Digital Menu Boards</li>
+              <li>HR Features & Staff Tracking</li>
+              <li>Customer Loyalty Program</li>
             </ul>
           </div>
           <button class="btn-signup" style="width: 100%; margin-top: 20px;" onclick="openSignupModalWithPlan('pri_01m1pb8szpcf4vapm28yfzw9aq')">Claim Founders Plus</button>
@@ -587,11 +592,14 @@
               <div class="vat-note">VAT not included</div>
             </div>
             <ul class="pricing-list">
-              <li><strong>Unlimited Multi-Terminal Sync</strong></li>
-              <li><strong>Kitchen Display System (KDS)</strong></li>
-              <li>Visual Table Floor Plans & Seat Ordering</li>
-              <li>Centralized Multi-Station Inventory</li>
-              <li><strong>Priority Live Agent Chat Included</strong></li>
+              <li><strong>Unlimited Devices (9,999 Max)</strong></li>
+              <li><strong>Unlimited Users (9,999 Max)</strong></li>
+              <li><strong>Local Device & Web Analytics with AI Insights</strong></li>
+              <li><strong>Automated Cloud Backup Included</strong></li>
+              <li><strong>Technical Support: Phone, Chat & Remote Access</strong></li>
+              <li>Table Mode & Visual Floor Plans</li>
+              <li>Advanced & Recipe Inventory</li>
+              <li>AI Copilot & Advanced Operations</li>
             </ul>
           </div>
           <button class="btn-login" style="width: 100%; margin-top: 20px; background: var(--accent-purple);" onclick="openSignupModalWithPlan('pri_01m1pb6ba15axyr7acv0hswynd')">Claim Founders Pro</button>
@@ -622,7 +630,7 @@
         </div>
       </div>
 
-      <!-- MATRIX -->
+      <!-- DETAILED MATRIX -->
       <div class="matrix-wrapper">
         <h3 style="font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px;">Detailed Feature Comparison</h3>
         <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Compare technical capabilities across FlexiTap tiers.</p>
@@ -637,15 +645,22 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><strong>Target Merchant</strong></td><td class="col-center" style="color: var(--text-muted);">Solo Kiosks</td><td class="col-center" style="color: #60a5fa;">Cafes, Boutiques</td><td class="col-center" style="color: #a855f7;">Restaurants</td></tr>
-            <tr><td>Active Terminals per Store</td><td class="col-center">1 Device</td><td class="col-center"><strong>Up to 3 Terminals</strong></td><td class="col-center"><strong>Unlimited Devices</strong></td></tr>
-            <tr><td>Offline-First Architecture</td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
-            <tr><td>Hardware: ESC/POS, Bluetooth, LAN, Sunmi</td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
-            <tr><td>Cash Ledger: Float, Drops, Z-Read</td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
-            <tr><td>Automated Real-Time Cloud Sync</td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
-            <tr><td>Live Web Customer Analytics Portal</td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
-            <tr><td>Visual Tables & KDS Routing</td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
-            <tr><td>CDS Customer Display Screen Support</td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="dash-icon">—</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
+            <tr><td><strong>Max Devices</strong></td><td class="col-center"><strong>1</strong></td><td class="col-center" style="color: #60a5fa;"><strong>3</strong></td><td class="col-center" style="color: #a855f7;"><strong>Unlimited (9,999)</strong></td></tr>
+            <tr><td><strong>Max Users</strong></td><td class="col-center"><strong>1</strong></td><td class="col-center" style="color: #60a5fa;"><strong>5</strong></td><td class="col-center" style="color: #a855f7;"><strong>Unlimited (9,999)</strong></td></tr>
+            <tr><td>Local Device Sales Reporting</td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>Web / Merchant Portal Analytics</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
+            <tr><td>Automated Cloud Backup</td><td class="col-center"><span class="dash-icon">✕ Local Only</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
+            <tr><td>Technical Support Channels</td><td class="col-center" style="font-size: 12px; color: var(--text-muted);">Community & FAQ</td><td class="col-center" style="color: #60a5fa;"><strong>Chat Support Only</strong></td><td class="col-center" style="color: #a855f7;"><strong>Phone, Chat & Remote Access</strong></td></tr>
+            <tr><td>Customer Loyalty Program</td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>HR Features</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>KDS (Kitchen Display System)</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>CDS (Customer Display Screen)</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>DMB (Digital Menu Board)</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>AI Insights / Analytics</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>AI Copilot</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>Advanced Inventory</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>Recipe Inventory</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>Table Mode</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -653,16 +668,16 @@
       <!-- SUPPORT PLAN BANNER -->
       <div class="support-plan-banner">
         <div>
-          <div style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">🛡️ Priority Support & Secure Remote Diagnostics</div>
-          <div style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px;">Keep your registers, network, and cloud sync pipelines in peak health during peak service hours with white-glove support.</div>
+          <div style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">🛡️ Pro Tier Support: Phone, Live Chat & Secure Remote Access</div>
+          <div style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px;">Ensure zero downtime with direct phone routing, real-time live chat, and remote desktop diagnostic sessions handled directly by technical engineers.</div>
           <ul class="support-features-list">
-            <li>24/7 Priority Support via Phone, Live Chat & Email</li>
-            <li>Secure Remote Access & Terminal Diagnostics</li>
+            <li>Direct Phone Line & Live Chat Technical Assistance</li>
+            <li>Secure Remote Diagnostic Access for Fast Terminal Resolution</li>
           </ul>
         </div>
         <div style="text-align: right;">
-          <div style="font-size: 28px; font-weight: 800; color: #fff;">$200 <span style="font-size: 14px; font-weight: 500; color: var(--text-muted);">/ year</span></div>
-          <p style="font-size: 12px; color: var(--accent-green); margin-top: 4px;">Included natively in Pro</p>
+          <div style="font-size: 18px; font-weight: 800; color: #fff;">Included with <span style="color: var(--accent-purple);">Pro</span></div>
+          <p style="font-size: 13px; color: #93c5fd; margin-top: 4px;">Plus includes dedicated Chat Support</p>
         </div>
       </div>
     </section>
@@ -713,7 +728,7 @@
 
       <div class="footer-bottom">
         <div>&copy; 2026 FlexiTap POS. All rights reserved.</div>
-        <div>www.flexitappapp.com</div>
+        <div>www.flexitapapp.com</div>
       </div>
     </div>
   </footer>
@@ -826,7 +841,7 @@
       </div>
 
       <div class="support-footnote">
-        Questions? Reach our team directly at <a href="mailto:support@flexitapapp.com">support@flexitapapp.com</a>
+        Questions? Reach our team directly at <a href="mailto:support@flexitapapp.com">support@flexitappapp.com</a>
       </div>
     </div>
   </div>
