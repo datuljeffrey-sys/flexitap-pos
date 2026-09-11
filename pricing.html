@@ -123,6 +123,199 @@
     .chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 13px; }
     .chat-msg { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; color: #f8fafc; }
 
+    /* UPGRADED PROFESSIONAL SUCCESS MODAL */
+    .success-card {
+      position: relative;
+      background: linear-gradient(180deg, #131a29 0%, #0d121d 100%);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 24px;
+      padding: 38px 28px 30px;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      margin: auto;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 40px rgba(59, 130, 246, 0.15);
+      overflow: hidden;
+      animation: modalScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes modalScaleIn {
+      0% { transform: scale(0.92) translateY(12px); opacity: 0; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .success-glow {
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 320px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(9, 13, 22, 0) 70%);
+      pointer-events: none;
+    }
+
+    .success-icon-wrap {
+      position: relative;
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .success-icon-pulse {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.2);
+      animation: successPulse 2s infinite ease-out;
+    }
+
+    @keyframes successPulse {
+      0% { transform: scale(0.85); opacity: 0.8; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    .success-check-svg {
+      position: relative;
+      width: 64px;
+      height: 64px;
+      padding: 16px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-radius: 50%;
+      color: #ffffff;
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+    }
+
+    .launch-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #93c5fd;
+      margin-bottom: 16px;
+      letter-spacing: 0.3px;
+    }
+
+    .launch-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #3b82f6;
+      box-shadow: 0 0 8px #3b82f6;
+    }
+
+    .success-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    .success-subtitle {
+      font-size: 14px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      padding: 0 8px;
+    }
+
+    .next-steps-container {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .step-item.step-highlight {
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .step-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step-badge-portal {
+      background: rgba(139, 92, 246, 0.25) !important;
+      border-color: rgba(139, 92, 246, 0.5) !important;
+      color: #c4b5fd !important;
+    }
+
+    .step-content { flex: 1; }
+    .step-heading { font-size: 13.5px; font-weight: 700; color: #f8fafc; margin-bottom: 2px; }
+    .step-desc { font-size: 12px; color: #94a3b8; line-height: 1.5; }
+    .highlight-text { color: #60a5fa; font-weight: 600; }
+
+    .btn-success-dismiss {
+      width: 100%;
+      padding: 13px 20px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      color: #f8fafc;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-success-dismiss:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.28);
+      color: #ffffff;
+    }
+
+    .support-footnote {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 16px;
+    }
+
+    .support-footnote a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .support-footnote a:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
     @media (max-width: 1023px) {
       .nav-links { display: none; width: 100%; flex-direction: column; align-items: flex-start; background: rgba(15, 23, 42, 0.98); padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); margin-top: 10px; box-sizing: border-box; }
       .nav-links.mobile-open { display: flex; }
@@ -151,6 +344,18 @@
         });
       }
     });
+
+    function showRegistrationSuccess(userEmail) {
+      const emailDisplay = document.getElementById('confirmed-email-display');
+      if (emailDisplay && userEmail) {
+        emailDisplay.innerText = userEmail;
+      }
+      openModal('registration-success-modal');
+    }
+
+    function dismissRegistrationSuccess() {
+      closeModal('registration-success-modal');
+    }
 
     function openSignupModalWithPlan(priceId) {
       const selectEl = document.getElementById('signup-tier');
@@ -258,12 +463,12 @@
       document.getElementById('portal-signup-form').reset();
 
       if (tierName === 'free') {
-        alert("Account created successfully! Welcome to FlexiTap Free.");
+        showRegistrationSuccess(email);
         return;
       }
 
       if (typeof Paddle === 'undefined') {
-        alert("Account created successfully! Paddle checkout is loading. Please try again.");
+        showRegistrationSuccess(email);
         return;
       }
 
@@ -284,8 +489,7 @@
         },
         successCallback: function(checkoutData) {
           console.log("Checkout success:", checkoutData);
-          alert("Account created and payment successful! Welcome to FlexiTap Founders VIP.");
-          window.location.href = '/dashboard';
+          showRegistrationSuccess(email);
         }
       });
     }
@@ -553,6 +757,77 @@
         <label>Password</label><input type="password" required placeholder="••••••••">
         <button type="submit" class="submit-btn">Log In</button>
       </form>
+    </div>
+  </div>
+
+  <!-- UPGRADED EXECUTIVE SUCCESS MODAL -->
+  <div class="modal-overlay" id="registration-success-modal" style="display: none; z-index: 2000;">
+    <div class="success-card">
+      <div class="success-glow"></div>
+      
+      <!-- Animated Checkmark Badge -->
+      <div class="success-icon-wrap">
+        <div class="success-icon-pulse"></div>
+        <svg class="success-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+
+      <!-- Official Launch Pill -->
+      <div class="launch-pill">
+        <span class="launch-dot"></span> Official Launch: November 13, 2026
+      </div>
+
+      <h3 class="success-title">Your Store Is Registered!</h3>
+      <p class="success-subtitle">
+        Welcome to <strong>FlexiTap POS</strong>. Your merchant profile is locked in while our engineering team readies your workspace.
+      </p>
+
+      <!-- 4-Step Progression -->
+      <div class="next-steps-container">
+        <div class="step-item">
+          <div class="step-badge">1</div>
+          <div class="step-content">
+            <div class="step-heading">Confirmation Email Dispatched</div>
+            <div class="step-desc">A formal confirmation with your registration details has been sent to <span id="confirmed-email-display" class="highlight-text">your email</span>.</div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-badge">2</div>
+          <div class="step-content">
+            <div class="step-heading">Pre-Launch Updates & Feature Walkthrough</div>
+            <div class="step-desc">Our core team will share milestone briefings, development progress, and feature previews via email.</div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-badge">3</div>
+          <div class="step-content">
+            <div class="step-heading">Go-Live & Terminal Access</div>
+            <div class="step-desc">Full terminal access and system deployment unlock on <strong>November 13, 2026</strong>.</div>
+          </div>
+        </div>
+
+        <div class="step-item step-highlight">
+          <div class="step-badge step-badge-portal">4</div>
+          <div class="step-content">
+            <div class="step-heading">Merchant Portal Access</div>
+            <div class="step-desc">Merchant Portal for Pro and Plus will be available on launch day.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dismiss Button -->
+      <div>
+        <button class="btn-success-dismiss" onclick="dismissRegistrationSuccess()">
+          Got It, Back to Home
+        </button>
+      </div>
+
+      <div class="support-footnote">
+        Questions? Reach our team directly at <a href="mailto:support@flexitappapp.com">support@flexitappapp.com</a>
+      </div>
     </div>
   </div>
 
