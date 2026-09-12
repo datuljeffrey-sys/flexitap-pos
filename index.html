@@ -179,6 +179,20 @@
     .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; }
     .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
 
+    /* DEMO BOOKING MODAL */
+    .booking-modal-card { max-width: 520px; text-align: left; }
+    .booking-modal-card h2 { text-align: center; color: #fff; margin-bottom: 8px; }
+    .booking-modal-card .booking-subtitle { text-align: center; color: var(--text-muted); font-size: 13px; margin-bottom: 22px; }
+    .booking-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .booking-grid .full { grid-column: 1 / -1; }
+    .booking-help { color: var(--text-muted); font-size: 11px; margin-top: -10px; margin-bottom: 14px; }
+    .booking-success { color: #34d399; font-size: 14px; text-align: center; margin-top: 14px; }
+    .booking-error { color: #f87171; font-size: 13px; text-align: center; margin-top: 14px; }
+    @media (max-width: 520px) {
+      .booking-grid { grid-template-columns: 1fr; }
+      .booking-grid .full { grid-column: auto; }
+    }
+
     /* SALES CHAT WIDGET */
     #chat-btn { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #2563eb); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 24px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 990; transition: transform 0.2s; }
     #sales-chat-panel { display: none; position: fixed; bottom: 90px; right: 24px; width: min(90vw, 370px); height: 520px; background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); flex-direction: column; overflow: hidden; z-index: 999; }
@@ -374,6 +388,61 @@
     </div>
   </div>
 
+  <!-- SUPABASE DEMO BOOKING MODAL -->
+  <div class="modal-overlay" id="booking-modal">
+    <div class="modal-card booking-modal-card">
+      <button class="close-btn" onclick="closeModal('booking-modal')" aria-label="Close">&times;</button>
+      <div class="modal-header-logo">
+        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 32px; height: 32px;" />
+      </div>
+      <h2>Book a Live Demo</h2>
+      <p class="booking-subtitle">Choose a date and time and our team will confirm your demo.</p>
+
+      <form id="demo-booking-form">
+        <div class="booking-grid">
+          <div class="full">
+            <label for="demo-business">Business / Contact Name</label>
+            <input type="text" id="demo-business" required placeholder="Your business or name" />
+          </div>
+
+          <div>
+            <label for="demo-email">Email</label>
+            <input type="email" id="demo-email" required placeholder="owner@example.com" autocomplete="email" />
+          </div>
+
+          <div>
+            <label for="demo-phone">Phone</label>
+            <input type="tel" id="demo-phone" placeholder="Optional" autocomplete="tel" />
+          </div>
+
+          <div>
+            <label for="demo-date">Preferred Date</label>
+            <input type="date" id="demo-date" required />
+          </div>
+
+          <div>
+            <label for="demo-time">Preferred Time</label>
+            <input type="time" id="demo-time" required />
+          </div>
+
+          <div class="full">
+            <div class="booking-help">Times are saved using your browser's local timezone. Your request will be confirmed by the FlexiTap team.</div>
+          </div>
+
+          <div class="full">
+            <label for="demo-notes">Notes</label>
+            <textarea id="demo-notes" rows="3" placeholder="Tell us what you'd like to see in the demo..." style="width:100%; padding:12px 14px; margin-bottom:18px; background:#090d16; border:1px solid rgba(255,255,255,.12); border-radius:10px; color:white; font-size:15px; resize:vertical;"></textarea>
+          </div>
+
+          <div class="full">
+            <button type="submit" class="submit-btn" id="demo-booking-btn">Request Demo</button>
+          </div>
+        </div>
+      </form>
+      <div id="booking-message"></div>
+    </div>
+  </div>
+
   <!-- AUTH LOGIN MODAL -->
   <div class="modal-overlay" id="login-modal">
     <div class="modal-card">
@@ -402,37 +471,111 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
     let supabaseClient;
 
-    // Google Calendar Schedule Link from your Workspace
-    const GOOGLE_CALENDAR_URL = '';
-
     document.addEventListener("DOMContentLoaded", function() {
       // Initialize Supabase Client
       supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // Prevent selecting dates in the past.
+      const dateInput = document.getElementById('demo-date');
+      if (dateInput) {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        dateInput.min = `${yyyy}-${mm}-${dd}`;
+      }
     });
 
-    // --- GOOGLE CALENDAR MODAL / POPUP HANDLER ---
+    // --- SUPABASE DEMO BOOKING ---
     function openCalendarBooking(e) {
       if (e) e.preventDefault();
 
-      // Check if URL is properly set
-      if (!GOOGLE_CALENDAR_URL || GOOGLE_CALENDAR_URL === '') {
-        alert('Google Calendar URL is not configured.');
+      const modal = document.getElementById('booking-modal');
+      const message = document.getElementById('booking-message');
+
+      if (modal) {
+        modal.style.display = 'flex';
+        if (message) message.innerHTML = '';
+      }
+    }
+
+    function localDateTimeToISO(dateString, timeString) {
+      // Convert the visitor's selected local date/time to an ISO timestamp
+      // while preserving the correct timezone offset.
+      const localDate = new Date(`${dateString}T${timeString}:00`);
+      if (Number.isNaN(localDate.getTime())) return null;
+      return localDate.toISOString();
+    }
+
+    document.getElementById('demo-booking-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const businessName = document.getElementById('demo-business').value.trim();
+      const email = document.getElementById('demo-email').value.trim();
+      const phone = document.getElementById('demo-phone').value.trim();
+      const date = document.getElementById('demo-date').value;
+      const time = document.getElementById('demo-time').value;
+      const notes = document.getElementById('demo-notes').value.trim();
+
+      const btn = document.getElementById('demo-booking-btn');
+      const message = document.getElementById('booking-message');
+
+      if (!date || !time) {
+        message.className = 'booking-error';
+        message.innerText = 'Please select both a date and time.';
         return;
       }
 
-      // Calculate centered popup coordinates for a clean focused modal
-      const width = 760;
-      const height = 700;
-      const left = window.screen.width ? (window.screen.width - width) / 2 : 100;
-      const top = window.screen.height ? (window.screen.height - height) / 2 : 100;
+      const scheduledAt = localDateTimeToISO(date, time);
 
-      // Opens scheduling link directly in a clean modal popup window
-      window.open(
-        GOOGLE_CALENDAR_URL,
-        'GoogleCalendarBooking',
-        `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`
-      );
-    }
+      if (!scheduledAt) {
+        message.className = 'booking-error';
+        message.innerText = 'Invalid date or time. Please try again.';
+        return;
+      }
+
+      btn.innerText = 'Submitting...';
+      btn.disabled = true;
+      message.innerHTML = '';
+
+      try {
+        const { error } = await supabaseClient
+          .from('demo_bookings')
+          .insert([{
+            business_name: businessName,
+            contact_email: email,
+            contact_phone: phone || null,
+            scheduled_at: scheduledAt,
+            notes: notes || null,
+            status: 'pending'
+          }]);
+
+        if (error) {
+          console.error('Supabase Demo Booking Error:', error);
+          message.className = 'booking-error';
+          message.innerText = 'We could not save your demo request. Please try again or email sales directly.';
+          return;
+        }
+
+        message.className = 'booking-success';
+        message.innerHTML = '✅ Demo request received! Our team will confirm your date and time shortly.';
+
+        e.target.reset();
+
+        setTimeout(() => {
+          closeModal('booking-modal');
+          message.innerHTML = '';
+        }, 3500);
+
+      } catch (err) {
+        console.error('Demo Booking Network Error:', err);
+        message.className = 'booking-error';
+        message.innerText = 'Network error. Please check your connection and try again.';
+      } finally {
+        btn.innerText = 'Request Demo';
+        btn.disabled = false;
+      }
+    });
 
     // --- MOBILE MENU TOGGLE ---
     function toggleMobileMenu() {
@@ -474,7 +617,7 @@
 
     function handleChatSelect(type) {
       if (type === 'demo') {
-        appendMessage(`<strong>Book a Live Demo:</strong><br>Pick a date and time that fits your calendar. A Google Meet link will be generated automatically.<br><br><button onclick="openCalendarBooking(event)" style="background:var(--primary); color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">📅 Select Time on Google Calendar</button>`);
+        appendMessage(`<strong>Book a Live Demo:</strong><br>Choose your preferred date and time below. Your request will be saved securely and our team will confirm the demo.<br><br><button onclick="openCalendarBooking(event)" style="background:var(--primary); color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">📅 Choose Demo Time</button>`);
       } else if (type === 'pricing') {
         appendMessage(`<strong>Founders VIP Annual Pass:</strong><br>• <strong>Plus ($290/yr):</strong> Save $200. Up to 3 terminals, web portal, cloud sync & backups.<br>• <strong>Pro ($590/yr):</strong> Save $400. Unlimited terminals, KDS, floor plans & priority support.<br><em>Note: Subscription activates when you complete onboarding on or after launch day (Nov 13, 2026).</em>`);
       } else if (type === 'platforms') {
