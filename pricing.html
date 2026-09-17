@@ -336,7 +336,7 @@
       // Initialize Supabase Client
       supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      // Initialize Paddle Live (Removed sandbox mode & updated with live token)
+      // Initialize Paddle Live
       if (typeof Paddle !== 'undefined') {
         Paddle.Initialize({ 
           token: "live_17e1c64de79e3d9fc9179cc475a",
@@ -445,8 +445,8 @@
             id: userId, 
             store_name: businessName, 
             subscription_tier: tierName, 
-            payment_status: paymentStatus,
-            role: 'owner',
+            payment_status: paymentStatus, 
+            role: 'owner', 
             onboarding_completed: false 
           }
         ]);
@@ -567,7 +567,7 @@
               <div class="vat-note">VAT not included</div>
             </div>
             <ul class="pricing-list">
-              <li><strong>Up to 3 Devices per Store</strong></li>
+              <li><strong>Up to 5 Devices per Store</strong></li>
               <li><strong>Up to 5 Users</strong></li>
               <li><strong>Local Device & Web Portal Analytics</strong></li>
               <li><strong>Automated Cloud Backup Included</strong></li>
@@ -645,7 +645,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><strong>Max Devices</strong></td><td class="col-center"><strong>1</strong></td><td class="col-center" style="color: #60a5fa;"><strong>3</strong></td><td class="col-center" style="color: #a855f7;"><strong>Unlimited (9,999)</strong></td></tr>
+            <tr><td><strong>Max Devices</strong></td><td class="col-center"><strong>1</strong></td><td class="col-center" style="color: #60a5fa;"><strong>5</strong></td><td class="col-center" style="color: #a855f7;"><strong>Unlimited (9,999)</strong></td></tr>
             <tr><td><strong>Max Users</strong></td><td class="col-center"><strong>1</strong></td><td class="col-center" style="color: #60a5fa;"><strong>5</strong></td><td class="col-center" style="color: #a855f7;"><strong>Unlimited (9,999)</strong></td></tr>
             <tr><td>Local Device Sales Reporting</td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
             <tr><td>Web / Merchant Portal Analytics</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
@@ -841,7 +841,7 @@
       </div>
 
       <div class="support-footnote">
-        Questions? Reach our team directly at <a href="mailto:support@flexitapapp.com">support@flexitappapp.com</a>
+        Questions? Reach our team directly at <a href="mailto:support@flexitapapp.com">support@flexitapapp.com</a>
       </div>
     </div>
   </div>
