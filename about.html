@@ -50,8 +50,22 @@
     .section-subtitle { color: var(--text-muted); margin-bottom: 48px; font-size: 16px; max-width: 680px; margin-left: auto; margin-right: auto; text-align: center; }
 
     .about-section { padding: 60px 0; width: 100%; }
-    .about-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 40px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: center; text-align: left; }
+    .about-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 40px; display: grid; grid-template-columns: 1.25fr 0.95fr; gap: 36px; align-items: start; text-align: left; }
     .about-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.35); padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 700; color: #c084fc; margin-bottom: 16px; }
+    .about-title { font-size: clamp(22px, 3vw, 28px); font-weight: 800; color: #fff; margin-bottom: 16px; line-height: 1.3; }
+    .about-text { color: var(--text-muted); font-size: 15px; line-height: 1.7; margin-bottom: 16px; }
+    
+    .about-features { list-style: none; display: flex; flex-direction: column; gap: 14px; margin: 24px 0; }
+    .about-features li { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+    .about-features li strong { color: #fff; }
+    .about-icon { color: var(--primary); flex-shrink: 0; font-size: 16px; line-height: 1.5; }
+
+    .founder-message { background: rgba(15, 23, 42, 0.85); border: 1px solid var(--card-border); border-left: 4px solid var(--primary); border-radius: 12px; padding: 24px; margin-top: 24px; }
+    .founder-message h4 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .founder-quote { font-style: italic; color: #cbd5e1; font-size: 14px; line-height: 1.7; margin-bottom: 12px; }
+    .founder-author { font-size: 13px; font-weight: 700; color: var(--primary); }
+
+    .about-sidebar { display: flex; flex-direction: column; gap: 20px; }
     .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .about-stat-box { background: rgba(15, 23, 42, 0.85); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; text-align: center; }
     .about-stat-number { font-size: 32px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
@@ -107,8 +121,8 @@
       .nav-links.mobile-open { display: flex; }
       .mobile-menu-toggle { display: block; }
       header { padding: 12px 16px; }
+      .about-card { grid-template-columns: 1fr; }
     }
-    @media (max-width: 1023px) { .about-card { grid-template-columns: 1fr; } }
     @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; } }
   </style>
 
@@ -158,9 +172,9 @@
       <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">☰</button>
 
       <div class="nav-links" id="navLinksContainer">
-        <a href="features.html" class="nav-link" onclick="toggleMobileMenu()">Capabilities</a>
-        <a href="pricing.html" class="nav-link" onclick="toggleMobileMenu()">Pricing</a>
-        <a href="about.html" class="nav-link active" onclick="toggleMobileMenu()">About Us & FAQ</a>
+        <a href="features.html" class="nav-link">Capabilities</a>
+        <a href="pricing.html" class="nav-link">Pricing</a>
+        <a href="about.html" class="nav-link active">About Us & FAQ</a>
         <a href="dev_portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
       </div>
 
@@ -176,14 +190,40 @@
     <section class="about-section">
       <div class="about-card">
         <div>
-          <div class="about-badge">🚀 Built by DevBrew</div>
-          <h3>Deep POS Expertise, Modern Architecture</h3>
-          <p>FlexiTap is engineered by <strong>DevBrew</strong>, a software lab headquartered in the Philippines. Our core team brings nearly <strong>30 years of combined hands-on experience</strong> across legacy and modern point-of-sale platforms.</p>
-          <p style="margin-top: 12px;">We built FlexiTap to eliminate predatory hardware lock-ins, prevent network downtime with true offline-first reliability, and deliver transparent SaaS pricing.</p>
+          <div class="about-badge">🚀 Engineered by DevBrew</div>
+          <h2 class="about-title">Proven Domain Expertise, Modern Execution</h2>
+          <p class="about-text">FlexiTap is built by <strong>DevBrew</strong>, a tech startup backed by over <strong>30 years of combined engineering experience</strong> spanning monolithic legacy systems to modern cloud architecture.</p>
+          <p class="about-text">We engineered FlexiTap to solve what legacy vendors won’t: eliminating predatory lock-ins, stopping internet dropouts with true offline continuity, and providing transparent SaaS pricing.</p>
+          
+          <ul class="about-features">
+            <li>
+              <span class="about-icon">⚡</span>
+              <div><strong>True Offline-First Architecture:</strong> Checkout lines and kitchen orders never stop when Wi-Fi drops. Orders write locally in milliseconds and sync automatically once reconnected.</div>
+            </li>
+            <li>
+              <span class="about-icon">📱</span>
+              <div><strong>Open Hardware Freedom:</strong> Reject expensive proprietary terminals. FlexiTap runs on off-the-shelf Android, iOS, and Windows devices, supporting your existing standard thermal printers.</div>
+            </li>
+            <li>
+              <span class="about-icon">💎</span>
+              <div><strong>Transparent SaaS Pricing:</strong> Predictable subscription tiers without forced processing surcharges, hidden maintenance fees, or mandatory hardware bundles.</div>
+            </li>
+          </ul>
+
+          <div class="founder-message">
+            <h4>💬 A Message from the Founder</h4>
+            <p class="founder-quote">"For years, we’ve watched businesses get trapped: locked into expensive proprietary terminals, held hostage by fragile cloud dependencies, or blindsided by escalating hidden fees. We started DevBrew with a clear mandate to return control to business owners. FlexiTap brings together deep, battle-tested POS architecture—engineered to keep your counter running no matter what, on whatever hardware you choose, at a price that respects your bottom line."</p>
+            <div class="founder-author">— Founder, DevBrew</div>
+          </div>
         </div>
-        <div class="about-stats">
-          <div class="about-stat-box"><div class="about-stat-number">~30</div><div class="about-stat-label">Years POS Experience</div></div>
-          <div class="about-stat-box"><div class="about-stat-number">100%</div><div class="about-stat-label">Hardware Independent</div></div>
+
+        <div class="about-sidebar">
+          <div class="about-stats">
+            <div class="about-stat-box"><div class="about-stat-number">30+</div><div class="about-stat-label">Years POS Experience</div></div>
+            <div class="about-stat-box"><div class="about-stat-number">100%</div><div class="about-stat-label">Hardware Freedom</div></div>
+            <div class="about-stat-box"><div class="about-stat-number">&lt;15ms</div><div class="about-stat-label">Local Write Speed</div></div>
+            <div class="about-stat-box"><div class="about-stat-number">0%</div><div class="about-stat-label">Proprietary Lock-in</div></div>
+          </div>
         </div>
       </div>
     </section>
