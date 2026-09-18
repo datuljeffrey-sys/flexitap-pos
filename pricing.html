@@ -3,11 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>FlexiTap POS — Founders VIP Annual Pass & Pricing</title>
+  <title>FlexiTap POS — Founders VIP Annual Pass & Priority Access</title>
   
-  <!-- Supabase Official JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Include Paddle.js -->
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,10 +26,10 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
-    html, body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; width: 100%; max-width: 100vw; overflow-x: clip; position: relative; }
+    html, body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; width: 100%; max-width: 100vw; overflow-x: clip; }
     .container { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
 
-    header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: rgba(9, 13, 22, 0.92); backdrop-filter: blur(12px); z-index: 100; width: 100%; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: rgba(9, 13, 22, 0.94); backdrop-filter: blur(12px); z-index: 100; width: 100%; }
     header .container { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 12px; }
     .logo { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 800; color: #ffffff; text-decoration: none; letter-spacing: -0.5px; }
     .brand-logo-svg { width: 34px; height: 34px; flex-shrink: 0; display: block; border-radius: 50%; object-fit: contain; }
@@ -46,46 +44,71 @@
     .btn-signup { background: var(--primary); border: none; color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; text-decoration: none; display: inline-flex; align-items: center; }
     .btn-signup:hover { background: var(--primary-hover); }
 
-    .pricing { padding: 60px 0; text-align: center; width: 100%; }
-    .section-title { font-size: clamp(24px, 5vw, 34px); font-weight: 800; margin-bottom: 12px; text-align: center; }
-    .section-subtitle { color: var(--text-muted); margin-bottom: 32px; font-size: 16px; max-width: 680px; margin-left: auto; margin-right: auto; text-align: center; }
+    .pricing { padding: 48px 0 60px; text-align: center; width: 100%; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 999px; font-size: 12.5px; font-weight: 700; color: #34d399; margin-bottom: 20px; }
+    .hero-dot { width: 7px; height: 7px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981; }
+    .section-title { font-size: clamp(28px, 5vw, 42px); font-weight: 800; margin-bottom: 14px; text-align: center; letter-spacing: -0.8px; line-height: 1.2; }
+    .section-subtitle { color: var(--text-muted); margin-bottom: 36px; font-size: 16.5px; max-width: 720px; margin-left: auto; margin-right: auto; text-align: center; line-height: 1.6; }
     
-    .public-announcement-banner { background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15)); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 24px; max-width: 900px; margin: 0 auto 48px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-    .public-announcement-banner h4 { color: #fff; font-size: 18px; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .public-announcement-banner p { color: #cbd5e1; font-size: 14.5px; line-height: 1.6; max-width: 780px; margin: 0 auto; }
+    .risk-reversal-card { background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(16, 185, 129, 0.08)); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 18px; padding: 20px 24px; max-width: 920px; margin: 0 auto 48px; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .risk-text h4 { color: #fff; font-size: 16.5px; font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+    .risk-text p { color: #cbd5e1; font-size: 14px; margin: 0; }
+    .risk-badge { background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px; white-space: nowrap; }
 
-    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; text-align: left; }
-    .pricing-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 32px; border-radius: 20px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
-    .pricing-card.popular { border-color: var(--primary); box-shadow: 0 0 25px rgba(59, 130, 246, 0.15); }
-    .badge-pop { position: absolute; top: 16px; right: 16px; background: var(--primary); color: white; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; text-align: left; align-items: stretch; }
+    .pricing-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 32px 28px; border-radius: 20px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+    .pricing-card.popular { border-color: var(--primary); box-shadow: 0 0 35px rgba(59, 130, 246, 0.18); background: linear-gradient(180deg, rgba(22, 30, 49, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%); }
+    .badge-pop { position: absolute; top: 18px; right: 18px; background: var(--primary); color: white; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.5px; }
     
-    .price-container { margin: 16px 0; }
-    .original-price { font-size: 20px; font-weight: 700; color: var(--text-muted); text-decoration: line-through; margin-right: 8px; }
-    .price { font-size: 40px; font-weight: 800; color: #34d399; display: inline-block; }
-    .price span { font-size: 15px; font-weight: 500; color: var(--text-muted); }
-    .vat-note { font-size: 11px; color: var(--text-muted); margin-top: 2px; font-style: italic; }
-    
-    .pricing-list { list-style: none; margin: 24px 0; font-size: 13.5px; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px; }
-    .pricing-list li::before { content: "✓ "; color: var(--accent-green); font-weight: 800; }
+    .pricing-card h3 { font-size: 22px; font-weight: 800; color: #fff; }
+    .pricing-card .tier-target { color: var(--text-muted); font-size: 13.5px; margin-top: 2px; }
 
-    .founders-perks-section { margin-top: 60px; text-align: left; background: rgba(22, 30, 49, 0.5); border: 1px solid var(--card-border); border-radius: 20px; padding: 40px; }
-    .perks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 32px; }
-    .perk-card { background: rgba(15, 23, 42, 0.7); border: 1px solid var(--card-border); padding: 24px; border-radius: 14px; }
-    .perk-icon { font-size: 28px; margin-bottom: 12px; display: inline-block; }
+    .price-container { margin: 20px 0 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding-bottom: 18px; }
+    .original-price { font-size: 18px; font-weight: 700; color: #64748b; text-decoration: line-through; margin-right: 8px; }
+    .price { font-size: 38px; font-weight: 800; color: #34d399; display: inline-block; letter-spacing: -0.5px; }
+    .price span { font-size: 14px; font-weight: 600; color: var(--text-muted); }
+    .vat-note { font-size: 12px; color: #94a3b8; margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+
+    .pricing-list { list-style: none; margin: 18px 0 24px; font-size: 13.5px; color: #cbd5e1; display: flex; flex-direction: column; gap: 11px; }
+    .pricing-list li { display: flex; align-items: flex-start; gap: 8px; line-height: 1.45; }
+    .pricing-list li .check-sign { color: var(--accent-green); font-weight: 800; flex-shrink: 0; }
+    .pricing-list li.dimmed { color: #64748b; }
+    .pricing-list li.dimmed .dash-sign { color: #475569; font-weight: 700; flex-shrink: 0; }
+
+    .btn-card-action { width: 100%; padding: 13px 18px; border-radius: 12px; font-weight: 700; font-size: 14.5px; cursor: pointer; transition: 0.2s ease; border: none; text-align: center; }
+    .btn-card-action.primary { background: var(--primary); color: #fff; }
+    .btn-card-action.primary:hover { background: var(--primary-hover); }
+    .btn-card-action.secondary { background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid var(--card-border); }
+    .btn-card-action.secondary:hover { background: rgba(255, 255, 255, 0.15); }
+    .btn-card-action.purple { background: var(--accent-purple); color: #fff; }
+    .btn-card-action.purple:hover { background: #7c3aed; }
+
+    .guarantee-micro { font-size: 11.5px; color: #94a3b8; text-align: center; margin-top: 10px; }
+
+    .byod-callout { margin-top: 40px; background: rgba(15, 23, 42, 0.6); border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: 16px; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .byod-text { font-size: 14px; color: #cbd5e1; }
+    .byod-text strong { color: #fff; }
+    .byod-pill { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px; }
+
+    .founders-perks-section { margin-top: 56px; text-align: left; background: rgba(22, 30, 49, 0.5); border: 1px solid var(--card-border); border-radius: 20px; padding: 40px 32px; }
+    .perks-header { text-align: center; max-width: 640px; margin: 0 auto 36px; }
+    .perks-header h3 { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+    .perks-header p { color: var(--text-muted); font-size: 14.5px; }
+
+    .perks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; }
+    .perk-card { background: rgba(15, 23, 42, 0.7); border: 1px solid var(--card-border); padding: 24px; border-radius: 14px; position: relative; }
+    .perk-icon { font-size: 26px; margin-bottom: 12px; display: inline-block; }
     .perk-card h4 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px; }
-    .perk-card p { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
+    .perk-card p { font-size: 13.5px; color: var(--text-muted); line-height: 1.55; }
+    .perk-highlight-tag { position: absolute; top: 16px; right: 16px; font-size: 10.5px; font-weight: 800; color: #6ee7b7; background: rgba(16, 185, 129, 0.15); padding: 3px 8px; border-radius: 6px; }
 
-    .matrix-wrapper { width: 100%; margin-top: 50px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 32px; overflow-x: auto; text-align: left; }
-    .matrix-table { width: 100%; min-width: 600px; border-collapse: collapse; text-align: left; font-size: 13.5px; }
+    .matrix-wrapper { width: 100%; margin-top: 56px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 36px 32px; overflow-x: auto; text-align: left; }
+    .matrix-table { width: 100%; min-width: 680px; border-collapse: collapse; text-align: left; font-size: 13.5px; }
     .matrix-table th { padding: 14px 16px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 12px; border-bottom: 1px solid var(--card-border); }
     .matrix-table td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
     .col-center { text-align: center; }
     .check-icon { color: var(--accent-green); font-weight: 800; font-size: 16px; }
-    .dash-icon { color: #f87171; font-weight: 700; font-size: 15px; }
-
-    .support-plan-banner { width: 100%; margin-top: 40px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 20px; padding: 36px; text-align: left; display: grid; grid-template-columns: 2fr 1.2fr; gap: 24px; align-items: center; }
-    .support-features-list { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--text-muted); }
-    .support-features-list li::before { content: "✓ "; color: var(--accent-green); font-weight: 800; }
+    .dash-icon { color: #64748b; font-weight: 700; font-size: 15px; }
 
     footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #0b0f19; font-size: 14px; width: 100%; }
     .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 24px; }
@@ -96,234 +119,37 @@
     .social-icon-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-2px); }
     .social-icon-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
-    .app-buttons { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
-    .app-btn { background: #000; border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 8px; color: #fff; font-size: 10px; font-weight: 700; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; cursor: not-allowed; transition: 0.2s; }
-    .app-btn:hover { border-color: rgba(255,255,255,0.2); }
-    .app-btn svg { width: 18px; height: 18px; }
-
     .footer-col h4 { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
     .footer-col ul { list-style: none; }
     .footer-col ul li { margin-bottom: 12px; }
     .footer-col ul li a { color: var(--text-muted); text-decoration: none; font-size: 14px; cursor: pointer; transition: 0.2s; }
     .footer-col ul li a:hover { color: #fff; }
-    
     .footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--text-muted); font-size: 13px; }
 
-    .modal-overlay { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; padding: 16px; box-sizing: border-box; }
-    .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); padding: 36px 24px; border-radius: 20px; width: 100%; max-width: 440px; position: relative; text-align: center; margin: auto; max-height: 90vh; overflow-y: auto; }
+    .modal-overlay { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; padding: 16px; box-sizing: border-box; }
+    .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.14); padding: 36px 28px; border-radius: 20px; width: 100%; max-width: 460px; position: relative; text-align: center; margin: auto; max-height: 92vh; overflow-y: auto; }
     .close-btn { position: absolute; top: 18px; right: 18px; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
     label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
-    input, select { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; color: white; font-size: 15px; box-sizing: border-box; }
-    .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; }
+    input, select { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: white; font-size: 14.5px; box-sizing: border-box; }
+    .submit-btn { width: 100%; padding: 13px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; transition: background 0.2s; }
+    .submit-btn:hover { background: var(--primary-hover); }
     .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
 
-    #chat-btn { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #2563eb); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 24px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 990; }
-    #sales-chat-panel { display: none; position: fixed; bottom: 90px; right: 24px; width: min(90vw, 370px); height: 520px; background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); flex-direction: column; overflow: hidden; z-index: 999; }
-    .chat-header { background: rgba(255,255,255,0.03); padding: 14px 18px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
-    .chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 13px; }
-    .chat-msg { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; color: #f8fafc; }
-
-    /* UPGRADED PROFESSIONAL SUCCESS MODAL */
-    .success-card {
-      position: relative;
-      background: linear-gradient(180deg, #131a29 0%, #0d121d 100%);
-      border: 1px solid rgba(59, 130, 246, 0.25);
-      border-radius: 24px;
-      padding: 38px 28px 30px;
-      width: 100%;
-      max-width: 500px;
-      text-align: center;
-      margin: auto;
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 40px rgba(59, 130, 246, 0.15);
-      overflow: hidden;
-      animation: modalScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes modalScaleIn {
-      0% { transform: scale(0.92) translateY(12px); opacity: 0; }
-      100% { transform: scale(1) translateY(0); opacity: 1; }
-    }
-
-    .success-glow {
-      position: absolute;
-      top: -120px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 320px;
-      height: 220px;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(9, 13, 22, 0) 70%);
-      pointer-events: none;
-    }
-
-    .success-icon-wrap {
-      position: relative;
-      width: 68px;
-      height: 68px;
-      margin: 0 auto 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .success-icon-pulse {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: rgba(16, 185, 129, 0.2);
-      animation: successPulse 2s infinite ease-out;
-    }
-
-    @keyframes successPulse {
-      0% { transform: scale(0.85); opacity: 0.8; }
-      100% { transform: scale(1.4); opacity: 0; }
-    }
-
-    .success-check-svg {
-      position: relative;
-      width: 64px;
-      height: 64px;
-      padding: 16px;
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      border-radius: 50%;
-      color: #ffffff;
-      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
-    }
-
-    .launch-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      background: rgba(59, 130, 246, 0.12);
-      border: 1px solid rgba(59, 130, 246, 0.35);
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #93c5fd;
-      margin-bottom: 16px;
-      letter-spacing: 0.3px;
-    }
-
-    .launch-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #3b82f6;
-      box-shadow: 0 0 8px #3b82f6;
-    }
-
-    .success-title {
-      font-size: 26px;
-      font-weight: 800;
-      color: #ffffff;
-      letter-spacing: -0.5px;
-      margin-bottom: 8px;
-    }
-
-    .success-subtitle {
-      font-size: 14px;
-      color: #cbd5e1;
-      line-height: 1.6;
-      margin-bottom: 24px;
-      padding: 0 8px;
-    }
-
-    .next-steps-container {
-      background: rgba(15, 23, 42, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      text-align: left;
-      margin-bottom: 24px;
-    }
-
-    .step-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-    }
-
-    .step-item.step-highlight {
-      background: rgba(59, 130, 246, 0.08);
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      border-radius: 10px;
-      padding: 10px;
-    }
-
-    .step-badge {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: rgba(59, 130, 246, 0.2);
-      border: 1px solid rgba(59, 130, 246, 0.4);
-      color: #93c5fd;
-      font-size: 12px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .step-badge-portal {
-      background: rgba(139, 92, 246, 0.25) !important;
-      border-color: rgba(139, 92, 246, 0.5) !important;
-      color: #c4b5fd !important;
-    }
-
-    .step-content { flex: 1; }
-    .step-heading { font-size: 13.5px; font-weight: 700; color: #f8fafc; margin-bottom: 2px; }
+    .success-card { position: relative; background: linear-gradient(180deg, #131a29 0%, #0d121d 100%); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 24px; padding: 38px 28px 30px; width: 100%; max-width: 500px; text-align: center; margin: auto; box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8); overflow: hidden; }
+    .success-icon-wrap { width: 64px; height: 64px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 50%; color: #fff; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); }
+    .success-title { font-size: 24px; font-weight: 800; color: #ffffff; margin-bottom: 8px; }
+    .success-subtitle { font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-bottom: 24px; }
+    .next-steps-container { background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 14px; text-align: left; margin-bottom: 24px; }
+    .step-item { display: flex; align-items: flex-start; gap: 12px; }
+    .step-badge { width: 24px; height: 24px; border-radius: 50%; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: #93c5fd; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .step-heading { font-size: 13.5px; font-weight: 700; color: #f8fafc; }
     .step-desc { font-size: 12px; color: #94a3b8; line-height: 1.5; }
-    .highlight-text { color: #60a5fa; font-weight: 600; }
-
-    .btn-success-dismiss {
-      width: 100%;
-      padding: 13px 20px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 12px;
-      color: #f8fafc;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-success-dismiss:hover {
-      background: rgba(255, 255, 255, 0.14);
-      border-color: rgba(255, 255, 255, 0.28);
-      color: #ffffff;
-    }
-
-    .support-footnote {
-      font-size: 12px;
-      color: #64748b;
-      margin-top: 16px;
-    }
-
-    .support-footnote a {
-      color: #94a3b8;
-      text-decoration: none;
-      transition: 0.2s;
-    }
-
-    .support-footnote a:hover {
-      color: #ffffff;
-      text-decoration: underline;
-    }
 
     @media (max-width: 1023px) {
-      .nav-links { display: none; width: 100%; flex-direction: column; align-items: flex-start; background: rgba(15, 23, 42, 0.98); padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); margin-top: 10px; box-sizing: border-box; }
+      .nav-links { display: none; width: 100%; flex-direction: column; align-items: flex-start; background: rgba(15, 23, 42, 0.98); padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); margin-top: 10px; }
       .nav-links.mobile-open { display: flex; }
       .mobile-menu-toggle { display: block; }
       header { padding: 12px 16px; }
-    }
-    @media (max-width: 768px) {
-      .support-plan-banner, .footer-grid { grid-template-columns: 1fr; }
     }
   </style>
 
@@ -333,28 +159,37 @@
     let supabaseClient;
 
     document.addEventListener("DOMContentLoaded", function() {
-      // Initialize Supabase Client
       supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      // Initialize Paddle Live
       if (typeof Paddle !== 'undefined') {
         Paddle.Initialize({ 
           token: "live_17e1c64de79e3d9fc9179cc475a",
           pwCustomer: { id: localStorage.getItem('flexitap_paddle_customer_id') || undefined }
         });
       }
+
+      const selectEl = document.getElementById('signup-tier');
+      if (selectEl) {
+        selectEl.addEventListener('change', syncModalState);
+      }
     });
 
-    function showRegistrationSuccess(userEmail) {
-      const emailDisplay = document.getElementById('confirmed-email-display');
-      if (emailDisplay && userEmail) {
-        emailDisplay.innerText = userEmail;
-      }
-      openModal('registration-success-modal');
-    }
+    function syncModalState() {
+      const selectEl = document.getElementById('signup-tier');
+      const btnText = document.getElementById('signup-btn-text');
+      const helper = document.getElementById('modal-intent-helper');
+      if (!selectEl || !btnText) return;
 
-    function dismissRegistrationSuccess() {
-      closeModal('registration-success-modal');
+      if (selectEl.value === 'free') {
+        btnText.innerText = 'Join Free Launch Waitlist';
+        helper.innerText = 'No credit card required. You will receive access on November 13, 2026.';
+      } else if (selectEl.value.includes('pri_01m1pb8szpcf4vapm28yfzw9aq')) {
+        btnText.innerText = 'Lock In Plus VIP Pass ($290/yr)';
+        helper.innerText = 'Includes 100% money-back guarantee after your first live week.';
+      } else {
+        btnText.innerText = 'Lock In Pro VIP Pass ($590/yr)';
+        helper.innerText = 'Includes full menu migration and phone/remote standby access.';
+      }
     }
 
     function openSignupModalWithPlan(priceId) {
@@ -362,6 +197,7 @@
       if (selectEl) {
         selectEl.value = priceId;
       }
+      syncModalState();
       openModal('signup-modal');
     }
 
@@ -376,7 +212,6 @@
       let tierName = 'free';
       let paymentStatus = 'free';
 
-      // Live Price IDs from the dashboard
       if (priceId.includes('pri_01m1pb8szpcf4vapm28yfzw9aq')) {
         tierName = 'plus';
         paymentStatus = 'unpaid';
@@ -389,11 +224,11 @@
       const btnText = document.getElementById('signup-btn-text');
 
       errorDiv.innerText = '';
-      btnText.innerText = 'Processing...';
+      const originalBtnText = btnText.innerText;
+      btnText.innerText = 'Securing spot...';
 
       let userId;
 
-      // 1. Attempt to sign up user in Supabase Auth
       const { data, error } = await supabaseClient.auth.signUp({ 
         email, 
         password,
@@ -404,23 +239,20 @@
       
       if (error) {
         if (error.message.toLowerCase().includes('already registered')) {
-          console.log('User already exists. Recovering session...');
-          
           const { data: loginData, error: loginError } = await supabaseClient.auth.signInWithPassword({
             email,
             password,
           });
 
           if (loginError) {
-            errorDiv.innerText = 'An account with this email already exists, but the password was incorrect. Please log in.';
-            btnText.innerText = 'Create Account & Pay';
+            errorDiv.innerText = 'An account with this email exists, but the password was incorrect. Please log in.';
+            btnText.innerText = originalBtnText;
             return;
           }
-          
           userId = loginData.user.id;
         } else {
           errorDiv.innerText = error.message;
-          btnText.innerText = 'Create Account & Pay';
+          btnText.innerText = originalBtnText;
           return;
         }
       } else {
@@ -452,47 +284,72 @@
         ]);
 
         if (profileError) {
-          errorDiv.innerText = 'Failed to save profile: ' + profileError.message;
-          btnText.innerText = 'Create Account & Pay';
+          errorDiv.innerText = 'Failed to save store profile: ' + profileError.message;
+          btnText.innerText = originalBtnText;
           return;
         }
       }
 
       closeModal('signup-modal');
-      btnText.innerText = 'Create Account & Pay';
+      syncModalState();
       document.getElementById('portal-signup-form').reset();
 
-      if (tierName === 'free') {
-        showRegistrationSuccess(email);
-        return;
-      }
-
-      if (typeof Paddle === 'undefined') {
+      if (tierName === 'free' || typeof Paddle === 'undefined') {
         showRegistrationSuccess(email);
         return;
       }
 
       Paddle.Checkout.open({
-        items: [
-          {
-            priceId: priceId,
-            quantity: 1
-          }
-        ],
-        customer: {
-          email: email
-        },
+        items: [{ priceId: priceId, quantity: 1 }],
+        customer: { email: email },
         customData: {
           business_name: businessName,
           supabase_user_id: userId,
           customer_email: email
         },
         successCallback: function(checkoutData) {
-          console.log("Checkout success:", checkoutData);
           showRegistrationSuccess(email);
         }
       });
     }
+
+    async function handleMerchantLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorDiv = document.getElementById('login-modal-error');
+      const submitBtn = document.getElementById('login-submit-btn');
+
+      errorDiv.innerText = '';
+      submitBtn.innerText = 'Signing in...';
+
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        errorDiv.innerText = error.message;
+        submitBtn.innerText = 'Log In';
+        return;
+      }
+
+      closeModal('login-modal');
+      window.location.href = '/dashboard';
+    }
+
+    function showRegistrationSuccess(userEmail) {
+      const emailDisplay = document.getElementById('confirmed-email-display');
+      if (emailDisplay && userEmail) {
+        emailDisplay.innerText = userEmail;
+      }
+      openModal('registration-success-modal');
+    }
+
+    function dismissRegistrationSuccess() {
+      closeModal('registration-success-modal');
+    }
+
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function toggleMobileMenu() { document.getElementById('navLinksContainer').classList.toggle('mobile-open'); }
   </script>
 </head>
 <body>
@@ -515,7 +372,7 @@
       </div>
 
       <div style="display: flex; align-items: center; gap: 10px;">
-        <a href="pricing.html" class="btn-signup">Get Started</a>
+        <button class="btn-signup" onclick="openSignupModalWithPlan('free')">Join Waitlist</button>
         <button class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
       </div>
     </div>
@@ -524,108 +381,154 @@
   <!-- MAIN PRICING CONTENT -->
   <main class="container">
     <section class="pricing">
-      <h2 class="section-title">Founders VIP Annual Pass</h2>
-      <p class="section-subtitle">Lock in exclusive early-adopter fixed annual rates today. Your payment secures your Founders VIP spot, and our system automatically adjusts your billing cycle so your full 12-month subscription begins on launch day (November 13, 2026) and renews on November 13, 2027.</p>
       
-      <!-- PROMINENT PUBLIC ANNOUNCEMENT BANNER -->
-      <div class="public-announcement-banner">
-        <h4>🚀 Official Launch: November 13, 2026</h4>
-        <p>Standard monthly and annual subscription plans will officially unlock when FlexiTap goes live on launch day. Right now, during pre-launch, you can secure our exclusive <strong>Founders VIP Annual Pass</strong> to lock in maximum savings and 1-week early access!</p>
+      <div class="hero-badge">
+        <span class="hero-dot"></span> Official Public Launch: November 13, 2026
+      </div>
+      
+      <h1 class="section-title">Resilient Offline POS.<br>Zero Proprietary Terminal Fees.</h1>
+      <p class="section-subtitle">Run your counter on standard tablets and PCs. Lock in guaranteed lifetime pricing with our Founders VIP Pass before public retail billing begins.</p>
+      
+      <!-- RISK-REVERSAL BANNER -->
+      <div class="risk-reversal-card">
+        <div class="risk-text">
+          <h4>🛡️ The Founders Operational Guarantee</h4>
+          <p>Your 12-month subscription begins on launch day. If FlexiTap does not speed up your service during your first 7 live shifts, get a 100% full refund immediately.</p>
+        </div>
+        <div class="risk-badge">100% Risk-Free Commitment</div>
       </div>
 
+      <!-- PRICING TIERS -->
       <div class="pricing-grid">
+        
         <!-- FREE TIER -->
         <div class="pricing-card">
           <div>
-            <h3>Free</h3>
-            <p style="color: var(--text-muted); font-size: 13px;">For solo pop-ups, markets & kiosks</p>
+            <h3>Free Waitlist</h3>
+            <p class="tier-target">For solo pop-ups, markets & kiosks</p>
+            
             <div class="price-container">
               <div class="price">$0 <span>/ mo</span></div>
+              <div class="vat-note">No credit card required to reserve</div>
             </div>
+
             <ul class="pricing-list">
-              <li><strong>1 Active Terminal Device</strong></li>
-              <li><strong>1 User Account</strong></li>
-              <li><strong>Local Device Sales & Daily Reports</strong></li>
-              <li>Customer Loyalty Program</li>
-              <li>Complete Offline Functionality</li>
-              <li>Local Device Backup Only</li>
-              <li>Community & FAQ Support</li>
+              <li><span class="check-sign">✓</span> <strong>1 Active Terminal Device</strong></li>
+              <li><span class="check-sign">✓</span> <strong>1 Cashier / User Account</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Complete Offline Functionality</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Local Device Sales & Daily Reports</strong></li>
+              <li><span class="check-sign">✓</span> Local Device Backup Only</li>
+              <li><span class="check-sign">✓</span> Community & FAQ Support</li>
+              <li class="dimmed"><span class="dash-sign">✕</span> Cloud Multi-Device Sync</li>
+              <li class="dimmed"><span class="dash-sign">✕</span> Kitchen Display System (KDS)</li>
+              <li class="dimmed"><span class="dash-sign">✕</span> Customer Loyalty Program</li>
             </ul>
           </div>
-          <button class="btn-signup" style="width: 100%; margin-top: 20px;" onclick="openModal('signup-modal')">Get Started Free</button>
+
+          <div>
+            <button class="btn-card-action secondary" onclick="openSignupModalWithPlan('free')">Join Free Launch Waitlist</button>
+            <div class="guarantee-micro">Instant confirmation • App access sent on Nov 13</div>
+          </div>
         </div>
 
         <!-- PLUS TIER (FOUNDERS VIP) -->
         <div class="pricing-card popular">
           <div>
-            <span class="badge-pop">Founders VIP</span>
-            <h3>Plus</h3>
-            <p style="color: var(--text-muted); font-size: 13px;">For growing cafes & food trucks</p>
+            <span class="badge-pop">Most Popular</span>
+            <h3>Plus Founders VIP</h3>
+            <p class="tier-target">For growing cafes & food trucks</p>
+            
             <div class="price-container">
               <span class="original-price">$490</span>
               <div class="price">$290 <span>/ year fixed</span></div>
-              <div class="vat-note">VAT not included</div>
+              <div class="vat-note">🔒 Lifetime rate lock • VAT calculated at checkout</div>
             </div>
+
             <ul class="pricing-list">
-              <li><strong>Up to 5 Devices per Store</strong></li>
-              <li><strong>Up to 5 Users</strong></li>
-              <li><strong>Local Device & Web Portal Analytics</strong></li>
-              <li><strong>Automated Cloud Backup Included</strong></li>
-              <li><strong>Live Chat Technical Support</strong></li>
-              <li>KDS, CDS & Digital Menu Boards</li>
-              <li>HR Features & Staff Tracking</li>
-              <li>Customer Loyalty Program</li>
+              <li><span class="check-sign">✓</span> <strong>Up to 5 Devices per Store</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Up to 5 Users</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Local Device & Web Portal Analytics</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Automated Cloud Backup Included</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Live Chat Technical Support</strong></li>
+              <li><span class="check-sign">✓</span> <strong>KDS, CDS & Digital Menu Boards</strong></li>
+              <li><span class="check-sign">✓</span> HR Features & Staff Tracking</li>
+              <li><span class="check-sign">✓</span> Customer Loyalty Program</li>
             </ul>
           </div>
-          <button class="btn-signup" style="width: 100%; margin-top: 20px;" onclick="openSignupModalWithPlan('pri_01m1pb8szpcf4vapm28yfzw9aq')">Claim Founders Plus</button>
+
+          <div>
+            <button class="btn-card-action primary" onclick="openSignupModalWithPlan('pri_01m1pb8szpcf4vapm28yfzw9aq')">Claim Founders Plus ($290)</button>
+            <div class="guarantee-micro">Backed by 7-Day Live Shift Money-Back Guarantee</div>
+          </div>
         </div>
 
         <!-- PRO TIER (FOUNDERS VIP) -->
         <div class="pricing-card">
           <div>
             <span class="badge-pop" style="background: var(--accent-purple);">VIP Elite</span>
-            <h3>Pro</h3>
-            <p style="color: var(--text-muted); font-size: 13px;">For multi-station restaurants</p>
+            <h3>Pro Founders VIP</h3>
+            <p class="tier-target">For multi-station restaurants</p>
+            
             <div class="price-container">
               <span class="original-price">$990</span>
               <div class="price" style="color: var(--accent-purple);">$590 <span>/ year fixed</span></div>
-              <div class="vat-note">VAT not included</div>
+              <div class="vat-note">🔒 Lifetime rate lock • VAT calculated at checkout</div>
             </div>
+
             <ul class="pricing-list">
-              <li><strong>Unlimited Devices (9,999 Max)</strong></li>
-              <li><strong>Unlimited Users (9,999 Max)</strong></li>
-              <li><strong>Local Device & Web Analytics with AI Insights</strong></li>
-              <li><strong>Automated Cloud Backup Included</strong></li>
-              <li><strong>Technical Support: Phone, Chat & Remote Access</strong></li>
-              <li>Table Mode & Visual Floor Plans</li>
-              <li>Advanced & Recipe Inventory</li>
-              <li>AI Copilot & Advanced Operations</li>
+              <li><span class="check-sign">✓</span> <strong>Unlimited Devices (9,999 Max)</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Unlimited Users (9,999 Max)</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Local Device & Web Analytics with AI Insights</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Automated Cloud Backup Included</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Phone, Chat & Remote Desktop Access</strong></li>
+              <li><span class="check-sign">✓</span> Table Mode & Visual Floor Plans</li>
+              <li><span class="check-sign">✓</span> Advanced & Recipe Inventory</li>
+              <li><span class="check-sign">✓</span> AI Copilot & Advanced Operations</li>
             </ul>
           </div>
-          <button class="btn-login" style="width: 100%; margin-top: 20px; background: var(--accent-purple);" onclick="openSignupModalWithPlan('pri_01m1pb6ba15axyr7acv0hswynd')">Claim Founders Pro</button>
+
+          <div>
+            <button class="btn-card-action purple" onclick="openSignupModalWithPlan('pri_01m1pb6ba15axyr7acv0hswynd')">Claim Founders Pro ($590)</button>
+            <div class="guarantee-micro">Priority onboarding & direct engineer standby</div>
+          </div>
         </div>
       </div>
 
-      <!-- WHY JOIN FOUNDERS VIP SECTION -->
+      <!-- BYOD HARDWARE PHILOSOPHY CALLOUT -->
+      <div class="byod-callout">
+        <div class="byod-text">
+          💡 <strong>Bring Your Own Hardware:</strong> FlexiTap runs on off-the-shelf Android tablets, iPads, and Windows PCs. You never have to purchase expensive vendor terminals or locked hardware leases.
+        </div>
+        <div class="byod-pill">Zero Proprietary Hardware Fees</div>
+      </div>
+
+      <!-- VIP PERKS SECTION -->
       <div class="founders-perks-section">
-        <h3 style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px; text-align: center;">Why Join as a Founders VIP?</h3>
-        <p style="color: var(--text-muted); font-size: 14.5px; text-align: center; max-width: 600px; margin: 0 auto;">Beyond locking in our lowest rates, our founding partners receive exclusive privileges and white-glove support.</p>
+        <div class="perks-header">
+          <h3>Why Operators Lock In the Founders Pass</h3>
+          <p>We eliminate the operational headache of switching systems with hands-on setup and lifetime protection.</p>
+        </div>
         
         <div class="perks-grid">
           <div class="perk-card">
-            <div class="perk-icon">🚀</div>
-            <h4>1-Week Early Access</h4>
-            <p>Get your hands on FlexiTap a full week before the public release. Download the app, configure your menu, and test your hardware with zero rush.</p>
+            <span class="perk-highlight-tag">Save 15+ Hours</span>
+            <div class="perk-icon">📋</div>
+            <h4>Done-For-You Menu Setup</h4>
+            <p>Skip the setup headache. Send us your menu and our product team will pre-format your store database, categories, and items before launch day.</p>
           </div>
+          
           <div class="perk-card">
-            <div class="perk-icon">🎯</div>
-            <h4>Direct Feature Requests</h4>
-            <p>Founders VIP members get direct access to our product team. Have a specific workflow or hardware requirement? Your feedback shapes our development roadmap.</p>
+            <span class="perk-highlight-tag">Permanent Shield</span>
+            <div class="perk-icon">🔒</div>
+            <h4>Permanent Lifetime Price Lock</h4>
+            <p>Your early-adopter renewal rate will never increase. As we scale and roll out new operational features, your founding subscription remains locked forever.</p>
           </div>
+          
           <div class="perk-card">
+            <span class="perk-highlight-tag">VIP Standby</span>
             <div class="perk-icon">⭐</div>
-            <h4>VIP Onboarding Priority</h4>
-            <p>Skip the queue during launch week. Get white-glove assistance setting up your store database, printer pairings, and inventory.</p>
+            <h4>Launch Shift Standby Support</h4>
+            <p>Skip the queue during launch week. Get white-glove assistance setting up your store database, printer pairings, and inventory, backed by direct engineer standby.</p>
           </div>
         </div>
       </div>
@@ -651,7 +554,7 @@
             <tr><td>Web / Merchant Portal Analytics</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
             <tr><td>Automated Cloud Backup</td><td class="col-center"><span class="dash-icon">✕ Local Only</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
             <tr><td>Technical Support Channels</td><td class="col-center" style="font-size: 12px; color: var(--text-muted);">Community & FAQ</td><td class="col-center" style="color: #60a5fa;"><strong>Chat Support Only</strong></td><td class="col-center" style="color: #a855f7;"><strong>Phone, Chat & Remote Access</strong></td></tr>
-            <tr><td>Customer Loyalty Program</td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>Customer Loyalty Program</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
             <tr><td>HR Features</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
             <tr><td>KDS (Kitchen Display System)</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
             <tr><td>CDS (Customer Display Screen)</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
@@ -663,22 +566,6 @@
             <tr><td>Table Mode</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
           </tbody>
         </table>
-      </div>
-
-      <!-- SUPPORT PLAN BANNER -->
-      <div class="support-plan-banner">
-        <div>
-          <div style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">🛡️ Pro Tier Support: Phone, Live Chat & Secure Remote Access</div>
-          <div style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px;">Ensure zero downtime with direct phone routing, real-time live chat, and remote desktop diagnostic sessions handled directly by technical engineers.</div>
-          <ul class="support-features-list">
-            <li>Direct Phone Line & Live Chat Technical Assistance</li>
-            <li>Secure Remote Diagnostic Access for Fast Terminal Resolution</li>
-          </ul>
-        </div>
-        <div style="text-align: right;">
-          <div style="font-size: 18px; font-weight: 800; color: #fff;">Included with <span style="color: var(--accent-purple);">Pro</span></div>
-          <p style="font-size: 13px; color: #93c5fd; margin-top: 4px;">Plus includes dedicated Chat Support</p>
-        </div>
       </div>
     </section>
   </main>
@@ -692,27 +579,21 @@
             <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 26px; height: 26px;" />
             <div style="font-weight: 800; color: #fff; font-size: 18px;">FlexiTap POS</div>
           </div>
-          <p>Simplify Sales. Grow Your Business. A point-of-sale for shop owners, baristas, and anyone who needs things to just work.</p>
+          <p>Simplify Sales. Grow Your Business. A resilient point-of-sale for shop owners, baristas, and anyone who needs things to just work.</p>
           
           <div class="social-links">
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
             <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="YouTube"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
             <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="X (Twitter)"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
           </div>
-
-          <div class="app-buttons" style="margin-top: 20px;">
-            <div class="app-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.793 12 3.61 22.186c-.301-.318-.485-.75-.485-1.229V3.043c0-.479.184-.911.484-1.229zm11.306 11.307l2.42 2.42-11.89 6.842 9.47-9.262zm0-2.242L5.445 1.617l11.89 6.842-2.42 2.42zm1.536 1.536l3.815-2.194c.833-.479.833-1.258 0-1.737L16.451 10.29l-2.115 2.125 2.115 2.126v-.126z"/></svg>Coming Soon</div>
-            <div class="app-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.01c.67-.82 1.13-1.96 1.01-3.1-.97.04-2.15.65-2.85 1.47-.62.72-1.16 1.88-1.02 2.99 1.08.08 2.19-.54 2.86-1.36z"/></svg>Coming Soon</div>
-          </div>
         </div>
 
         <div class="footer-col">
-          <h4>Product</h4>
+          <h4>Navigation</h4>
           <ul>
             <li><a href="features.html">Capabilities</a></li>
             <li><a href="pricing.html">Pricing</a></li>
             <li><a href="about.html">FAQ</a></li>
-            <li><a href="#" onclick="alert('Android APK direct download coming soon!'); return false;">Download</a></li>
           </ul>
         </div>
 
@@ -728,7 +609,7 @@
 
       <div class="footer-bottom">
         <div>&copy; 2026 FlexiTap POS. All rights reserved.</div>
-        <div>www.flexitapapp.com</div>
+        <div>Launch Date: November 13, 2026</div>
       </div>
     </div>
   </footer>
@@ -737,8 +618,8 @@
   <div class="modal-overlay" id="signup-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeModal('signup-modal')">&times;</button>
-      <h2>Create Your Store</h2>
-      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Register your account and select your plan.</p>
+      <h2>Reserve Your Store</h2>
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;" id="modal-intent-helper">Enter your store details below.</p>
       
       <form id="portal-signup-form" onsubmit="handleStoreSignup(event)">
         <label>Business Name</label>
@@ -752,104 +633,80 @@
         
         <label>Select Plan</label>
         <select id="signup-tier" required>
-          <option value="free">Free ($0 / mo)</option>
+          <option value="free">Free Launch Waitlist ($0 / mo)</option>
           <option value="pri_01m1pb8szpcf4vapm28yfzw9aq">Plus Founders VIP ($290 / year fixed)</option>
           <option value="pri_01m1pb6ba15axyr7acv0hswynd">Pro Founders VIP ($590 / year fixed)</option>
         </select>
 
-        <button type="submit" class="submit-btn" id="signup-btn-text" style="margin-top: 10px;">Create Account & Pay</button>
+        <button type="submit" class="submit-btn" id="signup-btn-text" style="margin-top: 10px;">Join Free Launch Waitlist</button>
       </form>
       <div id="signup-modal-error" class="error-msg"></div>
     </div>
   </div>
 
+  <!-- LOGIN MODAL -->
   <div class="modal-overlay" id="login-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
       <h2>Merchant Login</h2>
-      <form onsubmit="event.preventDefault(); alert('Success!'); closeModal('login-modal');">
-        <label>Email</label><input type="email" required placeholder="owner@cafe.com">
-        <label>Password</label><input type="password" required placeholder="••••••••">
-        <button type="submit" class="submit-btn">Log In</button>
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Sign in to manage your merchant profile.</p>
+      
+      <form id="login-form" onsubmit="handleMerchantLogin(event)">
+        <label>Email</label>
+        <input type="email" id="login-email" required placeholder="owner@cafe.com">
+        <label>Password</label>
+        <input type="password" id="login-password" required placeholder="••••••••">
+        <button type="submit" class="submit-btn" id="login-submit-btn">Log In</button>
       </form>
+      <div id="login-modal-error" class="error-msg"></div>
     </div>
   </div>
 
-  <!-- UPGRADED EXECUTIVE SUCCESS MODAL -->
-  <div class="modal-overlay" id="registration-success-modal" style="display: none; z-index: 2000;">
+  <!-- SUCCESS MODAL -->
+  <div class="modal-overlay" id="registration-success-modal">
     <div class="success-card">
-      <div class="success-glow"></div>
-      
-      <!-- Animated Checkmark Badge -->
       <div class="success-icon-wrap">
-        <div class="success-icon-pulse"></div>
-        <svg class="success-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <svg style="width: 32px; height: 32px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="20 6 9 17 4 12"></polyline>
         </svg>
       </div>
 
-      <!-- Official Launch Pill -->
-      <div class="launch-pill">
-        <span class="launch-dot"></span> Official Launch: November 13, 2026
-      </div>
-
       <h3 class="success-title">Your Store Is Registered!</h3>
       <p class="success-subtitle">
-        Welcome to <strong>FlexiTap POS</strong>. Your merchant profile is locked in while our engineering team readies your workspace.
+        Welcome to <strong>FlexiTap POS</strong>. Your merchant registration has been secured for <span id="confirmed-email-display" style="color: #60a5fa; font-weight: 600;">your email</span>.
       </p>
 
-      <!-- 4-Step Progression -->
       <div class="next-steps-container">
         <div class="step-item">
           <div class="step-badge">1</div>
-          <div class="step-content">
-            <div class="step-heading">Confirmation Email Dispatched</div>
-            <div class="step-desc">A formal confirmation with your registration details has been sent to <span id="confirmed-email-display" class="highlight-text">your email</span>.</div>
+          <div>
+            <div class="step-heading">Confirmation Sent</div>
+            <div class="step-desc">Your merchant profile is stored securely on our launch registry.</div>
           </div>
         </div>
 
         <div class="step-item">
           <div class="step-badge">2</div>
-          <div class="step-content">
-            <div class="step-heading">Pre-Launch Updates & Feature Walkthrough</div>
-            <div class="step-desc">Our core team will share milestone briefings, development progress, and feature previews via email.</div>
+          <div>
+            <div class="step-heading">Launch Access: November 13, 2026</div>
+            <div class="step-desc">You will receive direct download access for your tablets and desktop screens on release day.</div>
           </div>
         </div>
 
         <div class="step-item">
           <div class="step-badge">3</div>
-          <div class="step-content">
-            <div class="step-heading">Go-Live & Terminal Access</div>
-            <div class="step-desc">Full terminal access and system deployment unlock on <strong>November 13, 2026</strong>.</div>
-          </div>
-        </div>
-
-        <div class="step-item step-highlight">
-          <div class="step-badge step-badge-portal">4</div>
-          <div class="step-content">
-            <div class="step-heading">Merchant Portal Access</div>
-            <div class="step-desc">Merchant Portal for Pro and Plus will be available on launch day.</div>
+          <div>
+            <div class="step-heading">Onboarding Priority</div>
+            <div class="step-desc">Founders VIP members will be contacted directly for done-for-you menu setup prior to launch.</div>
           </div>
         </div>
       </div>
 
-      <!-- Dismiss Button -->
-      <div>
-        <button class="btn-success-dismiss" onclick="dismissRegistrationSuccess()">
-          Got It, Back to Home
-        </button>
-      </div>
-
-      <div class="support-footnote">
-        Questions? Reach our team directly at <a href="mailto:support@flexitapapp.com">support@flexitapapp.com</a>
-      </div>
+      <button class="submit-btn" onclick="dismissRegistrationSuccess()" style="background: rgba(255,255,255,0.08); border: 1px solid var(--card-border);">
+        Got It, Back to Overview
+      </button>
     </div>
   </div>
 
-  <script>
-    function toggleMobileMenu() { document.getElementById('navLinksContainer').classList.toggle('mobile-open'); }
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-  </script>
 </body>
 </html>
