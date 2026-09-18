@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>FlexiTap POS — Capabilities & Hardware Compatibility</title>
+  <title>FlexiTap POS — System Architecture & Capabilities</title>
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
@@ -14,8 +14,8 @@
 
   <style>
     :root {
-      --bg: #090d16;
-      --card-bg: rgba(22, 30, 49, 0.65);
+      --bg: #070a11;
+      --card-bg: rgba(18, 24, 38, 0.75);
       --card-border: rgba(255, 255, 255, 0.08);
       --primary: #3b82f6;
       --primary-hover: #2563eb;
@@ -27,10 +27,10 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
     html, body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; width: 100%; max-width: 100vw; overflow-x: clip; }
-    .container { width: 100%; max-width: 1140px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+    .container { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
 
     /* HEADER */
-    header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: rgba(9, 13, 22, 0.94); backdrop-filter: blur(12px); z-index: 100; width: 100%; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: rgba(7, 10, 17, 0.94); backdrop-filter: blur(14px); z-index: 100; width: 100%; }
     header .container { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 12px; }
     .logo { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 800; color: #ffffff; text-decoration: none; letter-spacing: -0.5px; }
     .brand-logo-svg { width: 34px; height: 34px; flex-shrink: 0; display: block; border-radius: 50%; object-fit: contain; }
@@ -46,55 +46,113 @@
     .btn-signup:hover { background: var(--primary-hover); }
 
     /* HERO */
-    .capabilities-hero { padding: 60px 0 40px; text-align: center; }
-    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 999px; font-size: 12.5px; font-weight: 700; color: #93c5fd; margin-bottom: 20px; }
+    .capabilities-hero { padding: 68px 0 44px; text-align: center; position: relative; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 999px; font-size: 12.5px; font-weight: 700; color: #93c5fd; margin-bottom: 18px; }
     .hero-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
-    .section-title { font-size: clamp(28px, 5vw, 40px); font-weight: 800; margin-bottom: 12px; letter-spacing: -0.8px; }
-    .section-subtitle { color: var(--text-muted); font-size: 16px; max-width: 660px; margin: 0 auto; line-height: 1.6; }
+    .section-title { font-size: clamp(30px, 5vw, 44px); font-weight: 800; margin-bottom: 14px; letter-spacing: -1px; line-height: 1.2; }
+    .section-subtitle { color: var(--text-muted); font-size: 16.5px; max-width: 700px; margin: 0 auto; line-height: 1.6; }
 
-    /* CORE CAPABILITIES: 3 ELEGANT CARDS */
-    .pillars-section { padding: 30px 0 50px; }
-    .pillars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-    .pillar-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 32px 28px; position: relative; transition: border-color 0.2s; }
-    .pillar-card:hover { border-color: rgba(59, 130, 246, 0.3); }
-    .pillar-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.25); display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 20px; }
-    .pillar-card h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 10px; }
-    .pillar-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 18px; }
-    .pillar-specs { list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #cbd5e1; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 16px; }
-    .pillar-specs li { display: flex; align-items: center; gap: 8px; }
-    .pillar-specs li span { color: var(--accent-green); font-weight: 800; }
+    /* VISUAL SYSTEM SHOWCASES */
+    .showcase-section { padding: 30px 0; }
+    .showcase-row { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; align-items: center; margin-bottom: 90px; }
+    .showcase-row.reversed { grid-template-columns: 1.2fr 1fr; }
 
-    /* WORKFLOW MODES: SCANNABLE DUAL SPLIT */
-    .workflow-section { padding: 40px 0; }
-    .workflow-container { background: rgba(15, 23, 42, 0.6); border: 1px solid var(--card-border); border-radius: 24px; padding: 36px 32px; }
-    .workflow-toggle-wrap { display: flex; justify-content: center; gap: 10px; margin-bottom: 32px; }
-    .workflow-btn { padding: 10px 22px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; border: 1px solid var(--card-border); background: rgba(255,255,255,0.03); color: var(--text-muted); transition: 0.2s; }
-    .workflow-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .showcase-content { text-align: left; }
+    .pill-indicator { font-size: 12px; font-weight: 800; color: #60a5fa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .showcase-content h3 { font-size: 27px; font-weight: 800; color: #fff; margin-bottom: 14px; letter-spacing: -0.5px; }
+    .showcase-content p { font-size: 15px; color: var(--text-muted); line-height: 1.65; margin-bottom: 20px; }
+    .showcase-metrics { display: flex; gap: 24px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 18px; }
+    .metric-item strong { display: block; font-size: 20px; font-weight: 800; color: #34d399; }
+    .metric-item span { font-size: 12px; color: var(--text-muted); }
+
+    /* REAL SCREENSHOT WRAPPER WITH MODERN APP SHELL & OVERLAYS */
+    .screen-mockup-wrapper {
+      position: relative;
+      border-radius: 18px;
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 40px rgba(59, 130, 246, 0.12);
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .screen-mockup-wrapper:hover {
+      transform: translateY(-4px);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+    .window-header {
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .window-dots { display: flex; gap: 6px; }
+    .window-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+    .window-title { font-size: 11.5px; font-family: 'JetBrains Mono', monospace; color: #94a3b8; letter-spacing: 0.5px; }
+
+    .screenshot-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    /* GLASSMORPHIC OVERLAYS ON REAL SCREENS */
+    .screen-overlay-badge {
+      position: absolute;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      z-index: 10;
+      pointer-events: none;
+    }
+    .screen-overlay-badge.top-right { top: 48px; right: 16px; }
+    .screen-overlay-badge.bottom-left { bottom: 16px; left: 16px; }
     
-    .workflow-view { display: none; }
-    .workflow-view.active { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-    .workflow-box { background: rgba(22, 30, 49, 0.65); border: 1px solid var(--card-border); border-radius: 16px; padding: 22px; }
-    .workflow-box h4 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
-    .workflow-box p { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+    .status-dot-pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { transform: scale(0.9); opacity: 0.8; } 50% { transform: scale(1.25); opacity: 1; } 100% { transform: scale(0.9); opacity: 0.8; } }
 
-    /* HARDWARE COMPATIBILITY: 4 CLEAN CATEGORIES (UNCLUTTERED) */
-    .hardware-clean-section { padding: 50px 0 70px; }
-    .hardware-clean-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 32px; }
-    .hw-category-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 24px; }
-    .hw-cat-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-    .hw-cat-icon { font-size: 22px; }
-    .hw-category-card h4 { font-size: 16px; font-weight: 700; color: #fff; }
-    .hw-category-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
-    .hw-tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
-    .hw-tag { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); padding: 4px 9px; border-radius: 6px; font-size: 11px; font-weight: 600; color: #94a3b8; }
+    /* WORKFLOW SELECTOR */
+    .workflow-container { background: rgba(15, 23, 42, 0.6); border: 1px solid var(--card-border); border-radius: 24px; padding: 40px 32px; margin: 30px 0 70px; text-align: center; }
+    .workflow-toggle-wrap { display: inline-flex; background: rgba(0, 0, 0, 0.4); padding: 4px; border-radius: 14px; border: 1px solid var(--card-border); margin-bottom: 36px; }
+    .workflow-btn { padding: 11px 26px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; border: none; background: transparent; color: var(--text-muted); transition: 0.2s; }
+    .workflow-btn.active { background: var(--primary); color: #fff; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
 
-    /* CALLOUT BANNER */
-    .bottom-cta-banner { background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(16, 185, 129, 0.08)); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 20px; padding: 32px; text-align: center; margin-bottom: 60px; }
-    .bottom-cta-banner h3 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px; }
-    .bottom-cta-banner p { font-size: 14.5px; color: #cbd5e1; max-width: 580px; margin: 0 auto 20px; }
+    .workflow-view { display: none; text-align: left; }
+    .workflow-view.active { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .workflow-card { background: rgba(22, 30, 49, 0.65); border: 1px solid var(--card-border); border-radius: 16px; padding: 24px; transition: 0.2s ease; }
+    .workflow-card:hover { border-color: rgba(59, 130, 246, 0.35); transform: translateY(-2px); }
+    .workflow-card h4 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .workflow-card p { font-size: 13.5px; color: var(--text-muted); line-height: 1.55; }
+
+    /* HARDWARE HUB */
+    .hardware-hub { padding-bottom: 60px; text-align: center; }
+    .hardware-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 32px; text-align: left; }
+    .hub-tile { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 24px; position: relative; overflow: hidden; }
+    .hub-tile::after { content: ""; position: absolute; top: 0; right: 0; width: 60px; height: 60px; background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(0,0,0,0) 70%); }
+    .hub-icon { font-size: 26px; margin-bottom: 12px; }
+    .hub-tile h4 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .hub-tile p { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px; }
+    .hub-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+    .hub-tag { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); padding: 4px 9px; border-radius: 6px; font-size: 11px; font-weight: 600; color: #94a3b8; }
+
+    /* CTA BANNER */
+    .cta-card { background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(16, 185, 129, 0.1)); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 22px; padding: 40px 32px; text-align: center; margin-bottom: 60px; }
+    .cta-card h3 { font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 10px; }
+    .cta-card p { font-size: 15px; color: #cbd5e1; max-width: 600px; margin: 0 auto 24px; }
 
     /* FOOTER */
-    footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #0b0f19; font-size: 14px; width: 100%; }
+    footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #070a11; font-size: 14px; width: 100%; }
     .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 24px; }
     .footer-brand p { color: var(--text-muted); font-size: 14px; margin: 16px 0 24px 0; max-width: 320px; line-height: 1.6; }
     
@@ -121,22 +179,20 @@
     label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
     input { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: white; font-size: 14.5px; box-sizing: border-box; }
     .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; }
-    .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
 
-    /* SALES CHAT */
+    /* CHAT WIDGET */
     #chat-btn { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #2563eb); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 24px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 990; }
     #sales-chat-panel { display: none; position: fixed; bottom: 90px; right: 24px; width: min(90vw, 370px); height: 480px; background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); flex-direction: column; overflow: hidden; z-index: 999; }
     .chat-header { background: rgba(255,255,255,0.03); padding: 14px 18px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
     .chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 13px; }
     .chat-msg { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; color: #f8fafc; }
 
-    @media (max-width: 1023px) {
+    @media (max-width: 960px) {
+      .showcase-row, .showcase-row.reversed { grid-template-columns: 1fr; gap: 36px; }
       .nav-links { display: none; width: 100%; flex-direction: column; align-items: flex-start; background: rgba(15, 23, 42, 0.98); padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); margin-top: 10px; }
       .nav-links.mobile-open { display: flex; }
       .mobile-menu-toggle { display: block; }
       header { padding: 12px 16px; }
-    }
-    @media (max-width: 768px) {
       .footer-grid { grid-template-columns: 1fr; gap: 30px; }
     }
   </style>
@@ -198,174 +254,273 @@
     </div>
   </header>
 
-  <!-- MAIN CONTENT -->
+  <!-- MAIN -->
   <main class="container">
     
-    <!-- HERO HEADER -->
+    <!-- HEADER -->
     <section class="capabilities-hero">
       <div class="hero-badge">
-        <span class="hero-dot"></span> Offline-First • Universal Compatibility
+        <span class="hero-dot"></span> Production-Ready Hardware Ecosystem
       </div>
-      <h1 class="section-title">Built for Speed. Engineered for Uptime.</h1>
-      <p class="section-subtitle">A high-performance point-of-sale designed to keep counter lines moving, prevent hardware lock-in, and safeguard your cash flow.</p>
+      <h1 class="section-title">Designed for Real Venue Operations.<br>Zero Hardware Lock-In.</h1>
+      <p class="section-subtitle">Explore the live FlexiTap counter terminal, synchronized customer displays, and low-latency kitchen screens—built to run flawlessly on standard devices.</p>
     </section>
 
-    <!-- 3 CORE PILLARS (CLEAN & SPACIOUS) -->
-    <section class="pillars-section">
-      <div class="pillars-grid">
-        
-        <div class="pillar-card">
-          <div class="pillar-icon">⚡</div>
-          <h3>Offline-First Architecture</h3>
-          <p>Your cash register should never depend on an ISP. FlexiTap writes all transactions to local hardware memory in milliseconds, continuing service even when internet drops entirely.</p>
-          <ul class="pillar-specs">
-            <li><span>✓</span> Instant local checkout writes (< 50ms)</li>
-            <li><span>✓</span> Uninterrupted receipt printing offline</li>
-            <li><span>✓</span> Automated cloud sync when online</li>
-          </ul>
+    <!-- LIVE PRODUCT SHOWCASES WITH REAL SCREENSHOTS & OVERLAYS -->
+    <section class="showcase-section">
+      
+      <!-- SHOWCASE 1: COUNTER TERMINAL DASHBOARD -->
+      <div class="showcase-row">
+        <div class="showcase-content">
+          <div class="pill-indicator">Master Counter Terminal</div>
+          <h3>High-Speed Cashier Flow & Ticket Holding</h3>
+          <p>Rings orders up in milliseconds with quick-category tabs, instant barcode lookup, seat/guest tracking, and check holding. The cashier can suspend transactions, process discounts, or print split bills with zero lag.</p>
+          <div class="showcase-metrics">
+            <div class="metric-item">
+              <strong>Master Terminal</strong>
+              <span>Register 1 Management</span>
+            </div>
+            <div class="metric-item">
+              <strong>Instant Hold</strong>
+              <span>Multi-Ticket Parking</span>
+            </div>
+          </div>
         </div>
 
-        <div class="pillar-card">
-          <div class="pillar-icon">🔄</div>
-          <h3>Multi-Station Ecosystem</h3>
-          <p>Seamlessly interconnect your counter cashiers, kitchen preparation screens, customer displays, and mobile ordering terminals across your venue's local network.</p>
-          <ul class="pillar-specs">
-            <li><span>✓</span> Digital Kitchen Display System (KDS)</li>
-            <li><span>✓</span> Customer-Facing Display (CDS) cart preview</li>
-            <li><span>✓</span> Instant order routing by prep station</li>
-          </ul>
+        <div class="screen-mockup-wrapper">
+          <div class="window-header">
+            <div class="window-dots">
+              <div class="window-dot dot-red"></div>
+              <div class="window-dot dot-yellow"></div>
+              <div class="window-dot dot-green"></div>
+            </div>
+            <div class="window-title">FlexiTap POS — Master Register 1</div>
+            <div style="font-size: 11px; color: #34d399; font-weight: 700;">● Online</div>
+          </div>
+          
+          <img src="dashboard.png" alt="FlexiTap POS Counter Dashboard" class="screenshot-img" />
+
+          <!-- INTERACTIVE GLASSMORPHIC OVERLAYS -->
+          <div class="screen-overlay-badge top-right">
+            <div class="status-dot-pulse"></div>
+            <div>
+              <div style="font-size: 11px; font-weight: 800; color: #fff;">LIVE TICKET: T1-1007</div>
+              <div style="font-size: 10px; color: #94a3b8;">Barcode & SKU Search Active</div>
+            </div>
+          </div>
+
+          <div class="screen-overlay-badge bottom-left">
+            <div style="font-size: 18px;">⚡</div>
+            <div>
+              <div style="font-size: 11.5px; font-weight: 700; color: #fff;">Quick Action Matrix</div>
+              <div style="font-size: 10px; color: #94a3b8;">No-Sale, Transfer, Split & Drawer Kick</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHOWCASE 2: CUSTOMER DISPLAY SCREEN (CDS) -->
+      <div class="showcase-row reversed">
+        <div class="screen-mockup-wrapper">
+          <div class="window-header">
+            <div class="window-dots">
+              <div class="window-dot dot-red"></div>
+              <div class="window-dot dot-yellow"></div>
+              <div class="window-dot dot-green"></div>
+            </div>
+            <div class="window-title">Customer-Facing Display (CDS) — 192.168.68.109</div>
+            <div style="font-size: 11px; color: #60a5fa; font-weight: 700;">Local Synced</div>
+          </div>
+          
+          <img src="cds.png" alt="FlexiTap Customer Display System" class="screenshot-img" />
+
+          <!-- INTERACTIVE GLASSMORPHIC OVERLAYS -->
+          <div class="screen-overlay-badge top-right">
+            <div style="font-size: 16px;">🎁</div>
+            <div>
+              <div style="font-size: 11px; font-weight: 800; color: #fff;">LOYALTY SCANNER</div>
+              <div style="font-size: 10px; color: #cbd5e1;">Scan QR to Save 10%</div>
+            </div>
+          </div>
+
+          <div class="screen-overlay-badge bottom-left">
+            <div style="font-size: 16px;">💳</div>
+            <div>
+              <div style="font-size: 11.5px; font-weight: 700; color: #fff;">Live Cart Broadcast</div>
+              <div style="font-size: 10px; color: #94a3b8;">Itemized Taxes & Grand Total Preview</div>
+            </div>
+          </div>
         </div>
 
-        <div class="pillar-card">
-          <div class="pillar-icon">🛡️</div>
-          <h3>Audit Control & Cash Security</h3>
-          <p>Eliminate till discrepancies with role-based PIN access, automated drawer kicks, cash drop tracking, and precise shift-end Z-reports.</p>
-          <ul class="pillar-specs">
-            <li><span>✓</span> Shift audit trails & cash drawer balance</li>
-            <li><span>✓</span> Granular manager overrides & voids</li>
-            <li><span>✓</span> Cloud portal analytics for owners</li>
-          </ul>
+        <div class="showcase-content">
+          <div class="pill-indicator">Secondary Screen Mirroring</div>
+          <h3>Customer-Facing Display & Loyalty QR</h3>
+          <p>Turn any secondary tablet, touch monitor, or compact screen toward your customer. FlexiTap streams active cart items, taxes, totals, and promotional loyalty club sign-up codes in real-time over your venue's private network.</p>
+          <div class="showcase-metrics">
+            <div class="metric-item">
+              <strong>Local LAN</strong>
+              <span>IP-Based Auto Sync</span>
+            </div>
+            <div class="metric-item">
+              <strong>QR Loyalty</strong>
+              <span>Frictionless Sign-Up</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHOWCASE 3: KITCHEN DISPLAY SYSTEM (KDS) -->
+      <div class="showcase-row">
+        <div class="showcase-content">
+          <div class="pill-indicator">Back-of-House Coordination</div>
+          <h3>Dedicated Kitchen Display System (KDS)</h3>
+          <p>Replace paper clutter and lost kitchen receipts with clean digital prep screens. Incoming tickets route by station (Hot Bar, Cold Prep, Drinks) and provide visual completion cues to keep your kitchen operating at peak turnaround speed.</p>
+          <div class="showcase-metrics">
+            <div class="metric-item">
+              <strong>Zero Tickets Lost</strong>
+              <span>Paperless Station Routing</span>
+            </div>
+            <div class="metric-item">
+              <strong>Real-Time</strong>
+              <span>All-Caught-Up Confirmation</span>
+            </div>
+          </div>
         </div>
 
+        <div class="screen-mockup-wrapper">
+          <div class="window-header">
+            <div class="window-dots">
+              <div class="window-dot dot-red"></div>
+              <div class="window-dot dot-yellow"></div>
+              <div class="window-dot dot-green"></div>
+            </div>
+            <div class="window-title">Kitchen Display System (KDS) — IP: 192.168.68.109</div>
+            <div style="font-size: 11px; color: #10b981; font-weight: 700;">Station Connected</div>
+          </div>
+          
+          <img src="kds.png" alt="FlexiTap Kitchen Display System" class="screenshot-img" />
+
+          <!-- INTERACTIVE GLASSMORPHIC OVERLAYS -->
+          <div class="screen-overlay-badge top-right">
+            <div style="font-size: 16px;">🍳</div>
+            <div>
+              <div style="font-size: 11px; font-weight: 800; color: #fff;">PREP STATION SYNC</div>
+              <div style="font-size: 10px; color: #cbd5e1;">Live Line Dispatch</div>
+            </div>
+          </div>
+
+          <div class="screen-overlay-badge bottom-left">
+            <div class="status-dot-pulse"></div>
+            <div>
+              <div style="font-size: 11.5px; font-weight: 700; color: #fff;">Zero Service Delay</div>
+              <div style="font-size: 10px; color: #94a3b8;">Auto-updates as cashiers ring items</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- OPERATING MODES SELECTOR -->
+    <section class="workflow-container">
+      <h2 style="font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 8px;">Tailored Venue Configurations</h2>
+      <p style="color: var(--text-muted); font-size: 14.5px; margin-bottom: 28px;">Switch between high-speed counter checkout and full-service dining room management effortlessly.</p>
+      
+      <div class="workflow-toggle-wrap">
+        <button class="workflow-btn active" id="wf-btn-fb" onclick="switchWorkflow('fb')">🍽️ Food & Beverage (F&B)</button>
+        <button class="workflow-btn" id="wf-btn-retail" onclick="switchWorkflow('retail')">🏷️ Quick-Serve & Retail</button>
+      </div>
+
+      <!-- F&B CARDS -->
+      <div class="workflow-view active" id="wf-fb">
+        <div class="workflow-card">
+          <h4>🗺️ Visual Table Floor Plans</h4>
+          <p>Interactive dining room floor plan with live table occupancy, elapsed meal timers, and effortless check transfers between tables.</p>
+        </div>
+        <div class="workflow-card">
+          <h4>🍳 Direct Kitchen Routing</h4>
+          <p>Route food tickets straight to thermal line printers or digital KDS screens with modifier grouping (e.g., extra shots, dairy alternatives).</p>
+        </div>
+        <div class="workflow-card">
+          <h4>🧾 Seat-Based Ordering & Bill Split</h4>
+          <p>Split tickets cleanly by guest seat or item, with complete tip reconciliation integrated into end-of-shift cashier Z-reports.</p>
+        </div>
+      </div>
+
+      <!-- RETAIL CARDS -->
+      <div class="workflow-view" id="wf-retail">
+        <div class="workflow-card">
+          <h4>📷 Instant Barcode Scanning</h4>
+          <p>High-speed product lookups using standard USB scanner guns, wireless Bluetooth devices, or integrated tablet cameras.</p>
+        </div>
+        <div class="workflow-card">
+          <h4>💵 Cash Drawer & Till Audits</h4>
+          <p>Automated drawer kick commands via standard RJ11, recorded cash drops, and manager PIN authorizations for secure shift reconciliation.</p>
+        </div>
+        <div class="workflow-card">
+          <h4>🖥️ Customer-Facing Display (CDS)</h4>
+          <p>Broadcast itemized totals, taxes, and promotional loyalty discount QR codes live to any secondary tablet facing the customer.</p>
+        </div>
       </div>
     </section>
 
-    <!-- WORKFLOW MODES (SCANNABLE) -->
-    <section class="workflow-section">
-      <div class="workflow-container">
-        <div style="text-align: center; margin-bottom: 24px;">
-          <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Optimized by Industry Workflow</h2>
-          <p style="color: var(--text-muted); font-size: 14.5px;">Toggle between specialized restaurant operations and high-speed retail checkout.</p>
-        </div>
+    <!-- UNIVERSAL HARDWARE MATRIX -->
+    <section class="hardware-hub">
+      <h2 style="font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 8px;">Bring Your Own Hardware (BYOD)</h2>
+      <p style="color: var(--text-muted); font-size: 14.5px; max-width: 600px; margin: 0 auto;">Connect standard off-the-shelf peripherals without being forced into proprietary vendor hardware leases.</p>
 
-        <div class="workflow-toggle-wrap">
-          <button class="workflow-btn active" id="wf-btn-fb" onclick="switchWorkflow('fb')">🍽️ Food & Beverage (Dine-In / Cafe)</button>
-          <button class="workflow-btn" id="wf-btn-retail" onclick="switchWorkflow('retail')">🏷️ Retail & Quick-Serve</button>
-        </div>
-
-        <!-- F&B VIEW -->
-        <div class="workflow-view active" id="wf-fb">
-          <div class="workflow-box">
-            <h4>🗺️ Table Layouts</h4>
-            <p>Visual floor plan showing table statuses, seating durations, and check transfers.</p>
-          </div>
-          <div class="workflow-box">
-            <h4>🍳 Kitchen Station Routing</h4>
-            <p>Send items directly to hot kitchen, cold bar, or beverage prep screens with custom modifiers.</p>
-          </div>
-          <div class="workflow-box">
-            <h4>🧾 Bill Splitting & Tips</h4>
-            <p>Split checks by seat or item, with complete tip tracking recorded in shift reconciliation.</p>
+      <div class="hardware-grid">
+        <div class="hub-tile">
+          <div class="hub-icon">🖨️</div>
+          <h4>Thermal Receipt Printers</h4>
+          <p>Standard ESC/POS protocol compatibility across counter checkouts and kitchen prep stations.</p>
+          <div class="hub-badges">
+            <span class="hub-tag">58mm & 80mm</span>
+            <span class="hub-tag">Network LAN IP</span>
+            <span class="hub-tag">Wi-Fi & Bluetooth</span>
           </div>
         </div>
 
-        <!-- RETAIL VIEW -->
-        <div class="workflow-view" id="wf-retail">
-          <div class="workflow-box">
-            <h4>📷 Instant Barcode Lookups</h4>
-            <p>Scan items using USB, Bluetooth scanners, or your device camera with sub-second SKU matching.</p>
-          </div>
-          <div class="workflow-box">
-            <h4>💵 Cash Drawer Controls</h4>
-            <p>Automatic kick commands for cash transactions, cash drop logs, and manager PIN authorizations.</p>
-          </div>
-          <div class="workflow-box">
-            <h4>🖥️ Customer Cart Broadcast</h4>
-            <p>Mirror cart totals, taxes, and promotional messages to secondary customer-facing screens.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- UNCLUTTERED HARDWARE (4 CLEAN CATEGORIES) -->
-    <section class="hardware-clean-section">
-      <div style="text-align: center;">
-        <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Bring Your Own Hardware (BYOD)</h2>
-        <p style="color: var(--text-muted); font-size: 14.5px; max-width: 600px; margin: 8px auto 0;">No locked ecosystems or expensive terminal leases. Connect standard peripherals effortlessly.</p>
-      </div>
-
-      <div class="hardware-clean-grid">
-        <div class="hw-category-card">
-          <div class="hw-cat-header">
-            <span class="hw-cat-icon">🖨️</span>
-            <h4>Printers & Drawers</h4>
-          </div>
-          <p>Standard ESC/POS thermal receipt printers and automated cash drawers.</p>
-          <div class="hw-tag-row">
-            <span class="hw-tag">58mm & 80mm</span>
-            <span class="hw-tag">Network / LAN</span>
-            <span class="hw-tag">Bluetooth</span>
-            <span class="hw-tag">RJ11 Kick</span>
+        <div class="hub-tile">
+          <div class="hub-icon">🖥️</div>
+          <h4>Multi-Screen Terminals</h4>
+          <p>Repurpose standard monitors, PCs, or tablets into operational displays.</p>
+          <div class="hub-badges">
+            <span class="hub-tag">Kitchen KDS</span>
+            <span class="hub-tag">Customer CDS</span>
+            <span class="hub-tag">Digital Menu Boards</span>
           </div>
         </div>
 
-        <div class="hw-category-card">
-          <div class="hw-cat-header">
-            <span class="hw-cat-icon">🖥️</span>
-            <h4>Screens & Displays</h4>
-          </div>
-          <p>Repurpose tablets and monitors as bump bars, prep screens, or customer displays.</p>
-          <div class="hw-tag-row">
-            <span class="hw-tag">Kitchen KDS</span>
-            <span class="hw-tag">Customer CDS</span>
-            <span class="hw-tag">Digital Menus</span>
+        <div class="hub-tile">
+          <div class="hub-icon">📷</div>
+          <h4>Scanners & Drawers</h4>
+          <p>High-speed 1D/2D scanning and standard automated cash drawer triggers.</p>
+          <div class="hub-badges">
+            <span class="hub-tag">1D / 2D Barcodes</span>
+            <span class="hub-tag">RJ11 Kick Port</span>
+            <span class="hub-tag">Loyalty QR Scanning</span>
           </div>
         </div>
 
-        <div class="hw-category-card">
-          <div class="hw-cat-header">
-            <span class="hw-cat-icon">📷</span>
-            <h4>Scanners & Payments</h4>
-          </div>
-          <p>Accept multiple checkout forms from wired barcode guns to dynamic QR codes.</p>
-          <div class="hw-tag-row">
-            <span class="hw-tag">1D / 2D Scanners</span>
-            <span class="hw-tag">Camera Scan</span>
-            <span class="hw-tag">QR Wallets</span>
-          </div>
-        </div>
-
-        <div class="hw-category-card">
-          <div class="hw-cat-header">
-            <span class="hw-cat-icon">📱</span>
-            <h4>Host Terminals</h4>
-          </div>
-          <p>Deploy FlexiTap on the mobile and desktop devices your venue already owns.</p>
-          <div class="hw-tag-row">
-            <span class="hw-tag">Android Tablets</span>
-            <span class="hw-tag">iPads</span>
-            <span class="hw-tag">Windows PCs</span>
-            <span class="hw-tag">Sunmi PDA</span>
+        <div class="hub-tile">
+          <div class="hub-icon">📱</div>
+          <h4>Cross-Platform Host Devices</h4>
+          <p>Deploy FlexiTap on the tablets and desktop hardware your venue already owns.</p>
+          <div class="hub-badges">
+            <span class="hub-tag">Android Tablets</span>
+            <span class="hub-tag">Apple iPads</span>
+            <span class="hub-tag">Windows Touch PCs</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- BOTTOM CTA BANNER -->
-    <div class="bottom-cta-banner">
-      <h3>Ready to modernise your counter?</h3>
-      <p>Lock in lifetime early-adopter pricing with our Founders VIP pass before retail pricing opens on November 13, 2026.</p>
-      <a href="pricing.html" class="btn-signup" style="padding: 12px 28px; font-size: 15px;">View Founders Pricing</a>
+    <!-- BOTTOM CALLOUT -->
+    <div class="cta-card">
+      <h3>Experience the FlexiTap Difference</h3>
+      <p>Official release begins November 13, 2026. Secure our lifetime fixed Founders VIP rate before public monthly billing unlocks.</p>
+      <a href="pricing.html" class="btn-signup" style="padding: 13px 30px; font-size: 15px;">Explore Founders VIP Pricing</a>
     </div>
 
   </main>
@@ -419,17 +574,16 @@
     </div>
   </footer>
 
-  <!-- SALES CHAT -->
+  <!-- MODALS -->
   <button id="chat-btn" onclick="toggleSalesChat()" title="Sales Chat">💬</button>
   <div id="sales-chat-panel">
     <div class="chat-header">
       <div style="font-size: 13px; font-weight: 800; color: #fff;">FlexiTap Assistant</div>
       <button onclick="toggleSalesChat()" style="background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer;">&times;</button>
     </div>
-    <div class="chat-body"><div class="chat-msg">👋 Welcome! Got questions about our capabilities or hardware support?</div></div>
+    <div class="chat-body"><div class="chat-msg">👋 Welcome! Inquiring about our system features or hardware compatibility?</div></div>
   </div>
 
-  <!-- LOGIN MODAL -->
   <div class="modal-overlay" id="login-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
