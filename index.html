@@ -10,7 +10,7 @@
   <!-- Include Paddle.js -->
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 
-  <!-- Google Calendar Appointment Scheduling Styles & SDK -->
+  <!-- Google Calendar Scheduling SDK -->
   <link href="https://calendar.google.com/calendar/scheduling-button-script.css" rel="stylesheet">
   <script src="https://calendar.google.com/calendar/scheduling-button-script.js" async></script>
   
@@ -49,7 +49,7 @@
       top: 0; 
       left: 0; 
       width: 100%; 
-      height: 900px; 
+      height: 920px; 
       overflow: hidden; 
       z-index: 0; 
       pointer-events: none; 
@@ -58,7 +58,7 @@
       width: 100%; 
       height: 100%; 
       object-fit: cover; 
-      opacity: 0.85; 
+      opacity: 0.75; 
       filter: saturate(1.1) contrast(1.05); 
     }
     .hero-video-overlay { 
@@ -67,7 +67,7 @@
       left: 0; 
       width: 100%; 
       height: 100%; 
-      background: linear-gradient(180deg, rgba(9, 13, 22, 0.25) 0%, rgba(9, 13, 22, 0.45) 60%, var(--bg) 100%); 
+      background: linear-gradient(180deg, rgba(9, 13, 22, 0.35) 0%, rgba(9, 13, 22, 0.6) 65%, var(--bg) 100%); 
     }
     .glow-top { 
       position: absolute; 
@@ -76,7 +76,7 @@
       transform: translateX(-50%); 
       width: min(750px, 100vw); 
       height: 500px; 
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(9, 13, 22, 0) 70%); 
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, rgba(9, 13, 22, 0) 70%); 
       pointer-events: none; 
       z-index: 1; 
     }
@@ -84,7 +84,7 @@
     .container { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
 
     /* HEADER & NAV */
-    header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: rgba(9, 13, 22, 0.85); backdrop-filter: blur(12px); z-index: 100; width: 100%; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: rgba(9, 13, 22, 0.88); backdrop-filter: blur(12px); z-index: 100; width: 100%; }
     header .container { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 12px; }
     .logo { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 800; color: #ffffff; text-decoration: none; letter-spacing: -0.5px; }
     .brand-logo-svg { width: 34px; height: 34px; flex-shrink: 0; display: block; border-radius: 50%; object-fit: contain; }
@@ -101,21 +101,20 @@
 
     /* HERO */
     .hero { text-align: center; padding: 75px 0 60px; position: relative; width: 100%; }
-    .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(9, 13, 22, 0.7); backdrop-filter: blur(8px); border: 1px solid rgba(59, 130, 246, 0.4); padding: 6px 16px; border-radius: 9999px; font-size: 13px; font-weight: 600; color: #93c5fd; margin-bottom: 24px; max-width: 90%; }
+    .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(9, 13, 22, 0.75); backdrop-filter: blur(8px); border: 1px solid rgba(59, 130, 246, 0.4); padding: 7px 18px; border-radius: 9999px; font-size: 13px; font-weight: 700; color: #93c5fd; margin-bottom: 24px; max-width: 90%; }
     .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); flex-shrink: 0; animation: pulse-dot 2s infinite; }
     @keyframes pulse-dot {
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
       70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
-    .hero h1 { font-size: clamp(30px, 7vw, 54px); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -1px; text-shadow: 0 4px 24px rgba(0,0,0,0.85); }
-    .hero p { font-size: clamp(14px, 2vw, 18.5px); color: #f1f5f9; max-width: 740px; margin: 0 auto 32px; padding: 0 16px; text-shadow: 0 2px 14px rgba(0,0,0,0.9); }
+    .hero h1 { font-size: clamp(32px, 6vw, 56px); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -1px; text-shadow: 0 4px 24px rgba(0,0,0,0.85); }
+    .hero p { font-size: clamp(15px, 2vw, 18.5px); color: #f1f5f9; max-width: 760px; margin: 0 auto 32px; padding: 0 16px; text-shadow: 0 2px 14px rgba(0,0,0,0.9); }
     
     .cta-group { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; width: 100%; }
     .btn-primary { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); transition: 0.2s ease; }
     .btn-primary:hover { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
     
-    /* BOOK A DEMO BUTTON */
     .btn-demo { 
       background: rgba(15, 23, 42, 0.75); 
       backdrop-filter: blur(10px); 
@@ -140,11 +139,16 @@
     }
 
     /* PUBLIC ANNOUNCEMENT BANNER */
-    .home-announcement { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 20px 24px; max-width: 850px; margin: 0 auto 40px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .home-announcement { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 18px; padding: 22px 26px; max-width: 860px; margin: 0 auto 36px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .home-announcement h4 { color: #fff; font-size: 17px; font-weight: 800; margin-bottom: 6px; }
     .home-announcement p { color: #cbd5e1; font-size: 14px; line-height: 1.6; margin: 0; }
     .home-announcement a { color: #60a5fa; font-weight: 700; text-decoration: none; }
     .home-announcement a:hover { text-decoration: underline; }
+
+    /* TRUST PROMISES TICKER */
+    .trust-badges { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-top: 20px; font-size: 13px; color: var(--text-muted); }
+    .trust-item { display: inline-flex; align-items: center; gap: 7px; }
+    .trust-item span { color: var(--accent-green); font-weight: 800; }
 
     /* FOOTER & SOCIAL ICONS */
     footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #0b0f19; font-size: 14px; width: 100%; }
@@ -157,7 +161,7 @@
     .social-icon-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
     .app-buttons { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
-    .app-btn { background: #000; border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 8px; color: #fff; font-size: 10px; font-weight: 700; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; cursor: not-allowed; transition: 0.2s; }
+    .app-btn { background: #000; border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 8px; color: #fff; font-size: 10px; font-weight: 700; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; cursor: default; transition: 0.2s; }
     .app-btn:hover { border-color: rgba(255,255,255,0.2); }
     .app-btn svg { width: 18px; height: 18px; }
 
@@ -169,14 +173,15 @@
     
     .footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--text-muted); font-size: 13px; }
 
-    /* LOGIN MODAL ONLY */
-    .modal-overlay { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; padding: 16px; box-sizing: border-box; }
-    .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); padding: 36px 24px; border-radius: 20px; width: 100%; max-width: 440px; position: relative; text-align: center; margin: auto; max-height: 90vh; overflow-y: auto; }
+    /* MODAL OVERLAYS */
+    .modal-overlay { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; padding: 16px; box-sizing: border-box; }
+    .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.14); padding: 36px 26px; border-radius: 20px; width: 100%; max-width: 440px; position: relative; text-align: center; margin: auto; max-height: 90vh; overflow-y: auto; }
     .modal-header-logo { display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; }
     .close-btn { position: absolute; top: 18px; right: 18px; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
     label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
-    input, select { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; color: white; font-size: 15px; box-sizing: border-box; }
-    .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; }
+    input, select, textarea { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: white; font-size: 14.5px; box-sizing: border-box; }
+    .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; transition: 0.2s; }
+    .submit-btn:hover { background: var(--primary-hover); }
     .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
 
     /* DEMO BOOKING MODAL */
@@ -265,15 +270,16 @@
   <main class="container">
     <section class="hero">
       <div class="badge">
-        <span class="badge-dot"></span> Founders VIP Pre-Launch Active
+        <span class="badge-dot"></span> Founders VIP Pre-Launch Active • Launching Nov 13, 2026
       </div>
+      
       <h1>Offline-First Hybrid POS.<br>Built for Uninterrupted Commerce.</h1>
-      <p>High-speed checkout, visual table management, kitchen routing, offline-first reliability, and real-time merchant analytics across all your devices.</p>
+      <p>Instant cashier checkout, visual table management, kitchen routing, and resilient offline reliability—running directly on your existing tablets, iPads, and PCs.</p>
       
       <!-- PUBLIC LAUNCH NOTICE BANNER -->
       <div class="home-announcement">
-        <h4>🚀 Official Launch: November 13, 2026</h4>
-        <p>Standard monthly and annual subscription plans will unlock on launch day. Right now during pre-launch, <a href="pricing.html">secure your Founders VIP Annual Pass</a> to lock in maximum savings, priority onboarding, and 1-week early access!</p>
+        <h4>🚀 Official Public Launch: November 13, 2026</h4>
+        <p>Retail monthly subscription plans unlock on launch day. Lock in your permanent <a href="pricing.html">Founders VIP Annual Pass</a> today with our 100% live shift guarantee, white-glove menu setup, and lifetime fixed rates.</p>
       </div>
 
       <div class="cta-group">
@@ -283,25 +289,29 @@
         </a>
         <button onclick="openCalendarBooking(event)" class="btn-demo">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          Book a Live Demo
+          Book a Live 1-on-1 Demo
         </button>
+      </div>
+
+      <div class="trust-badges">
+        <div class="trust-item"><span>✓</span> Zero Proprietary Terminal Fees</div>
+        <div class="trust-item"><span>✓</span> Works 100% Offline When Internet Drops</div>
+        <div class="trust-item"><span>✓</span> 7-Day Live Shift Money-Back Guarantee</div>
       </div>
     </section>
   </main>
 
-  <!-- FOOTER WITH SOCIAL ICONS -->
+  <!-- FOOTER -->
   <footer>
     <div class="container">
       <div class="footer-grid">
-        <!-- BRANDING COLUMN -->
         <div class="footer-brand">
           <div style="display: flex; align-items: center; gap: 10px;">
             <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 26px; height: 26px;" />
             <div style="font-weight: 800; color: #fff; font-size: 18px;">FlexiTap POS</div>
           </div>
-          <p>Simplify Sales. Grow Your Business. A point-of-sale for shop owners, baristas, and anyone who needs things to just work.</p>
+          <p>Simplify Sales. Grow Your Business. A point-of-sale built for shop owners, baristas, and anyone who needs things to just work.</p>
           
-          <!-- SOCIAL MEDIA ICONS -->
           <div class="social-links">
             <a href="https://www.facebook.com/FlexiTapPOS" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="Facebook">
               <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
@@ -320,16 +330,15 @@
           <div class="app-buttons" style="margin-top: 20px;">
             <div class="app-btn">
                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.793 12 3.61 22.186c-.301-.318-.485-.75-.485-1.229V3.043c0-.479.184-.911.484-1.229zm11.306 11.307l2.42 2.42-11.89 6.842 9.47-9.262zm0-2.242L5.445 1.617l11.89 6.842-2.42 2.42zm1.536 1.536l3.815-2.194c.833-.479.833-1.258 0-1.737L16.451 10.29l-2.115 2.125 2.115 2.126v-.126z"/></svg>
-               Coming Soon
+               Android (Nov 13)
             </div>
             <div class="app-btn">
                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.01c.67-.82 1.13-1.96 1.01-3.1-.97.04-2.15.65-2.85 1.47-.62.72-1.16 1.88-1.02 2.99 1.08.08 2.19-.54 2.86-1.36z"/></svg>
-               Coming Soon
+               iOS / iPadOS (Nov 13)
             </div>
           </div>
         </div>
 
-        <!-- PRODUCT LINKS -->
         <div class="footer-col">
           <h4>Product</h4>
           <ul>
@@ -340,7 +349,6 @@
           </ul>
         </div>
 
-        <!-- LEGAL LINKS -->
         <div class="footer-col">
           <h4>Legal</h4>
           <ul>
@@ -351,15 +359,14 @@
         </div>
       </div>
 
-      <!-- COPYRIGHT ROW -->
       <div class="footer-bottom">
         <div>&copy; 2026 FlexiTap POS. All rights reserved.</div>
-        <div>www.flexitapapp.com</div>
+        <div>Launch Date: November 13, 2026</div>
       </div>
     </div>
   </footer>
 
-  <!-- FLOATING INQUIRY & SALES CHAT WIDGET -->
+  <!-- SALES CHAT WIDGET -->
   <button id="chat-btn" onclick="toggleSalesChat()" title="Sales & Inquiries Chat">💬</button>
 
   <div id="sales-chat-panel">
@@ -376,19 +383,19 @@
 
     <div class="chat-body" id="chat-messages">
       <div class="chat-msg">
-        👋 <strong>Welcome to FlexiTap POS!</strong> Looking for the right setup for your business?
+        👋 <strong>Welcome to FlexiTap POS!</strong> How can we help configure your counter setup today?
       </div>
       <div class="chat-options" id="chat-quick-options">
         <button class="chat-chip" onclick="handleChatSelect('demo')" style="background: rgba(16,185,129,0.1); color: #34d399; border-color: rgba(16,185,129,0.3);">📅 Book a Live 1-on-1 Demo</button>
-        <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Founders VIP Annual Pass Details</button>
-        <button class="chat-chip" onclick="handleChatSelect('platforms')">📱 iOS, iPad, Android & Windows Availability</button>
-        <button class="chat-chip" onclick="handleChatSelect('sync')">⚡ Offline Reliability & Real-Time Cloud Sync</button>
+        <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Founders VIP Pass & Pricing</button>
+        <button class="chat-chip" onclick="handleChatSelect('platforms')">📱 Device & Hardware Support</button>
+        <button class="chat-chip" onclick="handleChatSelect('sync')">⚡ Offline Reliability & Cloud Sync</button>
         <button class="chat-chip" onclick="handleChatSelect('contact')">✉️ Send Message to Sales</button>
       </div>
     </div>
   </div>
 
-  <!-- SUPABASE DEMO BOOKING MODAL -->
+  <!-- DEMO BOOKING MODAL -->
   <div class="modal-overlay" id="booking-modal">
     <div class="modal-card booking-modal-card">
       <button class="close-btn" onclick="closeModal('booking-modal')" aria-label="Close">&times;</button>
@@ -396,22 +403,22 @@
         <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 32px; height: 32px;" />
       </div>
       <h2>Book a Live Demo</h2>
-      <p class="booking-subtitle">Choose a date and time and our team will confirm your demo.</p>
+      <p class="booking-subtitle">Choose a date and time and our team will prepare a walkthrough of your exact venue workflow.</p>
 
       <form id="demo-booking-form">
         <div class="booking-grid">
           <div class="full">
             <label for="demo-business">Business / Contact Name</label>
-            <input type="text" id="demo-business" required placeholder="Your business or name" />
+            <input type="text" id="demo-business" required placeholder="Daily Grind Cafe" />
           </div>
 
           <div>
-            <label for="demo-email">Email</label>
-            <input type="email" id="demo-email" required placeholder="owner@example.com" autocomplete="email" />
+            <label for="demo-email">Email Address</label>
+            <input type="email" id="demo-email" required placeholder="owner@cafe.com" autocomplete="email" />
           </div>
 
           <div>
-            <label for="demo-phone">Phone</label>
+            <label for="demo-phone">Phone Number</label>
             <input type="tel" id="demo-phone" placeholder="Optional" autocomplete="tel" />
           </div>
 
@@ -426,16 +433,16 @@
           </div>
 
           <div class="full">
-            <div class="booking-help">Times are saved using your browser's local timezone. Your request will be confirmed by the FlexiTap team.</div>
+            <div class="booking-help">Times are saved in your local timezone. You will receive an immediate confirmation email.</div>
           </div>
 
           <div class="full">
-            <label for="demo-notes">Notes</label>
-            <textarea id="demo-notes" rows="3" placeholder="Tell us what you'd like to see in the demo..." style="width:100%; padding:12px 14px; margin-bottom:18px; background:#090d16; border:1px solid rgba(255,255,255,.12); border-radius:10px; color:white; font-size:15px; resize:vertical;"></textarea>
+            <label for="demo-notes">Specific Requirements / Hardware</label>
+            <textarea id="demo-notes" rows="3" placeholder="E.g., We use 2 Android tablets, 1 network receipt printer, and want to see how KDS routing works..."></textarea>
           </div>
 
           <div class="full">
-            <button type="submit" class="submit-btn" id="demo-booking-btn">Request Demo</button>
+            <button type="submit" class="submit-btn" id="demo-booking-btn">Request Demo Walkthrough</button>
           </div>
         </div>
       </form>
@@ -443,7 +450,7 @@
     </div>
   </div>
 
-  <!-- AUTH LOGIN MODAL -->
+  <!-- MERCHANT LOGIN MODAL -->
   <div class="modal-overlay" id="login-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
@@ -455,7 +462,7 @@
 
       <form id="portal-login-form">
         <label for="modal-email">Owner Email</label>
-        <input type="email" id="modal-email" required placeholder="merchant@example.com" autocomplete="username" />
+        <input type="email" id="modal-email" required placeholder="owner@cafe.com" autocomplete="username" />
 
         <label for="modal-password">Password</label>
         <input type="password" id="modal-password" required placeholder="••••••••" autocomplete="current-password" />
@@ -472,10 +479,8 @@
     let supabaseClient;
 
     document.addEventListener("DOMContentLoaded", function() {
-      // Initialize Supabase Client
       supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      // Prevent selecting dates in the past.
       const dateInput = document.getElementById('demo-date');
       if (dateInput) {
         const today = new Date();
@@ -486,13 +491,10 @@
       }
     });
 
-    // --- SUPABASE DEMO BOOKING ---
     function openCalendarBooking(e) {
       if (e) e.preventDefault();
-
       const modal = document.getElementById('booking-modal');
       const message = document.getElementById('booking-message');
-
       if (modal) {
         modal.style.display = 'flex';
         if (message) message.innerHTML = '';
@@ -500,8 +502,6 @@
     }
 
     function localDateTimeToISO(dateString, timeString) {
-      // Convert the visitor's selected local date/time to an ISO timestamp
-      // while preserving the correct timezone offset.
       const localDate = new Date(`${dateString}T${timeString}:00`);
       if (Number.isNaN(localDate.getTime())) return null;
       return localDate.toISOString();
@@ -527,7 +527,6 @@
       }
 
       const scheduledAt = localDateTimeToISO(date, time);
-
       if (!scheduledAt) {
         message.className = 'booking-error';
         message.innerText = 'Invalid date or time. Please try again.';
@@ -551,15 +550,14 @@
           }]);
 
         if (error) {
-          console.error('Supabase Demo Booking Error:', error);
+          console.error('Demo Booking Error:', error);
           message.className = 'booking-error';
-          message.innerText = 'We could not save your demo request. Please try again or email sales directly.';
+          message.innerText = 'Could not save request. Please contact info@flexitapapp.com.';
           return;
         }
 
         message.className = 'booking-success';
-        message.innerHTML = '✅ Demo request received! Our team will confirm your date and time shortly.';
-
+        message.innerHTML = '✅ Demo requested! Our team will confirm your session shortly.';
         e.target.reset();
 
         setTimeout(() => {
@@ -568,22 +566,19 @@
         }, 3500);
 
       } catch (err) {
-        console.error('Demo Booking Network Error:', err);
+        console.error('Network Error:', err);
         message.className = 'booking-error';
-        message.innerText = 'Network error. Please check your connection and try again.';
+        message.innerText = 'Network connection error. Please try again.';
       } finally {
-        btn.innerText = 'Request Demo';
+        btn.innerText = 'Request Demo Walkthrough';
         btn.disabled = false;
       }
     });
 
-    // --- MOBILE MENU TOGGLE ---
     function toggleMobileMenu() {
-      const nav = document.getElementById('navLinksContainer');
-      nav.classList.toggle('mobile-open');
+      document.getElementById('navLinksContainer').classList.toggle('mobile-open');
     }
 
-    // --- MODAL CONTROLS ---
     function openModal(id) {
       const el = document.getElementById(id || 'login-modal');
       if (el) el.style.display = 'flex';
@@ -600,7 +595,6 @@
       });
     });
 
-    // --- SALES CHAT ENGINE ---
     function toggleSalesChat() {
       const p = document.getElementById('sales-chat-panel');
       p.style.display = (p.style.display === 'none' || p.style.display === '') ? 'flex' : 'none';
@@ -617,15 +611,15 @@
 
     function handleChatSelect(type) {
       if (type === 'demo') {
-        appendMessage(`<strong>Book a Live Demo:</strong><br>Choose your preferred date and time below. Your request will be saved securely and our team will confirm the demo.<br><br><button onclick="openCalendarBooking(event)" style="background:var(--primary); color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">📅 Choose Demo Time</button>`);
+        appendMessage(`<strong>Book a Live Demo:</strong><br>Schedule a 1-on-1 walkthrough with our engineers. We'll show you how the offline sync and multi-screen setup works.<br><br><button onclick="openCalendarBooking(event)" style="background:var(--primary); color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">📅 Choose Demo Time</button>`);
       } else if (type === 'pricing') {
-        appendMessage(`<strong>Founders VIP Annual Pass:</strong><br>• <strong>Plus ($290/yr):</strong> Save $200. Up to 3 terminals, web portal, cloud sync & backups.<br>• <strong>Pro ($590/yr):</strong> Save $400. Unlimited terminals, KDS, floor plans & priority support.<br><em>Note: Subscription activates when you complete onboarding on or after launch day (Nov 13, 2026).</em>`);
+        appendMessage(`<strong>Founders VIP Annual Pass:</strong><br>• <strong>Plus ($290/yr):</strong> Fixed for life. Up to 5 terminals, KDS, customer loyalty & web portal.<br>• <strong>Pro ($590/yr):</strong> Unlimited terminals, floor plan layouts, recipe inventory & phone/remote standby.<br><em>Includes 7-day live shift 100% money-back guarantee. Access begins launch day (Nov 13, 2026).</em>`);
       } else if (type === 'platforms') {
-        appendMessage(`<strong>Supported Platforms & App Stores:</strong><br>• <strong>Android:</strong> Direct APK build coming soon.<br>• <strong>Apple iOS / iPadOS:</strong> Coming soon to the App Store.<br>• <strong>Windows Touchscreen:</strong> Coming soon.`);
+        appendMessage(`<strong>Bring Your Own Device:</strong><br>FlexiTap runs on off-the-shelf Android tablets, iPads, and Windows touch PCs. Stop paying thousands for proprietary hardware leases.`);
       } else if (type === 'sync') {
-        appendMessage(`<strong>Offline-First Architecture:</strong><br>Transactions write locally in milliseconds on your device. Once online, sales automatically synchronize to the cloud.`);
+        appendMessage(`<strong>Offline-First Speed:</strong><br>Orders write locally in milliseconds. Even if your internet connection fails completely during a dinner rush, your counter, receipt printing, and kitchen routing keep running uninterrupted.`);
       } else if (type === 'contact') {
-        appendMessage(`<strong>Contact Sales Team:</strong><br>Direct Email: <a href="mailto:info@flexitapapp.com" style="color:var(--primary); font-weight:700;">info@flexitapapp.com</a> or leave your contact information and inquiry message below:`);
+        appendMessage(`<strong>Contact Sales:</strong><br>Direct Email: <a href="mailto:info@flexitapapp.com" style="color:var(--primary); font-weight:700;">info@flexitapapp.com</a> or leave a message below:`);
         showLeadForm();
       }
     }
@@ -635,9 +629,9 @@
         <div class="chat-form-container">
           <form onsubmit="submitSalesInquiry(event)">
             <input type="text" id="lead-name" placeholder="Business Name / Contact Name" required />
-            <input type="email" id="lead-email" placeholder="Email (e.g. owner@cafe.com)" required />
+            <input type="email" id="lead-email" placeholder="Email (owner@cafe.com)" required />
             <input type="tel" id="lead-phone" placeholder="Phone Number (Optional)" />
-            <textarea id="lead-message" placeholder="Type your inquiry or message here..." required></textarea>
+            <textarea id="lead-message" placeholder="Type your inquiry here..." required></textarea>
             <button type="submit">Send Inquiry</button>
           </form>
         </div>
@@ -661,22 +655,19 @@
           .insert([{ business_name: name, contact_email: email, contact_phone: phone, message: message }]);
 
         if (error) {
-          console.error("Supabase Error:", error);
-          appendMessage(`❌ <strong>Error:</strong> Failed to send inquiry. Please try emailing directly.`);
+          appendMessage(`❌ Failed to send inquiry. Please email info@flexitapapp.com directly.`);
         } else {
-          appendMessage(`✅ <strong>Thank you, ${name}!</strong> Your inquiry and message have been routed to <strong>info@flexitapapp.com</strong>. We will get back to you shortly.`);
+          appendMessage(`✅ <strong>Thank you, ${name}!</strong> Your inquiry has been routed to our team. We will reply shortly.`);
           e.target.reset(); 
         }
       } catch (err) {
-        console.error('Network Error:', err);
-        appendMessage(`❌ <strong>Error:</strong> Network issue. Please check your connection.`);
+        appendMessage(`❌ Network error. Please check your connection.`);
       } finally {
         btn.innerText = 'Send Inquiry';
         btn.disabled = false;
       }
     }
 
-    // --- AUTH LOGIN SUBMIT ---
     document.getElementById('portal-login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('modal-email').value.trim();
@@ -692,19 +683,6 @@
       if (error) {
         errorDiv.innerText = error.message;
         btnText.innerText = 'Log In to Portal';
-        return;
-      }
-
-      const { data: profile } = await supabaseClient
-        .from('profiles')
-        .select('subscription_tier, role')
-        .eq('id', data.user.id)
-        .maybeSingle();
-
-      const userRole = (profile?.role || '').toLowerCase();
-
-      if (userRole === 'dev' || userRole === 'developer' || userRole === 'admin') {
-        window.location.href = 'portal.html';
         return;
       }
 
