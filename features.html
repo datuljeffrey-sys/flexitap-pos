@@ -21,6 +21,7 @@
       --primary-hover: #2563eb;
       --accent-green: #10b981;
       --accent-purple: #8b5cf6;
+      --accent-amber: #f59e0b;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
     }
@@ -54,8 +55,8 @@
 
     /* VISUAL SYSTEM SHOWCASES */
     .showcase-section { padding: 30px 0; }
-    .showcase-row { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; align-items: center; margin-bottom: 90px; }
-    .showcase-row.reversed { grid-template-columns: 1.2fr 1fr; }
+    .showcase-row { display: grid; grid-template-columns: 1fr 1.25fr; gap: 48px; align-items: center; margin-bottom: 96px; }
+    .showcase-row.reversed { grid-template-columns: 1.25fr 1fr; }
 
     .showcase-content { text-align: left; }
     .pill-indicator { font-size: 12px; font-weight: 800; color: #60a5fa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
@@ -65,7 +66,7 @@
     .metric-item strong { display: block; font-size: 20px; font-weight: 800; color: #34d399; }
     .metric-item span { font-size: 12px; color: var(--text-muted); }
 
-    /* REAL SCREENSHOT WRAPPER WITH MODERN APP SHELL & OVERLAYS */
+    /* MOCKUP WINDOW SHELL */
     .screen-mockup-wrapper {
       position: relative;
       border-radius: 18px;
@@ -101,7 +102,7 @@
       object-fit: cover;
     }
 
-    /* GLASSMORPHIC OVERLAYS ON REAL SCREENS */
+    /* GLASSMORPHIC OVERLAYS */
     .screen-overlay-badge {
       position: absolute;
       background: rgba(15, 23, 42, 0.88);
@@ -260,10 +261,10 @@
     <!-- HEADER -->
     <section class="capabilities-hero">
       <div class="hero-badge">
-        <span class="hero-dot"></span> Production-Ready Hardware Ecosystem
+        <span class="hero-dot"></span> Production-Ready Hardware & Software Ecosystem
       </div>
       <h1 class="section-title">Designed for Real Venue Operations.<br>Zero Hardware Lock-In.</h1>
-      <p class="section-subtitle">Explore the live FlexiTap counter terminal, synchronized customer displays, and low-latency kitchen screens—built to run flawlessly on standard devices.</p>
+      <p class="section-subtitle">Explore the complete FlexiTap ecosystem: counter cashier terminals, customer loyalty displays, prep station KDS, live digital menu boards, and comprehensive back-office financial audits.</p>
     </section>
 
     <!-- LIVE PRODUCT SHOWCASES WITH REAL SCREENSHOTS & OVERLAYS -->
@@ -274,15 +275,15 @@
         <div class="showcase-content">
           <div class="pill-indicator">Master Counter Terminal</div>
           <h3>High-Speed Cashier Flow & Ticket Holding</h3>
-          <p>Rings orders up in milliseconds with quick-category tabs, instant barcode lookup, seat/guest tracking, and check holding. The cashier can suspend transactions, process discounts, or print split bills with zero lag.</p>
+          <p>Rings orders up in milliseconds with quick-category tabs, instant barcode lookup, seat/guest tracking, and check holding[cite: 2]. The cashier can suspend transactions, process discounts, or print split bills with zero lag[cite: 2].</p>
           <div class="showcase-metrics">
             <div class="metric-item">
               <strong>Master Terminal</strong>
-              <span>Register 1 Management</span>
+              <span>Register 1 Management[cite: 2]</span>
             </div>
             <div class="metric-item">
               <strong>Instant Hold</strong>
-              <span>Multi-Ticket Parking</span>
+              <span>Multi-Ticket Parking[cite: 2]</span>
             </div>
           </div>
         </div>
@@ -294,8 +295,8 @@
               <div class="window-dot dot-yellow"></div>
               <div class="window-dot dot-green"></div>
             </div>
-            <div class="window-title">FlexiTap POS — Master Register 1</div>
-            <div style="font-size: 11px; color: #34d399; font-weight: 700;">● Online</div>
+            <div class="window-title">FlexiTap POS — Master Register 1[cite: 2]</div>
+            <div style="font-size: 11px; color: #34d399; font-weight: 700;">● Online[cite: 2]</div>
           </div>
           
           <img src="dashboard.png" alt="FlexiTap POS Counter Dashboard" class="screenshot-img" />
@@ -304,16 +305,16 @@
           <div class="screen-overlay-badge top-right">
             <div class="status-dot-pulse"></div>
             <div>
-              <div style="font-size: 11px; font-weight: 800; color: #fff;">LIVE TICKET: T1-1007</div>
-              <div style="font-size: 10px; color: #94a3b8;">Barcode & SKU Search Active</div>
+              <div style="font-size: 11px; font-weight: 800; color: #fff;">LIVE TICKET: T1-1007[cite: 2]</div>
+              <div style="font-size: 10px; color: #94a3b8;">Barcode & SKU Search Active[cite: 2]</div>
             </div>
           </div>
 
           <div class="screen-overlay-badge bottom-left">
             <div style="font-size: 18px;">⚡</div>
             <div>
-              <div style="font-size: 11.5px; font-weight: 700; color: #fff;">Quick Action Matrix</div>
-              <div style="font-size: 10px; color: #94a3b8;">No-Sale, Transfer, Split & Drawer Kick</div>
+              <div style="font-size: 11.5px; font-weight: 700; color: #fff;">Quick Action Matrix[cite: 2]</div>
+              <div style="font-size: 10px; color: #94a3b8;">No-Sale, Transfer, Split & Drawer Kick[cite: 2]</div>
             </div>
           </div>
         </div>
@@ -328,8 +329,8 @@
               <div class="window-dot dot-yellow"></div>
               <div class="window-dot dot-green"></div>
             </div>
-            <div class="window-title">Customer-Facing Display (CDS) — 192.168.68.109</div>
-            <div style="font-size: 11px; color: #60a5fa; font-weight: 700;">Local Synced</div>
+            <div class="window-title">Customer-Facing Display (CDS) — 192.168.68.109[cite: 3]</div>
+            <div style="font-size: 11px; color: #60a5fa; font-weight: 700;">Local Synced[cite: 3]</div>
           </div>
           
           <img src="cds.png" alt="FlexiTap Customer Display System" class="screenshot-img" />
@@ -338,16 +339,16 @@
           <div class="screen-overlay-badge top-right">
             <div style="font-size: 16px;">🎁</div>
             <div>
-              <div style="font-size: 11px; font-weight: 800; color: #fff;">LOYALTY SCANNER</div>
-              <div style="font-size: 10px; color: #cbd5e1;">Scan QR to Save 10%</div>
+              <div style="font-size: 11px; font-weight: 800; color: #fff;">LOYALTY SCANNER[cite: 3]</div>
+              <div style="font-size: 10px; color: #cbd5e1;">Scan QR to Save 10%[cite: 3]</div>
             </div>
           </div>
 
           <div class="screen-overlay-badge bottom-left">
             <div style="font-size: 16px;">💳</div>
             <div>
-              <div style="font-size: 11.5px; font-weight: 700; color: #fff;">Live Cart Broadcast</div>
-              <div style="font-size: 10px; color: #94a3b8;">Itemized Taxes & Grand Total Preview</div>
+              <div style="font-size: 11.5px; font-weight: 700; color: #fff;">Live Cart Broadcast[cite: 3]</div>
+              <div style="font-size: 10px; color: #94a3b8;">Itemized Taxes & Grand Total Preview[cite: 3]</div>
             </div>
           </div>
         </div>
@@ -355,15 +356,15 @@
         <div class="showcase-content">
           <div class="pill-indicator">Secondary Screen Mirroring</div>
           <h3>Customer-Facing Display & Loyalty QR</h3>
-          <p>Turn any secondary tablet, touch monitor, or compact screen toward your customer. FlexiTap streams active cart items, taxes, totals, and promotional loyalty club sign-up codes in real-time over your venue's private network.</p>
+          <p>Turn any secondary tablet, touch monitor, or compact screen toward your customer[cite: 3]. FlexiTap streams active cart items, taxes, totals, and promotional loyalty club sign-up codes in real-time over your venue's private network[cite: 3].</p>
           <div class="showcase-metrics">
             <div class="metric-item">
-              <strong>Local LAN</strong>
-              <span>IP-Based Auto Sync</span>
+              <strong>Local LAN[cite: 3]</strong>
+              <span>IP-Based Auto Sync[cite: 3]</span>
             </div>
             <div class="metric-item">
-              <strong>QR Loyalty</strong>
-              <span>Frictionless Sign-Up</span>
+              <strong>QR Loyalty[cite: 3]</strong>
+              <span>Frictionless Sign-Up[cite: 3]</span>
             </div>
           </div>
         </div>
@@ -374,15 +375,15 @@
         <div class="showcase-content">
           <div class="pill-indicator">Back-of-House Coordination</div>
           <h3>Dedicated Kitchen Display System (KDS)</h3>
-          <p>Replace paper clutter and lost kitchen receipts with clean digital prep screens. Incoming tickets route by station (Hot Bar, Cold Prep, Drinks) and provide visual completion cues to keep your kitchen operating at peak turnaround speed.</p>
+          <p>Replace paper clutter and lost kitchen receipts with clean digital prep screens[cite: 4]. Incoming tickets route by station (Hot Bar, Cold Prep, Drinks) and provide visual completion cues to keep your kitchen operating at peak turnaround speed[cite: 4].</p>
           <div class="showcase-metrics">
             <div class="metric-item">
               <strong>Zero Tickets Lost</strong>
-              <span>Paperless Station Routing</span>
+              <span>Paperless Station Routing[cite: 4]</span>
             </div>
             <div class="metric-item">
               <strong>Real-Time</strong>
-              <span>All-Caught-Up Confirmation</span>
+              <span>All-Caught-Up Confirmation[cite: 4]</span>
             </div>
           </div>
         </div>
@@ -394,8 +395,8 @@
               <div class="window-dot dot-yellow"></div>
               <div class="window-dot dot-green"></div>
             </div>
-            <div class="window-title">Kitchen Display System (KDS) — IP: 192.168.68.109</div>
-            <div style="font-size: 11px; color: #10b981; font-weight: 700;">Station Connected</div>
+            <div class="window-title">Kitchen Display System (KDS) — IP: 192.168.68.109[cite: 4]</div>
+            <div style="font-size: 11px; color: #10b981; font-weight: 700;">Station Connected[cite: 4]</div>
           </div>
           
           <img src="kds.png" alt="FlexiTap Kitchen Display System" class="screenshot-img" />
@@ -404,8 +405,8 @@
           <div class="screen-overlay-badge top-right">
             <div style="font-size: 16px;">🍳</div>
             <div>
-              <div style="font-size: 11px; font-weight: 800; color: #fff;">PREP STATION SYNC</div>
-              <div style="font-size: 10px; color: #cbd5e1;">Live Line Dispatch</div>
+              <div style="font-size: 11px; font-weight: 800; color: #fff;">PREP STATION SYNC[cite: 4]</div>
+              <div style="font-size: 10px; color: #cbd5e1;">Live Line Dispatch[cite: 4]</div>
             </div>
           </div>
 
@@ -413,7 +414,107 @@
             <div class="status-dot-pulse"></div>
             <div>
               <div style="font-size: 11.5px; font-weight: 700; color: #fff;">Zero Service Delay</div>
-              <div style="font-size: 10px; color: #94a3b8;">Auto-updates as cashiers ring items</div>
+              <div style="font-size: 10px; color: #94a3b8;">Auto-updates as cashiers ring items[cite: 4]</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHOWCASE 4: DIGITAL MENU BOARD (DMB) -->
+      <div class="showcase-row reversed">
+        <div class="screen-mockup-wrapper">
+          <div class="window-header">
+            <div class="window-dots">
+              <div class="window-dot dot-red"></div>
+              <div class="window-dot dot-yellow"></div>
+              <div class="window-dot dot-green"></div>
+            </div>
+            <div class="window-title">Digital Menu Board (DMB) — DMB IP: 192.168.68.106[cite: 5]</div>
+            <div style="font-size: 11px; color: #f59e0b; font-weight: 700;">Live Digital Menu[cite: 5]</div>
+          </div>
+          
+          <img src="menuboard.png" alt="FlexiTap Digital Menu Board" class="screenshot-img" />
+
+          <!-- INTERACTIVE GLASSMORPHIC OVERLAYS -->
+          <div class="screen-overlay-badge top-right">
+            <div style="font-size: 16px;">📺</div>
+            <div>
+              <div style="font-size: 11px; font-weight: 800; color: #fff;">LIVE DIGITAL BOARD[cite: 5]</div>
+              <div style="font-size: 10px; color: #fde68a;">Auto Price & Item Sync[cite: 5]</div>
+            </div>
+          </div>
+
+          <div class="screen-overlay-badge bottom-left">
+            <div class="status-dot-pulse" style="background:#f59e0b; box-shadow:0 0 10px #f59e0b;"></div>
+            <div>
+              <div style="font-size: 11.5px; font-weight: 700; color: #fff;">Zero Cloud Fees[cite: 5]</div>
+              <div style="font-size: 10px; color: #94a3b8;">Direct LAN screen broadcast[cite: 5]</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="showcase-content">
+          <div class="pill-indicator">Overhead Merchandising</div>
+          <h3>Dynamic Digital Menu Boards (DMB)</h3>
+          <p>Mount any TV, HDMI display, or smart screen overhead[cite: 5]. FlexiTap broadcasts your live categories (Hot Beverages, Bakery, Retail), real-time pricing, and ticker announcements directly over LAN—eliminating costly third-party menu SaaS subscriptions[cite: 5].</p>
+          <div class="showcase-metrics">
+            <div class="metric-item">
+              <strong>Instant Update</strong>
+              <span>Price Changes Sync Live[cite: 5]</span>
+            </div>
+            <div class="metric-item">
+              <strong>Dynamic Ticker</strong>
+              <span>Custom Promotional Banners[cite: 5]</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHOWCASE 5: BACK OFFICE REPORTS HUB -->
+      <div class="showcase-row">
+        <div class="showcase-content">
+          <div class="pill-indicator">Financial Intelligence & Control</div>
+          <h3>Executive Back Office Reports Hub</h3>
+          <p>Stay on top of store performance with comprehensive revenue trend curves, product category mix distributions, hourly rush volume, and cashier performance audits[cite: 6]. All cash settlement records and liabilities are verified automatically[cite: 6].</p>
+          <div class="showcase-metrics">
+            <div class="metric-item">
+              <strong>Audit Verified</strong>
+              <span>Cash & Card Balance Match[cite: 6]</span>
+            </div>
+            <div class="metric-item">
+              <strong>Hourly Curves</strong>
+              <span>Peak Service Detection[cite: 6]</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen-mockup-wrapper">
+          <div class="window-header">
+            <div class="window-dots">
+              <div class="window-dot dot-red"></div>
+              <div class="window-dot dot-yellow"></div>
+              <div class="window-dot dot-green"></div>
+            </div>
+            <div class="window-title">FlexiTap — Back Office Reports Hub[cite: 6]</div>
+            <div style="font-size: 11px; color: #10b981; font-weight: 700;">Audit Verified[cite: 6]</div>
+          </div>
+          
+          <img src="backoffice.png" alt="FlexiTap Back Office Reports Hub" class="screenshot-img" />
+
+          <!-- INTERACTIVE GLASSMORPHIC OVERLAYS -->
+          <div class="screen-overlay-badge top-right">
+            <div style="font-size: 16px;">📊</div>
+            <div>
+              <div style="font-size: 11px; font-weight: 800; color: #fff;">SALES SUMMARY[cite: 6]</div>
+              <div style="font-size: 10px; color: #cbd5e1;">Hourly Trends & Product Mix[cite: 6]</div>
+            </div>
+          </div>
+
+          <div class="screen-overlay-badge bottom-left">
+            <div style="font-size: 16px;">🛡️</div>
+            <div>
+              <div style="font-size: 11.5px; font-weight: 700; color: #fff;">Reconciliation Hub[cite: 6]</div>
+              <div style="font-size: 10px; color: #94a3b8;">One-Click Detailed Report Export[cite: 6]</div>
             </div>
           </div>
         </div>
@@ -435,15 +536,15 @@
       <div class="workflow-view active" id="wf-fb">
         <div class="workflow-card">
           <h4>🗺️ Visual Table Floor Plans</h4>
-          <p>Interactive dining room floor plan with live table occupancy, elapsed meal timers, and effortless check transfers between tables.</p>
+          <p>Interactive dining room floor plan with live table occupancy, elapsed meal timers, and check transfers between tables.</p>
         </div>
         <div class="workflow-card">
           <h4>🍳 Direct Kitchen Routing</h4>
-          <p>Route food tickets straight to thermal line printers or digital KDS screens with modifier grouping (e.g., extra shots, dairy alternatives).</p>
+          <p>Route food tickets straight to thermal line printers or digital KDS screens with modifier grouping (e.g., extra shots, dairy alternatives)[cite: 4].</p>
         </div>
         <div class="workflow-card">
           <h4>🧾 Seat-Based Ordering & Bill Split</h4>
-          <p>Split tickets cleanly by guest seat or item, with complete tip reconciliation integrated into end-of-shift cashier Z-reports.</p>
+          <p>Split tickets cleanly by guest seat or item, with complete tip reconciliation integrated into end-of-shift cashier Z-reports[cite: 6].</p>
         </div>
       </div>
 
@@ -451,15 +552,15 @@
       <div class="workflow-view" id="wf-retail">
         <div class="workflow-card">
           <h4>📷 Instant Barcode Scanning</h4>
-          <p>High-speed product lookups using standard USB scanner guns, wireless Bluetooth devices, or integrated tablet cameras.</p>
+          <p>High-speed product lookups using standard USB scanner guns, wireless Bluetooth devices, or integrated tablet cameras[cite: 2].</p>
         </div>
         <div class="workflow-card">
           <h4>💵 Cash Drawer & Till Audits</h4>
-          <p>Automated drawer kick commands via standard RJ11, recorded cash drops, and manager PIN authorizations for secure shift reconciliation.</p>
+          <p>Automated drawer kick commands via standard RJ11, recorded cash drops, and manager PIN authorizations for secure shift reconciliation[cite: 2, 6].</p>
         </div>
         <div class="workflow-card">
           <h4>🖥️ Customer-Facing Display (CDS)</h4>
-          <p>Broadcast itemized totals, taxes, and promotional loyalty discount QR codes live to any secondary tablet facing the customer.</p>
+          <p>Broadcast itemized totals, taxes, and promotional loyalty discount QR codes live to any secondary tablet facing the customer[cite: 3].</p>
         </div>
       </div>
     </section>
@@ -473,10 +574,10 @@
         <div class="hub-tile">
           <div class="hub-icon">🖨️</div>
           <h4>Thermal Receipt Printers</h4>
-          <p>Standard ESC/POS protocol compatibility across counter checkouts and kitchen prep stations.</p>
+          <p>Standard ESC/POS protocol compatibility across counter checkouts and kitchen prep stations[cite: 2, 4].</p>
           <div class="hub-badges">
             <span class="hub-tag">58mm & 80mm</span>
-            <span class="hub-tag">Network LAN IP</span>
+            <span class="hub-tag">Network LAN IP[cite: 4]</span>
             <span class="hub-tag">Wi-Fi & Bluetooth</span>
           </div>
         </div>
@@ -484,22 +585,22 @@
         <div class="hub-tile">
           <div class="hub-icon">🖥️</div>
           <h4>Multi-Screen Terminals</h4>
-          <p>Repurpose standard monitors, PCs, or tablets into operational displays.</p>
+          <p>Repurpose standard monitors, PCs, or tablets into operational displays[cite: 3, 4, 5].</p>
           <div class="hub-badges">
-            <span class="hub-tag">Kitchen KDS</span>
-            <span class="hub-tag">Customer CDS</span>
-            <span class="hub-tag">Digital Menu Boards</span>
+            <span class="hub-tag">Kitchen KDS[cite: 4]</span>
+            <span class="hub-tag">Customer CDS[cite: 3]</span>
+            <span class="hub-tag">Digital Menu Boards[cite: 5]</span>
           </div>
         </div>
 
         <div class="hub-tile">
           <div class="hub-icon">📷</div>
           <h4>Scanners & Drawers</h4>
-          <p>High-speed 1D/2D scanning and standard automated cash drawer triggers.</p>
+          <p>High-speed 1D/2D scanning and standard automated cash drawer triggers[cite: 2].</p>
           <div class="hub-badges">
-            <span class="hub-tag">1D / 2D Barcodes</span>
-            <span class="hub-tag">RJ11 Kick Port</span>
-            <span class="hub-tag">Loyalty QR Scanning</span>
+            <span class="hub-tag">1D / 2D Barcodes[cite: 2]</span>
+            <span class="hub-tag">RJ11 Kick Port[cite: 2]</span>
+            <span class="hub-tag">Loyalty QR Scanning[cite: 3]</span>
           </div>
         </div>
 
