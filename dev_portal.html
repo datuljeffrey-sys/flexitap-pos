@@ -116,7 +116,7 @@
 
     /* Panels & Tables */
     .panel { background-color: var(--card-bg); border: 1px solid var(--card-border); padding: 24px; border-radius: 16px; margin-bottom: 24px; }
-    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--card-border); }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--card-border); flex-wrap: wrap; gap: 10px; }
     .panel-title { font-size: 1.1rem; font-weight: 800; color: var(--text); }
 
     .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; }
@@ -130,7 +130,23 @@
     }
     .action-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-    /* --- SUPPORT DESK SPLIT VIEW --- */
+    /* Storage Drag & Drop */
+    .upload-zone {
+      border: 2px dashed var(--card-border);
+      border-radius: 14px;
+      padding: 30px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.01);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 24px;
+    }
+    .upload-zone:hover {
+      border-color: var(--primary);
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    /* Support Desk */
     .support-desk-grid { display: grid; grid-template-columns: 320px 1fr; gap: 20px; height: 580px; }
     .session-list { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; overflow-y: auto; display: flex; flex-direction: column; }
     .session-item { padding: 14px 16px; border-bottom: 1px solid var(--card-border); cursor: pointer; transition: 0.2s; }
@@ -212,6 +228,12 @@
           <li>
             <button class="nav-btn active" onclick="switchNav('clients', this)">
               <span>👥 Clients</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn" onclick="switchNav('updates', this)">
+              <span>📦 Update</span>
+              <span class="nav-badge" id="storage-status-badge">Live</span>
             </button>
           </li>
           <li>
@@ -301,15 +323,64 @@
           </div>
         </div>
 
-        <!-- ================= 2. LIVE SUPPORT DESK ================= -->
+        <!-- ================= 2. UPDATE VIEW (STORAGE LISTENER) ================= -->
+        <div id="view-updates" class="tab-view">
+          <div class="kpi-row">
+            <div class="kpi-card">
+              <div class="kpi-title">Storage Target Bucket</div>
+              <div class="kpi-val" style="color: var(--primary);" id="kpi-current-bucket">app-releases</div>
+              <div class="kpi-status" style="color: var(--accent);">● Supabase Storage Active</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Available Release Artifacts</div>
+              <div class="kpi-val" style="color: var(--accent);" id="kpi-files-count">0</div>
+              <div class="kpi-status" style="color: var(--text-muted);" id="kpi-last-sync">Never checked</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Storage Poller</div>
+              <div class="kpi-val" style="color: #a855f7;" id="poller-state">Active</div>
+              <div class="kpi-status" style="color: var(--accent);">Syncing every 10s</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Bucket Releases & OTA Artifacts</div>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="text" id="storage-bucket-input" value="app-releases" placeholder="Bucket name..." style="padding: 7px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 160px;">
+                <button class="action-btn" onclick="fetchStorageFiles()">Refresh Bucket</button>
+              </div>
+            </div>
+
+            <div class="upload-zone" onclick="document.getElementById('ota-file-input').click()">
+              <p style="font-weight: 700; margin-bottom: 6px;">Click or drag APK / EXE / ZIP build to publish an update</p>
+              <p style="color: var(--text-muted); font-size: 0.8rem;">Uploads directly to selected Supabase Storage bucket</p>
+              <input type="file" id="ota-file-input" style="display: none;" onchange="handleFileUpload(event)" />
+            </div>
+
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>File / Package Name</th>
+                  <th>Size</th>
+                  <th>Last Modified</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="storage-files-tbody">
+                <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">Querying Supabase storage...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ================= 3. LIVE SUPPORT DESK ================= -->
         <div id="view-support" class="tab-view">
           <div class="support-desk-grid">
-            <!-- Merchant Session Sidebar -->
             <div class="session-list" id="support-sessions-list">
               <div style="padding: 16px; font-size: 12px; color: var(--text-muted); text-align: center;">Loading active merchant sessions...</div>
             </div>
 
-            <!-- Active Chat Window -->
             <div class="chat-console">
               <div class="chat-console-header">
                 <div>
@@ -329,7 +400,7 @@
           </div>
         </div>
 
-        <!-- ================= 3. REMOTE ACCESS VIEW ================= -->
+        <!-- ================= 4. REMOTE ACCESS VIEW ================= -->
         <div id="view-remote" class="tab-view">
           <div class="panel">
             <div class="panel-header">
@@ -357,7 +428,7 @@
           </div>
         </div>
 
-        <!-- ================= 4. MONITORING VIEW ================= -->
+        <!-- ================= 5. MONITORING VIEW ================= -->
         <div id="view-monitoring" class="tab-view">
           <div class="kpi-row">
             <div class="kpi-card">
@@ -373,7 +444,7 @@
           </div>
         </div>
 
-        <!-- ================= 5. ERRORS VIEW ================= -->
+        <!-- ================= 6. ERRORS VIEW ================= -->
         <div id="view-errors" class="tab-view">
           <div class="panel">
             <div class="panel-header">
@@ -415,9 +486,11 @@
     let selectedSession = null;
     let sessionsChannelSubscribed = false;
     let currentChatChannel = null;
+    let storagePollInterval = null;
 
     const views = {
       clients: { title: 'Merchant Clients & Support Hub', subtitle: 'Search merchant stores, troubleshoot terminal fleets, and override subscription tiers.' },
+      updates: { title: 'App Updates & Storage Releases', subtitle: 'Listen directly to Supabase storage releases, inspect APKs/binaries, and publish OTA payloads.' },
       support: { title: 'Live Merchant Support Desk', subtitle: 'Reply directly to paying Plus & Pro merchants in real time.' },
       remote: { title: 'Remote Access & Diagnostics', subtitle: 'Send real-time ADB commands, clear caches, and inspect remote device state.' },
       monitoring: { title: 'Telemetry & Sockets Monitoring', subtitle: 'Live Supabase real-time channels, API latencies, and sync performance.' },
@@ -435,6 +508,12 @@
       document.getElementById('view-subtitle').textContent = views[key].subtitle;
 
       if (key === 'support') loadSupportDeskSessions();
+      if (key === 'updates') {
+        fetchStorageFiles();
+        startStoragePoller();
+      } else {
+        stopStoragePoller();
+      }
     }
 
     function toggleTheme() {
@@ -496,6 +575,7 @@
     });
 
     async function devLogout() {
+      stopStoragePoller();
       await supabaseClient.auth.signOut();
       document.getElementById('dev-app-layout').style.display = 'none';
       document.getElementById('dev-password').value = '';
@@ -522,11 +602,11 @@
 
       tbody.innerHTML = list.map(s => `
         <tr>
-          <td><strong>${s.name || 'Unnamed Store'}</strong><br><span style="font-family: monospace; font-size: 0.75rem; color: var(--text-muted);">${s.id}</span></td>
+          <td><strong>\({s.name || 'Unnamed Store'}</strong><br><span style="font-family: monospace; font-size: 0.75rem; color: var(--text-muted);">\){s.id}</span></td>
           <td><span style="font-family: monospace; font-size: 0.8rem; color: var(--primary);">${s.owner_id || s.user_id || 'N/A'}</span></td>
           <td>${s.created_at ? new Date(s.created_at).toLocaleDateString() : 'N/A'}</td>
           <td>
-            <button class="action-btn" onclick="openChatForStore('${s.id}', '${(s.name || 'Store').replace(/'/g, "\\'")}')">Open Support Chat</button>
+            <button class="action-btn" onclick="openChatForStore('\({s.id}', '\){(s.name || 'Store').replace(/'/g, "\\'")}')">Open Support Chat</button>
           </td>
         </tr>
       `).join('');
@@ -539,6 +619,105 @@
         (s.id && s.id.toLowerCase().includes(term))
       );
       renderStores(filtered);
+    }
+
+    // --- SUPABASE STORAGE UPDATE LISTENER & EXPLORER ---
+    function formatBytes(bytes) {
+      if (!bytes || bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    async function fetchStorageFiles() {
+      const bucketName = document.getElementById('storage-bucket-input').value.trim() || 'app-releases';
+      document.getElementById('kpi-current-bucket').innerText = bucketName;
+
+      const tbody = document.getElementById('storage-files-tbody');
+
+      try {
+        const { data, error } = await supabaseClient.storage.from(bucketName).list('', {
+          limit: 100,
+          offset: 0,
+          sortBy: { column: 'created_at', order: 'desc' }
+        });
+
+        if (error) {
+          tbody.innerHTML = `<tr><td colspan="4" style="color: var(--danger); padding: 20px; text-align: center;">Error reading storage: ${error.message} (Check bucket name & permissions)</td></tr>`;
+          return;
+        }
+
+        const validFiles = (data || []).filter(item => item.name !== '.emptyFolderPlaceholder');
+        document.getElementById('kpi-files-count').innerText = validFiles.length;
+        document.getElementById('kpi-last-sync').innerText = 'Synced at ' + new Date().toLocaleTimeString();
+
+        if (validFiles.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">No update packages found in bucket "${bucketName}".</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = validFiles.map(file => {
+          const { data: pubData } = supabaseClient.storage.from(bucketName).getPublicUrl(file.name);
+          const downloadUrl = pubData?.publicUrl || '#';
+          const size = file.metadata?.size ? formatBytes(file.metadata.size) : 'Unknown';
+          const updated = file.created_at || file.updated_at ? new Date(file.created_at || file.updated_at).toLocaleString() : 'N/A';
+
+          return `
+            <tr>
+              <td>
+                <span style="font-weight: 700;">📦 ${file.name}</span>
+                <span style="display:block; font-size: 0.72rem; color: var(--text-muted); font-family: monospace;">${file.id || ''}</span>
+              </td>
+              <td>${size}</td>
+              <td>${updated}</td>
+              <td>
+                <a href="${downloadUrl}" target="_blank" download class="action-btn" style="text-decoration: none; display: inline-block;">Download Link</a>
+                <button class="action-btn" style="color: var(--danger); margin-left: 6px;" onclick="deleteStorageFile('\({bucketName}', '\){file.name}')">Delete</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="4" style="color: var(--danger); text-align: center;">Storage error: ${err.message}</td></tr>`;
+      }
+    }
+
+    async function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const bucketName = document.getElementById('storage-bucket-input').value.trim() || 'app-releases';
+      const filePath = `\({Date.now()}_\){file.name.replace(/\s+/g, '_')}`;
+
+      const { data, error } = await supabaseClient.storage.from(bucketName).upload(filePath, file, {
+        upsert: true
+      });
+
+      if (error) {
+        alert('Upload failed: ' + error.message);
+      } else {
+        alert('Update payload uploaded successfully: ' + filePath);
+        fetchStorageFiles();
+      }
+      event.target.value = '';
+    }
+
+    async function deleteStorageFile(bucket, filename) {
+      if (!confirm(`Are you sure you want to delete ${filename}?`)) return;
+      const { error } = await supabaseClient.storage.from(bucket).remove([filename]);
+      if (error) alert('Error: ' + error.message);
+      else fetchStorageFiles();
+    }
+
+    function startStoragePoller() {
+      if (storagePollInterval) clearInterval(storagePollInterval);
+      storagePollInterval = setInterval(fetchStorageFiles, 10000);
+    }
+
+    function stopStoragePoller() {
+      if (storagePollInterval) clearInterval(storagePollInterval);
     }
 
     // --- SUPPORT DESK REAL-TIME AGENT LOGIC ---
@@ -556,13 +735,12 @@
       }
 
       container.innerHTML = sessions.map(s => `
-        <div class="session-item ${selectedSession?.id === s.id ? 'active' : ''}" onclick="selectSession('${s.id}', '${s.store_name.replace(/'/g, "\\'")}', '${s.merchant_email}')">
+        <div class="session-item \({selectedSession?.id === s.id ? 'active' : ''}" onclick="selectSession('\){s.id}', '\({s.store_name.replace(/'/g, "\\'")}', '\){s.merchant_email}')">
           <div class="session-store-title">${s.store_name}</div>
           <div class="session-merchant-email">${s.merchant_email}</div>
         </div>
       `).join('');
 
-      // Single subscription guard to avoid listener loop
       if (!sessionsChannelSubscribed) {
         sessionsChannelSubscribed = true;
         supabaseClient.channel('dev-sessions').on('postgres_changes', {
@@ -594,12 +772,10 @@
         messages.forEach(m => renderDeskBubble(m.sender_role, m.message, m.created_at));
       }
 
-      // Unsubscribe previous message listener if switching sessions
       if (currentChatChannel) {
         supabaseClient.removeChannel(currentChatChannel);
       }
 
-      // Realtime incoming from merchant
       currentChatChannel = supabaseClient.channel(`desk-${sessionId}`).on('postgres_changes', {
         event: 'INSERT', schema: 'public', table: 'support_messages', filter: `session_id=eq.${sessionId}`
       }, (payload) => {
@@ -614,7 +790,7 @@
       const timeStr = timestamp ? new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
       const div = document.createElement('div');
       div.className = `agent-bubble ${role}`;
-      div.innerHTML = `${message} <span class="bubble-ts">${role === 'agent' ? 'You' : 'Merchant'} • ${timeStr}</span>`;
+      div.innerHTML = `\({message} <span class="bubble-ts">\){role === 'agent' ? 'You' : 'Merchant'} • ${timeStr}</span>`;
       body.appendChild(div);
       body.scrollTop = body.scrollHeight;
     }
@@ -637,7 +813,7 @@
     }
 
     function openChatForStore(storeId, storeName) {
-      switchNav('support', document.querySelectorAll('.nav-btn')[1]);
+      switchNav('support', document.querySelectorAll('.nav-btn')[2]);
     }
 
     function sendRemoteCommand() {
@@ -646,7 +822,7 @@
       if (!val) return;
       const logBox = document.getElementById('remote-logs');
       const time = new Date().toLocaleTimeString();
-      logBox.innerHTML += `<div class="log-line"><span class="log-info">[${time}]</span> &gt; ${val}</div>`;
+      logBox.innerHTML += `<div class="log-line"><span class="log-info">[\({time}]</span> &gt;\){val}</div>`;
       logBox.innerHTML += `<div class="log-line"><span class="log-success">[${time}]</span> Daemon acknowledged command. Status: 0 (OK)</div>`;
       input.value = '';
       logBox.scrollTop = logBox.scrollHeight;
