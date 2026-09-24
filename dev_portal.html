@@ -282,13 +282,13 @@
 
       <div class="content-body">
 
-        <!-- ================= 1. CLIENTS VIEW ================= -->
+        <!-- ================= 1. CLIENTS VIEW (FROM PROFILES) ================= -->
         <div id="view-clients" class="tab-view active">
           <div class="kpi-row">
             <div class="kpi-card">
-              <div class="kpi-title">Active Store Records</div>
+              <div class="kpi-title">Total Registered Accounts</div>
               <div class="kpi-val" style="color: var(--accent);" id="kpi-store-count">...</div>
-              <div class="kpi-status" style="color: var(--accent);">● Real-Time Database Query</div>
+              <div class="kpi-status" style="color: var(--accent);">● Public Profiles Query</div>
             </div>
             <div class="kpi-card">
               <div class="kpi-title">Developer Access Pool</div>
@@ -305,19 +305,20 @@
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title">Merchant Accounts & Diagnostics</div>
-              <input type="text" id="merchant-search" onkeyup="filterMerchants()" placeholder="Search store name or ID..." style="padding: 8px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 300px;">
+              <input type="text" id="merchant-search" onkeyup="filterMerchants()" placeholder="Search user ID, role, or tier..." style="padding: 8px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 300px;">
             </div>
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Store Name & ID</th>
-                  <th>Owner / User ID</th>
+                  <th>Profile / User ID</th>
+                  <th>Subscription Tier</th>
+                  <th>Role</th>
                   <th>Created At</th>
                   <th>Support Quick Action</th>
                 </tr>
               </thead>
               <tbody id="stores-tbody">
-                <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">Loading store records...</td></tr>
+                <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">Loading profiles...</td></tr>
               </tbody>
             </table>
           </div>
@@ -482,14 +483,14 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let activeDevUser = null;
-    let cachedStores = [];
+    let cachedProfiles = [];
     let selectedSession = null;
     let sessionsChannelSubscribed = false;
     let currentChatChannel = null;
     let storagePollInterval = null;
 
     const views = {
-      clients: { title: 'Merchant Clients & Support Hub', subtitle: 'Search merchant stores, troubleshoot terminal fleets, and override subscription tiers.' },
+      clients: { title: 'Merchant Clients & Support Hub', subtitle: 'Search merchant profiles, troubleshoot accounts, and inspect subscription tiers.' },
       updates: { title: 'App Updates & Storage Releases', subtitle: 'Listen directly to Supabase storage releases, inspect APKs/binaries, and publish OTA payloads.' },
       support: { title: 'Live Merchant Support Desk', subtitle: 'Reply directly to paying Plus & Pro merchants in real time.' },
       remote: { title: 'Remote Access & Diagnostics', subtitle: 'Send real-time ADB commands, clear caches, and inspect remote device state.' },
@@ -582,43 +583,67 @@
       document.getElementById('dev-auth-view').style.display = 'flex';
     }
 
-    // --- DATA LOADING FOR DEV OPS ---
+    // --- DATA LOADING FOR CLIENTS (FROM PROFILES) ---
     async function loadDevData() {
-      const { data: stores } = await supabaseClient.from('stores').select('*');
-      cachedStores = stores || [];
-      document.getElementById('kpi-store-count').innerText = cachedStores.length;
-      renderStores(cachedStores);
+      const { data: profiles, error } = await supabaseClient
+        .from('profiles')
+        .select('*');
 
-      const { data: devs } = await supabaseClient.from('profiles').select('id').in('role', ['dev', 'developer', 'admin']);
-      document.getElementById('kpi-dev-count').innerText = (devs?.length || 1) + ' Admins';
-    }
-
-    function renderStores(list) {
-      const tbody = document.getElementById('stores-tbody');
-      if (!list || list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">No store profiles registered.</td></tr>';
+      if (error) {
+        console.error('Error fetching profiles:', error);
         return;
       }
 
-      tbody.innerHTML = list.map(s => `
-        <tr>
-          <td><strong>\({s.name || 'Unnamed Store'}</strong><br><span style="font-family: monospace; font-size: 0.75rem; color: var(--text-muted);">\){s.id}</span></td>
-          <td><span style="font-family: monospace; font-size: 0.8rem; color: var(--primary);">${s.owner_id || s.user_id || 'N/A'}</span></td>
-          <td>${s.created_at ? new Date(s.created_at).toLocaleDateString() : 'N/A'}</td>
-          <td>
-            <button class="action-btn" onclick="openChatForStore('\({s.id}', '\){(s.name || 'Store').replace(/'/g, "\\'")}')">Open Support Chat</button>
-          </td>
-        </tr>
-      `).join('');
+      cachedProfiles = profiles || [];
+      const devCount = cachedProfiles.filter(p => ['dev', 'developer', 'admin'].includes((p.role || '').toLowerCase())).length;
+
+      document.getElementById('kpi-store-count').innerText = cachedProfiles.length;
+      document.getElementById('kpi-dev-count').innerText = `${devCount} Admins`;
+      renderProfiles(cachedProfiles);
+    }
+
+    function renderProfiles(list) {
+      const tbody = document.getElementById('stores-tbody');
+      if (!list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">No profiles registered.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(p => {
+        const isDev = ['dev', 'developer', 'admin'].includes((p.role || '').toLowerCase());
+        const roleBadge = isDev
+          ? '<span style="color: var(--primary); font-weight: 700; background: rgba(59,130,246,0.15); padding: 3px 8px; border-radius: 6px;">ADMIN / DEV</span>'
+          : '<span style="color: var(--accent); font-weight: 700; background: rgba(16,185,129,0.15); padding: 3px 8px; border-radius: 6px;">MERCHANT</span>';
+
+        const tierBadge = `<span style="text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">${p.subscription_tier || 'FREE'}</span>`;
+        const createdAt = p.created_at ? new Date(p.created_at).toLocaleDateString() : 'N/A';
+
+        return `
+          <tr>
+            <td>
+              <span style="font-family: monospace; font-size: 0.82rem; color: #fff; font-weight: 600;">${p.id}</span>
+              \({p.email ? `<br><span style="font-size: 0.75rem; color: var(--text-muted);">\){p.email}</span>` : ''}
+            </td>
+            <td>${tierBadge}</td>
+            <td>${roleBadge}</td>
+            <td>${createdAt}</td>
+            <td>
+              <button class="action-btn" onclick="openChatForStore('\({p.id}', '\){p.email || p.id}')">Open Support Chat</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function filterMerchants() {
       const term = document.getElementById('merchant-search').value.toLowerCase();
-      const filtered = cachedStores.filter(s => 
-        (s.name && s.name.toLowerCase().includes(term)) ||
-        (s.id && s.id.toLowerCase().includes(term))
+      const filtered = cachedProfiles.filter(p => 
+        (p.id && p.id.toLowerCase().includes(term)) ||
+        (p.role && p.role.toLowerCase().includes(term)) ||
+        (p.subscription_tier && p.subscription_tier.toLowerCase().includes(term)) ||
+        (p.email && p.email.toLowerCase().includes(term))
       );
-      renderStores(filtered);
+      renderProfiles(filtered);
     }
 
     // --- SUPABASE STORAGE UPDATE LISTENER & EXPLORER ---
@@ -644,7 +669,7 @@
         });
 
         if (error) {
-          tbody.innerHTML = `<tr><td colspan="4" style="color: var(--danger); padding: 20px; text-align: center;">Error reading storage: ${error.message} (Check bucket name & permissions)</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="4" style="color: var(--danger); padding: 20px; text-align: center;">Error reading storage: ${error.message} (Ensure SELECT policy exists)</td></tr>`;
           return;
         }
 
