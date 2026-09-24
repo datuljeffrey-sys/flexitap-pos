@@ -323,12 +323,12 @@
           </div>
         </div>
 
-        <!-- ================= 2. UPDATE VIEW (STORAGE LISTENER) ================= -->
+        <!-- ================= 2. UPDATE VIEW (SUPABASE STORAGE LISTENER) ================= -->
         <div id="view-updates" class="tab-view">
           <div class="kpi-row">
             <div class="kpi-card">
               <div class="kpi-title">Storage Target Bucket</div>
-              <div class="kpi-val" style="color: var(--primary);" id="kpi-current-bucket">app-releases</div>
+              <div class="kpi-val" style="color: var(--primary);" id="kpi-current-bucket">updates</div>
               <div class="kpi-status" style="color: var(--accent);">● Supabase Storage Active</div>
             </div>
             <div class="kpi-card">
@@ -347,7 +347,7 @@
             <div class="panel-header">
               <div class="panel-title">Bucket Releases & OTA Artifacts</div>
               <div style="display: flex; gap: 10px; align-items: center;">
-                <input type="text" id="storage-bucket-input" value="app-releases" placeholder="Bucket name..." style="padding: 7px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 160px;">
+                <input type="text" id="storage-bucket-input" value="updates" placeholder="Bucket name..." style="padding: 7px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 160px;">
                 <button class="action-btn" onclick="fetchStorageFiles()">Refresh Bucket</button>
               </div>
             </div>
@@ -631,7 +631,7 @@
     }
 
     async function fetchStorageFiles() {
-      const bucketName = document.getElementById('storage-bucket-input').value.trim() || 'app-releases';
+      const bucketName = document.getElementById('storage-bucket-input').value.trim() || 'updates';
       document.getElementById('kpi-current-bucket').innerText = bucketName;
 
       const tbody = document.getElementById('storage-files-tbody');
@@ -688,7 +688,7 @@
       const file = event.target.files[0];
       if (!file) return;
 
-      const bucketName = document.getElementById('storage-bucket-input').value.trim() || 'app-releases';
+      const bucketName = document.getElementById('storage-bucket-input').value.trim() || 'updates';
       const filePath = `\({Date.now()}_\){file.name.replace(/\s+/g, '_')}`;
 
       const { data, error } = await supabaseClient.storage.from(bucketName).upload(filePath, file, {
