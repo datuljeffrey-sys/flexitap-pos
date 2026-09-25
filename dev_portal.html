@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FlexiTap — Developer & Ops Portal</title>
   
-  <!-- Supabase JS Client v2 CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,12 +47,13 @@
 
     /* --- AUTH OVERLAY --- */
     #dev-auth-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-    .dev-login-box { background: var(--sidebar-bg); border: 1px solid var(--card-border); padding: 40px; border-radius: 16px; width: 100%; max-width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; }
+    .dev-login-box { background: var(--sidebar-bg); border: 1px solid var(--card-border); padding: 40px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; }
     .dev-login-header { display: inline-flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px; }
+    .brand-logo-img { width: 42px; height: 42px; object-fit: contain; border-radius: 8px; }
     .dev-login-box label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
-    .dev-login-box input { width: 100%; padding: 12px 14px; margin-bottom: 20px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: white; outline: none; font-size: 14px; }
+    .dev-login-box input { width: 100%; padding: 12px; margin-bottom: 20px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: white; outline: none; }
     .dev-login-box input:focus { border-color: var(--primary); }
-    .dev-btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; }
+    .dev-btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
     .dev-btn-submit:hover { background: var(--primary-hover); }
 
     /* --- APP LAYOUT --- */
@@ -65,7 +65,6 @@
       display: flex; flex-direction: column; justify-content: space-between; padding: 24px 16px; flex-shrink: 0;
     }
     .brand-box { display: flex; align-items: center; gap: 12px; padding: 0 8px 24px; border-bottom: 1px solid var(--card-border); }
-    .brand-logo-svg { width: 34px; height: 34px; flex-shrink: 0; }
     .brand-title { font-size: 1.15rem; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
     .brand-title span { color: var(--primary); font-size: 0.8rem; display: block; font-weight: 700; text-transform: uppercase; }
 
@@ -122,7 +121,7 @@
 
     .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; }
     .data-table th { padding: 12px 10px; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 700; border-bottom: 1px solid var(--card-border); }
-    .data-table td { padding: 14px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+    .data-table td { padding: 14px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); vertical-align: middle; }
     .data-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
 
     .action-btn {
@@ -147,7 +146,7 @@
       background: rgba(59, 130, 246, 0.05);
     }
 
-    /* Support Desk Split View */
+    /* Support Desk */
     .support-desk-grid { display: grid; grid-template-columns: 320px 1fr; gap: 20px; height: 580px; }
     .session-list { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; overflow-y: auto; display: flex; flex-direction: column; }
     .session-item { padding: 14px 16px; border-bottom: 1px solid var(--card-border); cursor: pointer; transition: 0.2s; }
@@ -187,15 +186,10 @@
   <div id="dev-auth-view">
     <div class="dev-login-box">
       <div class="dev-login-header">
-        <svg class="brand-logo-svg" style="width: 40px; height: 40px;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <polygon points="50,22 70,22 25,67 5,67" fill="#1e88e5" />
-          <polygon points="50,52 70,52 35,87 15,87" fill="#29b6f6" />
-          <polygon points="35,67 55,67 70,52 50,52" fill="#4fc3f7" />
-          <polygon points="35,67 55,67 70,87 50,87" fill="#0288d1" />
-        </svg>
-        <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Dev & Ops Login</h2>
+        <img class="brand-logo-img" src="image_02e503.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/datuljeffrey-sys/flexitap/main/image_02e503.png'; this.onerror=null;" />
+        <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Dev &amp; Ops Login</h2>
       </div>
-      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px;">Restricted Super Admin & Support Access</p>
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px;">Restricted Super Admin &amp; Support Access</p>
       
       <form id="dev-login-form">
         <label>Developer / Admin Email</label>
@@ -204,7 +198,7 @@
         <input type="password" id="dev-password" required placeholder="••••••••" autocomplete="current-password" />
         <button type="submit" class="dev-btn-submit" id="dev-btn-text">Authenticate</button>
       </form>
-      <p id="dev-err" style="color: #ef4444; font-size: 13px; margin-top: 14px; text-align: center; font-weight: 600;"></p>
+      <p id="dev-err" style="color: #ef4444; font-size: 13px; margin-top: 14px; text-align: center;"></p>
     </div>
   </div>
 
@@ -213,15 +207,10 @@
     <aside>
       <div>
         <div class="brand-box">
-          <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <polygon points="50,22 70,22 25,67 5,67" fill="#1e88e5" />
-            <polygon points="50,52 70,52 35,87 15,87" fill="#29b6f6" />
-            <polygon points="35,67 55,67 70,52 50,52" fill="#4fc3f7" />
-            <polygon points="35,67 55,67 70,87 50,87" fill="#0288d1" />
-          </svg>
+          <img class="brand-logo-img" src="image_02e503.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/datuljeffrey-sys/flexitap/main/image_02e503.png'; this.onerror=null;" />
           <div class="brand-title">
             FlexiTap
-            <span>Dev & Support Ops</span>
+            <span>Dev &amp; Support Ops</span>
           </div>
         </div>
 
@@ -272,7 +261,7 @@
     <main>
       <header>
         <div class="header-title">
-          <h1 id="view-title">Merchant Clients & Support Hub</h1>
+          <h1 id="view-title">Merchant Clients &amp; Support Hub</h1>
           <p id="view-subtitle">Search merchant profiles, troubleshoot accounts, and inspect subscription tiers.</p>
         </div>
         <div class="header-actions">
@@ -283,7 +272,7 @@
 
       <div class="content-body">
 
-        <!-- ================= 1. CLIENTS VIEW (PROFILES TABLE) ================= -->
+        <!-- ================= 1. CLIENTS VIEW (FROM PROFILES ONLY) ================= -->
         <div id="view-clients" class="tab-view active">
           <div class="kpi-row">
             <div class="kpi-card">
@@ -305,13 +294,14 @@
 
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title">Merchant Accounts & Diagnostics</div>
-              <input type="text" id="merchant-search" onkeyup="filterMerchants()" placeholder="Search user ID, role, or tier..." style="padding: 8px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 300px;">
+              <div class="panel-title">Merchant Accounts &amp; Diagnostics</div>
+              <input type="text" id="merchant-search" onkeyup="filterMerchants()" placeholder="Search name, store, email, or tier..." style="padding: 8px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 320px;">
             </div>
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Profile / User ID</th>
+                  <th>Client Name &amp; Email</th>
+                  <th>Store / Business Name</th>
                   <th>Subscription Tier</th>
                   <th>Role</th>
                   <th>Created At</th>
@@ -319,13 +309,13 @@
                 </tr>
               </thead>
               <tbody id="stores-tbody">
-                <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">Loading profiles...</td></tr>
+                <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">Loading profiles...</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- ================= 2. UPDATE VIEW (SUPABASE STORAGE 'UPDATES') ================= -->
+        <!-- ================= 2. UPDATE VIEW (SUPABASE STORAGE LISTENER) ================= -->
         <div id="view-updates" class="tab-view">
           <div class="kpi-row">
             <div class="kpi-card">
@@ -347,7 +337,7 @@
 
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title">Bucket Releases & OTA Artifacts</div>
+              <div class="panel-title">Bucket Releases &amp; OTA Artifacts</div>
               <div style="display: flex; gap: 10px; align-items: center;">
                 <input type="text" id="storage-bucket-input" value="updates" placeholder="Bucket name..." style="padding: 7px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 160px;">
                 <button class="action-btn" onclick="fetchStorageFiles()">Refresh Bucket</button>
@@ -406,7 +396,7 @@
         <div id="view-remote" class="tab-view">
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title">Remote POS Device Console & ADB Controller</div>
+              <div class="panel-title">Remote POS Device Console &amp; ADB Controller</div>
               <select style="background: var(--bg); border: 1px solid var(--card-border); color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem;" id="target-terminal">
                 <option>Active Testing Device (Android 13 / Tablet POS)</option>
                 <option>Store Counter 01 (Phone Kiosk)</option>
@@ -450,7 +440,7 @@
         <div id="view-errors" class="tab-view">
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title">Diagnostic Exceptions & Desync Queue</div>
+              <div class="panel-title">Diagnostic Exceptions &amp; Desync Queue</div>
               <button class="action-btn" onclick="alert('Cleared resolved logs.')">Dismiss Resolved</button>
             </div>
             <table class="data-table">
@@ -500,8 +490,8 @@
     };
 
     function switchNav(key, element) {
-      document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-view').forEach(function(v) { v.classList.remove('active'); });
+      document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
       
       const targetView = document.getElementById('view-' + key);
       if (targetView) targetView.classList.add('active');
@@ -526,49 +516,39 @@
       document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
     }
 
+    // --- DEV AUTHENTICATION & ACCESS GUARD ---
     async function checkDevSession() {
-      try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        if (session && session.user) {
-          verifyDevRole(session.user);
-        } else {
-          document.getElementById('dev-auth-view').style.display = 'flex';
-          document.getElementById('dev-app-layout').style.display = 'none';
-        }
-      } catch (err) {
-        console.error('Session verification error:', err);
+      const authResponse = await supabaseClient.auth.getSession();
+      const session = authResponse.data.session;
+      if (session && session.user) {
+        verifyDevRole(session.user);
+      } else {
+        document.getElementById('dev-auth-view').style.display = 'flex';
+        document.getElementById('dev-app-layout').style.display = 'none';
       }
     }
 
     async function verifyDevRole(user) {
-      try {
-        const { data: profile, error } = await supabaseClient
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .maybeSingle();
+      const profileResponse = await supabaseClient
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .maybeSingle();
 
-        if (error) {
-          console.warn('Profile read warning:', error);
-        }
+      const profile = profileResponse.data;
+      const role = (profile && profile.role ? profile.role : '').toLowerCase();
 
-        const role = ((profile && profile.role) || '').toLowerCase();
-
-        // Check if user has developer or admin privileges
-        if (role === 'dev' || role === 'developer' || role === 'admin') {
-          activeDevUser = user;
-          document.getElementById('dev-auth-view').style.display = 'none';
-          document.getElementById('dev-app-layout').style.display = 'flex';
-          document.getElementById('active-dev-user').innerText = user.email || user.id;
-          loadDevData();
-        } else {
-          await supabaseClient.auth.signOut();
-          document.getElementById('dev-err').innerText = 'Access Denied: Account has role "' + (role || 'none') + '", but "dev" is required.';
-          document.getElementById('dev-auth-view').style.display = 'flex';
-          document.getElementById('dev-app-layout').style.display = 'none';
-        }
-      } catch (err) {
-        console.error('verifyDevRole exception:', err);
+      if (role === 'dev' || role === 'developer' || role === 'admin') {
+        activeDevUser = user;
+        document.getElementById('dev-auth-view').style.display = 'none';
+        document.getElementById('dev-app-layout').style.display = 'flex';
+        document.getElementById('active-dev-user').innerText = user.email;
+        loadDevData();
+      } else {
+        await supabaseClient.auth.signOut();
+        document.getElementById('dev-err').innerText = 'Access Denied: Developer or Admin role required.';
+        document.getElementById('dev-auth-view').style.display = 'flex';
+        document.getElementById('dev-app-layout').style.display = 'none';
       }
     }
 
@@ -582,18 +562,13 @@
       err.innerText = '';
       btnText.innerText = 'Verifying credentials...';
 
-      try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
-        btnText.innerText = 'Authenticate';
+      const res = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
+      btnText.innerText = 'Authenticate';
 
-        if (error) {
-          err.innerText = error.message;
-        } else if (data && data.user) {
-          verifyDevRole(data.user);
-        }
-      } catch (exception) {
-        btnText.innerText = 'Authenticate';
-        err.innerText = exception.message || 'Login failed';
+      if (res.error) {
+        err.innerText = res.error.message;
+      } else {
+        verifyDevRole(res.data.user);
       }
     });
 
@@ -605,39 +580,40 @@
       document.getElementById('dev-auth-view').style.display = 'flex';
     }
 
+    // --- DATA LOADING FOR CLIENTS (FROM PROFILES ONLY) ---
     async function loadDevData() {
-      try {
-        const { data: profiles, error } = await supabaseClient
-          .from('profiles')
-          .select('*');
+      const res = await supabaseClient
+        .from('profiles')
+        .select('*');
 
-        if (error) {
-          console.error('Error fetching profiles:', error);
-          return;
-        }
-
-        cachedProfiles = profiles || [];
-        const devCount = cachedProfiles.filter(function(p) {
-          const r = (p.role || '').toLowerCase();
-          return r === 'dev' || r === 'developer' || r === 'admin';
-        }).length;
-
-        document.getElementById('kpi-store-count').innerText = cachedProfiles.length;
-        document.getElementById('kpi-dev-count').innerText = devCount + ' Admins';
-        renderProfiles(cachedProfiles);
-      } catch (err) {
-        console.error('loadDevData error:', err);
+      if (res.error) {
+        console.error('Error fetching profiles:', res.error);
+        return;
       }
+
+      cachedProfiles = res.data || [];
+      const devCount = cachedProfiles.filter(function(p) {
+        const r = (p.role || '').toLowerCase();
+        return r === 'dev' || r === 'developer' || r === 'admin';
+      }).length;
+
+      document.getElementById('kpi-store-count').innerText = cachedProfiles.length;
+      document.getElementById('kpi-dev-count').innerText = devCount + ' Admins';
+      renderProfiles(cachedProfiles);
     }
 
     function renderProfiles(list) {
       const tbody = document.getElementById('stores-tbody');
       if (!list || list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">No profiles registered.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">No profiles registered.</td></tr>';
         return;
       }
 
       tbody.innerHTML = list.map(function(p) {
+        const clientName = p.full_name || p.name || (p.first_name ? (p.first_name + ' ' + (p.last_name || '')).trim() : null) || 'Unnamed Client';
+        const storeName = p.store_name || p.business_name || p.store || 'No Store Assigned';
+        const email = p.email || 'No email attached';
+
         const r = (p.role || '').toLowerCase();
         const isDev = r === 'dev' || r === 'developer' || r === 'admin';
         const roleBadge = isDev
@@ -646,19 +622,21 @@
 
         const tierBadge = '<span style="text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">' + (p.subscription_tier || 'FREE') + '</span>';
         const createdAt = p.created_at ? new Date(p.created_at).toLocaleDateString() : 'N/A';
-        const safeId = (p.id || '').replace(/'/g, "\\'");
-        const safeEmail = (p.email || p.id || '').replace(/'/g, "\\'");
+
+        const safeChatName = (clientName !== 'Unnamed Client' ? clientName : email).replace(/'/g, "\\'");
 
         return '<tr>' +
           '<td>' +
-            '<span style="font-family: monospace; font-size: 0.82rem; color: #fff; font-weight: 600;">' + p.id + '</span>' +
-            (p.email ? '<br><span style="font-size: 0.75rem; color: var(--text-muted);">' + p.email + '</span>' : '') +
+            '<strong style="color: #fff; font-size: 0.92rem;">' + clientName + '</strong><br>' +
+            '<span style="font-size: 0.78rem; color: var(--text-muted);">' + email + '</span><br>' +
+            '<span style="font-family: monospace; font-size: 0.72rem; color: #475569;">' + p.id + '</span>' +
           '</td>' +
+          '<td><span style="font-weight: 600; color: #e2e8f0;">' + storeName + '</span></td>' +
           '<td>' + tierBadge + '</td>' +
           '<td>' + roleBadge + '</td>' +
           '<td>' + createdAt + '</td>' +
           '<td>' +
-            '<button class="action-btn" onclick="openChatForStore(\'' + safeId + '\', \'' + safeEmail + '\')">Open Support Chat</button>' +
+            '<button class="action-btn" onclick="openChatForStore(\'' + p.id + '\', \'' + safeChatName + '\')">Open Support Chat</button>' +
           '</td>' +
         '</tr>';
       }).join('');
@@ -667,14 +645,24 @@
     function filterMerchants() {
       const term = document.getElementById('merchant-search').value.toLowerCase();
       const filtered = cachedProfiles.filter(function(p) {
-        return (p.id && p.id.toLowerCase().includes(term)) ||
-          (p.role && p.role.toLowerCase().includes(term)) ||
-          (p.subscription_tier && p.subscription_tier.toLowerCase().includes(term)) ||
-          (p.email && p.email.toLowerCase().includes(term));
+        const clientName = (p.full_name || p.name || p.first_name || '').toLowerCase();
+        const storeName = (p.store_name || p.business_name || p.store || '').toLowerCase();
+        const email = (p.email || '').toLowerCase();
+        const id = (p.id || '').toLowerCase();
+        const role = (p.role || '').toLowerCase();
+        const tier = (p.subscription_tier || '').toLowerCase();
+
+        return clientName.includes(term) ||
+               storeName.includes(term) ||
+               email.includes(term) ||
+               id.includes(term) ||
+               role.includes(term) ||
+               tier.includes(term);
       });
       renderProfiles(filtered);
     }
 
+    // --- SUPABASE STORAGE UPDATE LISTENER & EXPLORER ---
     function formatBytes(bytes) {
       if (!bytes || bytes === 0) return '0 B';
       const k = 1024;
@@ -690,18 +678,18 @@
       const tbody = document.getElementById('storage-files-tbody');
 
       try {
-        const { data, error } = await supabaseClient.storage.from(bucketName).list('', {
+        const res = await supabaseClient.storage.from(bucketName).list('', {
           limit: 100,
           offset: 0,
           sortBy: { column: 'created_at', order: 'desc' }
         });
 
-        if (error) {
-          tbody.innerHTML = '<tr><td colspan="4" style="color: var(--danger); padding: 20px; text-align: center;">Error reading storage: ' + error.message + ' (Ensure a SELECT policy exists on storage.objects)</td></tr>';
+        if (res.error) {
+          tbody.innerHTML = '<tr><td colspan="4" style="color: var(--danger); padding: 20px; text-align: center;">Error reading storage: ' + res.error.message + ' (Ensure SELECT policy exists on storage.objects)</td></tr>';
           return;
         }
 
-        const validFiles = (data || []).filter(function(item) {
+        const validFiles = (res.data || []).filter(function(item) {
           return item.name !== '.emptyFolderPlaceholder';
         });
 
@@ -714,11 +702,10 @@
         }
 
         tbody.innerHTML = validFiles.map(function(file) {
-          const pubRes = supabaseClient.storage.from(bucketName).getPublicUrl(file.name);
-          const downloadUrl = (pubRes && pubRes.data && pubRes.data.publicUrl) ? pubRes.data.publicUrl : '#';
-          const size = (file.metadata && file.metadata.size) ? formatBytes(file.metadata.size) : 'Unknown';
+          const pubData = supabaseClient.storage.from(bucketName).getPublicUrl(file.name).data;
+          const downloadUrl = pubData && pubData.publicUrl ? pubData.publicUrl : '#';
+          const size = file.metadata && file.metadata.size ? formatBytes(file.metadata.size) : 'Unknown';
           const updated = file.created_at || file.updated_at ? new Date(file.created_at || file.updated_at).toLocaleString() : 'N/A';
-          const safeName = file.name.replace(/'/g, "\\'");
 
           return '<tr>' +
             '<td>' +
@@ -729,7 +716,7 @@
             '<td>' + updated + '</td>' +
             '<td>' +
               '<a href="' + downloadUrl + '" target="_blank" download class="action-btn" style="text-decoration: none; display: inline-block;">Download Link</a>' +
-              '<button class="action-btn" style="color: var(--danger); margin-left: 6px;" onclick="deleteStorageFile(\'' + bucketName + '\', \'' + safeName + '\')">Delete</button>' +
+              '<button class="action-btn" style="color: var(--danger); margin-left: 6px;" onclick="deleteStorageFile(\'' + bucketName + '\', \'' + file.name + '\')">Delete</button>' +
             '</td>' +
           '</tr>';
         }).join('');
@@ -746,32 +733,24 @@
       const bucketName = document.getElementById('storage-bucket-input').value.trim() || 'updates';
       const filePath = Date.now() + '_' + file.name.replace(/\s+/g, '_');
 
-      try {
-        const { error } = await supabaseClient.storage.from(bucketName).upload(filePath, file, {
-          upsert: true
-        });
+      const res = await supabaseClient.storage.from(bucketName).upload(filePath, file, {
+        upsert: true
+      });
 
-        if (error) {
-          alert('Upload failed: ' + error.message);
-        } else {
-          alert('Update payload uploaded successfully: ' + filePath);
-          fetchStorageFiles();
-        }
-      } catch (err) {
-        alert('Upload exception: ' + err.message);
+      if (res.error) {
+        alert('Upload failed: ' + res.error.message);
+      } else {
+        alert('Update payload uploaded successfully: ' + filePath);
+        fetchStorageFiles();
       }
       event.target.value = '';
     }
 
     async function deleteStorageFile(bucket, filename) {
       if (!confirm('Are you sure you want to delete ' + filename + '?')) return;
-      try {
-        const { error } = await supabaseClient.storage.from(bucket).remove([filename]);
-        if (error) alert('Error: ' + error.message);
-        else fetchStorageFiles();
-      } catch (err) {
-        alert('Delete failed: ' + err.message);
-      }
+      const res = await supabaseClient.storage.from(bucket).remove([filename]);
+      if (res.error) alert('Error: ' + res.error.message);
+      else fetchStorageFiles();
     }
 
     function startStoragePoller() {
@@ -783,40 +762,34 @@
       if (storagePollInterval) clearInterval(storagePollInterval);
     }
 
+    // --- SUPPORT DESK REAL-TIME AGENT LOGIC ---
     async function loadSupportDeskSessions() {
-      try {
-        const { data: sessions } = await supabaseClient
-          .from('support_sessions')
-          .select('*')
-          .eq('status', 'open')
-          .order('updated_at', { ascending: false });
+      const res = await supabaseClient
+        .from('support_sessions')
+        .select('*')
+        .eq('status', 'open')
+        .order('updated_at', { ascending: false });
 
-        const container = document.getElementById('support-sessions-list');
-        if (!sessions || sessions.length === 0) {
-          container.innerHTML = '<div style="padding: 16px; font-size: 13px; color: var(--text-muted); text-align: center;">No active merchant sessions.</div>';
-          return;
-        }
+      const container = document.getElementById('support-sessions-list');
+      if (!res.data || res.data.length === 0) {
+        container.innerHTML = '<div style="padding: 16px; font-size: 13px; color: var(--text-muted); text-align: center;">No active merchant sessions.</div>';
+        return;
+      }
 
-        container.innerHTML = sessions.map(function(s) {
-          const isAct = selectedSession && selectedSession.id === s.id ? 'active' : '';
-          const sName = (s.store_name || 'Store').replace(/'/g, "\\'");
-          const sEmail = (s.merchant_email || '').replace(/'/g, "\\'");
-          return '<div class="session-item ' + isAct + '" onclick="selectSession(\'' + s.id + '\', \'' + sName + '\', \'' + sEmail + '\')">' +
-            '<div class="session-store-title">' + (s.store_name || 'Store') + '</div>' +
-            '<div class="session-merchant-email">' + (s.merchant_email || '—') + '</div>' +
-          '</div>';
-        }).join('');
+      container.innerHTML = res.data.map(function(s) {
+        const isSelected = selectedSession && selectedSession.id === s.id ? 'active' : '';
+        const safeStore = (s.store_name || 'Store').replace(/'/g, "\\'");
+        return '<div class="session-item ' + isSelected + '" onclick="selectSession(\'' + s.id + '\', \'' + safeStore + '\', \'' + s.merchant_email + '\')">' +
+          '<div class="session-store-title">' + s.store_name + '</div>' +
+          '<div class="session-merchant-email">' + s.merchant_email + '</div>' +
+        '</div>';
+      }).join('');
 
-        if (!sessionsChannelSubscribed) {
-          sessionsChannelSubscribed = true;
-          supabaseClient.channel('dev-sessions').on('postgres_changes', {
-            event: '*', schema: 'public', table: 'support_sessions'
-          }, function() {
-            loadSupportDeskSessions();
-          }).subscribe();
-        }
-      } catch (err) {
-        console.error('loadSupportDeskSessions error:', err);
+      if (!sessionsChannelSubscribed) {
+        sessionsChannelSubscribed = true;
+        supabaseClient.channel('dev-sessions').on('postgres_changes', {
+          event: '*', schema: 'public', table: 'support_sessions'
+        }, function() { loadSupportDeskSessions(); }).subscribe();
       }
     }
 
@@ -831,35 +804,31 @@
     }
 
     async function loadDeskMessages(sessionId) {
-      try {
-        const { data: messages } = await supabaseClient
-          .from('support_messages')
-          .select('*')
-          .eq('session_id', sessionId)
-          .order('created_at', { ascending: true });
+      const res = await supabaseClient
+        .from('support_messages')
+        .select('*')
+        .eq('session_id', sessionId)
+        .order('created_at', { ascending: true });
 
-        const body = document.getElementById('desk-chat-body');
-        body.innerHTML = '';
-        if (messages) {
-          messages.forEach(function(m) {
-            renderDeskBubble(m.sender_role, m.message, m.created_at);
-          });
-        }
-
-        if (currentChatChannel) {
-          supabaseClient.removeChannel(currentChatChannel);
-        }
-
-        currentChatChannel = supabaseClient.channel('desk-' + sessionId).on('postgres_changes', {
-          event: 'INSERT', schema: 'public', table: 'support_messages', filter: 'session_id=eq.' + sessionId
-        }, function(payload) {
-          if (payload.new && payload.new.sender_role === 'merchant') {
-            renderDeskBubble('merchant', payload.new.message, payload.new.created_at);
-          }
-        }).subscribe();
-      } catch (err) {
-        console.error('loadDeskMessages error:', err);
+      const body = document.getElementById('desk-chat-body');
+      body.innerHTML = '';
+      if (res.data) {
+        res.data.forEach(function(m) {
+          renderDeskBubble(m.sender_role, m.message, m.created_at);
+        });
       }
+
+      if (currentChatChannel) {
+        supabaseClient.removeChannel(currentChatChannel);
+      }
+
+      currentChatChannel = supabaseClient.channel('desk-' + sessionId).on('postgres_changes', {
+        event: 'INSERT', schema: 'public', table: 'support_messages', filter: 'session_id=eq.' + sessionId
+      }, function(payload) {
+        if (payload.new && payload.new.sender_role === 'merchant') {
+          renderDeskBubble('merchant', payload.new.message, payload.new.created_at);
+        }
+      }).subscribe();
     }
 
     function renderDeskBubble(role, message, timestamp) {
@@ -881,16 +850,12 @@
       input.value = '';
       renderDeskBubble('agent', text, new Date());
 
-      try {
-        await supabaseClient.from('support_messages').insert([{
-          session_id: selectedSession.id,
-          sender_id: activeDevUser.id,
-          sender_role: 'agent',
-          message: text
-        }]);
-      } catch (err) {
-        console.error('sendAgentResponse error:', err);
-      }
+      await supabaseClient.from('support_messages').insert([{
+        session_id: selectedSession.id,
+        sender_id: activeDevUser.id,
+        sender_role: 'agent',
+        message: text
+      }]);
     }
 
     function openChatForStore(storeId, storeName) {
