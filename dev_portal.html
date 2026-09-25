@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FlexiTap — Developer & Ops Portal</title>
   
+  <!-- Supabase JS Client v2 CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,12 +48,12 @@
 
     /* --- AUTH OVERLAY --- */
     #dev-auth-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-    .dev-login-box { background: var(--sidebar-bg); border: 1px solid var(--card-border); padding: 40px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; }
-    .dev-login-header { display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; }
+    .dev-login-box { background: var(--sidebar-bg); border: 1px solid var(--card-border); padding: 40px; border-radius: 16px; width: 100%; max-width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; }
+    .dev-login-header { display: inline-flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px; }
     .dev-login-box label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
-    .dev-login-box input { width: 100%; padding: 12px; margin-bottom: 20px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: white; outline: none; }
+    .dev-login-box input { width: 100%; padding: 12px 14px; margin-bottom: 20px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: white; outline: none; font-size: 14px; }
     .dev-login-box input:focus { border-color: var(--primary); }
-    .dev-btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .dev-btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; }
     .dev-btn-submit:hover { background: var(--primary-hover); }
 
     /* --- APP LAYOUT --- */
@@ -146,7 +147,7 @@
       background: rgba(59, 130, 246, 0.05);
     }
 
-    /* Support Desk */
+    /* Support Desk Split View */
     .support-desk-grid { display: grid; grid-template-columns: 320px 1fr; gap: 20px; height: 580px; }
     .session-list { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; overflow-y: auto; display: flex; flex-direction: column; }
     .session-item { padding: 14px 16px; border-bottom: 1px solid var(--card-border); cursor: pointer; transition: 0.2s; }
@@ -203,7 +204,7 @@
         <input type="password" id="dev-password" required placeholder="••••••••" autocomplete="current-password" />
         <button type="submit" class="dev-btn-submit" id="dev-btn-text">Authenticate</button>
       </form>
-      <p id="dev-err" style="color: #ef4444; font-size: 13px; margin-top: 14px; text-align: center;"></p>
+      <p id="dev-err" style="color: #ef4444; font-size: 13px; margin-top: 14px; text-align: center; font-weight: 600;"></p>
     </div>
   </div>
 
@@ -272,7 +273,7 @@
       <header>
         <div class="header-title">
           <h1 id="view-title">Merchant Clients & Support Hub</h1>
-          <p id="view-subtitle">Search merchant stores, troubleshoot terminal fleets, and override subscription tiers.</p>
+          <p id="view-subtitle">Search merchant profiles, troubleshoot accounts, and inspect subscription tiers.</p>
         </div>
         <div class="header-actions">
           <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light">☀️</button>
@@ -282,7 +283,7 @@
 
       <div class="content-body">
 
-        <!-- ================= 1. CLIENTS VIEW (FROM PROFILES) ================= -->
+        <!-- ================= 1. CLIENTS VIEW (PROFILES TABLE) ================= -->
         <div id="view-clients" class="tab-view active">
           <div class="kpi-row">
             <div class="kpi-card">
@@ -324,7 +325,7 @@
           </div>
         </div>
 
-        <!-- ================= 2. UPDATE VIEW (SUPABASE STORAGE LISTENER) ================= -->
+        <!-- ================= 2. UPDATE VIEW (SUPABASE STORAGE 'UPDATES') ================= -->
         <div id="view-updates" class="tab-view">
           <div class="kpi-row">
             <div class="kpi-card">
@@ -502,7 +503,8 @@
       document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       
-      document.getElementById(`view-${key}`).classList.add('active');
+      const targetView = document.getElementById('view-' + key);
+      if (targetView) targetView.classList.add('active');
       if (element) element.classList.add('active');
 
       document.getElementById('view-title').textContent = views[key].title;
@@ -524,41 +526,53 @@
       document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
     }
 
-    // --- DEV AUTHENTICATION & ACCESS GUARD ---
     async function checkDevSession() {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (session?.user) {
-        verifyDevRole(session.user);
-      } else {
-        document.getElementById('dev-auth-view').style.display = 'flex';
-        document.getElementById('dev-app-layout').style.display = 'none';
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session && session.user) {
+          verifyDevRole(session.user);
+        } else {
+          document.getElementById('dev-auth-view').style.display = 'flex';
+          document.getElementById('dev-app-layout').style.display = 'none';
+        }
+      } catch (err) {
+        console.error('Session verification error:', err);
       }
     }
 
     async function verifyDevRole(user) {
-      const { data: profile } = await supabaseClient
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .maybeSingle();
+      try {
+        const { data: profile, error } = await supabaseClient
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .maybeSingle();
 
-      const role = (profile?.role || '').toLowerCase();
+        if (error) {
+          console.warn('Profile read warning:', error);
+        }
 
-      if (role === 'dev' || role === 'developer' || role === 'admin') {
-        activeDevUser = user;
-        document.getElementById('dev-auth-view').style.display = 'none';
-        document.getElementById('dev-app-layout').style.display = 'flex';
-        document.getElementById('active-dev-user').innerText = user.email;
-        loadDevData();
-      } else {
-        await supabaseClient.auth.signOut();
-        document.getElementById('dev-err').innerText = 'Access Denied: Developer role required.';
-        document.getElementById('dev-auth-view').style.display = 'flex';
-        document.getElementById('dev-app-layout').style.display = 'none';
+        const role = ((profile && profile.role) || '').toLowerCase();
+
+        // Check if user has developer or admin privileges
+        if (role === 'dev' || role === 'developer' || role === 'admin') {
+          activeDevUser = user;
+          document.getElementById('dev-auth-view').style.display = 'none';
+          document.getElementById('dev-app-layout').style.display = 'flex';
+          document.getElementById('active-dev-user').innerText = user.email || user.id;
+          loadDevData();
+        } else {
+          await supabaseClient.auth.signOut();
+          document.getElementById('dev-err').innerText = 'Access Denied: Account has role "' + (role || 'none') + '", but "dev" is required.';
+          document.getElementById('dev-auth-view').style.display = 'flex';
+          document.getElementById('dev-app-layout').style.display = 'none';
+        }
+      } catch (err) {
+        console.error('verifyDevRole exception:', err);
       }
     }
 
-    document.getElementById('dev-login-form').addEventListener('submit', async (e) => {
+    document.getElementById('dev-login-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       const email = document.getElementById('dev-email').value.trim();
       const password = document.getElementById('dev-password').value;
@@ -568,11 +582,19 @@
       err.innerText = '';
       btnText.innerText = 'Verifying credentials...';
 
-      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      btnText.innerText = 'Authenticate';
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
+        btnText.innerText = 'Authenticate';
 
-      if (error) err.innerText = error.message;
-      else verifyDevRole(data.user);
+        if (error) {
+          err.innerText = error.message;
+        } else if (data && data.user) {
+          verifyDevRole(data.user);
+        }
+      } catch (exception) {
+        btnText.innerText = 'Authenticate';
+        err.innerText = exception.message || 'Login failed';
+      }
     });
 
     async function devLogout() {
@@ -583,23 +605,29 @@
       document.getElementById('dev-auth-view').style.display = 'flex';
     }
 
-    // --- DATA LOADING FOR CLIENTS (FROM PROFILES) ---
     async function loadDevData() {
-      const { data: profiles, error } = await supabaseClient
-        .from('profiles')
-        .select('*');
+      try {
+        const { data: profiles, error } = await supabaseClient
+          .from('profiles')
+          .select('*');
 
-      if (error) {
-        console.error('Error fetching profiles:', error);
-        return;
+        if (error) {
+          console.error('Error fetching profiles:', error);
+          return;
+        }
+
+        cachedProfiles = profiles || [];
+        const devCount = cachedProfiles.filter(function(p) {
+          const r = (p.role || '').toLowerCase();
+          return r === 'dev' || r === 'developer' || r === 'admin';
+        }).length;
+
+        document.getElementById('kpi-store-count').innerText = cachedProfiles.length;
+        document.getElementById('kpi-dev-count').innerText = devCount + ' Admins';
+        renderProfiles(cachedProfiles);
+      } catch (err) {
+        console.error('loadDevData error:', err);
       }
-
-      cachedProfiles = profiles || [];
-      const devCount = cachedProfiles.filter(p => ['dev', 'developer', 'admin'].includes((p.role || '').toLowerCase())).length;
-
-      document.getElementById('kpi-store-count').innerText = cachedProfiles.length;
-      document.getElementById('kpi-dev-count').innerText = `${devCount} Admins`;
-      renderProfiles(cachedProfiles);
     }
 
     function renderProfiles(list) {
@@ -609,44 +637,44 @@
         return;
       }
 
-      tbody.innerHTML = list.map(p => {
-        const isDev = ['dev', 'developer', 'admin'].includes((p.role || '').toLowerCase());
+      tbody.innerHTML = list.map(function(p) {
+        const r = (p.role || '').toLowerCase();
+        const isDev = r === 'dev' || r === 'developer' || r === 'admin';
         const roleBadge = isDev
           ? '<span style="color: var(--primary); font-weight: 700; background: rgba(59,130,246,0.15); padding: 3px 8px; border-radius: 6px;">ADMIN / DEV</span>'
           : '<span style="color: var(--accent); font-weight: 700; background: rgba(16,185,129,0.15); padding: 3px 8px; border-radius: 6px;">MERCHANT</span>';
 
-        const tierBadge = `<span style="text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">${p.subscription_tier || 'FREE'}</span>`;
+        const tierBadge = '<span style="text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">' + (p.subscription_tier || 'FREE') + '</span>';
         const createdAt = p.created_at ? new Date(p.created_at).toLocaleDateString() : 'N/A';
+        const safeId = (p.id || '').replace(/'/g, "\\'");
+        const safeEmail = (p.email || p.id || '').replace(/'/g, "\\'");
 
-        return `
-          <tr>
-            <td>
-              <span style="font-family: monospace; font-size: 0.82rem; color: #fff; font-weight: 600;">${p.id}</span>
-              \({p.email ? `<br><span style="font-size: 0.75rem; color: var(--text-muted);">\){p.email}</span>` : ''}
-            </td>
-            <td>${tierBadge}</td>
-            <td>${roleBadge}</td>
-            <td>${createdAt}</td>
-            <td>
-              <button class="action-btn" onclick="openChatForStore('\({p.id}', '\){p.email || p.id}')">Open Support Chat</button>
-            </td>
-          </tr>
-        `;
+        return '<tr>' +
+          '<td>' +
+            '<span style="font-family: monospace; font-size: 0.82rem; color: #fff; font-weight: 600;">' + p.id + '</span>' +
+            (p.email ? '<br><span style="font-size: 0.75rem; color: var(--text-muted);">' + p.email + '</span>' : '') +
+          '</td>' +
+          '<td>' + tierBadge + '</td>' +
+          '<td>' + roleBadge + '</td>' +
+          '<td>' + createdAt + '</td>' +
+          '<td>' +
+            '<button class="action-btn" onclick="openChatForStore(\'' + safeId + '\', \'' + safeEmail + '\')">Open Support Chat</button>' +
+          '</td>' +
+        '</tr>';
       }).join('');
     }
 
     function filterMerchants() {
       const term = document.getElementById('merchant-search').value.toLowerCase();
-      const filtered = cachedProfiles.filter(p => 
-        (p.id && p.id.toLowerCase().includes(term)) ||
-        (p.role && p.role.toLowerCase().includes(term)) ||
-        (p.subscription_tier && p.subscription_tier.toLowerCase().includes(term)) ||
-        (p.email && p.email.toLowerCase().includes(term))
-      );
+      const filtered = cachedProfiles.filter(function(p) {
+        return (p.id && p.id.toLowerCase().includes(term)) ||
+          (p.role && p.role.toLowerCase().includes(term)) ||
+          (p.subscription_tier && p.subscription_tier.toLowerCase().includes(term)) ||
+          (p.email && p.email.toLowerCase().includes(term));
+      });
       renderProfiles(filtered);
     }
 
-    // --- SUPABASE STORAGE UPDATE LISTENER & EXPLORER ---
     function formatBytes(bytes) {
       if (!bytes || bytes === 0) return '0 B';
       const k = 1024;
@@ -669,43 +697,45 @@
         });
 
         if (error) {
-          tbody.innerHTML = `<tr><td colspan="4" style="color: var(--danger); padding: 20px; text-align: center;">Error reading storage: ${error.message} (Ensure SELECT policy exists)</td></tr>`;
+          tbody.innerHTML = '<tr><td colspan="4" style="color: var(--danger); padding: 20px; text-align: center;">Error reading storage: ' + error.message + ' (Ensure a SELECT policy exists on storage.objects)</td></tr>';
           return;
         }
 
-        const validFiles = (data || []).filter(item => item.name !== '.emptyFolderPlaceholder');
+        const validFiles = (data || []).filter(function(item) {
+          return item.name !== '.emptyFolderPlaceholder';
+        });
+
         document.getElementById('kpi-files-count').innerText = validFiles.length;
         document.getElementById('kpi-last-sync').innerText = 'Synced at ' + new Date().toLocaleTimeString();
 
         if (validFiles.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">No update packages found in bucket "${bucketName}".</td></tr>`;
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">No update packages found in bucket "' + bucketName + '".</td></tr>';
           return;
         }
 
-        tbody.innerHTML = validFiles.map(file => {
-          const { data: pubData } = supabaseClient.storage.from(bucketName).getPublicUrl(file.name);
-          const downloadUrl = pubData?.publicUrl || '#';
-          const size = file.metadata?.size ? formatBytes(file.metadata.size) : 'Unknown';
+        tbody.innerHTML = validFiles.map(function(file) {
+          const pubRes = supabaseClient.storage.from(bucketName).getPublicUrl(file.name);
+          const downloadUrl = (pubRes && pubRes.data && pubRes.data.publicUrl) ? pubRes.data.publicUrl : '#';
+          const size = (file.metadata && file.metadata.size) ? formatBytes(file.metadata.size) : 'Unknown';
           const updated = file.created_at || file.updated_at ? new Date(file.created_at || file.updated_at).toLocaleString() : 'N/A';
+          const safeName = file.name.replace(/'/g, "\\'");
 
-          return `
-            <tr>
-              <td>
-                <span style="font-weight: 700;">📦 ${file.name}</span>
-                <span style="display:block; font-size: 0.72rem; color: var(--text-muted); font-family: monospace;">${file.id || ''}</span>
-              </td>
-              <td>${size}</td>
-              <td>${updated}</td>
-              <td>
-                <a href="${downloadUrl}" target="_blank" download class="action-btn" style="text-decoration: none; display: inline-block;">Download Link</a>
-                <button class="action-btn" style="color: var(--danger); margin-left: 6px;" onclick="deleteStorageFile('\({bucketName}', '\){file.name}')">Delete</button>
-              </td>
-            </tr>
-          `;
+          return '<tr>' +
+            '<td>' +
+              '<span style="font-weight: 700;">📦 ' + file.name + '</span>' +
+              '<span style="display:block; font-size: 0.72rem; color: var(--text-muted); font-family: monospace;">' + (file.id || '') + '</span>' +
+            '</td>' +
+            '<td>' + size + '</td>' +
+            '<td>' + updated + '</td>' +
+            '<td>' +
+              '<a href="' + downloadUrl + '" target="_blank" download class="action-btn" style="text-decoration: none; display: inline-block;">Download Link</a>' +
+              '<button class="action-btn" style="color: var(--danger); margin-left: 6px;" onclick="deleteStorageFile(\'' + bucketName + '\', \'' + safeName + '\')">Delete</button>' +
+            '</td>' +
+          '</tr>';
         }).join('');
 
       } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="4" style="color: var(--danger); text-align: center;">Storage error: ${err.message}</td></tr>`;
+        tbody.innerHTML = '<tr><td colspan="4" style="color: var(--danger); text-align: center;">Storage error: ' + err.message + '</td></tr>';
       }
     }
 
@@ -714,26 +744,34 @@
       if (!file) return;
 
       const bucketName = document.getElementById('storage-bucket-input').value.trim() || 'updates';
-      const filePath = `\({Date.now()}_\){file.name.replace(/\s+/g, '_')}`;
+      const filePath = Date.now() + '_' + file.name.replace(/\s+/g, '_');
 
-      const { data, error } = await supabaseClient.storage.from(bucketName).upload(filePath, file, {
-        upsert: true
-      });
+      try {
+        const { error } = await supabaseClient.storage.from(bucketName).upload(filePath, file, {
+          upsert: true
+        });
 
-      if (error) {
-        alert('Upload failed: ' + error.message);
-      } else {
-        alert('Update payload uploaded successfully: ' + filePath);
-        fetchStorageFiles();
+        if (error) {
+          alert('Upload failed: ' + error.message);
+        } else {
+          alert('Update payload uploaded successfully: ' + filePath);
+          fetchStorageFiles();
+        }
+      } catch (err) {
+        alert('Upload exception: ' + err.message);
       }
       event.target.value = '';
     }
 
     async function deleteStorageFile(bucket, filename) {
-      if (!confirm(`Are you sure you want to delete ${filename}?`)) return;
-      const { error } = await supabaseClient.storage.from(bucket).remove([filename]);
-      if (error) alert('Error: ' + error.message);
-      else fetchStorageFiles();
+      if (!confirm('Are you sure you want to delete ' + filename + '?')) return;
+      try {
+        const { error } = await supabaseClient.storage.from(bucket).remove([filename]);
+        if (error) alert('Error: ' + error.message);
+        else fetchStorageFiles();
+      } catch (err) {
+        alert('Delete failed: ' + err.message);
+      }
     }
 
     function startStoragePoller() {
@@ -745,37 +783,45 @@
       if (storagePollInterval) clearInterval(storagePollInterval);
     }
 
-    // --- SUPPORT DESK REAL-TIME AGENT LOGIC ---
     async function loadSupportDeskSessions() {
-      const { data: sessions } = await supabaseClient
-        .from('support_sessions')
-        .select('*')
-        .eq('status', 'open')
-        .order('updated_at', { ascending: false });
+      try {
+        const { data: sessions } = await supabaseClient
+          .from('support_sessions')
+          .select('*')
+          .eq('status', 'open')
+          .order('updated_at', { ascending: false });
 
-      const container = document.getElementById('support-sessions-list');
-      if (!sessions || sessions.length === 0) {
-        container.innerHTML = '<div style="padding: 16px; font-size: 13px; color: var(--text-muted); text-align: center;">No active merchant sessions.</div>';
-        return;
-      }
+        const container = document.getElementById('support-sessions-list');
+        if (!sessions || sessions.length === 0) {
+          container.innerHTML = '<div style="padding: 16px; font-size: 13px; color: var(--text-muted); text-align: center;">No active merchant sessions.</div>';
+          return;
+        }
 
-      container.innerHTML = sessions.map(s => `
-        <div class="session-item \({selectedSession?.id === s.id ? 'active' : ''}" onclick="selectSession('\){s.id}', '\({s.store_name.replace(/'/g, "\\'")}', '\){s.merchant_email}')">
-          <div class="session-store-title">${s.store_name}</div>
-          <div class="session-merchant-email">${s.merchant_email}</div>
-        </div>
-      `).join('');
+        container.innerHTML = sessions.map(function(s) {
+          const isAct = selectedSession && selectedSession.id === s.id ? 'active' : '';
+          const sName = (s.store_name || 'Store').replace(/'/g, "\\'");
+          const sEmail = (s.merchant_email || '').replace(/'/g, "\\'");
+          return '<div class="session-item ' + isAct + '" onclick="selectSession(\'' + s.id + '\', \'' + sName + '\', \'' + sEmail + '\')">' +
+            '<div class="session-store-title">' + (s.store_name || 'Store') + '</div>' +
+            '<div class="session-merchant-email">' + (s.merchant_email || '—') + '</div>' +
+          '</div>';
+        }).join('');
 
-      if (!sessionsChannelSubscribed) {
-        sessionsChannelSubscribed = true;
-        supabaseClient.channel('dev-sessions').on('postgres_changes', {
-          event: '*', schema: 'public', table: 'support_sessions'
-        }, () => loadSupportDeskSessions()).subscribe();
+        if (!sessionsChannelSubscribed) {
+          sessionsChannelSubscribed = true;
+          supabaseClient.channel('dev-sessions').on('postgres_changes', {
+            event: '*', schema: 'public', table: 'support_sessions'
+          }, function() {
+            loadSupportDeskSessions();
+          }).subscribe();
+        }
+      } catch (err) {
+        console.error('loadSupportDeskSessions error:', err);
       }
     }
 
     async function selectSession(sessionId, storeName, merchantEmail) {
-      selectedSession = { id: sessionId, storeName, merchantEmail };
+      selectedSession = { id: sessionId, storeName: storeName, merchantEmail: merchantEmail };
       document.getElementById('desk-selected-store').innerText = storeName;
       document.getElementById('desk-selected-email').innerText = merchantEmail;
       document.getElementById('desk-input').disabled = false;
@@ -785,37 +831,43 @@
     }
 
     async function loadDeskMessages(sessionId) {
-      const { data: messages } = await supabaseClient
-        .from('support_messages')
-        .select('*')
-        .eq('session_id', sessionId)
-        .order('created_at', { ascending: true });
+      try {
+        const { data: messages } = await supabaseClient
+          .from('support_messages')
+          .select('*')
+          .eq('session_id', sessionId)
+          .order('created_at', { ascending: true });
 
-      const body = document.getElementById('desk-chat-body');
-      body.innerHTML = '';
-      if (messages) {
-        messages.forEach(m => renderDeskBubble(m.sender_role, m.message, m.created_at));
-      }
-
-      if (currentChatChannel) {
-        supabaseClient.removeChannel(currentChatChannel);
-      }
-
-      currentChatChannel = supabaseClient.channel(`desk-${sessionId}`).on('postgres_changes', {
-        event: 'INSERT', schema: 'public', table: 'support_messages', filter: `session_id=eq.${sessionId}`
-      }, (payload) => {
-        if (payload.new && payload.new.sender_role === 'merchant') {
-          renderDeskBubble('merchant', payload.new.message, payload.new.created_at);
+        const body = document.getElementById('desk-chat-body');
+        body.innerHTML = '';
+        if (messages) {
+          messages.forEach(function(m) {
+            renderDeskBubble(m.sender_role, m.message, m.created_at);
+          });
         }
-      }).subscribe();
+
+        if (currentChatChannel) {
+          supabaseClient.removeChannel(currentChatChannel);
+        }
+
+        currentChatChannel = supabaseClient.channel('desk-' + sessionId).on('postgres_changes', {
+          event: 'INSERT', schema: 'public', table: 'support_messages', filter: 'session_id=eq.' + sessionId
+        }, function(payload) {
+          if (payload.new && payload.new.sender_role === 'merchant') {
+            renderDeskBubble('merchant', payload.new.message, payload.new.created_at);
+          }
+        }).subscribe();
+      } catch (err) {
+        console.error('loadDeskMessages error:', err);
+      }
     }
 
     function renderDeskBubble(role, message, timestamp) {
       const body = document.getElementById('desk-chat-body');
       const timeStr = timestamp ? new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
       const div = document.createElement('div');
-      div.className = `agent-bubble ${role}`;
-      div.innerHTML = `\({message} <span class="bubble-ts">\){role === 'agent' ? 'You' : 'Merchant'} • ${timeStr}</span>`;
+      div.className = 'agent-bubble ' + role;
+      div.innerHTML = message + ' <span class="bubble-ts">' + (role === 'agent' ? 'You' : 'Merchant') + ' • ' + timeStr + '</span>';
       body.appendChild(div);
       body.scrollTop = body.scrollHeight;
     }
@@ -829,12 +881,16 @@
       input.value = '';
       renderDeskBubble('agent', text, new Date());
 
-      await supabaseClient.from('support_messages').insert([{
-        session_id: selectedSession.id,
-        sender_id: activeDevUser.id,
-        sender_role: 'agent',
-        message: text
-      }]);
+      try {
+        await supabaseClient.from('support_messages').insert([{
+          session_id: selectedSession.id,
+          sender_id: activeDevUser.id,
+          sender_role: 'agent',
+          message: text
+        }]);
+      } catch (err) {
+        console.error('sendAgentResponse error:', err);
+      }
     }
 
     function openChatForStore(storeId, storeName) {
@@ -847,8 +903,8 @@
       if (!val) return;
       const logBox = document.getElementById('remote-logs');
       const time = new Date().toLocaleTimeString();
-      logBox.innerHTML += `<div class="log-line"><span class="log-info">[\({time}]</span> &gt;\){val}</div>`;
-      logBox.innerHTML += `<div class="log-line"><span class="log-success">[${time}]</span> Daemon acknowledged command. Status: 0 (OK)</div>`;
+      logBox.innerHTML += '<div class="log-line"><span class="log-info">[' + time + ']</span> &gt; ' + val + '</div>';
+      logBox.innerHTML += '<div class="log-line"><span class="log-success">[' + time + ']</span> Daemon acknowledged command. Status: 0 (OK)</div>';
       input.value = '';
       logBox.scrollTop = logBox.scrollHeight;
     }
