@@ -1041,11 +1041,11 @@
     // --- DATA AGGREGATOR & REPORT ENGINE ---
     async function fetchAndRenderAllReports(startDate, endDate) {
       try {
-        // 1. Fetch sales summary row from Supabase
+        const targetIds = [activeStore.id, activeUser?.id].filter(Boolean);
         const { data: summaries } = await supabaseClient
           .from('daily_sales_summaries')
           .select('*')
-          .eq('store_id', activeStore.id)
+          .in('store_id', targetIds)
           .gte('date', startDate)
           .lte('date', endDate);
 
@@ -1115,30 +1115,10 @@
           });
         }
 
-        // Fallback realistic defaults if clean store with zero uploaded transactions yet
-        if (net === 0 && txns === 0) {
-          gross = 18450.00;
-          discounts = 450.00;
-          refunds = 0.00;
-          net = gross - discounts;
-          tax = net * 0.12;
-          tips = 1120.00;
-          txns = 48;
-          voidsCount = 2;
-          voidsAmount = 240.00;
-          payments = { 'Cash': 6500.00, 'Credit Card (Visa/MC)': 9800.00, 'GCash / QRPh': 3270.00 };
-          categories = {
-            'Specialty Coffee': { net: 7800.00, count: 52 },
-            'Pastries & Bakery': { net: 4350.00, count: 34 },
-            'Main Courses': { net: 4200.00, count: 18 },
-            'Cold Beverages': { net: 1650.00, count: 14 }
-          };
-        }
-
-        const cashSales = payments['Cash'] || payments['CASH'] || (gross * 0.35);
-        const openingBank = 3000.00;
-        const paidIn = 500.00;
-        const paidOut = 350.00;
+        const cashSales = payments['Cash'] || payments['CASH'] || 0;
+        const openingBank = 0;
+        const paidIn = 0;
+        const paidOut = 0;
         const expectedCash = openingBank + cashSales + paidIn - paidOut;
 
         currentAgg = {
@@ -1217,7 +1197,11 @@
         mTotal += val;
         mHtml += `<tr><td><strong>${k}</strong></td><td class="num">${formatMoney(val)}</td><td class="num">${formatMoney(k.includes('Card') ? currentAgg.tips : 0)}</td><td class="num">${formatMoney(val + (k.includes('Card') ? currentAgg.tips : 0))}</td></tr>`;
       }
-      mHtml += `<tr class="total-row"><td>Total Tendered Media</td><td class="num" colspan="3">${formatMoney(mTotal + currentAgg.tips)}</td></tr>`;
+      if (mHtml === '') {
+        mHtml = '<tr><td colspan="4" style="text-align:center; padding: 24px; color: var(--text-muted);">No payment transactions recorded for this period.</td></tr>';
+      } else {
+        mHtml += `<tr class="total-row"><td>Total Tendered Media</td><td class="num" colspan="3">${formatMoney(mTotal + currentAgg.tips)}</td></tr>`;
+      }
       document.getElementById('summary-media-tbody').innerHTML = mHtml;
     }
 
@@ -1229,17 +1213,22 @@
         <tr class="total-row"><td>Total Taxes</td><td class="num">${formatMoney(currentAgg.netSales)}</td><td class="num">${formatMoney(currentAgg.taxes)}</td></tr>
       `;
 
-      document.getElementById('zread-period-tbody').innerHTML = `
-        <tr><td>Morning / Breakfast (05:00 - 11:00)</td><td class="num">${Math.round(currentAgg.txnCount * 0.35)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.32)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.32 / (currentAgg.txnCount * 0.35 || 1))}</td></tr>
-        <tr><td>Lunch Shift (11:00 - 16:00)</td><td class="num">${Math.round(currentAgg.txnCount * 0.45)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.48)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.48 / (currentAgg.txnCount * 0.45 || 1))}</td></tr>
-        <tr><td>Dinner Shift (16:00 - 22:00)</td><td class="num">${Math.round(currentAgg.txnCount * 0.20)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.20)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.20 / (currentAgg.txnCount * 0.20 || 1))}</td></tr>
-      `;
+      if (currentAgg.txnCount > 0) {
+        document.getElementById('zread-period-tbody').innerHTML = `
+          <tr><td>Morning / Breakfast (05:00 - 11:00)</td><td class="num">${Math.round(currentAgg.txnCount * 0.35)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.32)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.32 / (currentAgg.txnCount * 0.35 || 1))}</td></tr>
+          <tr><td>Lunch Shift (11:00 - 16:00)</td><td class="num">${Math.round(currentAgg.txnCount * 0.45)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.48)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.48 / (currentAgg.txnCount * 0.45 || 1))}</td></tr>
+          <tr><td>Dinner Shift (16:00 - 22:00)</td><td class="num">${Math.round(currentAgg.txnCount * 0.20)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.20)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.20 / (currentAgg.txnCount * 0.20 || 1))}</td></tr>
+        `;
 
-      document.getElementById('zread-order-type-tbody').innerHTML = `
-        <tr><td>Dine-In</td><td class="num">${Math.round(currentAgg.txnCount * 0.65)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.68)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.68 / (currentAgg.txnCount * 0.65 || 1))}</td></tr>
-        <tr><td>Takeout / To-Go</td><td class="num">${Math.round(currentAgg.txnCount * 0.25)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.22)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.22 / (currentAgg.txnCount * 0.25 || 1))}</td></tr>
-        <tr><td>Online Delivery</td><td class="num">${Math.round(currentAgg.txnCount * 0.10)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.10)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.10 / (currentAgg.txnCount * 0.10 || 1))}</td></tr>
-      `;
+        document.getElementById('zread-order-type-tbody').innerHTML = `
+          <tr><td>Dine-In</td><td class="num">${Math.round(currentAgg.txnCount * 0.65)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.68)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.68 / (currentAgg.txnCount * 0.65 || 1))}</td></tr>
+          <tr><td>Takeout / To-Go</td><td class="num">${Math.round(currentAgg.txnCount * 0.25)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.22)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.22 / (currentAgg.txnCount * 0.25 || 1))}</td></tr>
+          <tr><td>Online Delivery</td><td class="num">${Math.round(currentAgg.txnCount * 0.10)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.10)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.10 / (currentAgg.txnCount * 0.10 || 1))}</td></tr>
+        `;
+      } else {
+        document.getElementById('zread-period-tbody').innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px; color: var(--text-muted);">No serving window activity recorded.</td></tr>';
+        document.getElementById('zread-order-type-tbody').innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px; color: var(--text-muted);">No order types recorded.</td></tr>';
+      }
 
       document.getElementById('zread-cash-tbody').innerHTML = `
         <tr><td>Opening Float Bank</td><td class="num">${formatMoney(currentAgg.openingBank)}</td></tr>
@@ -1293,50 +1282,17 @@
         return;
       }
 
-      const t1Sales = currentAgg.grossSales * 0.65;
-      const t2Sales = currentAgg.grossSales * 0.35;
-      document.getElementById('terminal-sales-tbody').innerHTML = `
-        <tr>
-          <td><strong>POS Terminal 1 (Main Cashier)</strong></td>
-          <td><code>192.168.1.101</code></td>
-          <td><span class="badge-status healthy">MASTER</span></td>
-          <td class="num">${Math.round(currentAgg.txnCount * 0.65)}</td>
-          <td class="num">${formatMoney(currentAgg.cashSales * 0.70)}</td>
-          <td class="num">${formatMoney(t1Sales - (currentAgg.cashSales * 0.70))}</td>
-          <td class="num">${formatMoney(t1Sales)}</td>
-          <td class="num">65.0%</td>
-        </tr>
-        <tr>
-          <td><strong>POS Terminal 2 (Bar & Express)</strong></td>
-          <td><code>192.168.1.102</code></td>
-          <td><span class="badge-status info">SUB-STATION</span></td>
-          <td class="num">${Math.round(currentAgg.txnCount * 0.35)}</td>
-          <td class="num">${formatMoney(currentAgg.cashSales * 0.30)}</td>
-          <td class="num">${formatMoney(t2Sales - (currentAgg.cashSales * 0.30))}</td>
-          <td class="num">${formatMoney(t2Sales)}</td>
-          <td class="num">35.0%</td>
-        </tr>
-        <tr class="total-row">
-          <td>Total All Terminals</td>
-          <td></td><td></td>
-          <td class="num">${currentAgg.txnCount}</td>
-          <td class="num">${formatMoney(currentAgg.cashSales)}</td>
-          <td class="num">${formatMoney(currentAgg.grossSales - currentAgg.cashSales)}</td>
-          <td class="num">${formatMoney(currentAgg.grossSales)}</td>
-          <td class="num">100.0%</td>
-        </tr>
-      `;
+      document.getElementById('terminal-sales-tbody').innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 40px; color: var(--text-muted);">No terminal activity recorded for this period.</td></tr>';
     }
 
     // 4. Product Mix
     function renderProductMix() {
-      let pmixItems = [];
       if (currentAgg.productMix && currentAgg.productMix.length > 0) {
-        pmixItems = currentAgg.productMix.map(p => {
+        const pmixItems = currentAgg.productMix.map(p => {
           const qty = Number(p.quantitySold || p.quantity || 1);
           const net = Number(p.netSales || p.sales || 0);
           const price = qty > 0 ? (net / qty) : 0;
-          const cogs = price * 0.28; // Estimated standard 28% food cost
+          const cogs = price * 0.28;
           return {
             name: p.itemName || p.name || 'Item',
             cat: p.categoryName || 'General',
@@ -1347,208 +1303,157 @@
             cls: qty > 15 ? 'star' : (price > 200 ? 'warning' : 'info')
           };
         });
-      } else {
-        pmixItems = [
-          { name: 'Iced Spanish Latte', cat: 'Specialty Coffee', qty: 28, price: 180, cogs: 42, tag: 'STAR ⭐', cls: 'star' },
-          { name: 'Cold Brew Signature', cat: 'Specialty Coffee', qty: 24, price: 160, cogs: 35, tag: 'STAR ⭐', cls: 'star' },
-          { name: 'Butter Croissant', cat: 'Pastries', qty: 22, price: 120, cogs: 38, tag: 'PLOWHORSE 🐎', cls: 'info' },
-          { name: 'Grilled Cheese Truffle', cat: 'Mains', qty: 12, price: 290, cogs: 95, tag: 'PUZZLE 🧩', cls: 'warning' },
-          { name: 'Matcha Green Tea Latte', cat: 'Cold Beverages', qty: 14, price: 190, cogs: 55, tag: 'STAR ⭐', cls: 'star' },
-          { name: 'Chocolate Chip Cookie', cat: 'Pastries', qty: 12, price: 85, cogs: 22, tag: 'DOG 🐕', cls: 'danger' }
-        ];
+
+        document.getElementById('pmix-top-item').innerText = pmixItems[0]?.name || '-';
+        const totalUnits = pmixItems.reduce((acc, i) => acc + i.qty, 0);
+        document.getElementById('pmix-total-units').innerText = totalUnits;
+
+        let html = '';
+        pmixItems.forEach(i => {
+          const net = i.qty * i.price;
+          const totalCost = i.qty * i.cogs;
+          const marginPct = net > 0 ? ((net - totalCost) / net * 100).toFixed(1) : '0.0';
+          html += `
+            <tr>
+              <td><strong>${i.name}</strong></td>
+              <td>${i.cat}</td>
+              <td class="num">${i.qty}</td>
+              <td class="num">${formatMoney(i.price)}</td>
+              <td class="num">${formatMoney(net)}</td>
+              <td class="num">${formatMoney(totalCost)}</td>
+              <td class="num" style="color:var(--accent-green);">${marginPct}%</td>
+              <td><span class="badge-status ${i.cls}">${i.tag}</span></td>
+            </tr>
+          `;
+        });
+        document.getElementById('pmix-tbody').innerHTML = html;
+        return;
       }
 
-      document.getElementById('pmix-top-item').innerText = pmixItems[0]?.name || '-';
-      const totalUnits = pmixItems.reduce((acc, i) => acc + i.qty, 0);
-      document.getElementById('pmix-total-units').innerText = totalUnits;
-
-      let html = '';
-      pmixItems.forEach(i => {
-        const net = i.qty * i.price;
-        const totalCost = i.qty * i.cogs;
-        const marginPct = net > 0 ? ((net - totalCost) / net * 100).toFixed(1) : '0.0';
-        html += `
-          <tr>
-            <td><strong>${i.name}</strong></td>
-            <td>${i.cat}</td>
-            <td class="num">${i.qty}</td>
-            <td class="num">${formatMoney(i.price)}</td>
-            <td class="num">${formatMoney(net)}</td>
-            <td class="num">${formatMoney(totalCost)}</td>
-            <td class="num" style="color:var(--accent-green);">${marginPct}%</td>
-            <td><span class="badge-status ${i.cls}">${i.tag}</span></td>
-          </tr>
-        `;
-      });
-      document.getElementById('pmix-tbody').innerHTML = html;
+      document.getElementById('pmix-top-item').innerText = 'None';
+      document.getElementById('pmix-total-units').innerText = '0';
+      document.getElementById('pmix-tbody').innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 40px; color: var(--text-muted);">No products sold during this period.</td></tr>';
     }
 
     // 5. Labor Report
     function renderLaborReport() {
-      let staff = [];
       if (currentAgg.laborSummary && currentAgg.laborSummary.length > 0) {
-        staff = currentAgg.laborSummary.map(l => ({
+        const staff = currentAgg.laborSummary.map(l => ({
           name: l.userName || l.name || 'Staff Member',
           role: l.role || 'Floor Staff',
           reg: Number(l.regularHours || 0),
           ot: Number(l.overtimeHours || 0),
           rate: (Number(l.totalHours || 1) > 0) ? (Number(l.totalPay || 0) / Number(l.totalHours || 1)) : 75.00
         }));
-      } else {
-        staff = [
-          { name: 'Maria Santos', role: 'Head Barista', reg: 8.0, ot: 1.5, rate: 85.00 },
-          { name: 'John Doe', role: 'Cashier / Server', reg: 8.0, ot: 0.0, rate: 75.00 },
-          { name: 'Carlos Reyes', role: 'Line Cook', reg: 7.5, ot: 0.5, rate: 80.00 },
-          { name: 'Anna Cruz', role: 'Kitchen Prep', reg: 6.0, ot: 0.0, rate: 70.00 }
-        ];
+
+        let totalCost = 0;
+        let totalHrs = 0;
+        let html = '';
+
+        staff.forEach(s => {
+          const regPay = s.reg * s.rate;
+          const otPay = s.ot * (s.rate * 1.5);
+          const gross = regPay + otPay;
+          totalCost += gross;
+          totalHrs += (s.reg + s.ot);
+
+          html += `
+            <tr>
+              <td><strong>${s.name}</strong></td>
+              <td>${s.role}</td>
+              <td class="num">${s.reg.toFixed(1)}</td>
+              <td class="num">${s.ot.toFixed(1)}</td>
+              <td class="num">${(s.reg + s.ot).toFixed(1)}</td>
+              <td class="num">${formatMoney(s.rate)}/hr</td>
+              <td class="num" style="font-weight:700;">${formatMoney(gross)}</td>
+              <td><span class="badge-status healthy">COMPLIANT</span></td>
+            </tr>
+          `;
+        });
+
+        document.getElementById('labor-total-cost').innerText = formatMoney(totalCost);
+        document.getElementById('labor-total-hours').innerText = `${totalHrs.toFixed(1)} hrs`;
+        const pct = currentAgg.netSales > 0 ? (totalCost / currentAgg.netSales * 100).toFixed(1) : 0;
+        document.getElementById('labor-pct-sales').innerText = `${pct}%`;
+        document.getElementById('labor-tbody').innerHTML = html;
+        return;
       }
 
-      let totalCost = 0;
-      let totalHrs = 0;
-      let html = '';
-
-      staff.forEach(s => {
-        const regPay = s.reg * s.rate;
-        const otPay = s.ot * (s.rate * 1.5);
-        const gross = regPay + otPay;
-        totalCost += gross;
-        totalHrs += (s.reg + s.ot);
-
-        html += `
-          <tr>
-            <td><strong>${s.name}</strong></td>
-            <td>${s.role}</td>
-            <td class="num">${s.reg.toFixed(1)}</td>
-            <td class="num">${s.ot.toFixed(1)}</td>
-            <td class="num">${(s.reg + s.ot).toFixed(1)}</td>
-            <td class="num">${formatMoney(s.rate)}/hr</td>
-            <td class="num" style="font-weight:700;">${formatMoney(gross)}</td>
-            <td><span class="badge-status healthy">COMPLIANT</span></td>
-          </tr>
-        `;
-      });
-
-      document.getElementById('labor-total-cost').innerText = formatMoney(totalCost);
-      document.getElementById('labor-total-hours').innerText = `${totalHrs.toFixed(1)} hrs`;
-      const pct = currentAgg.netSales > 0 ? (totalCost / currentAgg.netSales * 100).toFixed(1) : 0;
-      document.getElementById('labor-pct-sales').innerText = `${pct}%`;
-      document.getElementById('labor-tbody').innerHTML = html;
+      document.getElementById('labor-total-cost').innerText = formatMoney(0);
+      document.getElementById('labor-total-hours').innerText = '0.0 hrs';
+      document.getElementById('labor-pct-sales').innerText = '0.0%';
+      document.getElementById('labor-tbody').innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 40px; color: var(--text-muted);">No staff shift hours recorded for this date range.</td></tr>';
     }
 
     // 6. Discounts Report
     function renderDiscountsReport() {
-      document.getElementById('discounts-tbody').innerHTML = `
-        <tr><td><strong>Senior Citizen 20%</strong></td><td>Percentage (20%)</td><td class="num">4</td><td class="num">${formatMoney(240.00)}</td><td><span class="badge-status info">ID Verified</span></td><td>POS Terminal 1</td></tr>
-        <tr><td><strong>PWD 20% Discount</strong></td><td>Percentage (20%)</td><td class="num">2</td><td class="num">${formatMoney(110.00)}</td><td><span class="badge-status info">ID Verified</span></td><td>POS Terminal 1</td></tr>
-        <tr><td><strong>Manager Discretionary Comp</strong></td><td>Fixed / 100%</td><td class="num">1</td><td class="num">${formatMoney(100.00)}</td><td><span class="badge-status warning">PIN 9999</span></td><td>Manager PIN</td></tr>
-        <tr class="total-row"><td>Total Deductions</td><td></td><td class="num">7</td><td class="num">${formatMoney(450.00)}</td><td></td><td></td></tr>
-      `;
+      if (currentAgg.discounts > 0) {
+        document.getElementById('discounts-tbody').innerHTML = `
+          <tr><td><strong>Discounts & Promos Applied</strong></td><td>Aggregated</td><td class="num">-</td><td class="num">${formatMoney(currentAgg.discounts)}</td><td><span class="badge-status info">Applied</span></td><td>POS Register</td></tr>
+          <tr class="total-row"><td>Total Deductions</td><td></td><td class="num">-</td><td class="num">${formatMoney(currentAgg.discounts)}</td><td></td><td></td></tr>
+        `;
+        return;
+      }
+      document.getElementById('discounts-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No discounts or comps recorded for this period.</td></tr>';
     }
 
     // 7. Drawer Ledger
     function renderDrawerLedger() {
-      document.getElementById('drawer-ledger-tbody').innerHTML = `
-        <tr><td>08:00 AM</td><td><span class="badge-status info">OPEN FLOAT</span></td><td>Manager Maria</td><td>Shift Starting Cash Float</td><td class="num">${formatMoney(3000.00)}</td><td class="num">${formatMoney(3000.00)}</td></tr>
-        <tr><td>11:30 AM</td><td><span class="badge-status healthy">PAID-IN</span></td><td>Owner Jeffrey</td><td>Change replenishment (Coins/Bills)</td><td class="num">+${formatMoney(500.00)}</td><td class="num">${formatMoney(3500.00)}</td></tr>
-        <tr><td>02:15 PM</td><td><span class="badge-status danger">PAID-OUT</span></td><td>Manager Maria</td><td>Fresh ice delivery emergency restock</td><td class="num">-${formatMoney(350.00)}</td><td class="num">${formatMoney(3150.00)}</td></tr>
-      `;
+      document.getElementById('drawer-ledger-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No cash drops or paid-in/paid-out records for this date.</td></tr>';
     }
 
     // 8. Inventory Report
     function renderInventoryReport() {
-      let inventory = [];
       if (currentAgg.inventorySnapshot && currentAgg.inventorySnapshot.length > 0) {
-        inventory = currentAgg.inventorySnapshot.map(i => {
+        let html = '';
+        currentAgg.inventorySnapshot.forEach(i => {
           const stock = Number(i.currentStock || 0);
           const par = Number(i.reorderPoint || 10);
           let status = 'healthy';
           let label = 'OPTIMAL';
           if (stock <= 0) { status = 'danger'; label = 'OUT OF STOCK'; }
           else if (stock <= par) { status = 'warning'; label = 'LOW STOCK'; }
+          const cost = Number(i.costPrice || (i.price ? i.price * 0.4 : 50));
+          const val = stock * cost;
 
-          return {
-            sku: i.sku || 'SKU',
-            name: i.name || 'Catalog Item',
-            cat: i.categoryName || 'General',
-            stock: stock,
-            unit: 'units',
-            par: par,
-            cost: Number(i.costPrice || (i.price ? i.price * 0.4 : 50)),
-            status: status,
-            label: label
-          };
+          html += `
+            <tr>
+              <td><code>${i.sku || 'SKU'}</code></td>
+              <td><strong>${i.name || 'Catalog Item'}</strong></td>
+              <td>${i.categoryName || 'General'}</td>
+              <td class="num">${stock}</td>
+              <td>units</td>
+              <td class="num">${par}</td>
+              <td class="num">${formatMoney(cost)}</td>
+              <td class="num" style="font-weight:700;">${formatMoney(val)}</td>
+              <td><span class="badge-status ${status}">${label}</span></td>
+            </tr>
+          `;
         });
-      } else {
-        inventory = [
-          { sku: 'BEV-001', name: 'Arabica Coffee Beans 1kg', cat: 'Beans', stock: 18.5, unit: 'kg', par: 10.0, cost: 650.00, status: 'healthy', label: 'OPTIMAL' },
-          { sku: 'BEV-002', name: 'Fresh Whole Milk 1L', cat: 'Dairy', stock: 6.0, unit: 'cartons', par: 15.0, cost: 95.00, status: 'warning', label: 'LOW STOCK' },
-          { sku: 'SYR-001', name: 'Madagascar Vanilla Syrup', cat: 'Syrups', stock: 4.0, unit: 'bottles', par: 3.0, cost: 420.00, status: 'healthy', label: 'OPTIMAL' },
-          { sku: 'BAK-001', name: 'Frozen Croissant Dough', cat: 'Bakery', stock: 45.0, unit: 'pcs', par: 20.0, cost: 28.00, status: 'healthy', label: 'OPTIMAL' },
-          { sku: 'MAT-001', name: 'Ceremonial Grade Matcha 500g', cat: 'Tea', stock: 1.0, unit: 'tins', par: 2.0, cost: 1200.00, status: 'danger', label: 'CRITICAL' }
-        ];
+        document.getElementById('inventory-tbody').innerHTML = html;
+        return;
       }
 
-      let html = '';
-      inventory.forEach(i => {
-        const val = i.stock * i.cost;
-        html += `
-          <tr>
-            <td><code>${i.sku}</code></td>
-            <td><strong>${i.name}</strong></td>
-            <td>${i.cat}</td>
-            <td class="num">${i.stock}</td>
-            <td>${i.unit}</td>
-            <td class="num">${i.par}</td>
-            <td class="num">${formatMoney(i.cost)}</td>
-            <td class="num" style="font-weight:700;">${formatMoney(val)}</td>
-            <td><span class="badge-status ${i.status}">${i.label}</span></td>
-          </tr>
-        `;
-      });
-      document.getElementById('inventory-tbody').innerHTML = html;
+      document.getElementById('inventory-tbody').innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 40px; color: var(--text-muted);">No inventory items synced yet. Add items in POS Back Office to view stock counts.</td></tr>';
     }
 
     // 9. Recipe COGS
     function renderRecipeCogs() {
-      document.getElementById('recipe-cogs-tbody').innerHTML = `
-        <tr><td><strong>Iced Spanish Latte 16oz</strong></td><td>1 cup (16oz)</td><td class="num">${formatMoney(180.00)}</td><td class="num">${formatMoney(42.50)}</td><td class="num" style="color:var(--accent-green);">${formatMoney(137.50)}</td><td class="num">23.6%</td><td><span class="badge-status healthy">HIGH PROFIT</span></td></tr>
-        <tr><td><strong>Butter Croissant Baked</strong></td><td>1 piece</td><td class="num">${formatMoney(120.00)}</td><td class="num">${formatMoney(38.00)}</td><td class="num" style="color:var(--accent-green);">${formatMoney(82.00)}</td><td class="num">31.6%</td><td><span class="badge-status healthy">ON TARGET</span></td></tr>
-        <tr><td><strong>Truffle Grilled Cheese</strong></td><td>1 serving</td><td class="num">${formatMoney(290.00)}</td><td class="num">${formatMoney(95.00)}</td><td class="num" style="color:var(--accent-green);">${formatMoney(195.00)}</td><td class="num">32.7%</td><td><span class="badge-status healthy">ON TARGET</span></td></tr>
-      `;
+      document.getElementById('recipe-cogs-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No recipe ingredients configured. Build recipes in Back Office > Recipes.</td></tr>';
     }
 
     // 10. Expiring Items
     function renderExpiringItems() {
-      document.getElementById('expiring-tbody').innerHTML = `
-        <tr><td><code>LOT-2026-10A</code></td><td><strong>Fresh Whole Milk 1L</strong></td><td>2026-09-28</td><td>2026-10-10</td><td class="num">6</td><td class="num" style="color:#fbbf24;">4 days</td><td><span class="badge-status warning">EXPIRING SOON</span></td></tr>
-        <tr><td><code>LOT-2026-09C</code></td><td><strong>Vanilla Whipping Cream</strong></td><td>2026-09-20</td><td>2026-10-18</td><td class="num">12</td><td class="num">12 days</td><td><span class="badge-status healthy">GOOD</span></td></tr>
-        <tr><td><code>LOT-2026-08B</code></td><td><strong>Matcha Green Tea Powder</strong></td><td>2026-08-15</td><td>2027-02-15</td><td class="num">2</td><td class="num">132 days</td><td><span class="badge-status healthy">GOOD</span></td></tr>
-      `;
+      document.getElementById('expiring-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No perishable batch lot items expiring.</td></tr>';
     }
 
     // 11. Waste & Spoilage Log
     function renderWasteLoss() {
-      document.getElementById('waste-tbody').innerHTML = `
-        <tr><td>2026-10-06 09:15</td><td><strong>Burnt Croissant</strong></td><td class="num">2 pcs</td><td>Over-baked in morning oven</td><td>Carlos Reyes</td><td class="num" style="color:#f87171;">${formatMoney(76.00)}</td></tr>
-        <tr><td>2026-10-06 13:40</td><td><strong>Spilled Drip Coffee</strong></td><td class="num">1 mug</td><td>Counter drop accident</td><td>John Doe</td><td class="num" style="color:#f87171;">${formatMoney(25.00)}</td></tr>
-        <tr><td>2026-10-05 18:20</td><td><strong>Sour Milk Carton</strong></td><td class="num">1 carton</td><td>Unsealed overnight</td><td>Maria Santos</td><td class="num" style="color:#f87171;">${formatMoney(95.00)}</td></tr>
-      `;
+      document.getElementById('waste-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No waste or spoilage records logged.</td></tr>';
     }
 
     // 12. Checks Replica
-    let mockChecks = [
-      { id: '1024', time: '14:22', table: 'Table 4', cashier: 'Maria S.', total: 480.00, items: [
-        { name: 'Iced Spanish Latte', qty: 2, price: 180.00 },
-        { name: 'Butter Croissant', qty: 1, price: 120.00 }
-      ], sub: 480.00, tax: 57.60, tip: 40.00, tender: 'VISA •••• 8392' },
-      { id: '1025', time: '14:35', table: 'Takeout', cashier: 'John D.', total: 320.00, items: [
-        { name: 'Cold Brew Signature', qty: 2, price: 160.00 }
-      ], sub: 320.00, tax: 38.40, tip: 20.00, tender: 'GCash QR' },
-      { id: '1026', time: '14:48', table: 'Table 7', cashier: 'Maria S.', total: 660.00, items: [
-        { name: 'Grilled Cheese Truffle', qty: 2, price: 290.00 },
-        { name: 'Chocolate Chip Cookie', qty: 1, price: 80.00 }
-      ], sub: 660.00, tax: 79.20, tip: 50.00, tender: 'EXACT CASH' }
-    ];
+    let mockChecks = [];
 
     function renderChecksReplica() {
       if (currentAgg.recentChecks && currentAgg.recentChecks.length > 0) {
@@ -1568,23 +1473,34 @@
           tip: Number(c.tip || 0),
           tender: c.paymentMethod ? c.paymentMethod.toUpperCase() : 'PAID'
         }));
+
+        let html = '';
+        mockChecks.forEach(c => {
+          html += `
+            <tr style="cursor:pointer;" onclick="selectReceipt('${c.id}')">
+              <td><strong>#${c.id}</strong></td>
+              <td>${c.time}</td>
+              <td>${c.table}</td>
+              <td>${c.cashier}</td>
+              <td class="num">${formatMoney(c.total)}</td>
+              <td><span class="badge-status healthy">PAID</span></td>
+            </tr>
+          `;
+        });
+        document.getElementById('checks-list-tbody').innerHTML = html;
+        selectReceipt(mockChecks[0].id);
+        return;
       }
 
-      let html = '';
-      mockChecks.forEach(c => {
-        html += `
-          <tr style="cursor:pointer;" onclick="selectReceipt('${c.id}')">
-            <td><strong>#${c.id}</strong></td>
-            <td>${c.time}</td>
-            <td>${c.table}</td>
-            <td>${c.cashier}</td>
-            <td class="num">${formatMoney(c.total)}</td>
-            <td><span class="badge-status healthy">PAID</span></td>
-          </tr>
-        `;
-      });
-      document.getElementById('checks-list-tbody').innerHTML = html;
-      if (mockChecks.length > 0) selectReceipt(mockChecks[0].id);
+      document.getElementById('checks-list-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No checks found for this date.</td></tr>';
+      document.getElementById('rcpt-store').innerText = (activeStore?.name || 'FLEXITAP POS').toUpperCase();
+      document.getElementById('rcpt-meta').innerText = 'No transaction selected';
+      document.getElementById('rcpt-items').innerHTML = '<tr><td colspan="2" style="text-align:center; padding: 20px; color: #64748b;">No items</td></tr>';
+      document.getElementById('rcpt-subtotal').innerText = formatMoney(0);
+      document.getElementById('rcpt-tax').innerText = formatMoney(0);
+      document.getElementById('rcpt-tips').innerText = formatMoney(0);
+      document.getElementById('rcpt-total').innerText = formatMoney(0);
+      document.getElementById('rcpt-tender').innerText = 'NO TRANSACTION';
     }
 
     function selectReceipt(id) {
@@ -1628,22 +1544,12 @@
         return;
       }
 
-      document.getElementById('exceptions-tbody').innerHTML = `
-        <tr><td><code>EXC-881</code></td><td>11:42 AM</td><td><span class="badge-status danger">LINE ITEM VOID</span></td><td>John Doe</td><td>Manager Maria</td><td class="num">${formatMoney(180.00)}</td><td>Customer changed order to Cold Brew</td></tr>
-        <tr><td><code>EXC-882</code></td><td>01:15 PM</td><td><span class="badge-status warning">DRAWER KICK</span></td><td>Maria Santos</td><td>Direct POS Key</td><td class="num">₱0.00</td><td>Manual change drawer release</td></tr>
-        <tr><td><code>EXC-883</code></td><td>03:20 PM</td><td><span class="badge-status danger">ORDER REFUND</span></td><td>John Doe</td><td>PIN 9999</td><td class="num">${formatMoney(120.00)}</td><td>Wrong milk preference remade</td></tr>
-      `;
+      document.getElementById('exceptions-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No void or refund exceptions recorded for this period. Clean audit.</td></tr>';
     }
 
     // 14. Activity Clickstream
     function renderActivityLog() {
-      document.getElementById('activity-tbody').innerHTML = `
-        <tr><td>14:22:15</td><td>Maria Santos</td><td>CHECKOUT_COMPLETE</td><td>Register POS</td><td>Terminal 1</td><td>Order #1024 Tendered Visa (₱480.00)</td></tr>
-        <tr><td>14:20:02</td><td>Maria Santos</td><td>ADD_ITEM_TO_CART</td><td>Register POS</td><td>Terminal 1</td><td>Added Iced Spanish Latte (qty 2)</td></tr>
-        <tr><td>13:40:11</td><td>John Doe</td><td>WASTE_RECORD_CREATED</td><td>Back Office</td><td>Terminal 2</td><td>Logged spilled drip coffee (₱25 loss)</td></tr>
-        <tr><td>11:30:00</td><td>Jeffrey D.</td><td>PAID_IN_EXECUTED</td><td>Drawer Ledger</td><td>Terminal 1</td><td>Added float change ₱500.00</td></tr>
-        <tr><td>08:00:10</td><td>Maria Santos</td><td>STAFF_CLOCK_IN</td><td>Timeclock Hub</td><td>Terminal 1</td><td>Shift start verified via PIN 1234</td></tr>
-      `;
+      document.getElementById('activity-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No security or clickstream events recorded for this period.</td></tr>';
     }
 
     // 15. Customer CRM
@@ -1670,37 +1576,22 @@
         return;
       }
 
-      document.getElementById('customer-crm-tbody').innerHTML = `
-        <tr><td><strong>Atty. Benjamin Ramos</strong></td><td>+63 917 555 1234</td><td><span class="badge-status star">VIP GOLD</span></td><td class="num">38</td><td>2026-10-06</td><td class="num">${formatMoney(14250.00)}</td><td class="num">1,420</td><td class="num">₱0.00</td></tr>
-        <tr><td><strong>Dr. Maria Mendoza</strong></td><td>+63 918 555 5678</td><td><span class="badge-status star">VIP SILVER</span></td><td class="num">24</td><td>2026-10-05</td><td class="num">${formatMoney(8920.00)}</td><td class="num">890</td><td class="num">₱0.00</td></tr>
-        <tr><td><strong>Arch. Liam Torres</strong></td><td>+63 920 555 9012</td><td><span class="badge-status info">REGULAR</span></td><td class="num">12</td><td>2026-10-04</td><td class="num">${formatMoney(4300.00)}</td><td class="num">430</td><td class="num" style="color:#f87171;">${formatMoney(1200.00)}</td></tr>
-      `;
+      document.getElementById('customer-crm-tbody').innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 40px; color: var(--text-muted);">No customer profiles found. Add customers at checkout to view CRM history.</td></tr>';
     }
 
     // 16. AR House Accounts
     function renderArLedger() {
-      document.getElementById('ar-tbody').innerHTML = `
-        <tr><td><strong>Arch. Liam Torres (Studio Design)</strong></td><td>+63 920 555 9012</td><td class="num">${formatMoney(5000.00)}</td><td class="num" style="color:#f87171; font-weight:700;">${formatMoney(1200.00)}</td><td class="num">24.0%</td><td>2026-09-28</td><td><span class="badge-status healthy">ACTIVE HEALTHY</span></td></tr>
-        <tr><td><strong>Synergy Tech Solutions Corp</strong></td><td>+63 917 888 4400</td><td class="num">${formatMoney(25000.00)}</td><td class="num" style="color:#f87171; font-weight:700;">${formatMoney(8400.00)}</td><td class="num">33.6%</td><td>2026-10-01</td><td><span class="badge-status healthy">ACTIVE HEALTHY</span></td></tr>
-      `;
+      document.getElementById('ar-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No active AR house accounts with outstanding balances.</td></tr>';
     }
 
     // 17. Loyalty
     function renderLoyaltyReport() {
-      document.getElementById('loyalty-tbody').innerHTML = `
-        <tr><td><span class="badge-status star">GOLD TIER (1,000+ PTS)</span></td><td class="num">14</td><td class="num">18,400</td><td class="num">4,000</td><td class="num">14,400</td><td>Free specialty beverage + 10% discount</td></tr>
-        <tr><td><span class="badge-status info">SILVER TIER (500+ PTS)</span></td><td class="num">32</td><td class="num">21,000</td><td class="num">6,500</td><td class="num">14,500</td><td>Free pastry on birthday + priority line</td></tr>
-        <tr><td><span class="badge-status healthy">MEMBER TIER (0 - 499 PTS)</span></td><td class="num">120</td><td class="num">18,500</td><td class="num">3,200</td><td class="num">15,300</td><td>1 pt per ₱10 spent</td></tr>
-      `;
+      document.getElementById('loyalty-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No loyalty points or rewards activity recorded for this period.</td></tr>';
     }
 
     // 18. Gift Cards
     function renderGiftCards() {
-      document.getElementById('gift-cards-tbody').innerHTML = `
-        <tr><td><code>GC-8941-2026</code></td><td>Corporate Rewards Inc.</td><td>2026-09-15</td><td class="num">${formatMoney(5000.00)}</td><td class="num">${formatMoney(3200.00)}</td><td class="num" style="color:var(--accent-green); font-weight:700;">${formatMoney(1800.00)}</td><td><span class="badge-status healthy">ACTIVE</span></td></tr>
-        <tr><td><code>GC-7731-2026</code></td><td>Atty. Benjamin Ramos</td><td>2026-08-20</td><td class="num">${formatMoney(2000.00)}</td><td class="num">${formatMoney(2000.00)}</td><td class="num">₱0.00</td><td><span class="badge-status info">DEPLETED</span></td></tr>
-        <tr><td><code>GC-9912-2026</code></td><td>Elena Gomez</td><td>2026-09-01</td><td class="num">${formatMoney(1500.00)}</td><td class="num">${formatMoney(450.00)}</td><td class="num" style="color:var(--accent-green); font-weight:700;">${formatMoney(1050.00)}</td><td><span class="badge-status healthy">ACTIVE</span></td></tr>
-      `;
+      document.getElementById('gift-cards-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No gift cards or vouchers issued on file.</td></tr>';
     }
 
     // --- QUICK IN-TABLE SEARCH FILTER ---
