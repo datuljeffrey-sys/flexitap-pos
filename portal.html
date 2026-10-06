@@ -1060,6 +1060,15 @@
         let liveExceptions = [];
         let liveCustomers = [];
         let liveChecks = [];
+        let liveDiscounts = [];
+        let liveGiftCards = [];
+        let liveLoyalty = {};
+        let liveArLedger = [];
+        let liveRecipeCogs = [];
+        let liveExpiring = [];
+        let liveDrawer = [];
+        let liveWaste = [];
+        let liveActivity = [];
 
         if (summaries && summaries.length > 0) {
           summaries.forEach(row => {
@@ -1112,6 +1121,33 @@
             if (Array.isArray(row.recent_checks) && row.recent_checks.length > 0) {
               liveChecks = row.recent_checks;
             }
+            if (Array.isArray(row.discounts_summary) && row.discounts_summary.length > 0) {
+              liveDiscounts = row.discounts_summary;
+            }
+            if (Array.isArray(row.gift_cards_summary) && row.gift_cards_summary.length > 0) {
+              liveGiftCards = row.gift_cards_summary;
+            }
+            if (row.loyalty_summary && typeof row.loyalty_summary === 'object') {
+              liveLoyalty = row.loyalty_summary;
+            }
+            if (Array.isArray(row.ar_ledger_summary) && row.ar_ledger_summary.length > 0) {
+              liveArLedger = row.ar_ledger_summary;
+            }
+            if (Array.isArray(row.recipe_cogs_summary) && row.recipe_cogs_summary.length > 0) {
+              liveRecipeCogs = row.recipe_cogs_summary;
+            }
+            if (Array.isArray(row.expiring_batches) && row.expiring_batches.length > 0) {
+              liveExpiring = row.expiring_batches;
+            }
+            if (Array.isArray(row.drawer_ledger_summary) && row.drawer_ledger_summary.length > 0) {
+              liveDrawer = row.drawer_ledger_summary;
+            }
+            if (Array.isArray(row.waste_loss_summary) && row.waste_loss_summary.length > 0) {
+              liveWaste = row.waste_loss_summary;
+            }
+            if (Array.isArray(row.activity_clickstream) && row.activity_clickstream.length > 0) {
+              liveActivity = row.activity_clickstream;
+            }
           });
         }
 
@@ -1133,7 +1169,16 @@
           inventorySnapshot: liveInventory,
           auditExceptions: liveExceptions,
           customersCrm: liveCustomers,
-          recentChecks: liveChecks
+          recentChecks: liveChecks,
+          discountsSummary: liveDiscounts,
+          giftCardsSummary: liveGiftCards,
+          loyaltySummary: liveLoyalty,
+          arLedgerSummary: liveArLedger,
+          recipeCogsSummary: liveRecipeCogs,
+          expiringBatches: liveExpiring,
+          drawerLedgerSummary: liveDrawer,
+          wasteLossSummary: liveWaste,
+          activityClickstream: liveActivity
         };
 
         // Render all 16 reports
@@ -1387,6 +1432,23 @@
 
     // 6. Discounts Report
     function renderDiscountsReport() {
+      if (currentAgg.discountsSummary && currentAgg.discountsSummary.length > 0) {
+        let html = '';
+        currentAgg.discountsSummary.forEach(d => {
+          html += `
+            <tr>
+              <td><strong>${d.name || d.title || 'Discount'}</strong></td>
+              <td>${d.type || 'Standard'}</td>
+              <td class="num">${d.appliedCount || d.count || 1}</td>
+              <td class="num">${formatMoney(d.totalMarkdown || d.value || 0)}</td>
+              <td><span class="badge-status info">${d.requiresManager ? 'PIN Required' : 'Eligible'}</span></td>
+              <td>${d.attribution || 'POS Register'}</td>
+            </tr>
+          `;
+        });
+        document.getElementById('discounts-tbody').innerHTML = html;
+        return;
+      }
       if (currentAgg.discounts > 0) {
         document.getElementById('discounts-tbody').innerHTML = `
           <tr><td><strong>Discounts & Promos Applied</strong></td><td>Aggregated</td><td class="num">-</td><td class="num">${formatMoney(currentAgg.discounts)}</td><td><span class="badge-status info">Applied</span></td><td>POS Register</td></tr>
@@ -1399,6 +1461,27 @@
 
     // 7. Drawer Ledger
     function renderDrawerLedger() {
+      if (currentAgg.drawerLedgerSummary && currentAgg.drawerLedgerSummary.length > 0) {
+        let html = '';
+        let running = currentAgg.openingBank || 0;
+        currentAgg.drawerLedgerSummary.forEach(e => {
+          const amt = Number(e.amount || 0);
+          running += amt;
+          const isAdd = amt >= 0;
+          html += `
+            <tr>
+              <td>${e.timestamp ? new Date(e.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+              <td><span class="badge-status ${isAdd ? 'healthy' : 'danger'}">${(e.type || 'LEDGER').toUpperCase()}</span></td>
+              <td>${e.employee_id || 'Staff'}</td>
+              <td>${e.notes || 'Drawer entry'}</td>
+              <td class="num" style="${isAdd ? 'color:var(--accent-green);' : 'color:#f87171;'}">${isAdd ? '+' : ''}${formatMoney(amt)}</td>
+              <td class="num">${formatMoney(running)}</td>
+            </tr>
+          `;
+        });
+        document.getElementById('drawer-ledger-tbody').innerHTML = html;
+        return;
+      }
       document.getElementById('drawer-ledger-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No cash drops or paid-in/paid-out records for this date.</td></tr>';
     }
 
@@ -1439,16 +1522,83 @@
 
     // 9. Recipe COGS
     function renderRecipeCogs() {
+      if (currentAgg.recipeCogsSummary && currentAgg.recipeCogsSummary.length > 0) {
+        let html = '';
+        currentAgg.recipeCogsSummary.forEach(r => {
+          const rev = Number(r.total_revenue || r.revenue || 0);
+          const cogs = Number(r.total_cogs || r.cogs || 0);
+          const profit = rev - cogs;
+          const pct = rev > 0 ? ((cogs / rev) * 100).toFixed(1) : '0.0';
+          html += `
+            <tr>
+              <td><strong>${r.item_name || r.name || 'Recipe'}</strong></td>
+              <td>1 serving</td>
+              <td class="num">${formatMoney(rev)}</td>
+              <td class="num">${formatMoney(cogs)}</td>
+              <td class="num" style="color:var(--accent-green);">${formatMoney(profit)}</td>
+              <td class="num">${pct}%</td>
+              <td><span class="badge-status ${Number(pct) < 35 ? 'healthy' : 'warning'}">${Number(pct) < 35 ? 'HIGH PROFIT' : 'ON TARGET'}</span></td>
+            </tr>
+          `;
+        });
+        document.getElementById('recipe-cogs-tbody').innerHTML = html;
+        return;
+      }
       document.getElementById('recipe-cogs-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No recipe ingredients configured. Build recipes in Back Office > Recipes.</td></tr>';
     }
 
     // 10. Expiring Items
     function renderExpiringItems() {
+      if (currentAgg.expiringBatches && currentAgg.expiringBatches.length > 0) {
+        let html = '';
+        currentAgg.expiringBatches.forEach(b => {
+          const exp = b.expiryDate ? new Date(b.expiryDate) : null;
+          let daysLeft = '-';
+          let statusCls = 'healthy';
+          let statusLabel = 'GOOD';
+          if (exp) {
+            const diff = Math.ceil((exp - new Date()) / (1000 * 60 * 60 * 24));
+            daysLeft = `${diff} days`;
+            if (diff <= 0) { statusCls = 'danger'; statusLabel = 'EXPIRED'; }
+            else if (diff <= 7) { statusCls = 'warning'; statusLabel = 'EXPIRING SOON'; }
+          }
+          html += `
+            <tr>
+              <td><code>${b.batchNumber || 'LOT'}</code></td>
+              <td><strong>${b.name || 'Item'}</strong></td>
+              <td>${b.batchDate ? b.batchDate.split('T')[0] : '-'}</td>
+              <td>${b.expiryDate ? b.expiryDate.split('T')[0] : '-'}</td>
+              <td class="num">${b.stockQuantity ?? 0}</td>
+              <td class="num">${daysLeft}</td>
+              <td><span class="badge-status ${statusCls}">${statusLabel}</span></td>
+            </tr>
+          `;
+        });
+        document.getElementById('expiring-tbody').innerHTML = html;
+        return;
+      }
       document.getElementById('expiring-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No perishable batch lot items expiring.</td></tr>';
     }
 
     // 11. Waste & Spoilage Log
     function renderWasteLoss() {
+      if (currentAgg.wasteLossSummary && currentAgg.wasteLossSummary.length > 0) {
+        let html = '';
+        currentAgg.wasteLossSummary.forEach(w => {
+          html += `
+            <tr>
+              <td>${w.date || w.timestamp || '-'}</td>
+              <td><strong>${w.name || w.item || 'Item'}</strong></td>
+              <td class="num">${w.quantity || w.qty || 1}</td>
+              <td>${w.reason || 'Waste'}</td>
+              <td>${w.staff || w.employee || 'Staff'}</td>
+              <td class="num" style="color:#f87171;">${formatMoney(w.cost || w.amount || 0)}</td>
+            </tr>
+          `;
+        });
+        document.getElementById('waste-tbody').innerHTML = html;
+        return;
+      }
       document.getElementById('waste-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No waste or spoilage records logged.</td></tr>';
     }
 
@@ -1549,6 +1699,23 @@
 
     // 14. Activity Clickstream
     function renderActivityLog() {
+      if (currentAgg.activityClickstream && currentAgg.activityClickstream.length > 0) {
+        let html = '';
+        currentAgg.activityClickstream.forEach(a => {
+          html += `
+            <tr>
+              <td>${a.timestamp ? new Date(a.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '-'}</td>
+              <td>${a.user_name || 'Staff'}</td>
+              <td>${a.action_type || 'EVENT'}</td>
+              <td>${a.module_category || 'POS'}</td>
+              <td>Terminal</td>
+              <td>${a.description || '-'}</td>
+            </tr>
+          `;
+        });
+        document.getElementById('activity-tbody').innerHTML = html;
+        return;
+      }
       document.getElementById('activity-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No security or clickstream events recorded for this period.</td></tr>';
     }
 
@@ -1581,16 +1748,89 @@
 
     // 16. AR House Accounts
     function renderArLedger() {
+      if (currentAgg.arLedgerSummary && currentAgg.arLedgerSummary.length > 0) {
+        let html = '';
+        currentAgg.arLedgerSummary.forEach(a => {
+          const lim = Number(a.creditLimit || a.limit || 0);
+          const debt = Number(a.outstandingBalance || a.balance || 0);
+          const util = lim > 0 ? ((debt / lim) * 100).toFixed(1) : '0.0';
+          html += `
+            <tr>
+              <td><strong>${a.name || 'Account'}</strong></td>
+              <td>${a.phone || '-'}</td>
+              <td class="num">${formatMoney(lim)}</td>
+              <td class="num" style="${debt > 0 ? 'color:#f87171; font-weight:700;' : ''}">${formatMoney(debt)}</td>
+              <td class="num">${util}%</td>
+              <td>${a.lastPaymentDate || '-'}</td>
+              <td><span class="badge-status ${debt > lim && lim > 0 ? 'danger' : 'healthy'}">${debt > lim && lim > 0 ? 'OVER LIMIT' : 'HEALTHY'}</span></td>
+            </tr>
+          `;
+        });
+        document.getElementById('ar-tbody').innerHTML = html;
+        return;
+      }
       document.getElementById('ar-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No active AR house accounts with outstanding balances.</td></tr>';
     }
 
     // 17. Loyalty
     function renderLoyaltyReport() {
+      if (currentAgg.loyaltySummary && (currentAgg.loyaltySummary.totalCustomers > 0 || (currentAgg.loyaltySummary.rewards && currentAgg.loyaltySummary.rewards.length > 0))) {
+        let html = '';
+        const rewards = currentAgg.loyaltySummary.rewards || [];
+        if (rewards.length > 0) {
+          rewards.forEach(r => {
+            html += `
+              <tr>
+                <td><span class="badge-status star">${(r.tier || r.name || 'TIER').toUpperCase()}</span></td>
+                <td class="num">${currentAgg.loyaltySummary.activeMembers || 0}</td>
+                <td class="num">${currentAgg.loyaltySummary.totalPoints || 0}</td>
+                <td class="num">-</td>
+                <td class="num">${r.pointsRequired || r.points || '-'}</td>
+                <td>${r.rewardBenefit || r.benefit || 'Points redemption'}</td>
+              </tr>
+            `;
+          });
+        } else {
+          html = `
+            <tr>
+              <td><span class="badge-status info">LOYALTY ACTIVE</span></td>
+              <td class="num">${currentAgg.loyaltySummary.totalCustomers || 0}</td>
+              <td class="num">${currentAgg.loyaltySummary.totalPoints || 0}</td>
+              <td class="num">-</td>
+              <td class="num">${currentAgg.loyaltySummary.activeMembers || 0} members</td>
+              <td>Standard 1 point per spend unit</td>
+            </tr>
+          `;
+        }
+        document.getElementById('loyalty-tbody').innerHTML = html;
+        return;
+      }
       document.getElementById('loyalty-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No loyalty points or rewards activity recorded for this period.</td></tr>';
     }
 
     // 18. Gift Cards
     function renderGiftCards() {
+      if (currentAgg.giftCardsSummary && currentAgg.giftCardsSummary.length > 0) {
+        let html = '';
+        currentAgg.giftCardsSummary.forEach(g => {
+          const init = Number(g.initial_amount || g.initialValue || g.amount || 0);
+          const bal = Number(g.current_balance || g.balance || 0);
+          const redeemed = init - bal;
+          html += `
+            <tr>
+              <td><code>${g.code || g.number || 'GC'}</code></td>
+              <td>${g.customer_name || g.recipient || 'Customer'}</td>
+              <td>${g.created_at ? g.created_at.split('T')[0] : (g.issueDate || '-')}</td>
+              <td class="num">${formatMoney(init)}</td>
+              <td class="num">${formatMoney(redeemed)}</td>
+              <td class="num" style="color:var(--accent-green); font-weight:700;">${formatMoney(bal)}</td>
+              <td><span class="badge-status ${bal > 0 ? 'healthy' : 'info'}">${bal > 0 ? 'ACTIVE' : 'DEPLETED'}</span></td>
+            </tr>
+          `;
+        });
+        document.getElementById('gift-cards-tbody').innerHTML = html;
+        return;
+      }
       document.getElementById('gift-cards-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No gift cards or vouchers issued on file.</td></tr>';
     }
 
@@ -1676,8 +1916,8 @@
         .maybeSingle();
 
       activeStore = store || {
-        id: 'store-local',
-        name: profile?.store_name || 'FlexiTap Cafe & Bistro',
+        id: user.id,
+        name: profile?.store_name || 'My Store',
         currency_symbol: '₱'
       };
 
