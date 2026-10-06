@@ -328,9 +328,14 @@
 
           <!-- Date Range Pickers -->
           <div class="date-input-group">
-            <span>From:</span><input type="date" id="start-date" onchange="triggerDateRefresh()" />
-            <span>To:</span><input type="date" id="end-date" onchange="triggerDateRefresh()" />
+            <span>From:</span><input type="date" id="start-date" onchange="requestOnDemandReport()" />
+            <span>To:</span><input type="date" id="end-date" onchange="requestOnDemandReport()" />
           </div>
+
+          <!-- On-Demand Run Button (Option 2 Realtime Relay) -->
+          <button class="btn-action" style="background:#16a34a; color:#fff; border-color:#16a34a; font-weight:800; cursor:pointer;" id="btn-run-report" onclick="requestOnDemandReport()">
+            <span id="run-report-icon">▶</span> <span id="run-report-text">Run Report</span>
+          </button>
 
           <!-- Actions: Export CSV & PDF -->
           <button class="btn-action" onclick="exportActiveTableToCSV()">⬇️ CSV</button>
@@ -1116,15 +1121,173 @@
 
       document.getElementById('start-date').value = getLocalDateString(start);
       document.getElementById('end-date').value = getLocalDateString(end);
-      triggerDateRefresh();
+      requestOnDemandReport();
     }
 
-    function triggerDateRefresh() {
+    // --- ON-DEMAND REALTIME RELAY ENGINE (Option 2) ---
+    let relayChannels = [];
+    let currentPendingRequestId = null;
+
+    function initReportRelay() {
+      if (relayChannels.length > 0) return;
+
+      const channelNames = [
+        `store_reports_relay_${activeStore?.id}`,
+        `store_reports_relay_${activeUser?.id}`,
+        'store_reports_relay_a927b91f-0c1a-47b7-bf8b-59a9764aeacd'
+      ].filter(Boolean);
+
+      channelNames.forEach(chName => {
+        const ch = supabaseClient.channel(chName, {
+          config: { broadcast: { self: false } }
+        });
+
+        ch.on('broadcast', { event: 'REPORT_RESPONSE' }, (payload) => {
+          console.log('📡 Received on-demand report broadcast response:', payload);
+          handleRelayResponse(payload.payload);
+        }).subscribe((status) => {
+          console.log(`📡 Relay channel ${chName} status:`, status);
+          if (status === 'SUBSCRIBED') {
+            const badge = document.querySelector('.status-badge');
+            if (badge) badge.innerText = '● Live POS Relay';
+          }
+        });
+
+        relayChannels.push(ch);
+      });
+    }
+
+    function requestOnDemandReport() {
+      const btn = document.getElementById('btn-run-report');
+      const icon = document.getElementById('run-report-icon');
+      const text = document.getElementById('run-report-text');
+
+      if (btn) {
+        btn.disabled = true;
+        btn.style.opacity = '0.75';
+      }
+      if (icon) icon.innerText = '⏳';
+      if (text) text.innerText = 'Running...';
+
       const s = document.getElementById('start-date').value;
       const e = document.getElementById('end-date').value;
-      if (s && e) {
-        fetchAndRenderAllReports(s, e);
+
+      document.getElementById('global-audit-banner').className = 'audit-notice-banner balanced';
+      document.getElementById('audit-banner-text').innerText = '📡 Pulling live report data on demand from POS terminal (flexitap.db)...';
+
+      const reqId = 'req_' + Date.now();
+      currentPendingRequestId = reqId;
+
+      // Broadcast to POS terminal
+      relayChannels.forEach(ch => {
+        ch.send({
+          type: 'broadcast',
+          event: 'RUN_REPORT',
+          payload: {
+            requestId: reqId,
+            report: activeReportId,
+            startDate: s,
+            endDate: e
+          }
+        });
+      });
+
+      // Simultaneously trigger fallback query from cloud database
+      fetchAndRenderAllReports(s, e);
+
+      // Timeout safety
+      setTimeout(() => {
+        if (currentPendingRequestId === reqId) {
+          currentPendingRequestId = null;
+          resetRunButton();
+        }
+      }, 5000);
+    }
+
+    function resetRunButton() {
+      const btn = document.getElementById('btn-run-report');
+      const icon = document.getElementById('run-report-icon');
+      const text = document.getElementById('run-report-text');
+      if (btn) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
       }
+      if (icon) icon.innerText = '▶';
+      if (text) text.innerText = 'Run Report';
+    }
+
+    function handleRelayResponse(resp) {
+      if (!resp || resp.status !== 'success' || !resp.data) return;
+      currentPendingRequestId = null;
+      resetRunButton();
+
+      const d = resp.data;
+      currentAgg = {
+        grossSales: Number(d.gross_sales || 0),
+        netSales: Number(d.net_sales || 0),
+        taxes: Number(d.total_taxes || 0),
+        tips: Number(d.tips || 0),
+        discounts: Number(d.total_discounts || 0),
+        refunds: Number(d.total_refunds || 0),
+        voidsCount: Number(d.voided_count || 0),
+        voidsAmount: Number(d.voided_amount || 0),
+        txnCount: Number(d.transactions || 0),
+        openingBank: Number(d.opening_bank || 0),
+        cashSales: Number(d.payment_breakdown?.Cash || d.payment_breakdown?.CASH || 0),
+        paidIn: Number(d.paid_in || 0),
+        paidOut: Number(d.paid_out || 0),
+        expectedCash: Number(d.expected_cash || (d.payment_breakdown?.Cash || 0)),
+        payments: d.payment_breakdown || {},
+        categories: d.category_breakdown || {},
+        hourly: d.hourly_sales || {},
+        terminalSales: d.terminal_sales || [],
+        productMix: d.product_mix || [],
+        laborSummary: d.labor_summary || [],
+        inventorySnapshot: d.inventory_snapshot || [],
+        auditExceptions: d.audit_exceptions || [],
+        customersCrm: d.customers_crm || [],
+        recentChecks: d.recent_checks || [],
+        discountsSummary: d.discounts_summary || [],
+        giftCardsSummary: d.gift_cards_summary || [],
+        loyaltySummary: d.loyalty_summary || {},
+        arLedgerSummary: d.ar_ledger_summary || [],
+        recipeCogsSummary: d.recipe_cogs_summary || [],
+        expiringBatches: d.expiring_batches || [],
+        drawerLedgerSummary: d.drawer_ledger_summary || [],
+        wasteLossSummary: d.waste_loss_summary || [],
+        activityClickstream: d.activity_clickstream || []
+      };
+
+      if (resp.storeName) {
+        document.getElementById('store-name-display').innerText = resp.storeName;
+        document.getElementById('zread-store-name').innerText = resp.storeName;
+      }
+      if (resp.currency) {
+        activeStore.currency_symbol = resp.currency === 'PHP' ? '₱' : '$';
+      }
+
+      // Re-render all views with exact local SQLite figures!
+      renderSalesSummary();
+      renderSalesReportZRead();
+      renderTerminalSales();
+      renderProductMix();
+      renderLaborReport();
+      renderDiscountsReport();
+      renderDrawerLedger();
+      renderInventoryReport();
+      renderRecipeCogs();
+      renderExpiringItems();
+      renderWasteLoss();
+      renderChecksReplica();
+      renderExceptionsAudit();
+      renderActivityLog();
+      renderCustomerCrm();
+      renderArLedger();
+      renderLoyaltyReport();
+      renderGiftCards();
+
+      document.getElementById('global-audit-banner').className = 'audit-notice-banner balanced';
+      document.getElementById('audit-banner-text').innerText = '✓ Live report data pulled on demand from local POS terminal (flexitap.db).';
     }
 
     // --- DATA AGGREGATOR & REPORT ENGINE ---
@@ -2063,7 +2226,8 @@
       document.getElementById('start-date').value = '2026-10-06';
       document.getElementById('end-date').value = today;
 
-      await fetchAndRenderAllReports('2026-10-06', today);
+      initReportRelay();
+      requestOnDemandReport();
       initMerchantSupportChat();
     }
 
