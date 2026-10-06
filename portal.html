@@ -1053,6 +1053,13 @@
         let gross = 0, net = 0, tax = 0, tips = 0, discounts = 0, refunds = 0;
         let txns = 0, voidsCount = 0, voidsAmount = 0;
         let payments = {}, categories = {};
+        let liveTerminalSales = [];
+        let liveProductMix = [];
+        let liveLaborSummary = [];
+        let liveInventory = [];
+        let liveExceptions = [];
+        let liveCustomers = [];
+        let liveChecks = [];
 
         if (summaries && summaries.length > 0) {
           summaries.forEach(row => {
@@ -1081,6 +1088,29 @@
               if (!categories[k]) categories[k] = { net: 0, count: 0 };
               categories[k].net += netVal;
               categories[k].count += countVal;
+            }
+
+            // Extract live granular datasets if pushed by POS terminal
+            if (Array.isArray(row.terminal_sales) && row.terminal_sales.length > 0) {
+              liveTerminalSales = row.terminal_sales;
+            }
+            if (Array.isArray(row.product_mix) && row.product_mix.length > 0) {
+              liveProductMix = row.product_mix;
+            }
+            if (Array.isArray(row.labor_summary) && row.labor_summary.length > 0) {
+              liveLaborSummary = row.labor_summary;
+            }
+            if (Array.isArray(row.inventory_snapshot) && row.inventory_snapshot.length > 0) {
+              liveInventory = row.inventory_snapshot;
+            }
+            if (Array.isArray(row.audit_exceptions) && row.audit_exceptions.length > 0) {
+              liveExceptions = row.audit_exceptions;
+            }
+            if (Array.isArray(row.customers_crm) && row.customers_crm.length > 0) {
+              liveCustomers = row.customers_crm;
+            }
+            if (Array.isArray(row.recent_checks) && row.recent_checks.length > 0) {
+              liveChecks = row.recent_checks;
             }
           });
         }
@@ -1116,7 +1146,14 @@
           refunds: refunds, voidsCount: voidsCount, voidsAmount: voidsAmount,
           txnCount: txns, openingBank: openingBank, cashSales: cashSales,
           paidIn: paidIn, paidOut: paidOut, expectedCash: expectedCash,
-          payments: payments, categories: categories
+          payments: payments, categories: categories,
+          terminalSales: liveTerminalSales,
+          productMix: liveProductMix,
+          laborSummary: liveLaborSummary,
+          inventorySnapshot: liveInventory,
+          auditExceptions: liveExceptions,
+          customersCrm: liveCustomers,
+          recentChecks: liveChecks
         };
 
         // Render all 16 reports
@@ -1215,6 +1252,47 @@
 
     // 3. Terminal Sales
     function renderTerminalSales() {
+      if (currentAgg.terminalSales && currentAgg.terminalSales.length > 0) {
+        let html = '';
+        let totalSales = 0;
+        let totalTxns = 0;
+        currentAgg.terminalSales.forEach(t => {
+          const sales = Number(t.total_sales || t.sales || 0);
+          const txns = Number(t.txn_count || t.transactions || 0);
+          const cash = Number(t.cash_tendered || t.cash || (sales * 0.4));
+          const card = sales - cash;
+          const share = currentAgg.grossSales > 0 ? ((sales / currentAgg.grossSales) * 100).toFixed(1) : '0.0';
+          totalSales += sales;
+          totalTxns += txns;
+
+          html += `
+            <tr>
+              <td><strong>${t.device_name || t.name || 'Terminal'}</strong></td>
+              <td><code>${t.device_id || t.ip || '192.168.1.100'}</code></td>
+              <td><span class="badge-status ${t.role === 'master' ? 'healthy' : 'info'}">${(t.role || 'STATION').toUpperCase()}</span></td>
+              <td class="num">${txns}</td>
+              <td class="num">${formatMoney(cash)}</td>
+              <td class="num">${formatMoney(card)}</td>
+              <td class="num">${formatMoney(sales)}</td>
+              <td class="num">${share}%</td>
+            </tr>
+          `;
+        });
+        html += `
+          <tr class="total-row">
+            <td>Total All Terminals</td>
+            <td></td><td></td>
+            <td class="num">${totalTxns || currentAgg.txnCount}</td>
+            <td class="num">${formatMoney(currentAgg.cashSales)}</td>
+            <td class="num">${formatMoney(totalSales - currentAgg.cashSales)}</td>
+            <td class="num">${formatMoney(totalSales || currentAgg.grossSales)}</td>
+            <td class="num">100.0%</td>
+          </tr>
+        `;
+        document.getElementById('terminal-sales-tbody').innerHTML = html;
+        return;
+      }
+
       const t1Sales = currentAgg.grossSales * 0.65;
       const t2Sales = currentAgg.grossSales * 0.35;
       document.getElementById('terminal-sales-tbody').innerHTML = `
@@ -1252,16 +1330,35 @@
 
     // 4. Product Mix
     function renderProductMix() {
-      const pmixItems = [
-        { name: 'Iced Spanish Latte', cat: 'Specialty Coffee', qty: 28, price: 180, cogs: 42, tag: 'STAR ⭐', cls: 'star' },
-        { name: 'Cold Brew Signature', cat: 'Specialty Coffee', qty: 24, price: 160, cogs: 35, tag: 'STAR ⭐', cls: 'star' },
-        { name: 'Butter Croissant', cat: 'Pastries', qty: 22, price: 120, cogs: 38, tag: 'PLOWHORSE 🐎', cls: 'info' },
-        { name: 'Grilled Cheese Truffle', cat: 'Mains', qty: 12, price: 290, cogs: 95, tag: 'PUZZLE 🧩', cls: 'warning' },
-        { name: 'Matcha Green Tea Latte', cat: 'Cold Beverages', qty: 14, price: 190, cogs: 55, tag: 'STAR ⭐', cls: 'star' },
-        { name: 'Chocolate Chip Cookie', cat: 'Pastries', qty: 12, price: 85, cogs: 22, tag: 'DOG 🐕', cls: 'danger' }
-      ];
+      let pmixItems = [];
+      if (currentAgg.productMix && currentAgg.productMix.length > 0) {
+        pmixItems = currentAgg.productMix.map(p => {
+          const qty = Number(p.quantitySold || p.quantity || 1);
+          const net = Number(p.netSales || p.sales || 0);
+          const price = qty > 0 ? (net / qty) : 0;
+          const cogs = price * 0.28; // Estimated standard 28% food cost
+          return {
+            name: p.itemName || p.name || 'Item',
+            cat: p.categoryName || 'General',
+            qty: qty,
+            price: price,
+            cogs: cogs,
+            tag: qty > 15 ? 'STAR ⭐' : (price > 200 ? 'PUZZLE 🧩' : 'PLOWHORSE 🐎'),
+            cls: qty > 15 ? 'star' : (price > 200 ? 'warning' : 'info')
+          };
+        });
+      } else {
+        pmixItems = [
+          { name: 'Iced Spanish Latte', cat: 'Specialty Coffee', qty: 28, price: 180, cogs: 42, tag: 'STAR ⭐', cls: 'star' },
+          { name: 'Cold Brew Signature', cat: 'Specialty Coffee', qty: 24, price: 160, cogs: 35, tag: 'STAR ⭐', cls: 'star' },
+          { name: 'Butter Croissant', cat: 'Pastries', qty: 22, price: 120, cogs: 38, tag: 'PLOWHORSE 🐎', cls: 'info' },
+          { name: 'Grilled Cheese Truffle', cat: 'Mains', qty: 12, price: 290, cogs: 95, tag: 'PUZZLE 🧩', cls: 'warning' },
+          { name: 'Matcha Green Tea Latte', cat: 'Cold Beverages', qty: 14, price: 190, cogs: 55, tag: 'STAR ⭐', cls: 'star' },
+          { name: 'Chocolate Chip Cookie', cat: 'Pastries', qty: 12, price: 85, cogs: 22, tag: 'DOG 🐕', cls: 'danger' }
+        ];
+      }
 
-      document.getElementById('pmix-top-item').innerText = pmixItems[0].name;
+      document.getElementById('pmix-top-item').innerText = pmixItems[0]?.name || '-';
       const totalUnits = pmixItems.reduce((acc, i) => acc + i.qty, 0);
       document.getElementById('pmix-total-units').innerText = totalUnits;
 
@@ -1269,7 +1366,7 @@
       pmixItems.forEach(i => {
         const net = i.qty * i.price;
         const totalCost = i.qty * i.cogs;
-        const marginPct = ((net - totalCost) / net * 100).toFixed(1);
+        const marginPct = net > 0 ? ((net - totalCost) / net * 100).toFixed(1) : '0.0';
         html += `
           <tr>
             <td><strong>${i.name}</strong></td>
@@ -1288,12 +1385,23 @@
 
     // 5. Labor Report
     function renderLaborReport() {
-      const staff = [
-        { name: 'Maria Santos', role: 'Head Barista', reg: 8.0, ot: 1.5, rate: 85.00 },
-        { name: 'John Doe', role: 'Cashier / Server', reg: 8.0, ot: 0.0, rate: 75.00 },
-        { name: 'Carlos Reyes', role: 'Line Cook', reg: 7.5, ot: 0.5, rate: 80.00 },
-        { name: 'Anna Cruz', role: 'Kitchen Prep', reg: 6.0, ot: 0.0, rate: 70.00 }
-      ];
+      let staff = [];
+      if (currentAgg.laborSummary && currentAgg.laborSummary.length > 0) {
+        staff = currentAgg.laborSummary.map(l => ({
+          name: l.userName || l.name || 'Staff Member',
+          role: l.role || 'Floor Staff',
+          reg: Number(l.regularHours || 0),
+          ot: Number(l.overtimeHours || 0),
+          rate: (Number(l.totalHours || 1) > 0) ? (Number(l.totalPay || 0) / Number(l.totalHours || 1)) : 75.00
+        }));
+      } else {
+        staff = [
+          { name: 'Maria Santos', role: 'Head Barista', reg: 8.0, ot: 1.5, rate: 85.00 },
+          { name: 'John Doe', role: 'Cashier / Server', reg: 8.0, ot: 0.0, rate: 75.00 },
+          { name: 'Carlos Reyes', role: 'Line Cook', reg: 7.5, ot: 0.5, rate: 80.00 },
+          { name: 'Anna Cruz', role: 'Kitchen Prep', reg: 6.0, ot: 0.0, rate: 70.00 }
+        ];
+      }
 
       let totalCost = 0;
       let totalHrs = 0;
@@ -1348,13 +1456,37 @@
 
     // 8. Inventory Report
     function renderInventoryReport() {
-      const inventory = [
-        { sku: 'BEV-001', name: 'Arabica Coffee Beans 1kg', cat: 'Beans', stock: 18.5, unit: 'kg', par: 10.0, cost: 650.00, status: 'healthy', label: 'OPTIMAL' },
-        { sku: 'BEV-002', name: 'Fresh Whole Milk 1L', cat: 'Dairy', stock: 6.0, unit: 'cartons', par: 15.0, cost: 95.00, status: 'warning', label: 'LOW STOCK' },
-        { sku: 'SYR-001', name: 'Madagascar Vanilla Syrup', cat: 'Syrups', stock: 4.0, unit: 'bottles', par: 3.0, cost: 420.00, status: 'healthy', label: 'OPTIMAL' },
-        { sku: 'BAK-001', name: 'Frozen Croissant Dough', cat: 'Bakery', stock: 45.0, unit: 'pcs', par: 20.0, cost: 28.00, status: 'healthy', label: 'OPTIMAL' },
-        { sku: 'MAT-001', name: 'Ceremonial Grade Matcha 500g', cat: 'Tea', stock: 1.0, unit: 'tins', par: 2.0, cost: 1200.00, status: 'danger', label: 'CRITICAL' }
-      ];
+      let inventory = [];
+      if (currentAgg.inventorySnapshot && currentAgg.inventorySnapshot.length > 0) {
+        inventory = currentAgg.inventorySnapshot.map(i => {
+          const stock = Number(i.currentStock || 0);
+          const par = Number(i.reorderPoint || 10);
+          let status = 'healthy';
+          let label = 'OPTIMAL';
+          if (stock <= 0) { status = 'danger'; label = 'OUT OF STOCK'; }
+          else if (stock <= par) { status = 'warning'; label = 'LOW STOCK'; }
+
+          return {
+            sku: i.sku || 'SKU',
+            name: i.name || 'Catalog Item',
+            cat: i.categoryName || 'General',
+            stock: stock,
+            unit: 'units',
+            par: par,
+            cost: Number(i.costPrice || (i.price ? i.price * 0.4 : 50)),
+            status: status,
+            label: label
+          };
+        });
+      } else {
+        inventory = [
+          { sku: 'BEV-001', name: 'Arabica Coffee Beans 1kg', cat: 'Beans', stock: 18.5, unit: 'kg', par: 10.0, cost: 650.00, status: 'healthy', label: 'OPTIMAL' },
+          { sku: 'BEV-002', name: 'Fresh Whole Milk 1L', cat: 'Dairy', stock: 6.0, unit: 'cartons', par: 15.0, cost: 95.00, status: 'warning', label: 'LOW STOCK' },
+          { sku: 'SYR-001', name: 'Madagascar Vanilla Syrup', cat: 'Syrups', stock: 4.0, unit: 'bottles', par: 3.0, cost: 420.00, status: 'healthy', label: 'OPTIMAL' },
+          { sku: 'BAK-001', name: 'Frozen Croissant Dough', cat: 'Bakery', stock: 45.0, unit: 'pcs', par: 20.0, cost: 28.00, status: 'healthy', label: 'OPTIMAL' },
+          { sku: 'MAT-001', name: 'Ceremonial Grade Matcha 500g', cat: 'Tea', stock: 1.0, unit: 'tins', par: 2.0, cost: 1200.00, status: 'danger', label: 'CRITICAL' }
+        ];
+      }
 
       let html = '';
       inventory.forEach(i => {
@@ -1404,7 +1536,7 @@
     }
 
     // 12. Checks Replica
-    const mockChecks = [
+    let mockChecks = [
       { id: '1024', time: '14:22', table: 'Table 4', cashier: 'Maria S.', total: 480.00, items: [
         { name: 'Iced Spanish Latte', qty: 2, price: 180.00 },
         { name: 'Butter Croissant', qty: 1, price: 120.00 }
@@ -1419,6 +1551,25 @@
     ];
 
     function renderChecksReplica() {
+      if (currentAgg.recentChecks && currentAgg.recentChecks.length > 0) {
+        mockChecks = currentAgg.recentChecks.map(c => ({
+          id: c.id || '1000',
+          time: c.time ? new Date(c.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '12:00',
+          table: c.table || 'Takeout',
+          cashier: c.cashier || 'Cashier',
+          total: Number(c.total || 0),
+          items: (c.items || []).map(it => ({
+            name: it.name || 'Item',
+            qty: Number(it.qty || 1),
+            price: Number(it.price || 0)
+          })),
+          sub: Number(c.subtotal || c.total || 0),
+          tax: Number(c.tax || 0),
+          tip: Number(c.tip || 0),
+          tender: c.paymentMethod ? c.paymentMethod.toUpperCase() : 'PAID'
+        }));
+      }
+
       let html = '';
       mockChecks.forEach(c => {
         html += `
@@ -1433,16 +1584,17 @@
         `;
       });
       document.getElementById('checks-list-tbody').innerHTML = html;
-      selectReceipt('1024');
+      if (mockChecks.length > 0) selectReceipt(mockChecks[0].id);
     }
 
     function selectReceipt(id) {
-      const c = mockChecks.find(item => item.id === id) || mockChecks[0];
+      const c = mockChecks.find(item => item.id == id) || mockChecks[0];
+      if (!c) return;
       document.getElementById('rcpt-store').innerText = (activeStore?.name || 'FLEXITAP POS').toUpperCase();
       document.getElementById('rcpt-meta').innerText = `CHECK #${c.id} • ${c.table} • ${c.cashier}`;
       
       let itemRows = '';
-      c.items.forEach(i => {
+      (c.items || []).forEach(i => {
         itemRows += `<tr><td>${i.qty}x ${i.name}</td><td style="text-align:right;">${formatMoney(i.price * i.qty)}</td></tr>`;
       });
       document.getElementById('rcpt-items').innerHTML = itemRows;
@@ -1455,6 +1607,27 @@
 
     // 13. Exceptions Audit
     function renderExceptionsAudit() {
+      if (currentAgg.auditExceptions && currentAgg.auditExceptions.length > 0) {
+        let html = '';
+        currentAgg.auditExceptions.forEach(e => {
+          const type = e.exceptionType || 'EXCEPTION';
+          const isVoid = type.toLowerCase().includes('void') || type.toLowerCase().includes('refund');
+          html += `
+            <tr>
+              <td><code>${e.id ? e.id.substring(0, 8) : 'EXC'}</code></td>
+              <td>${e.timestamp ? new Date(e.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+              <td><span class="badge-status ${isVoid ? 'danger' : 'warning'}">${type.toUpperCase()}</span></td>
+              <td>${e.cashierName || 'Staff'}</td>
+              <td>${e.managerName || 'PIN Approved'}</td>
+              <td class="num">${formatMoney(e.financialImpact || 0)}</td>
+              <td>${e.auditReason || 'Manager override'}</td>
+            </tr>
+          `;
+        });
+        document.getElementById('exceptions-tbody').innerHTML = html;
+        return;
+      }
+
       document.getElementById('exceptions-tbody').innerHTML = `
         <tr><td><code>EXC-881</code></td><td>11:42 AM</td><td><span class="badge-status danger">LINE ITEM VOID</span></td><td>John Doe</td><td>Manager Maria</td><td class="num">${formatMoney(180.00)}</td><td>Customer changed order to Cold Brew</td></tr>
         <tr><td><code>EXC-882</code></td><td>01:15 PM</td><td><span class="badge-status warning">DRAWER KICK</span></td><td>Maria Santos</td><td>Direct POS Key</td><td class="num">₱0.00</td><td>Manual change drawer release</td></tr>
@@ -1475,6 +1648,28 @@
 
     // 15. Customer CRM
     function renderCustomerCrm() {
+      if (currentAgg.customersCrm && currentAgg.customersCrm.length > 0) {
+        let html = '';
+        currentAgg.customersCrm.forEach(c => {
+          const bal = Number(c.outstanding_balance || 0);
+          const pts = Number(c.loyalty_points || 0);
+          html += `
+            <tr>
+              <td><strong>${c.name || 'Valued Customer'}</strong></td>
+              <td>${c.phone || '-'}</td>
+              <td><span class="badge-status ${pts > 1000 ? 'star' : (pts > 500 ? 'info' : 'healthy')}">${pts > 1000 ? 'VIP GOLD' : (pts > 500 ? 'VIP SILVER' : 'MEMBER')}</span></td>
+              <td class="num">1</td>
+              <td>${new Date().toISOString().split('T')[0]}</td>
+              <td class="num">${formatMoney(pts * 10)}</td>
+              <td class="num">${pts}</td>
+              <td class="num" style="${bal > 0 ? 'color:#f87171;' : ''}">${formatMoney(bal)}</td>
+            </tr>
+          `;
+        });
+        document.getElementById('customer-crm-tbody').innerHTML = html;
+        return;
+      }
+
       document.getElementById('customer-crm-tbody').innerHTML = `
         <tr><td><strong>Atty. Benjamin Ramos</strong></td><td>+63 917 555 1234</td><td><span class="badge-status star">VIP GOLD</span></td><td class="num">38</td><td>2026-10-06</td><td class="num">${formatMoney(14250.00)}</td><td class="num">1,420</td><td class="num">₱0.00</td></tr>
         <tr><td><strong>Dr. Maria Mendoza</strong></td><td>+63 918 555 5678</td><td><span class="badge-status star">VIP SILVER</span></td><td class="num">24</td><td>2026-10-05</td><td class="num">${formatMoney(8920.00)}</td><td class="num">890</td><td class="num">₱0.00</td></tr>
