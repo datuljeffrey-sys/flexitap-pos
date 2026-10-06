@@ -130,9 +130,15 @@
     .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.14); padding: 36px 28px; border-radius: 20px; width: 100%; max-width: 460px; position: relative; text-align: center; margin: auto; max-height: 92vh; overflow-y: auto; }
     .close-btn { position: absolute; top: 18px; right: 18px; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
     label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
-    input, select { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: white; font-size: 14.5px; box-sizing: border-box; }
-    .submit-btn { width: 100%; padding: 13px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; transition: background 0.2s; }
-    .submit-btn:hover { background: var(--primary-hover); }
+    input:not([type="checkbox"]), select { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: white; font-size: 14.5px; box-sizing: border-box; }
+    .checkbox-wrap { display: flex; align-items: flex-start; gap: 10px; margin: 4px 0 20px; text-align: left; }
+    .checkbox-wrap input[type="checkbox"] { width: 18px; height: 18px; min-width: 18px; margin-top: 2px; accent-color: var(--primary); cursor: pointer; }
+    .checkbox-wrap label { display: inline; font-size: 12.5px; line-height: 1.5; color: #cbd5e1; font-weight: 400; margin-bottom: 0; cursor: pointer; }
+    .checkbox-wrap label a { color: #60a5fa; text-decoration: underline; font-weight: 700; transition: color 0.15s ease; }
+    .checkbox-wrap label a:hover { color: #93c5fd; }
+    .submit-btn { width: 100%; padding: 13px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; transition: background 0.2s, opacity 0.2s; }
+    .submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .submit-btn:hover:not(:disabled) { background: var(--primary-hover); }
     .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
 
     .success-card { position: relative; background: linear-gradient(180deg, #131a29 0%, #0d121d 100%); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 24px; padding: 38px 28px 30px; width: 100%; max-width: 500px; text-align: center; margin: auto; box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8); overflow: hidden; }
@@ -172,12 +178,19 @@
       if (selectEl) {
         selectEl.addEventListener('change', syncModalState);
       }
+
+      const termsCheckbox = document.getElementById('signup-terms');
+      if (termsCheckbox) {
+        termsCheckbox.addEventListener('change', syncModalState);
+      }
+      syncModalState();
     });
 
     function syncModalState() {
       const selectEl = document.getElementById('signup-tier');
       const btnText = document.getElementById('signup-btn-text');
       const helper = document.getElementById('modal-intent-helper');
+      const termsCheckbox = document.getElementById('signup-terms');
       if (!selectEl || !btnText) return;
 
       if (selectEl.value === 'free') {
@@ -189,6 +202,10 @@
       } else {
         btnText.innerText = 'Lock In Pro VIP Pass ($590/yr)';
         helper.innerText = 'Includes full menu migration and phone/remote standby access.';
+      }
+
+      if (termsCheckbox) {
+        btnText.disabled = !termsCheckbox.checked;
       }
     }
 
@@ -203,6 +220,15 @@
 
     async function handleStoreSignup(event) {
       event.preventDefault();
+
+      const termsCheckbox = document.getElementById('signup-terms');
+      const errorDiv = document.getElementById('signup-modal-error');
+      const btnText = document.getElementById('signup-btn-text');
+
+      if (!termsCheckbox || !termsCheckbox.checked) {
+        errorDiv.innerText = 'Please accept the Terms of Service & Privacy Policy to continue.';
+        return;
+      }
       
       const businessName = document.getElementById('signup-business').value.trim();
       const email = document.getElementById('signup-email').value.trim();
@@ -219,9 +245,6 @@
         tierName = 'pro';
         paymentStatus = 'unpaid';
       }
-
-      const errorDiv = document.getElementById('signup-modal-error');
-      const btnText = document.getElementById('signup-btn-text');
 
       errorDiv.innerText = '';
       const originalBtnText = btnText.innerText;
@@ -247,12 +270,14 @@
           if (loginError) {
             errorDiv.innerText = 'An account with this email exists, but the password was incorrect. Please log in.';
             btnText.innerText = originalBtnText;
+            syncModalState();
             return;
           }
           userId = loginData.user.id;
         } else {
           errorDiv.innerText = error.message;
           btnText.innerText = originalBtnText;
+          syncModalState();
           return;
         }
       } else {
@@ -286,13 +311,28 @@
         if (profileError) {
           errorDiv.innerText = 'Failed to save store profile: ' + profileError.message;
           btnText.innerText = originalBtnText;
+          syncModalState();
           return;
+        }
+
+        try {
+          await supabaseClient.from('user_legal_consents').insert([
+            {
+              user_id: userId,
+              document_type: 'tos_and_privacy',
+              document_version: 'v1.0.0_2026-10',
+              acceptance_method: 'clickwrap_checkbox',
+              user_agent: navigator.userAgent
+            }
+          ]);
+        } catch (consentErr) {
+          console.warn('Legal consent audit log notice:', consentErr);
         }
       }
 
       closeModal('signup-modal');
-      syncModalState();
       document.getElementById('portal-signup-form').reset();
+      syncModalState();
 
       if (tierName === 'free' || typeof Paddle === 'undefined') {
         showRegistrationSuccess(email);
@@ -637,6 +677,13 @@
           <option value="pri_01m1pb8szpcf4vapm28yfzw9aq">Plus Founders VIP ($290 / year fixed)</option>
           <option value="pri_01m1pb6ba15axyr7acv0hswynd">Pro Founders VIP ($590 / year fixed)</option>
         </select>
+
+        <div class="checkbox-wrap">
+          <input type="checkbox" id="signup-terms" required>
+          <label for="signup-terms">
+            I have read and agree to the <a href="terms.html" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Terms of Service</a> and <a href="privacy.html" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Privacy Policy</a>.
+          </label>
+        </div>
 
         <button type="submit" class="submit-btn" id="signup-btn-text" style="margin-top: 10px;">Join Free Launch Waitlist</button>
       </form>
