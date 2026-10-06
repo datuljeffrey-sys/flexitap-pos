@@ -1015,11 +1015,28 @@
   <script>
     const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    let safeStorage;
+    try {
+      const testKey = '__test_store__';
+      window.localStorage.setItem(testKey, testKey);
+      window.localStorage.removeItem(testKey);
+      safeStorage = window.localStorage;
+    } catch (_) {
+      safeStorage = undefined;
+    }
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: safeStorage !== undefined,
+        storage: safeStorage
+      }
+    });
 
     let activeStore = null;
     let activeUser = null;
     let currentSupportSession = null;
+    let currentChatChannel = null;
     let activeReportId = 'sales-summary';
     let isShiftApproved = false;
 
@@ -1178,18 +1195,20 @@
       const reqId = 'req_' + Date.now();
       currentPendingRequestId = reqId;
 
-      // Broadcast to POS terminal
+      // Broadcast to POS terminal over joined websocket channels
       relayChannels.forEach(ch => {
-        ch.send({
-          type: 'broadcast',
-          event: 'RUN_REPORT',
-          payload: {
-            requestId: reqId,
-            report: activeReportId,
-            startDate: s,
-            endDate: e
-          }
-        });
+        if (ch && ch.state === 'joined') {
+          ch.send({
+            type: 'broadcast',
+            event: 'RUN_REPORT',
+            payload: {
+              requestId: reqId,
+              report: activeReportId,
+              startDate: s,
+              endDate: e
+            }
+          });
+        }
       });
 
       // Simultaneously trigger fallback query from cloud database
@@ -2310,7 +2329,13 @@
           msgs.forEach(m => renderSupportBubble(m.sender_role, m.message, m.created_at));
         }
 
-        supabaseClient.channel(`chat-${session.id}`).on('postgres_changes', {
+        if (currentChatChannel) {
+          try { supabaseClient.removeChannel(currentChatChannel); } catch (_) {}
+          currentChatChannel = null;
+        }
+
+        currentChatChannel = supabaseClient.channel(`chat-${session.id}`);
+        currentChatChannel.on('postgres_changes', {
           event: 'INSERT', schema: 'public', table: 'support_messages', filter: `session_id=eq.${session.id}`
         }, (payload) => {
           if (payload.new && payload.new.sender_role === 'agent') {
