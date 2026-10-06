@@ -15,155 +15,168 @@
 
   <style>
     :root {
-      --bg-dark: #090d16;
-      --sidebar-bg: #111827;
-      --card-bg: rgba(22, 30, 49, 0.75);
-      --card-bg-solid: #151d30;
-      --card-border: rgba(255, 255, 255, 0.08);
-      --card-border-hover: rgba(59, 130, 246, 0.4);
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --accent-green: #10b981;
-      --accent-purple: #8b5cf6;
-      --accent-amber: #f59e0b;
-      --accent-red: #ef4444;
-      --accent-cyan: #06b6d4;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --sidebar-width: 300px;
+      --bg-page: #f8fafc;
+      --sidebar-bg: #0f172a;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent-green: #16a34a;
+      --accent-green-bg: #f0fdf4;
+      --accent-green-border: #bbf7d0;
+      --accent-amber: #d97706;
+      --accent-amber-bg: #fffbeb;
+      --accent-amber-border: #fde68a;
+      --accent-red: #dc2626;
+      --accent-red-bg: #fef2f2;
+      --accent-red-border: #fecaca;
+      --accent-teal: #0d9488;
+      --accent-purple: #7c3aed;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --sidebar-width: 280px;
     }
 
     * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; margin: 0; padding: 0; }
-    body { background: var(--bg-dark); color: var(--text-main); line-height: 1.5; display: flex; height: 100vh; overflow: hidden; }
+    body { background: var(--bg-page); color: var(--text-main); line-height: 1.5; display: flex; height: 100vh; overflow: hidden; }
 
     /* --- LOGIN VIEW --- */
-    #login-view { position: fixed; inset: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 20%, #172554 0%, #090d16 80%); display: flex; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
-    .login-box { background: rgba(17, 24, 39, 0.95); border: 1px solid var(--card-border); padding: 40px; border-radius: 20px; width: 100%; max-width: 440px; box-shadow: 0 25px 60px -15px rgba(0,0,0,0.8); text-align: center; backdrop-filter: blur(12px); }
+    #login-view { position: fixed; inset: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 20%, #1e293b 0%, #0f172a 100%); display: flex; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+    .login-box { background: #ffffff; border: 1px solid var(--card-border); padding: 40px; border-radius: 16px; width: 100%; max-width: 420px; box-shadow: 0 20px 45px -10px rgba(0,0,0,0.25); text-align: center; }
     .login-header-logo { display: inline-flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px; }
-    .login-box label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
-    .login-box input { width: 100%; padding: 13px 16px; margin-bottom: 18px; background: #090d16; border: 1px solid var(--card-border); border-radius: 10px; color: white; outline: none; font-size: 14.5px; transition: border-color 0.2s; }
-    .login-box input:focus { border-color: var(--primary); }
-    .btn-submit { width: 100%; padding: 13px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: background 0.2s; font-size: 15px; }
+    .login-box label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px; }
+    .login-box input { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; color: #0f172a; outline: none; font-size: 14px; transition: border-color 0.2s; }
+    .login-box input:focus { border-color: var(--primary); background: #ffffff; }
+    .btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: background 0.2s; font-size: 14.5px; }
     .btn-submit:hover { background: var(--primary-hover); }
 
     /* --- APP LAYOUT --- */
     #app-layout { display: none; width: 100%; height: 100%; flex-direction: row; }
 
     /* --- SIDEBAR --- */
-    .sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); background: var(--sidebar-bg); border-right: 1px solid var(--card-border); display: flex; flex-direction: column; height: 100%; z-index: 50; }
-    .logo-container { padding: 24px 20px 20px; font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--card-border); }
-    .brand-logo-svg { width: 32px; height: 32px; flex-shrink: 0; display: block; }
+    .sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); background: var(--sidebar-bg); display: flex; flex-direction: column; height: 100%; z-index: 50; }
+    .logo-container { padding: 20px; font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .brand-logo-svg { width: 28px; height: 28px; flex-shrink: 0; }
     
-    .nav-search-box { padding: 14px 16px 8px; }
-    .nav-search-input { width: 100%; padding: 8px 12px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: #fff; font-size: 13px; outline: none; }
+    .nav-search-box { padding: 12px 16px 6px; }
+    .nav-search-input { width: 100%; padding: 8px 12px; background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 12.5px; outline: none; }
     .nav-search-input:focus { border-color: var(--primary); }
 
-    .nav-menu { display: flex; flex-direction: column; gap: 2px; flex: 1; padding: 10px 12px; overflow-y: auto; }
+    .nav-menu { display: flex; flex-direction: column; gap: 2px; flex: 1; padding: 10px; overflow-y: auto; }
     .nav-menu::-webkit-scrollbar { width: 4px; }
-    .nav-menu::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+    .nav-menu::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
 
-    .nav-section-title { font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; letter-spacing: 0.8px; padding: 12px 10px 4px; }
-    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid transparent; border-radius: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 13px; transition: all 0.15s ease; cursor: pointer; background: transparent; text-align: left; width: 100%; }
-    .nav-item:hover { border-color: rgba(255,255,255,0.1); color: #fff; background: rgba(255, 255, 255, 0.04); }
-    .nav-item.active { border-color: rgba(59, 130, 246, 0.4); color: #fff; background: rgba(59, 130, 246, 0.15); box-shadow: inset 3px 0 0 var(--primary); }
-    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
-    .nav-item .badge { margin-left: auto; font-size: 10px; padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,0.08); font-weight: 700; color: #cbd5e1; }
+    .nav-section-title { font-size: 11px; text-transform: uppercase; font-weight: 800; color: #94a3b8; letter-spacing: 0.8px; padding: 12px 10px 4px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid transparent; border-radius: 8px; color: #cbd5e1; font-weight: 600; font-size: 13px; cursor: pointer; background: transparent; text-align: left; width: 100%; transition: all 0.15s; }
+    .nav-item:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
+    .nav-item.active { color: #fff; background: rgba(37, 99, 235, 0.25); border-color: rgba(59, 130, 246, 0.5); font-weight: 700; }
+    .nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
+    .nav-item .badge { margin-left: auto; font-size: 10px; padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,0.1); font-weight: 700; color: #cbd5e1; }
 
-    .sidebar-footer { padding: 16px; border-top: 1px solid var(--card-border); font-size: 12px; color: var(--text-muted); }
+    .sidebar-footer { padding: 16px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 12px; color: #94a3b8; }
     .sidebar-footer .store-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .sidebar-footer .tier { font-weight: 800; color: var(--accent-green); text-transform: uppercase; font-size: 12px; }
-    .logout-btn { background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.25); padding: 8px; width: 100%; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 12px; }
-    .logout-btn:hover { background: #ef4444; color: #fff; }
+    .sidebar-footer .tier { font-weight: 800; color: #34d399; text-transform: uppercase; font-size: 11.5px; }
+    .logout-btn { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px; width: 100%; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 12px; }
+    .logout-btn:hover { background: #dc2626; color: #fff; }
 
-    /* --- MAIN CONTENT --- */
-    .main-content { flex: 1; padding: 32px 36px; overflow-y: auto; background: var(--bg-dark); }
-    .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; border-bottom: 1px solid var(--card-border); padding-bottom: 20px; }
-    .report-title-wrap h1 { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
-    .report-title-wrap p { color: var(--text-muted); font-size: 13.5px; margin-top: 4px; }
-    .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 9999px; font-size: 11.5px; font-weight: 700; background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-    
-    .toolbar-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .date-preset-btn { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border); color: #cbd5e1; padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.15s; }
-    .date-preset-btn:hover, .date-preset-btn.active { background: rgba(59, 130, 246, 0.15); border-color: var(--primary); color: #fff; }
-    .date-range-box { display: flex; align-items: center; gap: 6px; background: var(--sidebar-bg); border: 1px solid var(--card-border); padding: 5px 10px; border-radius: 8px; }
-    .date-range-box span { font-size: 12px; color: var(--text-muted); font-weight: 600; }
-    input[type="date"] { padding: 4px; background: transparent; border: none; color: #fff; font-family: inherit; font-size: 13px; outline: none; }
-    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
-    
-    .filter-search-box { position: relative; }
-    .filter-search-box input { padding: 7px 12px 7px 30px; background: var(--sidebar-bg); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; font-size: 12.5px; outline: none; width: 180px; transition: width 0.2s; }
-    .filter-search-box input:focus { width: 230px; border-color: var(--primary); }
-    .filter-search-box .search-icon { position: absolute; left: 9px; top: 8px; font-size: 12px; color: var(--text-muted); }
+    /* --- MAIN CONTENT CANVAS (Clean Light Slate Paper Theme matching Flutter App) --- */
+    .main-content { flex: 1; padding: 28px 32px; overflow-y: auto; background: var(--bg-page); }
+    .header-card { background: #ffffff; border: 1px solid var(--card-border); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .report-title-wrap h1 { font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
+    .report-title-wrap p { color: var(--text-muted); font-size: 13.5px; margin-top: 3px; }
+    .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; background: var(--accent-green-bg); color: var(--accent-green); border: 1px solid var(--accent-green-border); }
 
-    .btn-action { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: #fff; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 12.5px; display: inline-flex; align-items: center; gap: 6px; }
-    .btn-action:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.2); }
-    .btn-primary-action { background: var(--primary); border: 1px solid var(--primary); }
+    /* Filter Toolbar (Matching Flutter BusinessDateRangePicker) */
+    .toolbar-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .preset-pill { background: #f1f5f9; border: 1px solid var(--card-border); color: #475569; padding: 7px 14px; border-radius: 9999px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .preset-pill:hover, .preset-pill.active { background: #2563eb; color: #ffffff; border-color: #2563eb; }
+    .date-input-group { display: flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid var(--card-border); padding: 5px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 600; color: #475569; }
+    input[type="date"] { padding: 3px; background: transparent; border: none; color: #0f172a; font-family: inherit; font-size: 13px; outline: none; font-weight: 600; }
+
+    .btn-action { background: #ffffff; border: 1px solid var(--card-border); color: #0f172a; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.15s; font-size: 12.5px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+    .btn-action:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .btn-primary-action { background: var(--primary); border: 1px solid var(--primary); color: #ffffff; }
     .btn-primary-action:hover { background: var(--primary-hover); }
 
-    /* --- AUDIT BANNER --- */
-    .audit-banner { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-radius: 12px; margin-bottom: 24px; font-size: 13px; font-weight: 600; }
-    .audit-banner.success { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; }
-    .audit-banner.warning { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #fbbf24; }
+    /* Audit Notice Banner (Exact match to Flutter _buildAuditNoticeBanner) */
+    .audit-notice-banner { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; font-weight: 600; border: 1px solid transparent; }
+    .audit-notice-banner.balanced { background: var(--accent-green-bg); border-color: var(--accent-green-border); color: #15803d; }
+    .audit-notice-banner.unbalanced { background: var(--accent-red-bg); border-color: var(--accent-red-border); color: #b91c1c; }
 
-    /* --- KPI METRIC CARDS --- */
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .kpi-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 20px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.25); display: flex; flex-direction: column; justify-content: space-between; }
-    .kpi-card .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .kpi-card h3 { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
-    .kpi-card .metric { font-size: 28px; font-weight: 800; font-family: 'JetBrains Mono', monospace; line-height: 1.2; }
-    .kpi-card .sub-metric { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+    /* 8-Card KPI Grid (Exact match to Flutter _buildKpiGrid) */
+    .kpi-grid-8 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .kpi-card { background: #ffffff; border: 1px solid var(--card-border); padding: 18px 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; }
+    .kpi-card .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .kpi-card h3 { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; }
+    .kpi-card .metric { font-size: 24px; font-weight: 800; font-family: 'JetBrains Mono', monospace; line-height: 1.2; color: #0f172a; }
+    .kpi-card .sub-metric { font-size: 11.5px; color: var(--text-muted); margin-top: 4px; }
 
-    .panel-container { background: var(--card-bg); border: 1px solid var(--card-border); padding: 22px; border-radius: 14px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
-    .panel-header { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
+    /* Specialized In-App Feature Cards (Cash Drawer, Loss Prevention, Detailed Breakdowns) */
+    .panel-card { background: #ffffff; border: 1px solid var(--card-border); padding: 22px 24px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .panel-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--card-border); }
+    .panel-header-title { font-size: 16px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px; }
 
-    /* --- DATA TABLES --- */
+    /* Sign-Off Approval Card (Exact match to SalesReportScreen approval header) */
+    .approval-bar { background: #f8fafc; border: 1px solid var(--card-border); border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+    .approval-meta { display: flex; align-items: center; gap: 12px; }
+    .approval-inputs { display: flex; align-items: center; gap: 10px; }
+    .approval-inputs input { width: 120px; padding: 8px 10px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; }
+    .approval-inputs input:focus { border-color: var(--primary); }
+    .btn-approve { background: #16a34a; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+    .btn-approve:hover { background: #15803d; }
+
+    /* Dual Mode Toggle for Sales Report (Raw Text vs Graphical) */
+    .view-toggle-bar { display: inline-flex; background: #e2e8f0; padding: 3px; border-radius: 8px; margin-bottom: 20px; }
+    .view-toggle-btn { padding: 6px 14px; border: none; border-radius: 6px; font-size: 12.5px; font-weight: 700; color: #475569; background: transparent; cursor: pointer; transition: 0.15s; }
+    .view-toggle-btn.active { background: #ffffff; color: #0f172a; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+
+    /* Data Tables */
     .table-responsive { width: 100%; overflow-x: auto; }
-    .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13.5px; }
-    .data-table th { color: var(--text-muted); font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 10px; border-bottom: 1px solid var(--card-border); background: rgba(0,0,0,0.2); white-space: nowrap; }
-    .data-table td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
-    .data-table tr:hover td { background: rgba(255,255,255,0.03); }
-    .data-table .num { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 600; }
+    .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+    .data-table th { color: #64748b; font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px; border-bottom: 1px solid var(--card-border); background: #f8fafc; white-space: nowrap; }
+    .data-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #0f172a; }
+    .data-table tr:hover td { background: #f8fafc; }
+    .data-table .num { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; }
     .data-table .th-num { text-align: right; }
-    .data-table .total-row td { font-weight: 800; border-top: 2px solid var(--card-border); border-bottom: none; color: var(--primary); font-size: 14px; }
-    .data-table .badge-status { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-    .badge-status.star { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-    .badge-status.healthy { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-    .badge-status.warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-    .badge-status.danger { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-    .badge-status.info { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .data-table .total-row td { font-weight: 800; border-top: 2px solid #cbd5e1; border-bottom: none; color: var(--primary); font-size: 13.5px; background: #f8fafc; }
+    
+    .badge-status { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    .badge-status.healthy { background: var(--accent-green-bg); color: var(--accent-green); border: 1px solid var(--accent-green-border); }
+    .badge-status.warning { background: var(--accent-amber-bg); color: var(--accent-amber); border: 1px solid var(--accent-amber-border); }
+    .badge-status.danger { background: var(--accent-red-bg); color: var(--accent-red); border: 1px solid var(--accent-red-border); }
+    .badge-status.info { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+    .badge-status.star { background: #fefce8; color: #ca8a04; border: 1px solid #fef08a; }
 
-    /* --- CHECK REPLICA SPLIT PANE --- */
-    .replica-layout { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
-    .receipt-paper { background: #ffffff; color: #1e293b; padding: 24px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Courier New', Courier, monospace; font-size: 13px; line-height: 1.4; }
+    /* Split-Pane Checks Replica */
+    .replica-layout { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+    .receipt-paper { background: #ffffff; color: #0f172a; padding: 24px; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 4px 15px rgba(0,0,0,0.06); font-family: 'Courier New', Courier, monospace; font-size: 13px; line-height: 1.4; }
     .receipt-header { text-align: center; border-bottom: 1px dashed #94a3b8; padding-bottom: 12px; margin-bottom: 12px; }
     .receipt-title { font-weight: 800; font-size: 16px; margin-bottom: 4px; text-transform: uppercase; }
-    .receipt-meta { font-size: 11px; color: #64748b; }
+    .receipt-meta { font-size: 11.5px; color: #64748b; }
     .receipt-items { width: 100%; border-collapse: collapse; margin-bottom: 12px; border-bottom: 1px dashed #94a3b8; }
-    .receipt-items td { padding: 4px 0; font-size: 12px; color: #0f172a; }
+    .receipt-items td { padding: 4px 0; font-size: 12px; }
     .receipt-totals { width: 100%; font-size: 12.5px; border-bottom: 1px dashed #94a3b8; padding-bottom: 8px; margin-bottom: 8px; }
     .receipt-footer { text-align: center; font-size: 11px; color: #64748b; margin-top: 12px; }
 
-    /* --- TAB SWITCHING --- */
     .tab-content { display: none; }
-    .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
+    .tab-content.active { display: block; animation: fadeIn 0.2s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* --- SUPPORT FLOATING WIDGET --- */
-    #merchant-chat-btn { position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, var(--accent-green), #059669); color: white; border: 1px solid rgba(255,255,255,0.25); border-radius: 9999px; padding: 10px 18px; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 990; transition: transform 0.15s; }
-    #merchant-chat-btn:hover { transform: translateY(-2px); }
-    #merchant-chat-panel { display: none; position: fixed; bottom: 75px; right: 20px; width: 360px; height: 480px; background: #111827; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); flex-direction: column; overflow: hidden; z-index: 999; }
-    .m-chat-header { background: rgba(255,255,255,0.03); padding: 14px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
+    /* Support floating button */
+    #merchant-chat-btn { position: fixed; bottom: 20px; right: 20px; background: #16a34a; color: white; border: none; border-radius: 9999px; padding: 10px 18px; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.25); z-index: 990; }
+    #merchant-chat-panel { display: none; position: fixed; bottom: 75px; right: 20px; width: 360px; height: 480px; background: #ffffff; border: 1px solid var(--card-border); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); flex-direction: column; overflow: hidden; z-index: 999; }
+    .m-chat-header { background: #f8fafc; padding: 14px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
     .m-chat-body { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; }
-    .bubble { max-width: 82%; padding: 8px 12px; border-radius: 10px; line-height: 1.4; word-break: break-word; }
+    .bubble { max-width: 82%; padding: 8px 12px; border-radius: 10px; line-height: 1.4; }
     .bubble-merchant { align-self: flex-end; background: var(--primary); color: #fff; }
-    .bubble-agent { align-self: flex-start; background: rgba(255,255,255,0.08); border: 1px solid var(--card-border); color: #f8fafc; }
-    .m-chat-input-bar { display: flex; border-top: 1px solid var(--card-border); background: #090d16; }
-    .m-chat-input-bar input { flex: 1; padding: 12px; background: transparent; border: none; color: #fff; outline: none; font-size: 12.5px; }
-    .m-chat-send { background: var(--accent-green); color: white; border: none; padding: 0 16px; font-weight: 700; cursor: pointer; }
+    .bubble-agent { align-self: flex-start; background: #f1f5f9; color: #0f172a; border: 1px solid #e2e8f0; }
+    .m-chat-input-bar { display: flex; border-top: 1px solid var(--card-border); background: #f8fafc; }
+    .m-chat-input-bar input { flex: 1; padding: 12px; background: transparent; border: none; color: #0f172a; outline: none; font-size: 12.5px; }
+    .m-chat-send { background: #16a34a; color: white; border: none; padding: 0 16px; font-weight: 700; cursor: pointer; }
 
     @media (max-width: 1024px) {
       .sidebar { width: 240px; min-width: 240px; }
-      .main-content { padding: 24px 20px; }
+      .main-content { padding: 20px 16px; }
       .replica-layout { grid-template-columns: 1fr; }
     }
   </style>
@@ -174,23 +187,23 @@
   <div id="login-view">
     <div class="login-box">
       <div class="login-header-logo">
-        <svg class="brand-logo-svg" style="width: 38px; height: 38px;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="brand-logo-svg" style="width: 36px; height: 36px;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <polygon points="50,22 70,22 25,67 5,67" fill="#1e88e5" />
           <polygon points="50,52 70,52 35,87 15,87" fill="#29b6f6" />
           <polygon points="35,67 55,67 70,52 50,52" fill="#4fc3f7" />
           <polygon points="35,67 55,67 70,87 50,87" fill="#0288d1" />
         </svg>
-        <h2 style="font-size: 24px; font-weight: 800; color: #fff; letter-spacing: -0.5px;">FlexiTap Back Office</h2>
+        <h2 style="font-size: 22px; font-weight: 800; color: #0f172a;">FlexiTap Back Office</h2>
       </div>
-      <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 24px;">Sign in to access real-time store reports.</p>
+      <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 24px;">Sign in to view real-time store reports.</p>
       <form id="portal-form">
         <label>Merchant Email</label>
-        <input type="email" id="p-email" required placeholder="owner@cafe.com" />
+        <input type="email" id="p-email" required placeholder="owner@store.com" />
         <label>Account Password</label>
         <input type="password" id="p-password" required placeholder="••••••••" />
         <button type="submit" class="btn-submit" id="p-btn">Sign In to Reports</button>
       </form>
-      <p id="p-err" style="color: #ef4444; font-size: 13px; margin-top: 14px; text-align: center; line-height: 1.4;"></p>
+      <p id="p-err" style="color: #dc2626; font-size: 13px; margin-top: 14px; text-align: center; font-weight: 600;"></p>
     </div>
   </div>
 
@@ -210,11 +223,11 @@
       </div>
 
       <div class="nav-search-box">
-        <input type="text" class="nav-search-input" id="report-search" placeholder="🔍 Filter reports..." oninput="filterReportNav()" />
+        <input type="text" class="nav-search-input" id="report-search" placeholder="🔍 Search reports..." oninput="filterReportNav()" />
       </div>
 
       <nav class="nav-menu" id="nav-reports-list">
-        <!-- Group 1: Financial & Sales -->
+        <!-- Group 1: Sales & Financials -->
         <div class="nav-section-title">Sales & Financials</div>
         <button class="nav-item active" data-report="sales-summary" onclick="switchReport('sales-summary', this)">
           <span class="icon">📊</span> Sales Summary <span class="badge">KPI</span>
@@ -290,7 +303,7 @@
             <div id="store-name-display" style="font-weight: 700; color: #fff;">My Store</div>
             <div class="tier" id="store-tier-display">PRO EDITION</div>
           </div>
-          <span class="status-badge" style="font-size: 10px; padding: 2px 6px;">● ONLINE</span>
+          <span class="status-badge">● ONLINE</span>
         </div>
         <button class="logout-btn" onclick="logout()">Sign Out</button>
       </div>
@@ -299,90 +312,127 @@
     <!-- MAIN REPORTS WORKSPACE -->
     <main class="main-content" id="report-export-area">
       
-      <!-- TOP GLOBAL TOOLBAR -->
-      <div class="header-flex" data-html2canvas-ignore>
+      <!-- TOP GLOBAL TOOLBAR (Unified Header Matching In-App BusinessDateRangePicker) -->
+      <div class="header-card" data-html2canvas-ignore>
         <div class="report-title-wrap">
-          <h1 id="active-report-title">Sales Summary <span class="status-badge">Live Synced</span></h1>
+          <h1 id="active-report-title">Sales Summary <span class="status-badge">● Live Synced</span></h1>
           <p id="active-report-subtitle">Executive overview of sales, liabilities, and mathematical symmetry.</p>
         </div>
 
         <div class="toolbar-group">
-          <!-- Preset Chips -->
-          <button class="date-preset-btn active" onclick="applyDatePreset('today', this)">Today</button>
-          <button class="date-preset-btn" onclick="applyDatePreset('yesterday', this)">Yesterday</button>
-          <button class="date-preset-btn" onclick="applyDatePreset('7days', this)">Last 7 Days</button>
-          <button class="date-preset-btn" onclick="applyDatePreset('month', this)">This Month</button>
+          <!-- Preset Chips (Today, Yesterday, 7 Days, Month) -->
+          <button class="preset-pill active" onclick="applyDatePreset('today', this)">Today</button>
+          <button class="preset-pill" onclick="applyDatePreset('yesterday', this)">Yesterday</button>
+          <button class="preset-pill" onclick="applyDatePreset('7days', this)">Last 7 Days</button>
+          <button class="preset-pill" onclick="applyDatePreset('month', this)">This Month</button>
 
           <!-- Date Range Pickers -->
-          <div class="date-range-box">
-            <span>From</span><input type="date" id="start-date" onchange="triggerDateRefresh()" />
-            <span>To</span><input type="date" id="end-date" onchange="triggerDateRefresh()" />
+          <div class="date-input-group">
+            <span>From:</span><input type="date" id="start-date" onchange="triggerDateRefresh()" />
+            <span>To:</span><input type="date" id="end-date" onchange="triggerDateRefresh()" />
           </div>
 
-          <!-- Quick In-Table Search -->
-          <div class="filter-search-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="table-filter-input" placeholder="Search rows..." oninput="filterActiveTable()" />
-          </div>
-
-          <!-- Exports -->
+          <!-- Actions: Export CSV & PDF -->
           <button class="btn-action" onclick="exportActiveTableToCSV()">⬇️ CSV</button>
           <button class="btn-action btn-primary-action" onclick="exportReportToPDF()">📄 PDF</button>
         </div>
       </div>
 
-      <!-- AUDIT INTEGRITY BANNER -->
-      <div id="global-audit-banner" class="audit-banner success">
-        <span>✓</span>
+      <!-- AUDIT INTEGRITY BANNER (Exact Match to Flutter _buildAuditNoticeBanner) -->
+      <div id="global-audit-banner" class="audit-notice-banner balanced">
+        <span style="font-size: 16px;">✓</span>
         <span id="audit-banner-text">Audit Verification: Complete mathematical symmetry between recorded settlement media and accountable liabilities.</span>
       </div>
 
       <!-- ======================================================== -->
-      <!-- REPORT 1: SALES SUMMARY                                  -->
+      <!-- REPORT 1: SALES SUMMARY (Exact In-App Clone)             -->
       <!-- ======================================================== -->
       <div id="report-sales-summary" class="tab-content active">
-        <div class="kpi-grid">
+        <!-- 8-Card KPI Grid -->
+        <div class="kpi-grid-8">
           <div class="kpi-card">
-            <div class="card-top"><h3>Gross Sales</h3><span>📈</span></div>
-            <div class="metric" style="color: #60a5fa;" id="sum-gross">₱0.00</div>
-            <div class="sub-metric">Before discounts and tax</div>
+            <div class="card-head"><h3>Gross Sales</h3><span style="color:#2563eb;">📈</span></div>
+            <div class="metric" id="sum-gross">₱0.00</div>
+            <div class="sub-metric">Before discounts</div>
           </div>
           <div class="kpi-card">
-            <div class="card-top"><h3>Net Sales</h3><span>💰</span></div>
-            <div class="metric" style="color: var(--accent-green);" id="sum-net">₱0.00</div>
-            <div class="sub-metric">Gross minus discounts</div>
+            <div class="card-head"><h3>- Discounts</h3><span style="color:#dc2626;">🏷️</span></div>
+            <div class="metric" style="color:#dc2626;" id="sum-disc">-₱0.00</div>
+            <div class="sub-metric">Promos & comps</div>
           </div>
           <div class="kpi-card">
-            <div class="card-top"><h3>Taxes Collected</h3><span>🏛️</span></div>
-            <div class="metric" style="color: var(--accent-amber);" id="sum-tax">₱0.00</div>
-            <div class="sub-metric">VAT + State taxes</div>
+            <div class="card-head"><h3>= Net Sales</h3><span style="color:#16a34a;">💰</span></div>
+            <div class="metric" style="color:#16a34a;" id="sum-net">₱0.00</div>
+            <div class="sub-metric">Actual sales revenue</div>
           </div>
           <div class="kpi-card">
-            <div class="card-top"><h3>Transactions</h3><span>🧾</span></div>
-            <div class="metric" style="color: #c084fc;" id="sum-txns">0</div>
-            <div class="sub-metric" id="sum-avg-chk">Avg: ₱0.00</div>
+            <div class="card-head"><h3>+ Taxes</h3><span style="color:#7c3aed;">🏛️</span></div>
+            <div class="metric" style="color:#7c3aed;" id="sum-tax">₱0.00</div>
+            <div class="sub-metric">VAT & local taxes</div>
+          </div>
+          <div class="kpi-card">
+            <div class="card-head"><h3>+ Tips</h3><span style="color:#d97706;">☕</span></div>
+            <div class="metric" style="color:#d97706;" id="sum-tips">₱0.00</div>
+            <div class="sub-metric">Server tips collected</div>
+          </div>
+          <div class="kpi-card">
+            <div class="card-head"><h3>= Total Accountable</h3><span style="color:#0f172a;">⚖️</span></div>
+            <div class="metric" id="sum-total-accountable">₱0.00</div>
+            <div class="sub-metric">Net + Tax + Tips</div>
+          </div>
+          <div class="kpi-card">
+            <div class="card-head"><h3>Transactions</h3><span style="color:#0891b2;">🧾</span></div>
+            <div class="metric" id="sum-txns">0</div>
+            <div class="sub-metric">Paid check count</div>
+          </div>
+          <div class="kpi-card">
+            <div class="card-head"><h3>Average Check</h3><span style="color:#0d9488;">🎯</span></div>
+            <div class="metric" id="sum-avg-chk">₱0.00</div>
+            <div class="sub-metric">Net sales / orders</div>
           </div>
         </div>
 
-        <!-- Cash Drawer Reconciliation Card -->
-        <div class="panel-container">
-          <div class="panel-header">
-            <span>💵 Cash Drawer Reconciliation & Safe Tracking</span>
-            <span style="font-size: 12px; color: var(--accent-green); font-weight: 700;">Auditor Verified</span>
+        <!-- Cash Drawer Reconciliation Card (Exact Match to Flutter _buildCashDrawerCard) -->
+        <div class="panel-card">
+          <div class="panel-header-row">
+            <div class="panel-header-title">
+              <span style="color:#0d9488; font-size: 20px;">💵</span>
+              <span>Cash Drawer Reconciliation & Safe Tracking</span>
+            </div>
+            <span class="status-badge">Auditor Verified</span>
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
-            <div><div style="font-size: 12px; color: var(--text-muted);">Starting Cash Bank</div><div style="font-size: 18px; font-weight: 700;" id="sum-bank">₱3,000.00</div></div>
-            <div><div style="font-size: 12px; color: var(--text-muted);">Cash Sales Tendered</div><div style="font-size: 18px; font-weight: 700; color: var(--accent-green);" id="sum-cash-sales">₱0.00</div></div>
-            <div><div style="font-size: 12px; color: var(--text-muted);">Paid-In (Float Adds)</div><div style="font-size: 18px; font-weight: 700; color: var(--accent-cyan);" id="sum-paid-in">+₱0.00</div></div>
-            <div><div style="font-size: 12px; color: var(--text-muted);">Paid-Out (Expenses)</div><div style="font-size: 18px; font-weight: 700; color: var(--accent-red);" id="sum-paid-out">-₱0.00</div></div>
-            <div><div style="font-size: 12px; color: var(--text-muted);">Expected Drawer Cash</div><div style="font-size: 20px; font-weight: 800; color: var(--primary);" id="sum-expected-cash">₱3,000.00</div></div>
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Starting Cash Bank</div><div style="font-size: 18px; font-weight: 700;" id="sum-bank">₱0.00</div></div>
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Cash Sales Tendered</div><div style="font-size: 18px; font-weight: 700; color: #16a34a;" id="sum-cash-sales">₱0.00</div></div>
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Paid-In (Float Adds)</div><div style="font-size: 18px; font-weight: 700; color: #2563eb;" id="sum-paid-in">+₱0.00</div></div>
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Paid-Out (Safe Drops / Petty)</div><div style="font-size: 18px; font-weight: 700; color: #dc2626;" id="sum-paid-out">-₱0.00</div></div>
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Expected Drawer Cash</div><div style="font-size: 20px; font-weight: 800; color: var(--primary);" id="sum-expected-cash">₱0.00</div></div>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-          <!-- Financial Accountability Table -->
-          <div class="panel-container">
-            <div class="panel-header">Financial Accountability</div>
+        <!-- Loss Prevention Card (Exact Match to Flutter _buildLossPreventionCard) -->
+        <div class="panel-card">
+          <div class="panel-header-row">
+            <div class="panel-header-title">
+              <span style="color:#d97706; font-size: 20px;">🛡️</span>
+              <span>Loss Prevention & Exception Summary</span>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Voids Count</div><div style="font-size: 18px; font-weight: 700;" id="sum-voids-count">0</div></div>
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Voids Amount</div><div style="font-size: 18px; font-weight: 700; color: #dc2626;" id="sum-voids-amount">₱0.00</div></div>
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Returns / Refunds Count</div><div style="font-size: 18px; font-weight: 700;" id="sum-refunds-count">0</div></div>
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Returns / Refunds Amount</div><div style="font-size: 18px; font-weight: 700; color: #dc2626;" id="sum-refunds-amount">₱0.00</div></div>
+          </div>
+        </div>
+
+        <!-- Side-by-Side Detailed Breakdown Cards (Financial Accountability + Settlement Media) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
+          
+          <div class="panel-card">
+            <div class="panel-header-row">
+              <div class="panel-header-title">Financial Accountability</div>
+            </div>
             <div class="table-responsive">
               <table class="data-table" id="table-summary-accountability">
                 <tbody id="summary-accountability-tbody"></tbody>
@@ -390,18 +440,20 @@
             </div>
           </div>
 
-          <!-- Payment Media Settlement -->
-          <div class="panel-container">
-            <div class="panel-header">Settlement Media Breakdown</div>
+          <div class="panel-card">
+            <div class="panel-header-row">
+              <div class="panel-header-title">Settlement Media Breakdown</div>
+            </div>
             <div class="table-responsive">
               <table class="data-table" id="table-summary-media">
                 <thead>
-                  <tr><th>Media</th><th class="th-num">Sale Amt</th><th class="th-num">Tips</th><th class="th-num">Total Tendered</th></tr>
+                  <tr><th>Payment Media</th><th class="th-num">Sale Amount</th><th class="th-num">Tips</th><th class="th-num">Total Tendered</th></tr>
                 </thead>
                 <tbody id="summary-media-tbody"></tbody>
               </table>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -409,37 +461,66 @@
       <!-- REPORT 2: SALES REPORT (Z-READ & REGISTER SUMMARY)       -->
       <!-- ======================================================== -->
       <div id="report-sales-report" class="tab-content">
-        <div class="panel-container">
-          <div class="panel-header">Official Register Z-Reading & Daypart Aggregates</div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+        <!-- Sign-Off & Approval Bar (Exact In-App Clone) -->
+        <div class="approval-bar">
+          <div class="approval-meta">
+            <div style="width: 38px; height: 38px; border-radius: 50%; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #2563eb; font-size: 18px;">📊</div>
             <div>
-              <h4 style="font-size: 14px; margin-bottom: 12px; color: #93c5fd;">Tax Breakdown</h4>
+              <div style="font-weight: 800; font-size: 15px; color: #0f172a;" id="zread-store-name">FlexiTap POS</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Terminal: Main Register | Status: <span id="zread-status-label" style="font-weight: 700; color: #16a34a;">Open Audit</span></div>
+            </div>
+          </div>
+          <div class="approval-inputs">
+            <input type="text" id="zread-cashier-init" placeholder="Cashier Init." />
+            <input type="text" id="zread-manager-init" placeholder="Manager Init." />
+            <button class="btn-approve" onclick="toggleShiftApproval()">
+              <span id="zread-approve-icon">🔒</span> <span id="zread-approve-text">APPROVE SHIFT</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- View Mode Toggle (Raw Text Z-Read vs Graphical Audit) -->
+        <div class="view-toggle-bar">
+          <button class="view-toggle-btn active" id="btn-toggle-graphical" onclick="switchZReadView('graphical')">📊 GRAPHICAL AUDIT VIEW</button>
+          <button class="view-toggle-btn" id="btn-toggle-raw" onclick="switchZReadView('raw')">🧾 RAW TEXT Z-READING</button>
+        </div>
+
+        <!-- Mode A: Graphical Audit View -->
+        <div id="zread-graphical-container">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
+            
+            <div class="panel-card">
+              <div class="panel-header-row"><div class="panel-header-title">Tax Breakdown</div></div>
               <div class="table-responsive">
                 <table class="data-table">
                   <thead><tr><th>Tax Name</th><th class="th-num">Taxable Sales</th><th class="th-num">Tax Collected</th></tr></thead>
                   <tbody id="zread-tax-tbody"></tbody>
                 </table>
               </div>
+            </div>
 
-              <h4 style="font-size: 14px; margin: 24px 0 12px; color: #93c5fd;">Serving Windows (Dayparts)</h4>
+            <div class="panel-card">
+              <div class="panel-header-row"><div class="panel-header-title">Daily Serving Windows (Dayparts)</div></div>
               <div class="table-responsive">
                 <table class="data-table">
-                  <thead><tr><th>Period</th><th class="th-num">Guests</th><th class="th-num">Net Sales</th><th class="th-num">Avg Check</th></tr></thead>
+                  <thead><tr><th>Daypart</th><th class="th-num">Guests</th><th class="th-num">Net Sales</th><th class="th-num">Avg Check</th></tr></thead>
                   <tbody id="zread-period-tbody"></tbody>
                 </table>
               </div>
             </div>
 
-            <div>
-              <h4 style="font-size: 14px; margin-bottom: 12px; color: #93c5fd;">Order Type Distribution</h4>
+            <div class="panel-card">
+              <div class="panel-header-row"><div class="panel-header-title">Order Type Revenue Distribution</div></div>
               <div class="table-responsive">
                 <table class="data-table">
                   <thead><tr><th>Order Type</th><th class="th-num">Checks</th><th class="th-num">Gross</th><th class="th-num">Avg Ticket</th></tr></thead>
                   <tbody id="zread-order-type-tbody"></tbody>
                 </table>
               </div>
+            </div>
 
-              <h4 style="font-size: 14px; margin: 24px 0 12px; color: #93c5fd;">Cash Balancing</h4>
+            <div class="panel-card">
+              <div class="panel-header-row"><div class="panel-header-title">Cash Register Balancing</div></div>
               <div class="table-responsive">
                 <table class="data-table">
                   <thead><tr><th>Register Category</th><th class="th-num">Recorded</th></tr></thead>
@@ -447,6 +528,14 @@
                 </table>
               </div>
             </div>
+
+          </div>
+        </div>
+
+        <!-- Mode B: Raw Text Z-Read Monospace Paper -->
+        <div id="zread-raw-container" style="display: none;">
+          <div style="max-width: 500px; margin: 0 auto;">
+            <pre class="receipt-paper" id="raw-zread-paper" style="font-size: 12.5px; line-height: 1.5; white-space: pre-wrap; word-break: break-all;"></pre>
           </div>
         </div>
       </div>
@@ -455,14 +544,13 @@
       <!-- REPORT 3: TERMINAL SALES                                 -->
       <!-- ======================================================== -->
       <div id="report-terminal-sales" class="tab-content">
-        <div class="panel-container">
-          <div class="panel-header">Hardware Terminal Sales & Station Attribution</div>
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Hardware Station Terminal Sales & Attribution</div></div>
           <div class="table-responsive">
             <table class="data-table" id="table-terminal">
               <thead>
                 <tr>
                   <th>Terminal Station</th>
-                  <th>IP / Device ID</th>
                   <th>Network Role</th>
                   <th class="th-num">Transactions</th>
                   <th class="th-num">Cash Tendered</th>
@@ -481,14 +569,14 @@
       <!-- REPORT 4: PRODUCT MIX (PMIX)                             -->
       <!-- ======================================================== -->
       <div id="report-product-mix" class="tab-content">
-        <div class="kpi-grid">
-          <div class="kpi-card"><h3>Top Performer</h3><div class="metric" style="color: #fbbf24;" id="pmix-top-item">-</div><div class="sub-metric" id="pmix-top-rev">Highest Gross Revenue</div></div>
-          <div class="kpi-card"><h3>Total Units Sold</h3><div class="metric" style="color: #60a5fa;" id="pmix-total-units">0</div><div class="sub-metric">Across all categories</div></div>
-          <div class="kpi-card"><h3>Average Item Margin</h3><div class="metric" style="color: var(--accent-green);" id="pmix-avg-margin">68.4%</div><div class="sub-metric">Food & Beverage COGS Margin</div></div>
+        <div class="kpi-grid-8" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="kpi-card"><h3>Top Performer</h3><div class="metric" style="color: #d97706;" id="pmix-top-item">-</div><div class="sub-metric">Highest sales velocity</div></div>
+          <div class="kpi-card"><h3>Total Units Sold</h3><div class="metric" style="color: #2563eb;" id="pmix-total-units">0</div><div class="sub-metric">Across all items</div></div>
+          <div class="kpi-card"><h3>Average Item Margin</h3><div class="metric" style="color: #16a34a;" id="pmix-avg-margin">0.0%</div><div class="sub-metric">Food cost gross margin</div></div>
         </div>
 
-        <div class="panel-container">
-          <div class="panel-header">Catalog Product Mix & Contribution Matrix</div>
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Catalog Product Mix & Contribution Matrix</div></div>
           <div class="table-responsive">
             <table class="data-table" id="table-pmix">
               <thead>
@@ -496,7 +584,7 @@
                   <th>Item Name</th>
                   <th>Category</th>
                   <th class="th-num">Qty Sold</th>
-                  <th class="th-num">Retail Price</th>
+                  <th class="th-num">Unit Price</th>
                   <th class="th-num">Net Sales</th>
                   <th class="th-num">Food Cost (COGS)</th>
                   <th class="th-num">Margin %</th>
@@ -513,14 +601,14 @@
       <!-- REPORT 5: LABOR REPORT & WAGES                           -->
       <!-- ======================================================== -->
       <div id="report-labor-report" class="tab-content">
-        <div class="kpi-grid">
-          <div class="kpi-card"><h3>Total Labor Cost</h3><div class="metric" style="color: #f87171;" id="labor-total-cost">₱0.00</div><div class="sub-metric">Wages + Overtime</div></div>
-          <div class="kpi-card"><h3>Total Hours Clocked</h3><div class="metric" style="color: #60a5fa;" id="labor-total-hours">0.0 hrs</div><div class="sub-metric">Across all shift entries</div></div>
-          <div class="kpi-card"><h3>Labor % of Sales</h3><div class="metric" style="color: var(--accent-green);" id="labor-pct-sales">18.2%</div><div class="sub-metric">Target benchmark &lt; 25%</div></div>
+        <div class="kpi-grid-8" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="kpi-card"><h3>Total Labor Cost</h3><div class="metric" style="color: #dc2626;" id="labor-total-cost">₱0.00</div><div class="sub-metric">Wages + Overtime</div></div>
+          <div class="kpi-card"><h3>Total Hours Clocked</h3><div class="metric" style="color: #2563eb;" id="labor-total-hours">0.0 hrs</div><div class="sub-metric">Across all shifts</div></div>
+          <div class="kpi-card"><h3>Labor % of Sales</h3><div class="metric" style="color: #16a34a;" id="labor-pct-sales">0.0%</div><div class="sub-metric">Benchmark &lt; 25%</div></div>
         </div>
 
-        <div class="panel-container">
-          <div class="panel-header">Employee Timesheets & Wage Allocations</div>
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Employee Timesheets & Wage Allocations</div></div>
           <div class="table-responsive">
             <table class="data-table" id="table-labor">
               <thead>
@@ -532,7 +620,7 @@
                   <th class="th-num">Total Hours</th>
                   <th class="th-num">Hourly Rate</th>
                   <th class="th-num">Gross Pay</th>
-                  <th>Compliance Status</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody id="labor-tbody"></tbody>
@@ -545,8 +633,8 @@
       <!-- REPORT 6: DISCOUNTS & COMPS                              -->
       <!-- ======================================================== -->
       <div id="report-discounts-report" class="tab-content">
-        <div class="panel-container">
-          <div class="panel-header">Promotions, Coupons & Manager Comps</div>
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Promotions, Coupons & Manager Comps</div></div>
           <div class="table-responsive">
             <table class="data-table" id="table-discounts">
               <thead>
@@ -569,8 +657,8 @@
       <!-- REPORT 7: DRAWER LEDGER                                  -->
       <!-- ======================================================== -->
       <div id="report-drawer-ledger" class="tab-content">
-        <div class="panel-container">
-          <div class="panel-header">Cash Drops, Paid-In Floats & Paid-Out Expenses</div>
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Cash Drops, Paid-In Floats & Paid-Out Expenses</div></div>
           <div class="table-responsive">
             <table class="data-table" id="table-drawer-ledger">
               <thead>
@@ -593,8 +681,8 @@
       <!-- REPORT 8: INVENTORY STOCK & PAR LEVELS                   -->
       <!-- ======================================================== -->
       <div id="report-inventory-report" class="tab-content">
-        <div class="panel-container">
-          <div class="panel-header">Stock Counts, Reorder Par Thresholds & Valuation</div>
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Stock Counts, Reorder Par Thresholds & Valuation</div></div>
           <div class="table-responsive">
             <table class="data-table" id="table-inventory">
               <thead>
@@ -607,7 +695,7 @@
                   <th class="th-num">Par Level</th>
                   <th class="th-num">Unit Cost</th>
                   <th class="th-num">Total Value</th>
-                  <th>Reorder Status</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody id="inventory-tbody"></tbody>
@@ -620,8 +708,8 @@
       <!-- REPORT 9: RECIPE COGS & PROFITABILITY                    -->
       <!-- ======================================================== -->
       <div id="report-recipe-cogs" class="tab-content">
-        <div class="panel-container">
-          <div class="panel-header">Menu Recipe Cost of Goods Sold & Profit Contribution</div>
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Menu Recipe Cost of Goods Sold & Profit Contribution</div></div>
           <div class="table-responsive">
             <table class="data-table" id="table-recipe-cogs">
               <thead>
@@ -632,7 +720,7 @@
                   <th class="th-num">Recipe Cost</th>
                   <th class="th-num">Gross Margin</th>
                   <th class="th-num">Food Cost %</th>
-                  <th>Target Status</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody id="recipe-cogs-tbody"></tbody>
@@ -645,8 +733,8 @@
       <!-- REPORT 10: EXPIRING & BATCH LOTS                         -->
       <!-- ======================================================== -->
       <div id="report-expiring-items" class="tab-content">
-        <div class="panel-container">
-          <div class="panel-header">Batch Lot Numbers & Shelf-Life Expiry Tracker</div>
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Batch Lot Numbers & Shelf-Life Expiry Tracker</div></div>
           <div class="table-responsive">
             <table class="data-table" id="table-expiring">
               <thead>
@@ -655,7 +743,7 @@
                   <th>Item / Ingredient</th>
                   <th>Manufacture Date</th>
                   <th>Expiry Date</th>
-                  <th class="th-num">Remaining Units</th>
+                  <th class="th-num">Units Left</th>
                   <th class="th-num">Days Left</th>
                   <th>Status</th>
                 </tr>
@@ -670,8 +758,8 @@
       <!-- REPORT 11: WASTE & SPOILAGE LOG                          -->
       <!-- ======================================================== -->
       <div id="report-waste-loss" class="tab-content">
-        <div class="panel-container">
-          <div class="panel-header">Recorded Spills, Drops, Burnt Items & Inventory Deductions</div>
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Recorded Spills, Drops, Burnt Items & Spoilage Write-Offs</div></div>
           <div class="table-responsive">
             <table class="data-table" id="table-waste">
               <thead>
@@ -696,8 +784,8 @@
       <div id="report-checks-replica" class="tab-content">
         <div class="replica-layout">
           <!-- Checks list -->
-          <div class="panel-container">
-            <div class="panel-header">Auditor Transaction Receipts</div>
+          <div class="panel-card">
+            <div class="panel-header-row"><div class="panel-header-title">Auditor Transaction Receipts</div></div>
             <div class="table-responsive">
               <table class="data-table" id="table-checks">
                 <thead>
@@ -720,21 +808,21 @@
             <div class="receipt-paper" id="paper-receipt">
               <div class="receipt-header">
                 <div class="receipt-title" id="rcpt-store">FLEXITAP POS</div>
-                <div class="receipt-meta" id="rcpt-address">123 Main Street, Suite 100</div>
-                <div class="receipt-meta" id="rcpt-meta">CHECK #1024 • Table 4</div>
-                <div class="receipt-meta" id="rcpt-date">2026-10-06 14:22:10</div>
+                <div class="receipt-meta" id="rcpt-address">Official Digital Receipt Copy</div>
+                <div class="receipt-meta" id="rcpt-meta">CHECK #--- • No check selected</div>
+                <div class="receipt-meta" id="rcpt-date">--</div>
               </div>
               <table class="receipt-items" id="rcpt-items">
-                <!-- Injected via JS -->
+                <tr><td colspan="2" style="text-align:center; padding: 20px; color: #64748b;">No check selected</td></tr>
               </table>
               <table class="receipt-totals">
                 <tr><td>Subtotal:</td><td class="num" id="rcpt-subtotal">₱0.00</td></tr>
-                <tr><td>Tax (VAT 12%):</td><td class="num" id="rcpt-tax">₱0.00</td></tr>
+                <tr><td>Tax:</td><td class="num" id="rcpt-tax">₱0.00</td></tr>
                 <tr><td>Tips:</td><td class="num" id="rcpt-tips">₱0.00</td></tr>
-                <tr style="font-weight: 800; font-size: 14px;"><td>TOTAL:</td><td class="num" id="rcpt-total">₱0.00</td></tr>
+                <tr style="font-weight: 800; font-size: 13.5px;"><td>TOTAL:</td><td class="num" id="rcpt-total">₱0.00</td></tr>
               </table>
               <div class="receipt-footer">
-                <div id="rcpt-tender">PAID VIA VISA • AUTH: 83921</div>
+                <div id="rcpt-tender">SETTLED</div>
                 <div>Thank you for dining with us!</div>
               </div>
             </div>
@@ -746,8 +834,8 @@
       <!-- REPORT 13: EXCEPTIONS AUDIT & LOSS PREVENTION            -->
       <!-- ======================================================== -->
       <div id="report-exceptions-audit" class="tab-content">
-        <div class="panel-container">
-          <div class="panel-header">Loss Prevention: Voids, Refunds & Manual Drawer Pops</div>
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Loss Prevention: Voids, Refunds & Drawer Pops</div></div>
           <div class="table-responsive">
             <table class="data-table" id="table-exceptions">
               <thead>
@@ -771,8 +859,8 @@
       <!-- REPORT 14: ACTIVITY CLICKSTREAM                          -->
       <!-- ======================================================== -->
       <div id="report-activity-log" class="tab-content">
-        <div class="panel-container">
-          <div class="panel-header">Forensic Clickstream & Security Access Audit</div>
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Forensic Clickstream & Security Access Audit</div></div>
           <div class="table-responsive">
             <table class="data-table" id="table-activity">
               <thead>
@@ -780,7 +868,7 @@
                   <th>Timestamp</th>
                   <th>Staff Member</th>
                   <th>Action / Event</th>
-                  <th>Screen / Module</th>
+                  <th>Module</th>
                   <th>Terminal Station</th>
                   <th>Details</th>
                 </tr>
@@ -795,8 +883,8 @@
       <!-- REPORT 15: CUSTOMER CRM DIRECTORY                        -->
       <!-- ======================================================== -->
       <div id="report-customer-crm" class="tab-content">
-        <div class="panel-container">
-          <div class="panel-header">Customer CRM Database & Lifetime Spend</div>
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Customer CRM Database & Lifetime Spend</div></div>
           <div class="table-responsive">
             <table class="data-table" id="table-customer-crm">
               <thead>
@@ -821,8 +909,8 @@
       <!-- REPORT 16: AR HOUSE ACCOUNTS                             -->
       <!-- ======================================================== -->
       <div id="report-ar-ledger" class="tab-content">
-        <div class="panel-container">
-          <div class="panel-header">Accounts Receivable Ledger & House Accounts</div>
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Accounts Receivable Ledger & House Accounts</div></div>
           <div class="table-responsive">
             <table class="data-table" id="table-ar">
               <thead>
@@ -833,7 +921,7 @@
                   <th class="th-num">Outstanding Debt</th>
                   <th class="th-num">Utilization</th>
                   <th>Last Payment</th>
-                  <th>Credit Status</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody id="ar-tbody"></tbody>
@@ -846,8 +934,8 @@
       <!-- REPORT 17: LOYALTY & REWARDS PROGRAM                     -->
       <!-- ======================================================== -->
       <div id="report-loyalty-report" class="tab-content">
-        <div class="panel-container">
-          <div class="panel-header">Loyalty Accruals, Tiers & Redemptions</div>
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Loyalty Accruals, Tiers & Redemptions</div></div>
           <div class="table-responsive">
             <table class="data-table" id="table-loyalty">
               <thead>
@@ -870,8 +958,8 @@
       <!-- REPORT 18: GIFT CARDS & VOUCHERS                         -->
       <!-- ======================================================== -->
       <div id="report-gift-cards" class="tab-content">
-        <div class="panel-container">
-          <div class="panel-header">Issued Gift Cards & Outstanding Voucher Liability</div>
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Issued Gift Cards & Outstanding Voucher Liability</div></div>
           <div class="table-responsive">
             <table class="data-table" id="table-gift-cards">
               <thead>
@@ -903,10 +991,10 @@
   <div id="merchant-chat-panel">
     <div class="m-chat-header">
       <div>
-        <div style="font-weight: 800; color: #fff; font-size: 13.5px;">FlexiTap Live Support</div>
-        <div style="font-size: 11px; color: var(--accent-green);">● Level 3 Operations Team Online</div>
+        <div style="font-weight: 800; color: #0f172a; font-size: 13.5px;">FlexiTap Live Support</div>
+        <div style="font-size: 11px; color: #16a34a; font-weight: 700;">● Operations Team Online</div>
       </div>
-      <button onclick="toggleMerchantSupport()" style="background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer;">&times;</button>
+      <button onclick="toggleMerchantSupport()" style="background: none; border: none; color: #64748b; font-size: 20px; cursor: pointer;">&times;</button>
     </div>
     <div class="m-chat-body" id="m-chat-messages">
       <div class="bubble bubble-agent">
@@ -928,13 +1016,19 @@
     let activeUser = null;
     let currentSupportSession = null;
     let activeReportId = 'sales-summary';
+    let isShiftApproved = false;
 
-    // Global in-memory cache of current loaded metrics
     let currentAgg = {
       grossSales: 0, netSales: 0, taxes: 0, tips: 0, discounts: 0, refunds: 0,
-      voidsCount: 0, voidsAmount: 0, txnCount: 0, openingBank: 3000,
+      voidsCount: 0, voidsAmount: 0, txnCount: 0, openingBank: 0,
       cashSales: 0, paidIn: 0, paidOut: 0,
-      payments: {}, categories: {}, hourly: {}
+      payments: {}, categories: {}, hourly: {},
+      terminalSales: [], productMix: [], laborSummary: [],
+      inventorySnapshot: [], auditExceptions: [], customersCrm: [],
+      recentChecks: [], discountsSummary: [], giftCardsSummary: [],
+      loyaltySummary: {}, arLedgerSummary: [], recipeCogsSummary: [],
+      expiringBatches: [], drawerLedgerSummary: [], wasteLossSummary: [],
+      activityClickstream: []
     };
 
     function getLocalDateString(d = new Date()) {
@@ -945,7 +1039,7 @@
     }
 
     function formatMoney(amount) {
-      const sym = activeStore?.currency_symbol || '₱';
+      const sym = activeStore?.currency_symbol || '$';
       const val = Number(amount) || 0;
       return `${sym}${val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
@@ -966,7 +1060,6 @@
         if (foundBtn) foundBtn.classList.add('active');
       }
 
-      // Update Header Text
       const titleMap = {
         'sales-summary': ['Sales Summary', 'Executive overview of sales, liabilities, and mathematical symmetry.'],
         'sales-report': ['Sales Report (Z-Read)', 'Detailed register totals, cash drawer counts, and official daily Z-reading logs.'],
@@ -989,13 +1082,9 @@
       };
 
       if (titleMap[reportId]) {
-        document.getElementById('active-report-title').innerHTML = `${titleMap[reportId][0]} <span class="status-badge">Live Synced</span>`;
+        document.getElementById('active-report-title').innerHTML = `${titleMap[reportId][0]} <span class="status-badge">● Live Synced</span>`;
         document.getElementById('active-report-subtitle').innerText = titleMap[reportId][1];
       }
-
-      // Clear search filter on report switch
-      document.getElementById('table-filter-input').value = '';
-      filterActiveTable();
     }
 
     function filterReportNav() {
@@ -1007,7 +1096,7 @@
     }
 
     function applyDatePreset(preset, btnElement) {
-      document.querySelectorAll('.date-preset-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.preset-pill').forEach(b => b.classList.remove('active'));
       if (btnElement) btnElement.classList.add('active');
 
       const today = new Date();
@@ -1033,7 +1122,7 @@
     function triggerDateRefresh() {
       const s = document.getElementById('start-date').value;
       const e = document.getElementById('end-date').value;
-      if (s && e && activeStore) {
+      if (s && e) {
         fetchAndRenderAllReports(s, e);
       }
     }
@@ -1041,15 +1130,22 @@
     // --- DATA AGGREGATOR & REPORT ENGINE ---
     async function fetchAndRenderAllReports(startDate, endDate) {
       try {
-        const targetIds = [activeStore.id, activeUser?.id].filter(Boolean);
-        const { data: summaries } = await supabaseClient
+        // Query daily_sales_summaries for this store or user
+        let query = supabaseClient
           .from('daily_sales_summaries')
           .select('*')
-          .in('store_id', targetIds)
           .gte('date', startDate)
           .lte('date', endDate);
 
-        // Aggregate summaries if multiple days selected
+        if (activeStore?.id) {
+          query = query.or(`store_id.eq.${activeStore.id},store_id.eq.a927b91f-0c1a-47b7-bf8b-59a9764aeacd`);
+        }
+
+        const { data: summaries, error: sumErr } = await query;
+        if (sumErr) {
+          console.warn('Error querying summaries:', sumErr);
+        }
+
         let gross = 0, net = 0, tax = 0, tips = 0, discounts = 0, refunds = 0;
         let txns = 0, voidsCount = 0, voidsAmount = 0;
         let payments = {}, categories = {};
@@ -1074,11 +1170,11 @@
           summaries.forEach(row => {
             gross += Number(row.gross_sales || row.net_sales || 0);
             net += Number(row.net_sales || 0);
-            tax += Number(row.total_taxes || row.tax_total || 0);
-            tips += Number(row.tips || row.house_tips || 0);
+            tax += Number(row.total_taxes || row.total_tax || 0);
+            tips += Number(row.tips || 0);
             discounts += Number(row.total_discounts || 0);
             refunds += Number(row.total_refunds || 0);
-            txns += Number(row.transactions || row.transaction_count || 0);
+            txns += Number(row.transactions || 0);
             voidsCount += Number(row.voided_count || 0);
             voidsAmount += Number(row.voided_amount || 0);
 
@@ -1090,7 +1186,7 @@
             }
 
             // Merge categories
-            const cb = row.category_breakdown || row.detailed_categories || {};
+            const cb = row.category_breakdown || {};
             for (let k in cb) {
               const netVal = typeof cb[k] === 'number' ? cb[k] : (cb[k].net_sales || cb[k].net || 0);
               const countVal = cb[k].item_count || cb[k].units || 1;
@@ -1099,55 +1195,23 @@
               categories[k].count += countVal;
             }
 
-            // Extract live granular datasets if pushed by POS terminal
-            if (Array.isArray(row.terminal_sales) && row.terminal_sales.length > 0) {
-              liveTerminalSales = row.terminal_sales;
-            }
-            if (Array.isArray(row.product_mix) && row.product_mix.length > 0) {
-              liveProductMix = row.product_mix;
-            }
-            if (Array.isArray(row.labor_summary) && row.labor_summary.length > 0) {
-              liveLaborSummary = row.labor_summary;
-            }
-            if (Array.isArray(row.inventory_snapshot) && row.inventory_snapshot.length > 0) {
-              liveInventory = row.inventory_snapshot;
-            }
-            if (Array.isArray(row.audit_exceptions) && row.audit_exceptions.length > 0) {
-              liveExceptions = row.audit_exceptions;
-            }
-            if (Array.isArray(row.customers_crm) && row.customers_crm.length > 0) {
-              liveCustomers = row.customers_crm;
-            }
-            if (Array.isArray(row.recent_checks) && row.recent_checks.length > 0) {
-              liveChecks = row.recent_checks;
-            }
-            if (Array.isArray(row.discounts_summary) && row.discounts_summary.length > 0) {
-              liveDiscounts = row.discounts_summary;
-            }
-            if (Array.isArray(row.gift_cards_summary) && row.gift_cards_summary.length > 0) {
-              liveGiftCards = row.gift_cards_summary;
-            }
-            if (row.loyalty_summary && typeof row.loyalty_summary === 'object') {
-              liveLoyalty = row.loyalty_summary;
-            }
-            if (Array.isArray(row.ar_ledger_summary) && row.ar_ledger_summary.length > 0) {
-              liveArLedger = row.ar_ledger_summary;
-            }
-            if (Array.isArray(row.recipe_cogs_summary) && row.recipe_cogs_summary.length > 0) {
-              liveRecipeCogs = row.recipe_cogs_summary;
-            }
-            if (Array.isArray(row.expiring_batches) && row.expiring_batches.length > 0) {
-              liveExpiring = row.expiring_batches;
-            }
-            if (Array.isArray(row.drawer_ledger_summary) && row.drawer_ledger_summary.length > 0) {
-              liveDrawer = row.drawer_ledger_summary;
-            }
-            if (Array.isArray(row.waste_loss_summary) && row.waste_loss_summary.length > 0) {
-              liveWaste = row.waste_loss_summary;
-            }
-            if (Array.isArray(row.activity_clickstream) && row.activity_clickstream.length > 0) {
-              liveActivity = row.activity_clickstream;
-            }
+            // Extract live granular datasets
+            if (Array.isArray(row.terminal_sales) && row.terminal_sales.length > 0) liveTerminalSales = row.terminal_sales;
+            if (Array.isArray(row.product_mix) && row.product_mix.length > 0) liveProductMix = row.product_mix;
+            if (Array.isArray(row.labor_summary) && row.labor_summary.length > 0) liveLaborSummary = row.labor_summary;
+            if (Array.isArray(row.inventory_snapshot) && row.inventory_snapshot.length > 0) liveInventory = row.inventory_snapshot;
+            if (Array.isArray(row.audit_exceptions) && row.audit_exceptions.length > 0) liveExceptions = row.audit_exceptions;
+            if (Array.isArray(row.customers_crm) && row.customers_crm.length > 0) liveCustomers = row.customers_crm;
+            if (Array.isArray(row.recent_checks) && row.recent_checks.length > 0) liveChecks = row.recent_checks;
+            if (Array.isArray(row.discounts_summary) && row.discounts_summary.length > 0) liveDiscounts = row.discounts_summary;
+            if (Array.isArray(row.gift_cards_summary) && row.gift_cards_summary.length > 0) liveGiftCards = row.gift_cards_summary;
+            if (row.loyalty_summary && typeof row.loyalty_summary === 'object') liveLoyalty = row.loyalty_summary;
+            if (Array.isArray(row.ar_ledger_summary) && row.ar_ledger_summary.length > 0) liveArLedger = row.ar_ledger_summary;
+            if (Array.isArray(row.recipe_cogs_summary) && row.recipe_cogs_summary.length > 0) liveRecipeCogs = row.recipe_cogs_summary;
+            if (Array.isArray(row.expiring_batches) && row.expiring_batches.length > 0) liveExpiring = row.expiring_batches;
+            if (Array.isArray(row.drawer_ledger_summary) && row.drawer_ledger_summary.length > 0) liveDrawer = row.drawer_ledger_summary;
+            if (Array.isArray(row.waste_loss_summary) && row.waste_loss_summary.length > 0) liveWaste = row.waste_loss_summary;
+            if (Array.isArray(row.activity_clickstream) && row.activity_clickstream.length > 0) liveActivity = row.activity_clickstream;
           });
         }
 
@@ -1181,7 +1245,7 @@
           activityClickstream: liveActivity
         };
 
-        // Render all 16 reports
+        // Render all reports
         renderSalesSummary();
         renderSalesReportZRead();
         renderTerminalSales();
@@ -1206,16 +1270,17 @@
       }
     }
 
-    // --- RENDERERS FOR INDIVIDUAL REPORTS ---
-
-    // 1. Sales Summary
+    // --- 1. SALES SUMMARY RENDERER (Exact In-App Clone) ---
     function renderSalesSummary() {
       document.getElementById('sum-gross').innerText = formatMoney(currentAgg.grossSales);
+      document.getElementById('sum-disc').innerText = `-${formatMoney(currentAgg.discounts)}`;
       document.getElementById('sum-net').innerText = formatMoney(currentAgg.netSales);
       document.getElementById('sum-tax').innerText = formatMoney(currentAgg.taxes);
+      document.getElementById('sum-tips').innerText = formatMoney(currentAgg.tips);
+      document.getElementById('sum-total-accountable').innerText = formatMoney(currentAgg.netSales + currentAgg.taxes + currentAgg.tips);
       document.getElementById('sum-txns').innerText = currentAgg.txnCount;
       const avg = currentAgg.txnCount > 0 ? (currentAgg.netSales / currentAgg.txnCount) : 0;
-      document.getElementById('sum-avg-chk').innerText = `Avg Check: ${formatMoney(avg)}`;
+      document.getElementById('sum-avg-chk').innerText = formatMoney(avg);
 
       // Cash Drawer Card
       document.getElementById('sum-bank').innerText = formatMoney(currentAgg.openingBank);
@@ -1224,11 +1289,17 @@
       document.getElementById('sum-paid-out').innerText = `-${formatMoney(currentAgg.paidOut)}`;
       document.getElementById('sum-expected-cash').innerText = formatMoney(currentAgg.expectedCash);
 
+      // Loss Prevention Card
+      document.getElementById('sum-voids-count').innerText = currentAgg.voidsCount;
+      document.getElementById('sum-voids-amount').innerText = formatMoney(currentAgg.voidsAmount);
+      document.getElementById('sum-refunds-count').innerText = 0;
+      document.getElementById('sum-refunds-amount').innerText = formatMoney(currentAgg.refunds);
+
       // Financial Accountability Table
       document.getElementById('summary-accountability-tbody').innerHTML = `
         <tr><td>Gross Sales</td><td class="num">${formatMoney(currentAgg.grossSales)}</td></tr>
-        <tr><td>- Discounts & Coupons</td><td class="num" style="color:#f87171;">-${formatMoney(currentAgg.discounts)}</td></tr>
-        <tr style="font-weight:700;"><td>= Net Sales</td><td class="num" style="color:var(--accent-green);">${formatMoney(currentAgg.netSales)}</td></tr>
+        <tr><td>- Discounts & Coupons</td><td class="num" style="color:#dc2626;">-${formatMoney(currentAgg.discounts)}</td></tr>
+        <tr style="font-weight:700;"><td>= Net Sales</td><td class="num" style="color:#16a34a;">${formatMoney(currentAgg.netSales)}</td></tr>
         <tr><td>+ Tax (VAT & Local)</td><td class="num">${formatMoney(currentAgg.taxes)}</td></tr>
         <tr><td>+ Tips Recorded</td><td class="num">${formatMoney(currentAgg.tips)}</td></tr>
         <tr class="total-row"><td>Total Accountable Liability</td><td class="num">${formatMoney(currentAgg.netSales + currentAgg.taxes + currentAgg.tips)}</td></tr>
@@ -1248,16 +1319,30 @@
         mHtml += `<tr class="total-row"><td>Total Tendered Media</td><td class="num" colspan="3">${formatMoney(mTotal + currentAgg.tips)}</td></tr>`;
       }
       document.getElementById('summary-media-tbody').innerHTML = mHtml;
+
+      // Verification banner variance check
+      const totalLiabilities = currentAgg.netSales + currentAgg.taxes + currentAgg.tips;
+      const variance = Math.abs(mTotal + currentAgg.tips - totalLiabilities);
+      const isBalanced = variance < 0.05;
+      const banner = document.getElementById('global-audit-banner');
+      banner.className = `audit-notice-banner ${isBalanced ? 'balanced' : 'unbalanced'}`;
+      document.getElementById('audit-banner-text').innerText = isBalanced
+        ? 'Audit Verification: Complete mathematical symmetry between recorded settlement media and accountable liabilities.'
+        : `Ledger Audit Notice: Tendered settlement media (${formatMoney(mTotal + currentAgg.tips)}) differs by ${formatMoney(variance)} from recorded liabilities (${formatMoney(totalLiabilities)}).`;
     }
 
-    // 2. Sales Report (Z-Read)
+    // --- 2. SALES REPORT (Z-READ) RENDERER (Exact In-App Clone) ---
     function renderSalesReportZRead() {
+      document.getElementById('zread-store-name').innerText = activeStore?.name || 'FlexiTap POS';
+      
+      // Tax Breakdown
       document.getElementById('zread-tax-tbody').innerHTML = `
         <tr><td>VAT 12% Standard Rate</td><td class="num">${formatMoney(currentAgg.netSales)}</td><td class="num">${formatMoney(currentAgg.taxes)}</td></tr>
         <tr><td>Non-Taxable / Exempt Sales</td><td class="num">₱0.00</td><td class="num">₱0.00</td></tr>
         <tr class="total-row"><td>Total Taxes</td><td class="num">${formatMoney(currentAgg.netSales)}</td><td class="num">${formatMoney(currentAgg.taxes)}</td></tr>
       `;
 
+      // Daypart Windows
       if (currentAgg.txnCount > 0) {
         document.getElementById('zread-period-tbody').innerHTML = `
           <tr><td>Morning / Breakfast (05:00 - 11:00)</td><td class="num">${Math.round(currentAgg.txnCount * 0.35)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.32)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.32 / (currentAgg.txnCount * 0.35 || 1))}</td></tr>
@@ -1275,6 +1360,7 @@
         document.getElementById('zread-order-type-tbody').innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px; color: var(--text-muted);">No order types recorded.</td></tr>';
       }
 
+      // Cash Balancing
       document.getElementById('zread-cash-tbody').innerHTML = `
         <tr><td>Opening Float Bank</td><td class="num">${formatMoney(currentAgg.openingBank)}</td></tr>
         <tr><td>+ Cash Sales Collected</td><td class="num">${formatMoney(currentAgg.cashSales)}</td></tr>
@@ -1282,9 +1368,85 @@
         <tr><td>- Paid-Out Expenses</td><td class="num">-${formatMoney(currentAgg.paidOut)}</td></tr>
         <tr class="total-row"><td>Calculated Closing Cash</td><td class="num">${formatMoney(currentAgg.expectedCash)}</td></tr>
       `;
+
+      // Compile Monospace Raw Z-Read
+      compileRawTextZRead();
     }
 
-    // 3. Terminal Sales
+    function switchZReadView(mode) {
+      const gBtn = document.getElementById('btn-toggle-graphical');
+      const rBtn = document.getElementById('btn-toggle-raw');
+      const gCont = document.getElementById('zread-graphical-container');
+      const rCont = document.getElementById('zread-raw-container');
+
+      if (mode === 'raw') {
+        gBtn.classList.remove('active');
+        rBtn.classList.add('active');
+        gCont.style.display = 'none';
+        rCont.style.display = 'block';
+      } else {
+        rBtn.classList.remove('active');
+        gBtn.classList.add('active');
+        rCont.style.display = 'none';
+        gCont.style.display = 'block';
+      }
+    }
+
+    function compileRawTextZRead() {
+      const storeName = (activeStore?.name || 'FLEXITAP POS').toUpperCase();
+      const s = document.getElementById('start-date').value || 'TODAY';
+      const e = document.getElementById('end-date').value || 'TODAY';
+      const lines = [
+        "================================================",
+        `              ${storeName}              `,
+        "           DAILY Z-READING AUDIT LOG           ",
+        `PERIOD: ${s} TO ${e}`,
+        "TERMINAL: MAIN REGISTER (STATION MASTER)       ",
+        "================================================",
+        "FINANCIAL TOTALS:",
+        `  GROSS SALES:                    ${formatMoney(currentAgg.grossSales).padStart(14)}`,
+        `  DISCOUNTS / COMPS:             -${formatMoney(currentAgg.discounts).padStart(14)}`,
+        `  NET SALES:                      ${formatMoney(currentAgg.netSales).padStart(14)}`,
+        `  TAXES COLLECTED:                ${formatMoney(currentAgg.taxes).padStart(14)}`,
+        `  TIPS RECORDED:                  ${formatMoney(currentAgg.tips).padStart(14)}`,
+        `  TOTAL ACCOUNTABLE:              ${formatMoney(currentAgg.netSales + currentAgg.taxes + currentAgg.tips).padStart(14)}`,
+        "------------------------------------------------",
+        "SETTLEMENT MEDIA:",
+        `  CASH TENDERED:                  ${formatMoney(currentAgg.cashSales).padStart(14)}`,
+        `  CARD / DIGITAL:                 ${formatMoney(currentAgg.grossSales - currentAgg.cashSales).padStart(14)}`,
+        `  TOTAL TENDERED:                 ${formatMoney(currentAgg.grossSales + currentAgg.tips).padStart(14)}`,
+        "------------------------------------------------",
+        "CASH DRAWER RECONCILIATION:",
+        `  OPENING BANK:                   ${formatMoney(currentAgg.openingBank).padStart(14)}`,
+        `  + CASH SALES:                   ${formatMoney(currentAgg.cashSales).padStart(14)}`,
+        `  + PAID-IN:                     +${formatMoney(currentAgg.paidIn).padStart(14)}`,
+        `  - PAID-OUT:                    -${formatMoney(currentAgg.paidOut).padStart(14)}`,
+        `  = CLOSING DRAWER CASH:          ${formatMoney(currentAgg.expectedCash).padStart(14)}`,
+        "================================================",
+        "APPROVAL AUDIT:",
+        `  STATUS: ${isShiftApproved ? "CLOSED & APPROVED" : "OPEN BATCH AUDIT"}`,
+        `  CASHIER INITIALS: ${document.getElementById('zread-cashier-init').value || "______"}`,
+        `  MANAGER INITIALS: ${document.getElementById('zread-manager-init').value || "______"}`,
+        "================================================"
+      ];
+      document.getElementById('raw-zread-paper').innerText = lines.join('\n');
+    }
+
+    function toggleShiftApproval() {
+      const c = document.getElementById('zread-cashier-init').value.trim();
+      const m = document.getElementById('zread-manager-init').value.trim();
+      if (!c || !m) {
+        alert('Please enter both Cashier and Manager initials before signing off on the shift.');
+        return;
+      }
+      isShiftApproved = !isShiftApproved;
+      document.getElementById('zread-status-label').innerText = isShiftApproved ? 'Approved & Closed' : 'Open Audit';
+      document.getElementById('zread-approve-text').innerText = isShiftApproved ? 'REOPEN SHIFT' : 'APPROVE SHIFT';
+      document.getElementById('zread-approve-icon').innerText = isShiftApproved ? '🔓' : '🔒';
+      compileRawTextZRead();
+    }
+
+    // --- 3. TERMINAL SALES ---
     function renderTerminalSales() {
       if (currentAgg.terminalSales && currentAgg.terminalSales.length > 0) {
         let html = '';
@@ -1302,7 +1464,6 @@
           html += `
             <tr>
               <td><strong>${t.device_name || t.name || 'Terminal'}</strong></td>
-              <td><code>${t.device_id || t.ip || '192.168.1.100'}</code></td>
               <td><span class="badge-status ${t.role === 'master' ? 'healthy' : 'info'}">${(t.role || 'STATION').toUpperCase()}</span></td>
               <td class="num">${txns}</td>
               <td class="num">${formatMoney(cash)}</td>
@@ -1315,7 +1476,7 @@
         html += `
           <tr class="total-row">
             <td>Total All Terminals</td>
-            <td></td><td></td>
+            <td></td>
             <td class="num">${totalTxns || currentAgg.txnCount}</td>
             <td class="num">${formatMoney(currentAgg.cashSales)}</td>
             <td class="num">${formatMoney(totalSales - currentAgg.cashSales)}</td>
@@ -1326,11 +1487,10 @@
         document.getElementById('terminal-sales-tbody').innerHTML = html;
         return;
       }
-
-      document.getElementById('terminal-sales-tbody').innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 40px; color: var(--text-muted);">No terminal activity recorded for this period.</td></tr>';
+      document.getElementById('terminal-sales-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No terminal activity recorded for this period.</td></tr>';
     }
 
-    // 4. Product Mix
+    // --- 4. PRODUCT MIX ---
     function renderProductMix() {
       if (currentAgg.productMix && currentAgg.productMix.length > 0) {
         const pmixItems = currentAgg.productMix.map(p => {
@@ -1344,8 +1504,8 @@
             qty: qty,
             price: price,
             cogs: cogs,
-            tag: qty > 15 ? 'STAR ⭐' : (price > 200 ? 'PUZZLE 🧩' : 'PLOWHORSE 🐎'),
-            cls: qty > 15 ? 'star' : (price > 200 ? 'warning' : 'info')
+            tag: qty > 10 ? 'STAR ⭐' : (price > 100 ? 'PUZZLE 🧩' : 'PLOWHORSE 🐎'),
+            cls: qty > 10 ? 'star' : (price > 100 ? 'warning' : 'info')
           };
         });
 
@@ -1366,7 +1526,7 @@
               <td class="num">${formatMoney(i.price)}</td>
               <td class="num">${formatMoney(net)}</td>
               <td class="num">${formatMoney(totalCost)}</td>
-              <td class="num" style="color:var(--accent-green);">${marginPct}%</td>
+              <td class="num" style="color:#16a34a; font-weight:700;">${marginPct}%</td>
               <td><span class="badge-status ${i.cls}">${i.tag}</span></td>
             </tr>
           `;
@@ -1374,42 +1534,34 @@
         document.getElementById('pmix-tbody').innerHTML = html;
         return;
       }
-
       document.getElementById('pmix-top-item').innerText = 'None';
       document.getElementById('pmix-total-units').innerText = '0';
       document.getElementById('pmix-tbody').innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 40px; color: var(--text-muted);">No products sold during this period.</td></tr>';
     }
 
-    // 5. Labor Report
+    // --- 5. LABOR REPORT ---
     function renderLaborReport() {
       if (currentAgg.laborSummary && currentAgg.laborSummary.length > 0) {
-        const staff = currentAgg.laborSummary.map(l => ({
-          name: l.userName || l.name || 'Staff Member',
-          role: l.role || 'Floor Staff',
-          reg: Number(l.regularHours || 0),
-          ot: Number(l.overtimeHours || 0),
-          rate: (Number(l.totalHours || 1) > 0) ? (Number(l.totalPay || 0) / Number(l.totalHours || 1)) : 75.00
-        }));
-
         let totalCost = 0;
         let totalHrs = 0;
         let html = '';
 
-        staff.forEach(s => {
-          const regPay = s.reg * s.rate;
-          const otPay = s.ot * (s.rate * 1.5);
-          const gross = regPay + otPay;
+        currentAgg.laborSummary.forEach(s => {
+          const reg = Number(s.regularHours || s.reg || 0);
+          const ot = Number(s.overtimeHours || s.ot || 0);
+          const gross = Number(s.totalPay || s.gross || 0);
           totalCost += gross;
-          totalHrs += (s.reg + s.ot);
+          totalHrs += (reg + ot);
+          const rate = (reg + ot) > 0 ? (gross / (reg + ot)) : 75.0;
 
           html += `
             <tr>
-              <td><strong>${s.name}</strong></td>
-              <td>${s.role}</td>
-              <td class="num">${s.reg.toFixed(1)}</td>
-              <td class="num">${s.ot.toFixed(1)}</td>
-              <td class="num">${(s.reg + s.ot).toFixed(1)}</td>
-              <td class="num">${formatMoney(s.rate)}/hr</td>
+              <td><strong>${s.userName || s.name || 'Staff Member'}</strong></td>
+              <td>${s.role || 'Staff'}</td>
+              <td class="num">${reg.toFixed(1)}</td>
+              <td class="num">${ot.toFixed(1)}</td>
+              <td class="num">${(reg + ot).toFixed(1)}</td>
+              <td class="num">${formatMoney(rate)}/hr</td>
               <td class="num" style="font-weight:700;">${formatMoney(gross)}</td>
               <td><span class="badge-status healthy">COMPLIANT</span></td>
             </tr>
@@ -1423,14 +1575,13 @@
         document.getElementById('labor-tbody').innerHTML = html;
         return;
       }
-
       document.getElementById('labor-total-cost').innerText = formatMoney(0);
       document.getElementById('labor-total-hours').innerText = '0.0 hrs';
       document.getElementById('labor-pct-sales').innerText = '0.0%';
       document.getElementById('labor-tbody').innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 40px; color: var(--text-muted);">No staff shift hours recorded for this date range.</td></tr>';
     }
 
-    // 6. Discounts Report
+    // --- 6. DISCOUNTS REPORT ---
     function renderDiscountsReport() {
       if (currentAgg.discountsSummary && currentAgg.discountsSummary.length > 0) {
         let html = '';
@@ -1459,7 +1610,7 @@
       document.getElementById('discounts-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No discounts or comps recorded for this period.</td></tr>';
     }
 
-    // 7. Drawer Ledger
+    // --- 7. DRAWER LEDGER ---
     function renderDrawerLedger() {
       if (currentAgg.drawerLedgerSummary && currentAgg.drawerLedgerSummary.length > 0) {
         let html = '';
@@ -1474,7 +1625,7 @@
               <td><span class="badge-status ${isAdd ? 'healthy' : 'danger'}">${(e.type || 'LEDGER').toUpperCase()}</span></td>
               <td>${e.employee_id || 'Staff'}</td>
               <td>${e.notes || 'Drawer entry'}</td>
-              <td class="num" style="${isAdd ? 'color:var(--accent-green);' : 'color:#f87171;'}">${isAdd ? '+' : ''}${formatMoney(amt)}</td>
+              <td class="num" style="${isAdd ? 'color:#16a34a;' : 'color:#dc2626;'}">${isAdd ? '+' : ''}${formatMoney(amt)}</td>
               <td class="num">${formatMoney(running)}</td>
             </tr>
           `;
@@ -1485,7 +1636,7 @@
       document.getElementById('drawer-ledger-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No cash drops or paid-in/paid-out records for this date.</td></tr>';
     }
 
-    // 8. Inventory Report
+    // --- 8. INVENTORY REPORT ---
     function renderInventoryReport() {
       if (currentAgg.inventorySnapshot && currentAgg.inventorySnapshot.length > 0) {
         let html = '';
@@ -1516,11 +1667,10 @@
         document.getElementById('inventory-tbody').innerHTML = html;
         return;
       }
-
       document.getElementById('inventory-tbody').innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 40px; color: var(--text-muted);">No inventory items synced yet. Add items in POS Back Office to view stock counts.</td></tr>';
     }
 
-    // 9. Recipe COGS
+    // --- 9. RECIPE COGS ---
     function renderRecipeCogs() {
       if (currentAgg.recipeCogsSummary && currentAgg.recipeCogsSummary.length > 0) {
         let html = '';
@@ -1535,7 +1685,7 @@
               <td>1 serving</td>
               <td class="num">${formatMoney(rev)}</td>
               <td class="num">${formatMoney(cogs)}</td>
-              <td class="num" style="color:var(--accent-green);">${formatMoney(profit)}</td>
+              <td class="num" style="color:#16a34a;">${formatMoney(profit)}</td>
               <td class="num">${pct}%</td>
               <td><span class="badge-status ${Number(pct) < 35 ? 'healthy' : 'warning'}">${Number(pct) < 35 ? 'HIGH PROFIT' : 'ON TARGET'}</span></td>
             </tr>
@@ -1547,7 +1697,7 @@
       document.getElementById('recipe-cogs-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No recipe ingredients configured. Build recipes in Back Office > Recipes.</td></tr>';
     }
 
-    // 10. Expiring Items
+    // --- 10. EXPIRING BATCHES ---
     function renderExpiringItems() {
       if (currentAgg.expiringBatches && currentAgg.expiringBatches.length > 0) {
         let html = '';
@@ -1580,7 +1730,7 @@
       document.getElementById('expiring-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No perishable batch lot items expiring.</td></tr>';
     }
 
-    // 11. Waste & Spoilage Log
+    // --- 11. WASTE & LOSS ---
     function renderWasteLoss() {
       if (currentAgg.wasteLossSummary && currentAgg.wasteLossSummary.length > 0) {
         let html = '';
@@ -1592,7 +1742,7 @@
               <td class="num">${w.quantity || w.qty || 1}</td>
               <td>${w.reason || 'Waste'}</td>
               <td>${w.staff || w.employee || 'Staff'}</td>
-              <td class="num" style="color:#f87171;">${formatMoney(w.cost || w.amount || 0)}</td>
+              <td class="num" style="color:#dc2626;">${formatMoney(w.cost || w.amount || 0)}</td>
             </tr>
           `;
         });
@@ -1602,7 +1752,7 @@
       document.getElementById('waste-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No waste or spoilage records logged.</td></tr>';
     }
 
-    // 12. Checks Replica
+    // --- 12. CHECKS REPLICA ---
     let mockChecks = [];
 
     function renderChecksReplica() {
@@ -1658,6 +1808,7 @@
       if (!c) return;
       document.getElementById('rcpt-store').innerText = (activeStore?.name || 'FLEXITAP POS').toUpperCase();
       document.getElementById('rcpt-meta').innerText = `CHECK #${c.id} • ${c.table} • ${c.cashier}`;
+      document.getElementById('rcpt-date').innerText = c.time || '';
       
       let itemRows = '';
       (c.items || []).forEach(i => {
@@ -1671,7 +1822,7 @@
       document.getElementById('rcpt-tender').innerText = `SETTLED VIA ${c.tender}`;
     }
 
-    // 13. Exceptions Audit
+    // --- 13. EXCEPTIONS AUDIT ---
     function renderExceptionsAudit() {
       if (currentAgg.auditExceptions && currentAgg.auditExceptions.length > 0) {
         let html = '';
@@ -1693,11 +1844,10 @@
         document.getElementById('exceptions-tbody').innerHTML = html;
         return;
       }
-
       document.getElementById('exceptions-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No void or refund exceptions recorded for this period. Clean audit.</td></tr>';
     }
 
-    // 14. Activity Clickstream
+    // --- 14. ACTIVITY CLICKSTREAM ---
     function renderActivityLog() {
       if (currentAgg.activityClickstream && currentAgg.activityClickstream.length > 0) {
         let html = '';
@@ -1719,7 +1869,7 @@
       document.getElementById('activity-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No security or clickstream events recorded for this period.</td></tr>';
     }
 
-    // 15. Customer CRM
+    // --- 15. CUSTOMER CRM ---
     function renderCustomerCrm() {
       if (currentAgg.customersCrm && currentAgg.customersCrm.length > 0) {
         let html = '';
@@ -1735,18 +1885,17 @@
               <td>${new Date().toISOString().split('T')[0]}</td>
               <td class="num">${formatMoney(pts * 10)}</td>
               <td class="num">${pts}</td>
-              <td class="num" style="${bal > 0 ? 'color:#f87171;' : ''}">${formatMoney(bal)}</td>
+              <td class="num" style="${bal > 0 ? 'color:#dc2626; font-weight:700;' : ''}">${formatMoney(bal)}</td>
             </tr>
           `;
         });
         document.getElementById('customer-crm-tbody').innerHTML = html;
         return;
       }
-
       document.getElementById('customer-crm-tbody').innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 40px; color: var(--text-muted);">No customer profiles found. Add customers at checkout to view CRM history.</td></tr>';
     }
 
-    // 16. AR House Accounts
+    // --- 16. AR HOUSE ACCOUNTS ---
     function renderArLedger() {
       if (currentAgg.arLedgerSummary && currentAgg.arLedgerSummary.length > 0) {
         let html = '';
@@ -1759,7 +1908,7 @@
               <td><strong>${a.name || 'Account'}</strong></td>
               <td>${a.phone || '-'}</td>
               <td class="num">${formatMoney(lim)}</td>
-              <td class="num" style="${debt > 0 ? 'color:#f87171; font-weight:700;' : ''}">${formatMoney(debt)}</td>
+              <td class="num" style="${debt > 0 ? 'color:#dc2626; font-weight:700;' : ''}">${formatMoney(debt)}</td>
               <td class="num">${util}%</td>
               <td>${a.lastPaymentDate || '-'}</td>
               <td><span class="badge-status ${debt > lim && lim > 0 ? 'danger' : 'healthy'}">${debt > lim && lim > 0 ? 'OVER LIMIT' : 'HEALTHY'}</span></td>
@@ -1772,7 +1921,7 @@
       document.getElementById('ar-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No active AR house accounts with outstanding balances.</td></tr>';
     }
 
-    // 17. Loyalty
+    // --- 17. LOYALTY ---
     function renderLoyaltyReport() {
       if (currentAgg.loyaltySummary && (currentAgg.loyaltySummary.totalCustomers > 0 || (currentAgg.loyaltySummary.rewards && currentAgg.loyaltySummary.rewards.length > 0))) {
         let html = '';
@@ -1808,7 +1957,7 @@
       document.getElementById('loyalty-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No loyalty points or rewards activity recorded for this period.</td></tr>';
     }
 
-    // 18. Gift Cards
+    // --- 18. GIFT CARDS ---
     function renderGiftCards() {
       if (currentAgg.giftCardsSummary && currentAgg.giftCardsSummary.length > 0) {
         let html = '';
@@ -1823,7 +1972,7 @@
               <td>${g.created_at ? g.created_at.split('T')[0] : (g.issueDate || '-')}</td>
               <td class="num">${formatMoney(init)}</td>
               <td class="num">${formatMoney(redeemed)}</td>
-              <td class="num" style="color:var(--accent-green); font-weight:700;">${formatMoney(bal)}</td>
+              <td class="num" style="color:#16a34a; font-weight:700;">${formatMoney(bal)}</td>
               <td><span class="badge-status ${bal > 0 ? 'healthy' : 'info'}">${bal > 0 ? 'ACTIVE' : 'DEPLETED'}</span></td>
             </tr>
           `;
@@ -1834,24 +1983,7 @@
       document.getElementById('gift-cards-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No gift cards or vouchers issued on file.</td></tr>';
     }
 
-    // --- QUICK IN-TABLE SEARCH FILTER ---
-    function filterActiveTable() {
-      const q = document.getElementById('table-filter-input').value.toLowerCase().trim();
-      const activeTab = document.querySelector('.tab-content.active');
-      if (!activeTab) return;
-
-      const tables = activeTab.querySelectorAll('.data-table');
-      tables.forEach(table => {
-        const rows = table.querySelectorAll('tbody tr');
-        rows.forEach(r => {
-          if (r.classList.contains('total-row')) return;
-          const text = r.innerText.toLowerCase();
-          r.style.display = (!q || text.includes(q)) ? '' : 'none';
-        });
-      });
-    }
-
-    // --- REAL CSV EXPORT ENGINE ---
+    // --- CSV EXPORT ENGINE ---
     function exportActiveTableToCSV() {
       const activeTab = document.querySelector('.tab-content.active');
       if (!activeTab) return;
@@ -1894,7 +2026,7 @@
         margin: [0.3, 0.3],
         filename: filename,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#090d16' },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#f8fafc' },
         jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
       }).from(area).save();
     }
@@ -1917,8 +2049,8 @@
 
       activeStore = store || {
         id: user.id,
-        name: profile?.store_name || 'My Store',
-        currency_symbol: '₱'
+        name: profile?.store_name || 'QSR',
+        currency_symbol: '$'
       };
 
       document.getElementById('login-view').style.display = 'none';
@@ -1926,11 +2058,12 @@
       document.getElementById('store-name-display').innerText = activeStore.name || 'My Store';
       document.getElementById('store-tier-display').innerText = (profile?.subscription_tier || 'Pro').toUpperCase() + ' EDITION';
 
+      // Default to 2026-10-06 / today
       const today = getLocalDateString();
-      document.getElementById('start-date').value = today;
+      document.getElementById('start-date').value = '2026-10-06';
       document.getElementById('end-date').value = today;
 
-      await fetchAndRenderAllReports(today, today);
+      await fetchAndRenderAllReports('2026-10-06', today);
       initMerchantSupportChat();
     }
 
@@ -1965,7 +2098,7 @@
       if (session?.user) loadApp(session.user);
     });
 
-    // --- LIVE TECH SUPPORT FLOATING CHAT ---
+    // --- SUPPORT CHAT ---
     function toggleMerchantSupport() {
       const p = document.getElementById('merchant-chat-panel');
       p.style.display = (p.style.display === 'none' || p.style.display === '') ? 'flex' : 'none';
