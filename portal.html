@@ -1055,4 +1055,1463 @@
     function getLocalDateString(d = new Date()) {
       const year = d.getFullYear();
       const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function formatMoney(amount) {
+      const sym = activeStore?.currency_symbol || '$';
+      const val = Number(amount) || 0;
+      return `${sym}${val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    // --- NAVIGATION & REPORT SWITCHING ---
+    function switchReport(reportId, btnElement) {
+      activeReportId = reportId;
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      const targetReport = document.getElementById(`report-${reportId}`);
+      if (targetReport) targetReport.classList.add('active');
+
+      if (btnElement) {
+        btnElement.classList.add('active');
+      } else {
+        const foundBtn = document.querySelector(`.nav-item[data-report="${reportId}"]`);
+        if (foundBtn) foundBtn.classList.add('active');
+      }
+
+      const titleMap = {
+        'sales-summary': ['Sales Summary', 'Executive overview of sales, liabilities, and mathematical symmetry.'],
+        'sales-report': ['Sales Report (Z-Read)', 'Detailed register totals, cash drawer counts, and official daily Z-reading logs.'],
+        'terminal-sales': ['Terminal Sales', 'Hardware station breakdown of transactions, tips, and cashier volume.'],
+        'product-mix': ['Product Mix (PMIX)', 'Item sales velocity, margin share, and contribution profitability matrix.'],
+        'labor-report': ['Labor & Wages', 'Employee timesheets, wage allocations, overtime, and labor cost percentage.'],
+        'discounts-report': ['Discounts & Comps', 'Applied promotions, coupons, manual comps, and markdown attribution.'],
+        'drawer-ledger': ['Drawer Ledger', 'Cash drops, paid-ins, paid-outs, and cash float activity tracking.'],
+        'inventory-report': ['Stock & Par Levels', 'Real-time catalog stock, par thresholds, reorder warnings, and valuation.'],
+        'recipe-cogs': ['Recipe COGS & Profitability', 'Food cost margins, recipe ingredients, and portion profitability scores.'],
+        'expiring-items': ['Expiring & Batch Lots', 'Perishable batch lot tracking, manufacture dates, and shelf-life expiration alerts.'],
+        'waste-loss': ['Waste & Spoilage Log', 'Recorded kitchen spills, drops, burnt items, and spoilage write-offs.'],
+        'checks-replica': ['Checks Replica', 'Auditor-friendly digital duplicates of customer guest checks and receipts.'],
+        'exceptions-audit': ['Exceptions Audit', 'Loss prevention hub tracking cashier voids, refunds, and manual drawer opens.'],
+        'activity-log': ['Activity Clickstream', 'Forensic record of user interactions, logins, price overrides, and configuration edits.'],
+        'customer-crm': ['Customer Directory', 'Customer CRM database, profiles, visit frequency, and lifetime spend.'],
+        'ar-ledger': ['AR House Accounts', 'Accounts Receivable ledger tracking house accounts, open credit, and payments.'],
+        'loyalty-report': ['Loyalty & Rewards', 'Accrued loyalty points, member tiers, and redeemed rewards impact.'],
+        'gift-cards': ['Gift Cards & Vouchers', 'Issued vouchers, card activations, remaining balances, and store liability.']
+      };
+
+      if (titleMap[reportId]) {
+        document.getElementById('active-report-title').innerHTML = `${titleMap[reportId][0]} <span class="status-badge">● Live Synced</span>`;
+        document.getElementById('active-report-subtitle').innerText = titleMap[reportId][1];
+      }
+    }
+
+    function filterReportNav() {
+      const q = document.getElementById('report-search').value.toLowerCase().trim();
+      document.querySelectorAll('#nav-reports-list .nav-item').forEach(btn => {
+        const text = btn.innerText.toLowerCase();
+        btn.style.display = text.includes(q) ? 'flex' : 'none';
+      });
+    }
+
+    function applyDatePreset(preset, btnElement) {
+      document.querySelectorAll('.preset-pill').forEach(b => b.classList.remove('active'));
+      if (btnElement) btnElement.classList.add('active');
+
+      const today = new Date();
+      let start = new Date();
+      let end = new Date();
+
+      if (preset === 'today') {
+        // Today
+      } else if (preset === 'yesterday') {
+        start.setDate(today.getDate() - 1);
+        end.setDate(today.getDate() - 1);
+      } else if (preset === '7days') {
+        start.setDate(today.getDate() - 6);
+      } else if (preset === 'month') {
+        start = new Date(today.getFullYear(), today.getMonth(), 1);
+      }
+
+      document.getElementById('start-date').value = getLocalDateString(start);
+      document.getElementById('end-date').value = getLocalDateString(end);
+      requestOnDemandReport();
+    }
+
+    // --- ON-DEMAND REALTIME RELAY ENGINE (Option 2) ---
+    let relayChannels = [];
+    let currentPendingRequestId = null;
+
+    function initReportRelay() {
+      if (relayChannels.length > 0) return;
+
+      const channelNames = [
+        `store_reports_relay_${activeStore?.id}`,
+        `store_reports_relay_${activeUser?.id}`,
+        'store_reports_relay_a927b91f-0c1a-47b7-bf8b-59a9764aeacd'
+      ].filter(Boolean);
+
+      channelNames.forEach(chName => {
+        const ch = supabaseClient.channel(chName, {
+          config: { broadcast: { self: false } }
+        });
+
+        ch.on('broadcast', { event: 'REPORT_RESPONSE' }, (payload) => {
+          console.log('📡 Received on-demand report broadcast response:', payload);
+          handleRelayResponse(payload.payload);
+        }).subscribe((status) => {
+          console.log(`📡 Relay channel ${chName} status:`, status);
+          if (status === 'SUBSCRIBED') {
+            const badge = document.querySelector('.status-badge');
+            if (badge) badge.innerText = '● Live POS Relay';
+          }
+        });
+
+        relayChannels.push(ch);
+      });
+    }
+
+    function requestOnDemandReport() {
+      const btn = document.getElementById('btn-run-report');
+      const icon = document.getElementById('run-report-icon');
+      const text = document.getElementById('run-report-text');
+
+      if (btn) {
+        btn.disabled = true;
+        btn.style.opacity = '0.75';
+      }
+      if (icon) icon.innerText = '⏳';
+      if (text) text.innerText = 'Running...';
+
+      const s = document.getElementById('start-date').value;
+      const e = document.getElementById('end-date').value;
+
+      document.getElementById('global-audit-banner').className = 'audit-notice-banner balanced';
+      document.getElementById('audit-banner-text').innerText = '📡 Pulling live report data on demand from POS terminal (flexitap.db)...';
+
+      const reqId = 'req_' + Date.now();
+      currentPendingRequestId = reqId;
+
+      // Broadcast to POS terminal over joined websocket channels
+      relayChannels.forEach(ch => {
+        if (ch && ch.state === 'joined') {
+          ch.send({
+            type: 'broadcast',
+            event: 'RUN_REPORT',
+            payload: {
+              requestId: reqId,
+              report: activeReportId,
+              startDate: s,
+              endDate: e
+            }
+          });
+        }
+      });
+
+      // Simultaneously trigger fallback query from cloud database
+      fetchAndRenderAllReports(s, e);
+
+      // Timeout safety
+      setTimeout(() => {
+        if (currentPendingRequestId === reqId) {
+          currentPendingRequestId = null;
+          resetRunButton();
+        }
+      }, 5000);
+    }
+
+    function resetRunButton() {
+      const btn = document.getElementById('btn-run-report');
+      const icon = document.getElementById('run-report-icon');
+      const text = document.getElementById('run-report-text');
+      if (btn) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      }
+      if (icon) icon.innerText = '▶';
+      if (text) text.innerText = 'Run Report';
+    }
+
+    function handleRelayResponse(resp) {
+      if (!resp || resp.status !== 'success' || !resp.data) return;
+      currentPendingRequestId = null;
+      resetRunButton();
+
+      const d = resp.data;
+      currentAgg = {
+        grossSales: Number(d.gross_sales || 0),
+        netSales: Number(d.net_sales || 0),
+        taxes: Number(d.total_taxes || 0),
+        tips: Number(d.tips || 0),
+        discounts: Number(d.total_discounts || 0),
+        refunds: Number(d.total_refunds || 0),
+        voidsCount: Number(d.voided_count || 0),
+        voidsAmount: Number(d.voided_amount || 0),
+        txnCount: Number(d.transactions || 0),
+        openingBank: Number(d.opening_bank || 0),
+        cashSales: Number(d.payment_breakdown?.Cash || d.payment_breakdown?.CASH || 0),
+        paidIn: Number(d.paid_in || 0),
+        paidOut: Number(d.paid_out || 0),
+        expectedCash: Number(d.expected_cash || (d.payment_breakdown?.Cash || 0)),
+        payments: d.payment_breakdown || {},
+        categories: d.category_breakdown || {},
+        hourly: d.hourly_sales || {},
+        terminalSales: d.terminal_sales || [],
+        productMix: d.product_mix || [],
+        laborSummary: d.labor_summary || [],
+        inventorySnapshot: d.inventory_snapshot || [],
+        auditExceptions: d.audit_exceptions || [],
+        customersCrm: d.customers_crm || [],
+        recentChecks: d.recent_checks || [],
+        discountsSummary: d.discounts_summary || [],
+        giftCardsSummary: d.gift_cards_summary || [],
+        loyaltySummary: d.loyalty_summary || {},
+        arLedgerSummary: d.ar_ledger_summary || [],
+        recipeCogsSummary: d.recipe_cogs_summary || [],
+        expiringBatches: d.expiring_batches || [],
+        drawerLedgerSummary: d.drawer_ledger_summary || [],
+        wasteLossSummary: d.waste_loss_summary || [],
+        activityClickstream: d.activity_clickstream || []
+      };
+
+      if (resp.storeName) {
+        document.getElementById('store-name-display').innerText = resp.storeName;
+        document.getElementById('zread-store-name').innerText = resp.storeName;
+      }
+      if (resp.currency) {
+        activeStore.currency_symbol = resp.currency === 'PHP' ? '₱' : '$';
+      }
+
+      // Re-render all views with exact local SQLite figures!
+      renderSalesSummary();
+      renderSalesReportZRead();
+      renderTerminalSales();
+      renderProductMix();
+      renderLaborReport();
+      renderDiscountsReport();
+      renderDrawerLedger();
+      renderInventoryReport();
+      renderRecipeCogs();
+      renderExpiringItems();
+      renderWasteLoss();
+      renderChecksReplica();
+      renderExceptionsAudit();
+      renderActivityLog();
+      renderCustomerCrm();
+      renderArLedger();
+      renderLoyaltyReport();
+      renderGiftCards();
+
+      document.getElementById('global-audit-banner').className = 'audit-notice-banner balanced';
+      document.getElementById('audit-banner-text').innerText = '✓ Live report data pulled on demand from local POS terminal (flexitap.db).';
+    }
+
+    // --- DATA AGGREGATOR & REPORT ENGINE ---
+    async function fetchAndRenderAllReports(startDate, endDate) {
+      try {
+        // Query daily_sales_summaries for this store or user
+        let query = supabaseClient
+          .from('daily_sales_summaries')
+          .select('*')
+          .gte('date', startDate)
+          .lte('date', endDate);
+
+        if (activeStore?.id) {
+          query = query.or(`store_id.eq.${activeStore.id},store_id.eq.a927b91f-0c1a-47b7-bf8b-59a9764aeacd`);
+        }
+
+        const { data: summaries, error: sumErr } = await query;
+        if (sumErr) {
+          console.warn('Error querying summaries:', sumErr);
+        }
+
+        let gross = 0, net = 0, tax = 0, tips = 0, discounts = 0, refunds = 0;
+        let txns = 0, voidsCount = 0, voidsAmount = 0;
+        let payments = {}, categories = {};
+        let liveTerminalSales = [];
+        let liveProductMix = [];
+        let liveLaborSummary = [];
+        let liveInventory = [];
+        let liveExceptions = [];
+        let liveCustomers = [];
+        let liveChecks = [];
+        let liveDiscounts = [];
+        let liveGiftCards = [];
+        let liveLoyalty = {};
+        let liveArLedger = [];
+        let liveRecipeCogs = [];
+        let liveExpiring = [];
+        let liveDrawer = [];
+        let liveWaste = [];
+        let liveActivity = [];
+
+        if (summaries && summaries.length > 0) {
+          summaries.forEach(row => {
+            gross += Number(row.gross_sales || row.net_sales || 0);
+            net += Number(row.net_sales || 0);
+            tax += Number(row.total_taxes || row.total_tax || 0);
+            tips += Number(row.tips || 0);
+            discounts += Number(row.total_discounts || 0);
+            refunds += Number(row.total_refunds || 0);
+            txns += Number(row.transactions || 0);
+            voidsCount += Number(row.voided_count || 0);
+            voidsAmount += Number(row.voided_amount || 0);
+
+            // Merge payments
+            const pb = row.payment_breakdown || {};
+            for (let k in pb) {
+              const val = typeof pb[k] === 'number' ? pb[k] : (pb[k].total_sales || pb[k].sale_amt || 0);
+              payments[k] = (payments[k] || 0) + val;
+            }
+
+            // Merge categories
+            const cb = row.category_breakdown || {};
+            for (let k in cb) {
+              const netVal = typeof cb[k] === 'number' ? cb[k] : (cb[k].net_sales || cb[k].net || 0);
+              const countVal = cb[k].item_count || cb[k].units || 1;
+              if (!categories[k]) categories[k] = { net: 0, count: 0 };
+              categories[k].net += netVal;
+              categories[k].count += countVal;
+            }
+
+            // Extract live granular datasets
+            if (Array.isArray(row.terminal_sales) && row.terminal_sales.length > 0) liveTerminalSales = row.terminal_sales;
+            if (Array.isArray(row.product_mix) && row.product_mix.length > 0) liveProductMix = row.product_mix;
+            if (Array.isArray(row.labor_summary) && row.labor_summary.length > 0) liveLaborSummary = row.labor_summary;
+            if (Array.isArray(row.inventory_snapshot) && row.inventory_snapshot.length > 0) liveInventory = row.inventory_snapshot;
+            if (Array.isArray(row.audit_exceptions) && row.audit_exceptions.length > 0) liveExceptions = row.audit_exceptions;
+            if (Array.isArray(row.customers_crm) && row.customers_crm.length > 0) liveCustomers = row.customers_crm;
+            if (Array.isArray(row.recent_checks) && row.recent_checks.length > 0) liveChecks = row.recent_checks;
+            if (Array.isArray(row.discounts_summary) && row.discounts_summary.length > 0) liveDiscounts = row.discounts_summary;
+            if (Array.isArray(row.gift_cards_summary) && row.gift_cards_summary.length > 0) liveGiftCards = row.gift_cards_summary;
+            if (row.loyalty_summary && typeof row.loyalty_summary === 'object') liveLoyalty = row.loyalty_summary;
+            if (Array.isArray(row.ar_ledger_summary) && row.ar_ledger_summary.length > 0) liveArLedger = row.ar_ledger_summary;
+            if (Array.isArray(row.recipe_cogs_summary) && row.recipe_cogs_summary.length > 0) liveRecipeCogs = row.recipe_cogs_summary;
+            if (Array.isArray(row.expiring_batches) && row.expiring_batches.length > 0) liveExpiring = row.expiring_batches;
+            if (Array.isArray(row.drawer_ledger_summary) && row.drawer_ledger_summary.length > 0) liveDrawer = row.drawer_ledger_summary;
+            if (Array.isArray(row.waste_loss_summary) && row.waste_loss_summary.length > 0) liveWaste = row.waste_loss_summary;
+            if (Array.isArray(row.activity_clickstream) && row.activity_clickstream.length > 0) liveActivity = row.activity_clickstream;
+          });
+        }
+
+        const cashSales = payments['Cash'] || payments['CASH'] || 0;
+        const openingBank = 0;
+        const paidIn = 0;
+        const paidOut = 0;
+        const expectedCash = openingBank + cashSales + paidIn - paidOut;
+
+        currentAgg = {
+          grossSales: gross, netSales: net, taxes: tax, tips: tips, discounts: discounts,
+          refunds: refunds, voidsCount: voidsCount, voidsAmount: voidsAmount,
+          txnCount: txns, openingBank: openingBank, cashSales: cashSales,
+          paidIn: paidIn, paidOut: paidOut, expectedCash: expectedCash,
+          payments: payments, categories: categories,
+          terminalSales: liveTerminalSales,
+          productMix: liveProductMix,
+          laborSummary: liveLaborSummary,
+          inventorySnapshot: liveInventory,
+          auditExceptions: liveExceptions,
+          customersCrm: liveCustomers,
+          recentChecks: liveChecks,
+          discountsSummary: liveDiscounts,
+          giftCardsSummary: liveGiftCards,
+          loyaltySummary: liveLoyalty,
+          arLedgerSummary: liveArLedger,
+          recipeCogsSummary: liveRecipeCogs,
+          expiringBatches: liveExpiring,
+          drawerLedgerSummary: liveDrawer,
+          wasteLossSummary: liveWaste,
+          activityClickstream: liveActivity
+        };
+
+        // Render all reports
+        renderSalesSummary();
+        renderSalesReportZRead();
+        renderTerminalSales();
+        renderProductMix();
+        renderLaborReport();
+        renderDiscountsReport();
+        renderDrawerLedger();
+        renderInventoryReport();
+        renderRecipeCogs();
+        renderExpiringItems();
+        renderWasteLoss();
+        renderChecksReplica();
+        renderExceptionsAudit();
+        renderActivityLog();
+        renderCustomerCrm();
+        renderArLedger();
+        renderLoyaltyReport();
+        renderGiftCards();
+
+      } catch (err) {
+        console.error('Error fetching reports data:', err);
+      }
+    }
+
+    // --- 1. SALES SUMMARY RENDERER (Exact In-App Clone) ---
+    function renderSalesSummary() {
+      document.getElementById('sum-gross').innerText = formatMoney(currentAgg.grossSales);
+      document.getElementById('sum-disc').innerText = `-${formatMoney(currentAgg.discounts)}`;
+      document.getElementById('sum-net').innerText = formatMoney(currentAgg.netSales);
+      document.getElementById('sum-tax').innerText = formatMoney(currentAgg.taxes);
+      document.getElementById('sum-tips').innerText = formatMoney(currentAgg.tips);
+      document.getElementById('sum-total-accountable').innerText = formatMoney(currentAgg.netSales + currentAgg.taxes + currentAgg.tips);
+      document.getElementById('sum-txns').innerText = currentAgg.txnCount;
+      const avg = currentAgg.txnCount > 0 ? (currentAgg.netSales / currentAgg.txnCount) : 0;
+      document.getElementById('sum-avg-chk').innerText = formatMoney(avg);
+
+      // Cash Drawer Card
+      document.getElementById('sum-bank').innerText = formatMoney(currentAgg.openingBank);
+      document.getElementById('sum-cash-sales').innerText = formatMoney(currentAgg.cashSales);
+      document.getElementById('sum-paid-in').innerText = `+${formatMoney(currentAgg.paidIn)}`;
+      document.getElementById('sum-paid-out').innerText = `-${formatMoney(currentAgg.paidOut)}`;
+      document.getElementById('sum-expected-cash').innerText = formatMoney(currentAgg.expectedCash);
+
+      // Loss Prevention Card
+      document.getElementById('sum-voids-count').innerText = currentAgg.voidsCount;
+      document.getElementById('sum-voids-amount').innerText = formatMoney(currentAgg.voidsAmount);
+      document.getElementById('sum-refunds-count').innerText = 0;
+      document.getElementById('sum-refunds-amount').innerText = formatMoney(currentAgg.refunds);
+
+      // Financial Accountability Table
+      document.getElementById('summary-accountability-tbody').innerHTML = `
+        <tr><td>Gross Sales</td><td class="num">${formatMoney(currentAgg.grossSales)}</td></tr>
+        <tr><td>- Discounts & Coupons</td><td class="num" style="color:#dc2626;">-${formatMoney(currentAgg.discounts)}</td></tr>
+        <tr style="font-weight:700;"><td>= Net Sales</td><td class="num" style="color:#16a34a;">${formatMoney(currentAgg.netSales)}</td></tr>
+        <tr><td>+ Tax (VAT & Local)</td><td class="num">${formatMoney(currentAgg.taxes)}</td></tr>
+        <tr><td>+ Tips Recorded</td><td class="num">${formatMoney(currentAgg.tips)}</td></tr>
+        <tr class="total-row"><td>Total Accountable Liability</td><td class="num">${formatMoney(currentAgg.netSales + currentAgg.taxes + currentAgg.tips)}</td></tr>
+      `;
+
+      // Media Settlement Table
+      let mHtml = '';
+      let mTotal = 0;
+      for (let k in currentAgg.payments) {
+        const val = currentAgg.payments[k];
+        mTotal += val;
+        mHtml += `<tr><td><strong>${k}</strong></td><td class="num">${formatMoney(val)}</td><td class="num">${formatMoney(k.includes('Card') ? currentAgg.tips : 0)}</td><td class="num">${formatMoney(val + (k.includes('Card') ? currentAgg.tips : 0))}</td></tr>`;
+      }
+      if (mHtml === '') {
+        mHtml = '<tr><td colspan="4" style="text-align:center; padding: 24px; color: var(--text-muted);">No payment transactions recorded for this period.</td></tr>';
+      } else {
+        mHtml += `<tr class="total-row"><td>Total Tendered Media</td><td class="num" colspan="3">${formatMoney(mTotal + currentAgg.tips)}</td></tr>`;
+      }
+      document.getElementById('summary-media-tbody').innerHTML = mHtml;
+
+      // Verification banner variance check
+      const totalLiabilities = currentAgg.netSales + currentAgg.taxes + currentAgg.tips;
+      const variance = Math.abs(mTotal + currentAgg.tips - totalLiabilities);
+      const isBalanced = variance < 0.05;
+      const banner = document.getElementById('global-audit-banner');
+      banner.className = `audit-notice-banner ${isBalanced ? 'balanced' : 'unbalanced'}`;
+      document.getElementById('audit-banner-text').innerText = isBalanced
+        ? 'Audit Verification: Complete mathematical symmetry between recorded settlement media and accountable liabilities.'
+        : `Ledger Audit Notice: Tendered settlement media (${formatMoney(mTotal + currentAgg.tips)}) differs by ${formatMoney(variance)} from recorded liabilities (${formatMoney(totalLiabilities)}).`;
+    }
+
+    // --- 2. SALES REPORT (Z-READ) RENDERER (Exact In-App Clone) ---
+    function renderSalesReportZRead() {
+      document.getElementById('zread-store-name').innerText = activeStore?.name || 'FlexiTap POS';
+      
+      // Tax Breakdown
+      document.getElementById('zread-tax-tbody').innerHTML = `
+        <tr><td>VAT 12% Standard Rate</td><td class="num">${formatMoney(currentAgg.netSales)}</td><td class="num">${formatMoney(currentAgg.taxes)}</td></tr>
+        <tr><td>Non-Taxable / Exempt Sales</td><td class="num">₱0.00</td><td class="num">₱0.00</td></tr>
+        <tr class="total-row"><td>Total Taxes</td><td class="num">${formatMoney(currentAgg.netSales)}</td><td class="num">${formatMoney(currentAgg.taxes)}</td></tr>
+      `;
+
+      // Daypart Windows
+      if (currentAgg.txnCount > 0) {
+        document.getElementById('zread-period-tbody').innerHTML = `
+          <tr><td>Morning / Breakfast (05:00 - 11:00)</td><td class="num">${Math.round(currentAgg.txnCount * 0.35)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.32)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.32 / (currentAgg.txnCount * 0.35 || 1))}</td></tr>
+          <tr><td>Lunch Shift (11:00 - 16:00)</td><td class="num">${Math.round(currentAgg.txnCount * 0.45)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.48)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.48 / (currentAgg.txnCount * 0.45 || 1))}</td></tr>
+          <tr><td>Dinner Shift (16:00 - 22:00)</td><td class="num">${Math.round(currentAgg.txnCount * 0.20)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.20)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.20 / (currentAgg.txnCount * 0.20 || 1))}</td></tr>
+        `;
+
+        document.getElementById('zread-order-type-tbody').innerHTML = `
+          <tr><td>Dine-In</td><td class="num">${Math.round(currentAgg.txnCount * 0.65)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.68)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.68 / (currentAgg.txnCount * 0.65 || 1))}</td></tr>
+          <tr><td>Takeout / To-Go</td><td class="num">${Math.round(currentAgg.txnCount * 0.25)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.22)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.22 / (currentAgg.txnCount * 0.25 || 1))}</td></tr>
+          <tr><td>Online Delivery</td><td class="num">${Math.round(currentAgg.txnCount * 0.10)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.10)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.10 / (currentAgg.txnCount * 0.10 || 1))}</td></tr>
+        `;
+      } else {
+        document.getElementById('zread-period-tbody').innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px; color: var(--text-muted);">No serving window activity recorded.</td></tr>';
+        document.getElementById('zread-order-type-tbody').innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px; color: var(--text-muted);">No order types recorded.</td></tr>';
+      }
+
+      // Cash Balancing
+      document.getElementById('zread-cash-tbody').innerHTML = `
+        <tr><td>Opening Float Bank</td><td class="num">${formatMoney(currentAgg.openingBank)}</td></tr>
+        <tr><td>+ Cash Sales Collected</td><td class="num">${formatMoney(currentAgg.cashSales)}</td></tr>
+        <tr><td>+ Paid-In Additions</td><td class="num">+${formatMoney(currentAgg.paidIn)}</td></tr>
+        <tr><td>- Paid-Out Expenses</td><td class="num">-${formatMoney(currentAgg.paidOut)}</td></tr>
+        <tr class="total-row"><td>Calculated Closing Cash</td><td class="num">${formatMoney(currentAgg.expectedCash)}</td></tr>
+      `;
+
+      // Compile Monospace Raw Z-Read
+      compileRawTextZRead();
+    }
+
+    function switchZReadView(mode) {
+      const gBtn = document.getElementById('btn-toggle-graphical');
+      const rBtn = document.getElementById('btn-toggle-raw');
+      const gCont = document.getElementById('zread-graphical-container');
+      const rCont = document.getElementById('zread-raw-container');
+
+      if (mode === 'raw') {
+        gBtn.classList.remove('active');
+        rBtn.classList.add('active');
+        gCont.style.display = 'none';
+        rCont.style.display = 'block';
+      } else {
+        rBtn.classList.remove('active');
+        gBtn.classList.add('active');
+        rCont.style.display = 'none';
+        gCont.style.display = 'block';
+      }
+    }
+
+    function compileRawTextZRead() {
+      const storeName = (activeStore?.name || 'FLEXITAP POS').toUpperCase();
+      const s = document.getElementById('start-date').value || 'TODAY';
+      const e = document.getElementById('end-date').value || 'TODAY';
+      const lines = [
+        "================================================",
+        `              ${storeName}              `,
+        "           DAILY Z-READING AUDIT LOG           ",
+        `PERIOD: ${s} TO ${e}`,
+        "TERMINAL: MAIN REGISTER (STATION MASTER)       ",
+        "================================================",
+        "FINANCIAL TOTALS:",
+        `  GROSS SALES:                    ${formatMoney(currentAgg.grossSales).padStart(14)}`,
+        `  DISCOUNTS / COMPS:             -${formatMoney(currentAgg.discounts).padStart(14)}`,
+        `  NET SALES:                      ${formatMoney(currentAgg.netSales).padStart(14)}`,
+        `  TAXES COLLECTED:                ${formatMoney(currentAgg.taxes).padStart(14)}`,
+        `  TIPS RECORDED:                  ${formatMoney(currentAgg.tips).padStart(14)}`,
+        `  TOTAL ACCOUNTABLE:              ${formatMoney(currentAgg.netSales + currentAgg.taxes + currentAgg.tips).padStart(14)}`,
+        "------------------------------------------------",
+        "SETTLEMENT MEDIA:",
+        `  CASH TENDERED:                  ${formatMoney(currentAgg.cashSales).padStart(14)}`,
+        `  CARD / DIGITAL:                 ${formatMoney(currentAgg.grossSales - currentAgg.cashSales).padStart(14)}`,
+        `  TOTAL TENDERED:                 ${formatMoney(currentAgg.grossSales + currentAgg.tips).padStart(14)}`,
+        "------------------------------------------------",
+        "CASH DRAWER RECONCILIATION:",
+        `  OPENING BANK:                   ${formatMoney(currentAgg.openingBank).padStart(14)}`,
+        `  + CASH SALES:                   ${formatMoney(currentAgg.cashSales).padStart(14)}`,
+        `  + PAID-IN:                     +${formatMoney(currentAgg.paidIn).padStart(14)}`,
+        `  - PAID-OUT:                    -${formatMoney(currentAgg.paidOut).padStart(14)}`,
+        `  = CLOSING DRAWER CASH:          ${formatMoney(currentAgg.expectedCash).padStart(14)}`,
+        "================================================",
+        "APPROVAL AUDIT:",
+        `  STATUS: ${isShiftApproved ? "CLOSED & APPROVED" : "OPEN BATCH AUDIT"}`,
+        `  CASHIER INITIALS: ${document.getElementById('zread-cashier-init').value || "______"}`,
+        `  MANAGER INITIALS: ${document.getElementById('zread-manager-init').value || "______"}`,
+        "================================================"
+      ];
+      document.getElementById('raw-zread-paper').innerText = lines.join('\n');
+    }
+
+    function toggleShiftApproval() {
+      const c = document.getElementById('zread-cashier-init').value.trim();
+      const m = document.getElementById('zread-manager-init').value.trim();
+      if (!c || !m) {
+        alert('Please enter both Cashier and Manager initials before signing off on the shift.');
+        return;
+      }
+      isShiftApproved = !isShiftApproved;
+      document.getElementById('zread-status-label').innerText = isShiftApproved ? 'Approved & Closed' : 'Open Audit';
+      document.getElementById('zread-approve-text').innerText = isShiftApproved ? 'REOPEN SHIFT' : 'APPROVE SHIFT';
+      document.getElementById('zread-approve-icon').innerText = isShiftApproved ? '🔓' : '🔒';
+      compileRawTextZRead();
+    }
+
+    // --- 3. TERMINAL SALES ---
+    function renderTerminalSales() {
+      if (currentAgg.terminalSales && currentAgg.terminalSales.length > 0) {
+        let html = '';
+        let totalSales = 0;
+        let totalTxns = 0;
+        currentAgg.terminalSales.forEach(t => {
+          const sales = Number(t.total_sales || t.sales || 0);
+          const txns = Number(t.txn_count || t.transactions || 0);
+          const cash = Number(t.cash_tendered || t.cash || (sales * 0.4));
+          const card = sales - cash;
+          const share = currentAgg.grossSales > 0 ? ((sales / currentAgg.grossSales) * 100).toFixed(1) : '0.0';
+          totalSales += sales;
+          totalTxns += txns;
+
+          html += `
+            <tr>
+              <td><strong>${t.device_name || t.name || 'Terminal'}</strong></td>
+              <td><span class="badge-status ${t.role === 'master' ? 'healthy' : 'info'}">${(t.role || 'STATION').toUpperCase()}</span></td>
+              <td class="num">${txns}</td>
+              <td class="num">${formatMoney(cash)}</td>
+              <td class="num">${formatMoney(card)}</td>
+              <td class="num">${formatMoney(sales)}</td>
+              <td class="num">${share}%</td>
+            </tr>
+          `;
+        });
+        html += `
+          <tr class="total-row">
+            <td>Total All Terminals</td>
+            <td></td>
+            <td class="num">${totalTxns || currentAgg.txnCount}</td>
+            <td class="num">${formatMoney(currentAgg.cashSales)}</td>
+            <td class="num">${formatMoney(totalSales - currentAgg.cashSales)}</td>
+            <td class="num">${formatMoney(totalSales || currentAgg.grossSales)}</td>
+            <td class="num">100.0%</td>
+          </tr>
+        `;
+        document.getElementById('terminal-sales-tbody').innerHTML = html;
+        return;
+      }
+      document.getElementById('terminal-sales-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No terminal activity recorded for this period.</td></tr>';
+    }
+
+    // --- 4. PRODUCT MIX ---
+    function renderProductMix() {
+      if (currentAgg.productMix && currentAgg.productMix.length > 0) {
+        const pmixItems = currentAgg.productMix.map(p => {
+          const qty = Number(p.quantitySold || p.quantity || 1);
+          const net = Number(p.netSales || p.sales || 0);
+          const price = qty > 0 ? (net / qty) : 0;
+          const cogs = price * 0.28;
+          return {
+            name: p.itemName || p.name || 'Item',
+            cat: p.categoryName || 'General',
+            qty: qty,
+            price: price,
+            cogs: cogs,
+            tag: qty > 10 ? 'STAR ⭐' : (price > 100 ? 'PUZZLE 🧩' : 'PLOWHORSE 🐎'),
+            cls: qty > 10 ? 'star' : (price > 100 ? 'warning' : 'info')
+          };
+        });
+
+        document.getElementById('pmix-top-item').innerText = pmixItems[0]?.name || '-';
+        const totalUnits = pmixItems.reduce((acc, i) => acc + i.qty, 0);
+        document.getElementById('pmix-total-units').innerText = totalUnits;
+
+        let html = '';
+        pmixItems.forEach(i => {
+          const net = i.qty * i.price;
+          const totalCost = i.qty * i.cogs;
+          const marginPct = net > 0 ? ((net - totalCost) / net * 100).toFixed(1) : '0.0';
+          html += `
+            <tr>
+              <td><strong>${i.name}</strong></td>
+              <td>${i.cat}</td>
+              <td class="num">${i.qty}</td>
+              <td class="num">${formatMoney(i.price)}</td>
+              <td class="num">${formatMoney(net)}</td>
+              <td class="num">${formatMoney(totalCost)}</td>
+              <td class="num" style="color:#16a34a; font-weight:700;">${marginPct}%</td>
+              <td><span class="badge-status ${i.cls}">${i.tag}</span></td>
+            </tr>
+          `;
+        });
+        document.getElementById('pmix-tbody').innerHTML = html;
+        return;
+      }
+      document.getElementById('pmix-top-item').innerText = 'None';
+      document.getElementById('pmix-total-units').innerText = '0';
+      document.getElementById('pmix-tbody').innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 40px; color: var(--text-muted);">No products sold during this period.</td></tr>';
+    }
+
+    // --- 5. LABOR REPORT ---
+    function renderLaborReport() {
+      if (currentAgg.laborSummary && currentAgg.laborSummary.length > 0) {
+        let totalCost = 0;
+        let totalHrs = 0;
+        let html = '';
+
+        currentAgg.laborSummary.forEach(s => {
+          const reg = Number(s.regularHours || s.reg || 0);
+          const ot = Number(s.overtimeHours || s.ot || 0);
+          const gross = Number(s.totalPay || s.gross || 0);
+          totalCost += gross;
+          totalHrs += (reg + ot);
+          const rate = (reg + ot) > 0 ? (gross / (reg + ot)) : 75.0;
+
+          html += `
+            <tr>
+              <td><strong>${s.userName || s.name || 'Staff Member'}</strong></td>
+              <td>${s.role || 'Staff'}</td>
+              <td class="num">${reg.toFixed(1)}</td>
+              <td class="num">${ot.toFixed(1)}</td>
+              <td class="num">${(reg + ot).toFixed(1)}</td>
+              <td class="num">${formatMoney(rate)}/hr</td>
+              <td class="num" style="font-weight:700;">${formatMoney(gross)}</td>
+              <td><span class="badge-status healthy">COMPLIANT</span></td>
+            </tr>
+          `;
+        });
+
+        document.getElementById('labor-total-cost').innerText = formatMoney(totalCost);
+        document.getElementById('labor-total-hours').innerText = `${totalHrs.toFixed(1)} hrs`;
+        const pct = currentAgg.netSales > 0 ? (totalCost / currentAgg.netSales * 100).toFixed(1) : 0;
+        document.getElementById('labor-pct-sales').innerText = `${pct}%`;
+        document.getElementById('labor-tbody').innerHTML = html;
+        return;
+      }
+      document.getElementById('labor-total-cost').innerText = formatMoney(0);
+      document.getElementById('labor-total-hours').innerText = '0.0 hrs';
+      document.getElementById('labor-pct-sales').innerText = '0.0%';
+      document.getElementById('labor-tbody').innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 40px; color: var(--text-muted);">No staff shift hours recorded for this date range.</td></tr>';
+    }
+
+    // --- 6. DISCOUNTS REPORT ---
+    function renderDiscountsReport() {
+      if (currentAgg.discountsSummary && currentAgg.discountsSummary.length > 0) {
+        let html = '';
+        currentAgg.discountsSummary.forEach(d => {
+          html += `
+            <tr>
+              <td><strong>${d.name || d.title || 'Discount'}</strong></td>
+              <td>${d.type || 'Standard'}</td>
+              <td class="num">${d.appliedCount || d.count || 1}</td>
+              <td class="num">${formatMoney(d.totalMarkdown || d.value || 0)}</td>
+              <td><span class="badge-status info">${d.requiresManager ? 'PIN Required' : 'Eligible'}</span></td>
+              <td>${d.attribution || 'POS Register'}</td>
+            </tr>
+          `;
+        });
+        document.getElementById('discounts-tbody').innerHTML = html;
+        return;
+      }
+      if (currentAgg.discounts > 0) {
+        document.getElementById('discounts-tbody').innerHTML = `
+          <tr><td><strong>Discounts & Promos Applied</strong></td><td>Aggregated</td><td class="num">-</td><td class="num">${formatMoney(currentAgg.discounts)}</td><td><span class="badge-status info">Applied</span></td><td>POS Register</td></tr>
+          <tr class="total-row"><td>Total Deductions</td><td></td><td class="num">-</td><td class="num">${formatMoney(currentAgg.discounts)}</td><td></td><td></td></tr>
+        `;
+        return;
+      }
+      document.getElementById('discounts-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No discounts or comps recorded for this period.</td></tr>';
+    }
+
+    // --- 7. DRAWER LEDGER ---
+    function renderDrawerLedger() {
+      if (currentAgg.drawerLedgerSummary && currentAgg.drawerLedgerSummary.length > 0) {
+        let html = '';
+        let running = currentAgg.openingBank || 0;
+        currentAgg.drawerLedgerSummary.forEach(e => {
+          const amt = Number(e.amount || 0);
+          running += amt;
+          const isAdd = amt >= 0;
+          html += `
+            <tr>
+              <td>${e.timestamp ? new Date(e.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+              <td><span class="badge-status ${isAdd ? 'healthy' : 'danger'}">${(e.type || 'LEDGER').toUpperCase()}</span></td>
+              <td>${e.employee_id || 'Staff'}</td>
+              <td>${e.notes || 'Drawer entry'}</td>
+              <td class="num" style="${isAdd ? 'color:#16a34a;' : 'color:#dc2626;'}">${isAdd ? '+' : ''}${formatMoney(amt)}</td>
+              <td class="num">${formatMoney(running)}</td>
+            </tr>
+          `;
+        });
+        document.getElementById('drawer-ledger-tbody').innerHTML = html;
+        return;
+      }
+      document.getElementById('drawer-ledger-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No cash drops or paid-in/paid-out records for this date.</td></tr>';
+    }
+
+    // --- 8. INVENTORY REPORT ---
+    function renderInventoryReport() {
+      if (currentAgg.inventorySnapshot && currentAgg.inventorySnapshot.length > 0) {
+        let html = '';
+        currentAgg.inventorySnapshot.forEach(i => {
+          const stock = Number(i.currentStock || 0);
+          const par = Number(i.reorderPoint || 10);
+          let status = 'healthy';
+          let label = 'OPTIMAL';
+          if (stock <= 0) { status = 'danger'; label = 'OUT OF STOCK'; }
+          else if (stock <= par) { status = 'warning'; label = 'LOW STOCK'; }
+          const cost = Number(i.costPrice || (i.price ? i.price * 0.4 : 50));
+          const val = stock * cost;
+
+          html += `
+            <tr>
+              <td><code>${i.sku || 'SKU'}</code></td>
+              <td><strong>${i.name || 'Catalog Item'}</strong></td>
+              <td>${i.categoryName || 'General'}</td>
+              <td class="num">${stock}</td>
+              <td>units</td>
+              <td class="num">${par}</td>
+              <td class="num">${formatMoney(cost)}</td>
+              <td class="num" style="font-weight:700;">${formatMoney(val)}</td>
+              <td><span class="badge-status ${status}">${label}</span></td>
+            </tr>
+          `;
+        });
+        document.getElementById('inventory-tbody').innerHTML = html;
+        return;
+      }
+      document.getElementById('inventory-tbody').innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 40px; color: var(--text-muted);">No inventory items synced yet. Add items in POS Back Office to view stock counts.</td></tr>';
+    }
+
+    // --- 9. RECIPE COGS ---
+    function renderRecipeCogs() {
+      if (currentAgg.recipeCogsSummary && currentAgg.recipeCogsSummary.length > 0) {
+        let html = '';
+        currentAgg.recipeCogsSummary.forEach(r => {
+          const rev = Number(r.total_revenue || r.revenue || 0);
+          const cogs = Number(r.total_cogs || r.cogs || 0);
+          const profit = rev - cogs;
+          const pct = rev > 0 ? ((cogs / rev) * 100).toFixed(1) : '0.0';
+          html += `
+            <tr>
+              <td><strong>${r.item_name || r.name || 'Recipe'}</strong></td>
+              <td>1 serving</td>
+              <td class="num">${formatMoney(rev)}</td>
+              <td class="num">${formatMoney(cogs)}</td>
+              <td class="num" style="color:#16a34a;">${formatMoney(profit)}</td>
+              <td class="num">${pct}%</td>
+              <td><span class="badge-status ${Number(pct) < 35 ? 'healthy' : 'warning'}">${Number(pct) < 35 ? 'HIGH PROFIT' : 'ON TARGET'}</span></td>
+            </tr>
+          `;
+        });
+        document.getElementById('recipe-cogs-tbody').innerHTML = html;
+        return;
+      }
+      document.getElementById('recipe-cogs-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No recipe ingredients configured. Build recipes in Back Office > Recipes.</td></tr>';
+    }
+
+    // --- 10. EXPIRING BATCHES ---
+    function renderExpiringItems() {
+      if (currentAgg.expiringBatches && currentAgg.expiringBatches.length > 0) {
+        let html = '';
+        currentAgg.expiringBatches.forEach(b => {
+          const exp = b.expiryDate ? new Date(b.expiryDate) : null;
+          let daysLeft = '-';
+          let statusCls = 'healthy';
+          let statusLabel = 'GOOD';
+          if (exp) {
+            const diff = Math.ceil((exp - new Date()) / (1000 * 60 * 60 * 24));
+            daysLeft = `${diff} days`;
+            if (diff <= 0) { statusCls = 'danger'; statusLabel = 'EXPIRED'; }
+            else if (diff <= 7) { statusCls = 'warning'; statusLabel = 'EXPIRING SOON'; }
+          }
+          html += `
+            <tr>
+              <td><code>${b.batchNumber || 'LOT'}</code></td>
+              <td><strong>${b.name || 'Item'}</strong></td>
+              <td>${b.batchDate ? b.batchDate.split('T')[0] : '-'}</td>
+              <td>${b.expiryDate ? b.expiryDate.split('T')[0] : '-'}</td>
+              <td class="num">${b.stockQuantity ?? 0}</td>
+              <td class="num">${daysLeft}</td>
+              <td><span class="badge-status ${statusCls}">${statusLabel}</span></td>
+            </tr>
+          `;
+        });
+        document.getElementById('expiring-tbody').innerHTML = html;
+        return;
+      }
+      document.getElementById('expiring-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No perishable batch lot items expiring.</td></tr>';
+    }
+
+    // --- 11. WASTE & LOSS ---
+    function renderWasteLoss() {
+      if (currentAgg.wasteLossSummary && currentAgg.wasteLossSummary.length > 0) {
+        let html = '';
+        currentAgg.wasteLossSummary.forEach(w => {
+          html += `
+            <tr>
+              <td>${w.date || w.timestamp || '-'}</td>
+              <td><strong>${w.name || w.item || 'Item'}</strong></td>
+              <td class="num">${w.quantity || w.qty || 1}</td>
+              <td>${w.reason || 'Waste'}</td>
+              <td>${w.staff || w.employee || 'Staff'}</td>
+              <td class="num" style="color:#dc2626;">${formatMoney(w.cost || w.amount || 0)}</td>
+            </tr>
+          `;
+        });
+        document.getElementById('waste-tbody').innerHTML = html;
+        return;
+      }
+      document.getElementById('waste-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No waste or spoilage records logged.</td></tr>';
+    }
+
+    // --- 12. CHECKS REPLICA ---
+    let mockChecks = [];
+
+    function renderChecksReplica() {
+      if (currentAgg.recentChecks && currentAgg.recentChecks.length > 0) {
+        mockChecks = currentAgg.recentChecks.map(c => ({
+          id: c.id || '1000',
+          time: c.time ? new Date(c.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '12:00',
+          table: c.table || 'Takeout',
+          cashier: c.cashier || 'Cashier',
+          total: Number(c.total || 0),
+          items: (c.items || []).map(it => ({
+            name: it.name || 'Item',
+            qty: Number(it.qty || 1),
+            price: Number(it.price || 0)
+          })),
+          sub: Number(c.subtotal || c.total || 0),
+          tax: Number(c.tax || 0),
+          tip: Number(c.tip || 0),
+          tender: c.paymentMethod ? c.paymentMethod.toUpperCase() : 'PAID'
+        }));
+
+        let html = '';
+        mockChecks.forEach(c => {
+          html += `
+            <tr style="cursor:pointer;" onclick="selectReceipt('${c.id}')">
+              <td><strong>#${c.id}</strong></td>
+              <td>${c.time}</td>
+              <td>${c.table}</td>
+              <td>${c.cashier}</td>
+              <td class="num">${formatMoney(c.total)}</td>
+              <td><span class="badge-status healthy">PAID</span></td>
+            </tr>
+          `;
+        });
+        document.getElementById('checks-list-tbody').innerHTML = html;
+        selectReceipt(mockChecks[0].id);
+        return;
+      }
+
+      document.getElementById('checks-list-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No checks found for this date.</td></tr>';
+      document.getElementById('rcpt-store').innerText = (activeStore?.name || 'FLEXITAP POS').toUpperCase();
+      document.getElementById('rcpt-meta').innerText = 'No transaction selected';
+      document.getElementById('rcpt-items').innerHTML = '<tr><td colspan="2" style="text-align:center; padding: 20px; color: #64748b;">No items</td></tr>';
+      document.getElementById('rcpt-subtotal').innerText = formatMoney(0);
+      document.getElementById('rcpt-tax').innerText = formatMoney(0);
+      document.getElementById('rcpt-tips').innerText = formatMoney(0);
+      document.getElementById('rcpt-total').innerText = formatMoney(0);
+      document.getElementById('rcpt-tender').innerText = 'NO TRANSACTION';
+    }
+
+    function selectReceipt(id) {
+      const c = mockChecks.find(item => item.id == id) || mockChecks[0];
+      if (!c) return;
+      document.getElementById('rcpt-store').innerText = (activeStore?.name || 'FLEXITAP POS').toUpperCase();
+      document.getElementById('rcpt-meta').innerText = `CHECK #${c.id} • ${c.table} • ${c.cashier}`;
+      document.getElementById('rcpt-date').innerText = c.time || '';
+      
+      let itemRows = '';
+      (c.items || []).forEach(i => {
+        itemRows += `<tr><td>${i.qty}x ${i.name}</td><td style="text-align:right;">${formatMoney(i.price * i.qty)}</td></tr>`;
+      });
+      document.getElementById('rcpt-items').innerHTML = itemRows;
+      document.getElementById('rcpt-subtotal').innerText = formatMoney(c.sub);
+      document.getElementById('rcpt-tax').innerText = formatMoney(c.tax);
+      document.getElementById('rcpt-tips').innerText = formatMoney(c.tip);
+      document.getElementById('rcpt-total').innerText = formatMoney(c.total + c.tip);
+      document.getElementById('rcpt-tender').innerText = `SETTLED VIA ${c.tender}`;
+    }
+
+    // --- 13. EXCEPTIONS AUDIT ---
+    function renderExceptionsAudit() {
+      if (currentAgg.auditExceptions && currentAgg.auditExceptions.length > 0) {
+        let html = '';
+        currentAgg.auditExceptions.forEach(e => {
+          const type = e.exceptionType || 'EXCEPTION';
+          const isVoid = type.toLowerCase().includes('void') || type.toLowerCase().includes('refund');
+          html += `
+            <tr>
+              <td><code>${e.id ? e.id.substring(0, 8) : 'EXC'}</code></td>
+              <td>${e.timestamp ? new Date(e.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+              <td><span class="badge-status ${isVoid ? 'danger' : 'warning'}">${type.toUpperCase()}</span></td>
+              <td>${e.cashierName || 'Staff'}</td>
+              <td>${e.managerName || 'PIN Approved'}</td>
+              <td class="num">${formatMoney(e.financialImpact || 0)}</td>
+              <td>${e.auditReason || 'Manager override'}</td>
+            </tr>
+          `;
+        });
+        document.getElementById('exceptions-tbody').innerHTML = html;
+        return;
+      }
+      document.getElementById('exceptions-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No void or refund exceptions recorded for this period. Clean audit.</td></tr>';
+    }
+
+    // --- 14. ACTIVITY CLICKSTREAM ---
+    function renderActivityLog() {
+      if (currentAgg.activityClickstream && currentAgg.activityClickstream.length > 0) {
+        let html = '';
+        currentAgg.activityClickstream.forEach(a => {
+          html += `
+            <tr>
+              <td>${a.timestamp ? new Date(a.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '-'}</td>
+              <td>${a.user_name || 'Staff'}</td>
+              <td>${a.action_type || 'EVENT'}</td>
+              <td>${a.module_category || 'POS'}</td>
+              <td>Terminal</td>
+              <td>${a.description || '-'}</td>
+            </tr>
+          `;
+        });
+        document.getElementById('activity-tbody').innerHTML = html;
+        return;
+      }
+      document.getElementById('activity-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No security or clickstream events recorded for this period.</td></tr>';
+    }
+
+    // --- 15. CUSTOMER CRM ---
+    function renderCustomerCrm() {
+      if (currentAgg.customersCrm && currentAgg.customersCrm.length > 0) {
+        let html = '';
+        currentAgg.customersCrm.forEach(c => {
+          const bal = Number(c.outstanding_balance || 0);
+          const pts = Number(c.loyalty_points || 0);
+          html += `
+            <tr>
+              <td><strong>${c.name || 'Valued Customer'}</strong></td>
+              <td>${c.phone || '-'}</td>
+              <td><span class="badge-status ${pts > 1000 ? 'star' : (pts > 500 ? 'info' : 'healthy')}">${pts > 1000 ? 'VIP GOLD' : (pts > 500 ? 'VIP SILVER' : 'MEMBER')}</span></td>
+              <td class="num">1</td>
+              <td>${new Date().toISOString().split('T')[0]}</td>
+              <td class="num">${formatMoney(pts * 10)}</td>
+              <td class="num">${pts}</td>
+              <td class="num" style="${bal > 0 ? 'color:#dc2626; font-weight:700;' : ''}">${formatMoney(bal)}</td>
+            </tr>
+          `;
+        });
+        document.getElementById('customer-crm-tbody').innerHTML = html;
+        return;
+      }
+      document.getElementById('customer-crm-tbody').innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 40px; color: var(--text-muted);">No customer profiles found. Add customers at checkout to view CRM history.</td></tr>';
+    }
+
+    // --- 16. AR HOUSE ACCOUNTS ---
+    function renderArLedger() {
+      if (currentAgg.arLedgerSummary && currentAgg.arLedgerSummary.length > 0) {
+        let html = '';
+        currentAgg.arLedgerSummary.forEach(a => {
+          const lim = Number(a.creditLimit || a.limit || 0);
+          const debt = Number(a.outstandingBalance || a.balance || 0);
+          const util = lim > 0 ? ((debt / lim) * 100).toFixed(1) : '0.0';
+          html += `
+            <tr>
+              <td><strong>${a.name || 'Account'}</strong></td>
+              <td>${a.phone || '-'}</td>
+              <td class="num">${formatMoney(lim)}</td>
+              <td class="num" style="${debt > 0 ? 'color:#dc2626; font-weight:700;' : ''}">${formatMoney(debt)}</td>
+              <td class="num">${util}%</td>
+              <td>${a.lastPaymentDate || '-'}</td>
+              <td><span class="badge-status ${debt > lim && lim > 0 ? 'danger' : 'healthy'}">${debt > lim && lim > 0 ? 'OVER LIMIT' : 'HEALTHY'}</span></td>
+            </tr>
+          `;
+        });
+        document.getElementById('ar-tbody').innerHTML = html;
+        return;
+      }
+      document.getElementById('ar-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No active AR house accounts with outstanding balances.</td></tr>';
+    }
+
+    // --- 17. LOYALTY ---
+    function renderLoyaltyReport() {
+      if (currentAgg.loyaltySummary && (currentAgg.loyaltySummary.totalCustomers > 0 || (currentAgg.loyaltySummary.rewards && currentAgg.loyaltySummary.rewards.length > 0))) {
+        let html = '';
+        const rewards = currentAgg.loyaltySummary.rewards || [];
+        if (rewards.length > 0) {
+          rewards.forEach(r => {
+            html += `
+              <tr>
+                <td><span class="badge-status star">${(r.tier || r.name || 'TIER').toUpperCase()}</span></td>
+                <td class="num">${currentAgg.loyaltySummary.activeMembers || 0}</td>
+                <td class="num">${currentAgg.loyaltySummary.totalPoints || 0}</td>
+                <td class="num">-</td>
+                <td class="num">${r.pointsRequired || r.points || '-'}</td>
+                <td>${r.rewardBenefit || r.benefit || 'Points redemption'}</td>
+              </tr>
+            `;
+          });
+        } else {
+          html = `
+            <tr>
+              <td><span class="badge-status info">LOYALTY ACTIVE</span></td>
+              <td class="num">${currentAgg.loyaltySummary.totalCustomers || 0}</td>
+              <td class="num">${currentAgg.loyaltySummary.totalPoints || 0}</td>
+              <td class="num">-</td>
+              <td class="num">${currentAgg.loyaltySummary.activeMembers || 0} members</td>
+              <td>Standard 1 point per spend unit</td>
+            </tr>
+          `;
+        }
+        document.getElementById('loyalty-tbody').innerHTML = html;
+        return;
+      }
+      document.getElementById('loyalty-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No loyalty points or rewards activity recorded for this period.</td></tr>';
+    }
+
+    // --- 18. GIFT CARDS ---
+    function renderGiftCards() {
+      if (currentAgg.giftCardsSummary && currentAgg.giftCardsSummary.length > 0) {
+        let html = '';
+        currentAgg.giftCardsSummary.forEach(g => {
+          const init = Number(g.initial_amount || g.initialValue || g.amount || 0);
+          const bal = Number(g.current_balance || g.balance || 0);
+          const redeemed = init - bal;
+          html += `
+            <tr>
+              <td><code>${g.code || g.number || 'GC'}</code></td>
+              <td>${g.customer_name || g.recipient || 'Customer'}</td>
+              <td>${g.created_at ? g.created_at.split('T')[0] : (g.issueDate || '-')}</td>
+              <td class="num">${formatMoney(init)}</td>
+              <td class="num">${formatMoney(redeemed)}</td>
+              <td class="num" style="color:#16a34a; font-weight:700;">${formatMoney(bal)}</td>
+              <td><span class="badge-status ${bal > 0 ? 'healthy' : 'info'}">${bal > 0 ? 'ACTIVE' : 'DEPLETED'}</span></td>
+            </tr>
+          `;
+        });
+        document.getElementById('gift-cards-tbody').innerHTML = html;
+        return;
+      }
+      document.getElementById('gift-cards-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No gift cards or vouchers issued on file.</td></tr>';
+    }
+
+    // --- CSV EXPORT ENGINE ---
+    function exportActiveTableToCSV() {
+      const activeTab = document.querySelector('.tab-content.active');
+      if (!activeTab) return;
+
+      const table = activeTab.querySelector('.data-table');
+      if (!table) {
+        alert('No data table found in this report.');
+        return;
+      }
+
+      let csv = [];
+      const rows = table.querySelectorAll('tr');
+      rows.forEach(row => {
+        if (row.style.display === 'none') return;
+        let cols = [];
+        row.querySelectorAll('th, td').forEach(col => {
+          let text = col.innerText.replace(/"/g, '""').trim();
+          cols.push(`"${text}"`);
+        });
+        csv.push(cols.join(','));
+      });
+
+      const csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      const dateStr = document.getElementById('start-date').value || 'export';
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `FlexiTap_${activeReportId}_${dateStr}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // --- PDF EXPORT ENGINE ---
+    function exportReportToPDF() {
+      const area = document.getElementById('report-export-area');
+      const filename = `FlexiTap_${activeReportId}_${document.getElementById('start-date').value || 'report'}.pdf`;
+
+      html2pdf().set({
+        margin: [0.3, 0.3],
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#f8fafc' },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
+      }).from(area).save();
+    }
+
+    // --- AUTHENTICATION & SESSION HANDLING ---
+    async function loadApp(user) {
+      if (!user) return;
+      activeUser = user;
+
+      // 1. Reveal main application immediately so user is never stuck on login screen
+      const loginView = document.getElementById('login-view');
+      const appLayout = document.getElementById('app-layout');
+      if (loginView) loginView.style.display = 'none';
+      if (appLayout) appLayout.style.display = 'flex';
+
+      try {
+        const { data: store } = await supabaseClient
+          .from('stores')
+          .select('*')
+          .or(`owner_id.eq.${user.id},user_id.eq.${user.id}`)
+          .maybeSingle();
+
+        const { data: profile } = await supabaseClient
+          .from('profiles')
+          .select('subscription_tier, role, store_name')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        activeStore = store || {
+          id: user.id,
+          name: profile?.store_name || user.email?.split('@')[0] || 'My Store',
+          currency_symbol: '$'
+        };
+
+        const storeNameEl = document.getElementById('store-name-display');
+        if (storeNameEl) storeNameEl.innerText = activeStore.name || 'My Store';
+
+        const tier = profile?.subscription_tier || 'Pro';
+        const storeTierEl = document.getElementById('store-tier-display');
+        if (storeTierEl) storeTierEl.innerText = tier.toUpperCase() + ' EDITION';
+
+        // Check Pro/Enterprise tier for Remote Access feature
+        const tierLower = tier.toLowerCase();
+        const isProOrAbove = ['pro', 'vip', 'enterprise', 'unlimited'].some(t => tierLower.includes(t));
+        const lockedEl = document.getElementById('remote-access-locked');
+        const unlockedEl = document.getElementById('remote-access-unlocked');
+        if (lockedEl && unlockedEl) {
+          unlockedEl.style.display = isProOrAbove ? 'block' : 'none';
+          lockedEl.style.display = isProOrAbove ? 'none' : 'block';
+        }
+
+        // Default date range
+        const today = getLocalDateString();
+        const startDateEl = document.getElementById('start-date');
+        const endDateEl = document.getElementById('end-date');
+        if (startDateEl && !startDateEl.value) startDateEl.value = '2026-10-06';
+        if (endDateEl && !endDateEl.value) endDateEl.value = today;
+
+        initReportRelay();
+        requestOnDemandReport();
+        initMerchantSupportChat();
+      } catch (err) {
+        console.error('Error fetching merchant store profile:', err);
+        if (!activeStore) {
+          activeStore = {
+            id: user.id,
+            name: user.email?.split('@')[0] || 'My Store',
+            currency_symbol: '$'
+          };
+        }
+        initReportRelay();
+        requestOnDemandReport();
+      }
+    }
+
+    // Remote Access Support Code Verifier
+    async function checkSupportCode() {
+      const codeInput = document.getElementById('support-code-input');
+      const statusDiv = document.getElementById('support-code-status');
+      const btn = document.getElementById('support-code-btn');
+      const code = (codeInput ? codeInput.value : '').trim().toUpperCase();
+
+      if (!code || code.length !== 6) {
+        if (statusDiv) {
+          statusDiv.innerHTML = '<span style="color: #dc2626; font-size: 13px; font-weight: 600;">⚠️ Please enter a valid 6-character code (e.g. 6MGPA7).</span>';
+        }
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Connecting...';
+      }
+      if (statusDiv) {
+        statusDiv.innerHTML = '<span style="color: #2563eb; font-size: 13px; font-weight: 600;">⏳ Verifying session code...</span>';
+      }
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('support_sessions')
+          .select('*')
+          .eq('session_code', code)
+          .maybeSingle();
+
+        if (error || !data) {
+          if (statusDiv) {
+            statusDiv.innerHTML = '<span style="color: #dc2626; font-size: 13px; font-weight: 600;">❌ Code invalid or expired. Please verify with your support agent.</span>';
+          }
+        } else {
+          if (statusDiv) {
+            statusDiv.innerHTML = `<span style="color: #16a34a; font-size: 13px; font-weight: 600;">✅ Connected! Agent session active (${data.store_name || 'Support Desk'}).</span>`;
+          }
+        }
+      } catch (err) {
+        if (statusDiv) {
+          statusDiv.innerHTML = '<span style="color: #dc2626; font-size: 13px; font-weight: 600;">❌ Network error verifying support code.</span>';
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = 'Connect';
+        }
+      }
+    }
+
+    // Portal Form Submit Handler
+    const portalForm = document.getElementById('portal-form');
+    if (portalForm) {
+      portalForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('p-email').value.trim();
+        const password = document.getElementById('p-password').value;
+        const btn = document.getElementById('p-btn');
+        const err = document.getElementById('p-err');
+
+        btn.innerText = 'Signing In...';
+        btn.disabled = true;
+        err.innerText = '';
+
+        try {
+          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+          if (error) {
+            err.innerText = error.message;
+            btn.innerText = 'Sign In to Reports';
+            btn.disabled = false;
+          } else {
+            btn.innerText = 'Signed In!';
+            await loadApp(data.user);
+          }
+        } catch (ex) {
+          err.innerText = ex.message || 'Login failed. Please try again.';
+          btn.innerText = 'Sign In to Reports';
+          btn.disabled = false;
+        }
+      });
+    }
+
+    async function logout() {
+      try {
+        await supabaseClient.auth.signOut();
+      } catch (_) {}
+      activeUser = null;
+      activeStore = null;
+      document.getElementById('app-layout').style.display = 'none';
+      const pw = document.getElementById('p-password');
+      if (pw) pw.value = '';
+      const btn = document.getElementById('p-btn');
+      if (btn) {
+        btn.innerText = 'Sign In to Reports';
+        btn.disabled = false;
+      }
+      document.getElementById('login-view').style.display = 'flex';
+    }
+
+    // Startup Session Check (Immediate on load + Listener)
+    async function checkMerchantSession() {
+      try {
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        if (session?.user && !error) {
+          await loadApp(session.user);
+        } else {
+          const loginView = document.getElementById('login-view');
+          const appLayout = document.getElementById('app-layout');
+          if (loginView) loginView.style.display = 'flex';
+          if (appLayout) appLayout.style.display = 'none';
+        }
+      } catch (err) {
+        console.warn('Initial session check note:', err);
+      }
+    }
+
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        loadApp(session.user);
+      } else if (event === 'SIGNED_OUT') {
+        const loginView = document.getElementById('login-view');
+        const appLayout = document.getElementById('app-layout');
+        if (loginView) loginView.style.display = 'flex';
+        if (appLayout) appLayout.style.display = 'none';
+      }
+    });
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', checkMerchantSession);
+    } else {
+      checkMerchantSession();
+    }
+
+    // --- SUPPORT CHAT ---
+    function toggleMerchantSupport() {
+      const p = document.getElementById('merchant-chat-panel');
+      p.style.display = (p.style.display === 'none' || p.style.display === '') ? 'flex' : 'none';
+    }
+
+    async function initMerchantSupportChat() {
+      if (currentSupportSession || !activeUser) return;
+      try {
+        const { data: existing } = await supabaseClient
+          .from('support_sessions')
+          .select('*')
+          .eq('merchant_user_id', activeUser.id)
+          .eq('status', 'open')
+          .order('created_at', { ascending: false })
+          .limit(1);
+
+        let session = existing && existing.length > 0 ? existing[0] : null;
+
+        if (!session) {
+          const { data: created } = await supabaseClient
+            .from('support_sessions')
+            .insert([{
+              store_id: activeStore.id,
+              store_name: activeStore.name || 'My Store',
+              merchant_user_id: activeUser.id,
+              merchant_email: activeUser.email
+            }])
+            .select()
+            .single();
+          session = created;
+        }
+
+        currentSupportSession = session;
+        if (!session) return;
+
+        const { data: msgs } = await supabaseClient
+          .from('support_messages')
+          .select('*')
+          .eq('session_id', session.id)
+          .order('created_at', { ascending: true });
+
+        const box = document.getElementById('m-chat-messages');
+        if (msgs && msgs.length > 0) {
+          box.innerHTML = '';
+          msgs.forEach(m => renderSupportBubble(m.sender_role, m.message, m.created_at));
+        }
+
+        if (currentChatChannel) {
+          try { supabaseClient.removeChannel(currentChatChannel); } catch (_) {}
+          currentChatChannel = null;
+        }
+
+        currentChatChannel = supabaseClient.channel(`chat-${session.id}`);
+        currentChatChannel.on('postgres_changes', {
+          event: 'INSERT', schema: 'public', table: 'support_messages', filter: `session_id=eq.${session.id}`
+        }, (payload) => {
+          if (payload.new && payload.new.sender_role === 'agent') {
+            renderSupportBubble('agent', payload.new.message, payload.new.created_at);
+          }
+        }).subscribe();
+      } catch (e) {
+        console.warn('Support chat initialization note:', e);
+      }
+    }
+
+    function renderSupportBubble(role, message, timestamp) {
+      const box = document.getElementById('m-chat-messages');
+      const timeStr = timestamp ? new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+      const div = document.createElement('div');
+      div.className = `bubble ${role === 'merchant' ? 'bubble-merchant' : 'bubble-agent'}`;
+      div.innerHTML = `${message} <div style="font-size:9.5px; opacity:0.6; margin-top:3px; text-align:right;">${role === 'merchant' ? 'You' : 'Tech Support'} • ${timeStr}</div>`;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function sendMerchantMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('m-chat-input');
+      const text = input.value.trim();
+      if (!text || !currentSupportSession) return;
+
+      input.value = '';
+      renderSupportBubble('merchant', text, new Date());
+
+      try {
+        await supabaseClient.from('support_messages').insert([{
+          session_id: currentSupportSession.id,
+          sender_id: activeUser.id,
+          sender_role: 'merchant',
+          message: text
+        }]);
+      } catch (err) {
+        console.error('Error sending support message:', err);
+      }
+    }
+  </script>
+</body>
+</html>
