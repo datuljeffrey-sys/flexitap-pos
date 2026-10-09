@@ -296,7 +296,7 @@
           <span class="icon">🎁</span> Gift Cards & Vouchers
         </button>
 
-        <!-- Group 6: Support[cite: 1] -->
+        <!-- Group 6: Support -->
         <div class="nav-section-title">Support</div>
         <button class="nav-item" data-report="remote-access" onclick="switchReport('remote-access', this)">
           <span class="icon">🛠️</span> Remote Access <span class="badge">Live</span>
@@ -940,9 +940,9 @@
         </div>
       </div>
 
-      <!-- REMOTE ACCESS (Ad-hoc support session, Pro-gated)[cite: 1] -->
+      <!-- REMOTE ACCESS (Ad-hoc support session, Pro-gated) -->
       <div id="report-remote-access" class="tab-content">
-        <!-- Shown if the logged-in merchant is NOT on a paying tier[cite: 1] -->
+        <!-- Shown if the logged-in merchant is NOT on a paying tier -->
         <div id="remote-access-locked" class="panel-card" style="display:none; text-align:center; padding: 40px;">
           <div style="font-size: 40px; margin-bottom: 12px;">🔒</div>
           <h3 style="margin-bottom: 8px;">Remote Support is a Pro feature</h3>
@@ -951,7 +951,7 @@
           </p>
         </div>
 
-        <!-- Shown to Pro merchants[cite: 1] -->
+        <!-- Shown to Pro merchants -->
         <div id="remote-access-unlocked" style="display:none;">
           <div class="panel-card">
             <div class="panel-header-row">
@@ -962,4 +962,97 @@
             </div>
 
             <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 18px;">
-              During a support call,
+              During a support call, our agent will give you a 6-character code. Enter it below to start the session — no need to leave this page.
+            </p>
+
+            <div style="display:flex; gap: 10px; max-width: 420px;">
+              <input
+                type="text"
+                id="support-code-input"
+                placeholder="Enter code e.g. 6MGPA7"
+                maxlength="6"
+                style="flex:1; padding: 12px 14px; border: 1px solid var(--card-border); border-radius: 8px; font-size: 15px; text-transform: uppercase; letter-spacing: 2px; font-family: 'JetBrains Mono', monospace;"
+              />
+              <button class="btn-action btn-primary-action" onclick="checkSupportCode()" id="support-code-btn">
+                Connect
+              </button>
+            </div>
+
+            <div id="support-code-status" style="margin-top: 18px;"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- FLOATING PRIORITY TECH SUPPORT BUTTON -->
+  <button id="merchant-chat-btn" onclick="toggleMerchantSupport()">
+    <span>🟢</span> Priority Tech Support
+  </button>
+
+  <!-- LIVE SUPPORT CHAT PANEL -->
+  <div id="merchant-chat-panel">
+    <div class="m-chat-header">
+      <div>
+        <div style="font-weight: 800; color: #0f172a; font-size: 13.5px;">FlexiTap Live Support</div>
+        <div style="font-size: 11px; color: #16a34a; font-weight: 700;">● Operations Team Online</div>
+      </div>
+      <button onclick="toggleMerchantSupport()" style="background: none; border: none; color: #64748b; font-size: 20px; cursor: pointer;">&times;</button>
+    </div>
+    <div class="m-chat-body" id="m-chat-messages">
+      <div class="bubble bubble-agent">
+        👋 Hello! How can our support team assist your store reporting today?
+      </div>
+    </div>
+    <form class="m-chat-input-bar" onsubmit="sendMerchantMessage(event)">
+      <input type="text" id="m-chat-input" placeholder="Type your message..." required autocomplete="off" />
+      <button type="submit" class="m-chat-send">Send</button>
+    </form>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+    
+    let safeStorage;
+    try {
+      const testKey = '__test_store__';
+      window.localStorage.setItem(testKey, testKey);
+      window.localStorage.removeItem(testKey);
+      safeStorage = window.localStorage;
+    } catch (_) {
+      safeStorage = undefined;
+    }
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: safeStorage !== undefined,
+        storage: safeStorage
+      }
+    });
+
+    let activeStore = null;
+    let activeUser = null;
+    let currentSupportSession = null;
+    let currentChatChannel = null;
+    let activeReportId = 'sales-summary';
+    let isShiftApproved = false;
+
+    let currentAgg = {
+      grossSales: 0, netSales: 0, taxes: 0, tips: 0, discounts: 0, refunds: 0,
+      voidsCount: 0, voidsAmount: 0, txnCount: 0, openingBank: 0,
+      cashSales: 0, paidIn: 0, paidOut: 0,
+      payments: {}, categories: {}, hourly: {},
+      terminalSales: [], productMix: [], laborSummary: [],
+      inventorySnapshot: [], auditExceptions: [], customersCrm: [],
+      recentChecks: [], discountsSummary: [], giftCardsSummary: [],
+      loyaltySummary: {}, arLedgerSummary: [], recipeCogsSummary: [],
+      expiringBatches: [], drawerLedgerSummary: [], wasteLossSummary: [],
+      activityClickstream: []
+    };
+
+    function getLocalDateString(d = new Date()) {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2
