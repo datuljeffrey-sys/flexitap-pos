@@ -1,1562 +1,965 @@
-<script>
-    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlexiTap — Back Office & Reports Hub</title>
+  
+  <!-- Supabase JS Client & PDF Export Engine -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --sidebar-bg: #0f172a;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent-green: #16a34a;
+      --accent-green-bg: #f0fdf4;
+      --accent-green-border: #bbf7d0;
+      --accent-amber: #d97706;
+      --accent-amber-bg: #fffbeb;
+      --accent-amber-border: #fde68a;
+      --accent-red: #dc2626;
+      --accent-red-bg: #fef2f2;
+      --accent-red-border: #fecaca;
+      --accent-teal: #0d9488;
+      --accent-purple: #7c3aed;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --sidebar-width: 280px;
+    }
+
+    * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; margin: 0; padding: 0; }
+    body { background: var(--bg-page); color: var(--text-main); line-height: 1.5; display: flex; height: 100vh; overflow: hidden; }
+
+    /* --- LOGIN VIEW --- */
+    #login-view { position: fixed; inset: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 20%, #1e293b 0%, #0f172a 100%); display: flex; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+    .login-box { background: #ffffff; border: 1px solid var(--card-border); padding: 40px; border-radius: 16px; width: 100%; max-width: 420px; box-shadow: 0 20px 45px -10px rgba(0,0,0,0.25); text-align: center; }
+    .login-header-logo { display: inline-flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px; }
+    .login-box label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px; }
+    .login-box input { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; color: #0f172a; outline: none; font-size: 14px; transition: border-color 0.2s; }
+    .login-box input:focus { border-color: var(--primary); background: #ffffff; }
+    .btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: background 0.2s; font-size: 14.5px; }
+    .btn-submit:hover { background: var(--primary-hover); }
+
+    /* --- APP LAYOUT --- */
+    #app-layout { display: none; width: 100%; height: 100%; flex-direction: row; }
+
+    /* --- SIDEBAR --- */
+    .sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); background: var(--sidebar-bg); display: flex; flex-direction: column; height: 100%; z-index: 50; }
+    .logo-container { padding: 20px; font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .brand-logo-svg { width: 28px; height: 28px; flex-shrink: 0; }
     
-    let safeStorage;
-    try {
-      const testKey = '__test_store__';
-      window.localStorage.setItem(testKey, testKey);
-      window.localStorage.removeItem(testKey);
-      safeStorage = window.localStorage;
-    } catch (_) {
-      safeStorage = undefined;
+    .nav-search-box { padding: 12px 16px 6px; }
+    .nav-search-input { width: 100%; padding: 8px 12px; background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 12.5px; outline: none; }
+    .nav-search-input:focus { border-color: var(--primary); }
+
+    .nav-menu { display: flex; flex-direction: column; gap: 2px; flex: 1; padding: 10px; overflow-y: auto; }
+    .nav-menu::-webkit-scrollbar { width: 4px; }
+    .nav-menu::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
+
+    .nav-section-title { font-size: 11px; text-transform: uppercase; font-weight: 800; color: #94a3b8; letter-spacing: 0.8px; padding: 12px 10px 4px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid transparent; border-radius: 8px; color: #cbd5e1; font-weight: 600; font-size: 13px; cursor: pointer; background: transparent; text-align: left; width: 100%; transition: all 0.15s; }
+    .nav-item:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
+    .nav-item.active { color: #fff; background: rgba(37, 99, 235, 0.25); border-color: rgba(59, 130, 246, 0.5); font-weight: 700; }
+    .nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
+    .nav-item .badge { margin-left: auto; font-size: 10px; padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,0.1); font-weight: 700; color: #cbd5e1; }
+
+    .sidebar-footer { padding: 16px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 12px; color: #94a3b8; }
+    .sidebar-footer .store-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .sidebar-footer .tier { font-weight: 800; color: #34d399; text-transform: uppercase; font-size: 11.5px; }
+    .logout-btn { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px; width: 100%; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 12px; }
+    .logout-btn:hover { background: #dc2626; color: #fff; }
+
+    /* --- MAIN CONTENT CANVAS --- */
+    .main-content { flex: 1; padding: 28px 32px; overflow-y: auto; background: var(--bg-page); }
+    .header-card { background: #ffffff; border: 1px solid var(--card-border); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .report-title-wrap h1 { font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
+    .report-title-wrap p { color: var(--text-muted); font-size: 13.5px; margin-top: 3px; }
+    .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; background: var(--accent-green-bg); color: var(--accent-green); border: 1px solid var(--accent-green-border); }
+
+    /* Filter Toolbar */
+    .toolbar-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .preset-pill { background: #f1f5f9; border: 1px solid var(--card-border); color: #475569; padding: 7px 14px; border-radius: 9999px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .preset-pill:hover, .preset-pill.active { background: #2563eb; color: #ffffff; border-color: #2563eb; }
+    .date-input-group { display: flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid var(--card-border); padding: 5px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 600; color: #475569; }
+    input[type="date"] { padding: 3px; background: transparent; border: none; color: #0f172a; font-family: inherit; font-size: 13px; outline: none; font-weight: 600; }
+
+    .btn-action { background: #ffffff; border: 1px solid var(--card-border); color: #0f172a; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.15s; font-size: 12.5px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+    .btn-action:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .btn-primary-action { background: var(--primary); border: 1px solid var(--primary); color: #ffffff; }
+    .btn-primary-action:hover { background: var(--primary-hover); }
+
+    /* Audit Notice Banner */
+    .audit-notice-banner { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; font-weight: 600; border: 1px solid transparent; }
+    .audit-notice-banner.balanced { background: var(--accent-green-bg); border-color: var(--accent-green-border); color: #15803d; }
+    .audit-notice-banner.unbalanced { background: var(--accent-red-bg); border-color: var(--accent-red-border); color: #b91c1c; }
+
+    /* 8-Card KPI Grid */
+    .kpi-grid-8 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .kpi-card { background: #ffffff; border: 1px solid var(--card-border); padding: 18px 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; }
+    .kpi-card .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .kpi-card h3 { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; }
+    .kpi-card .metric { font-size: 24px; font-weight: 800; font-family: 'JetBrains Mono', monospace; line-height: 1.2; color: #0f172a; }
+    .kpi-card .sub-metric { font-size: 11.5px; color: var(--text-muted); margin-top: 4px; }
+
+    /* Feature Cards */
+    .panel-card { background: #ffffff; border: 1px solid var(--card-border); padding: 22px 24px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .panel-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--card-border); }
+    .panel-header-title { font-size: 16px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px; }
+
+    /* Sign-Off Approval Card */
+    .approval-bar { background: #f8fafc; border: 1px solid var(--card-border); border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+    .approval-meta { display: flex; align-items: center; gap: 12px; }
+    .approval-inputs { display: flex; align-items: center; gap: 10px; }
+    .approval-inputs input { width: 120px; padding: 8px 10px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; }
+    .approval-inputs input:focus { border-color: var(--primary); }
+    .btn-approve { background: #16a34a; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+    .btn-approve:hover { background: #15803d; }
+
+    /* Dual Mode Toggle */
+    .view-toggle-bar { display: inline-flex; background: #e2e8f0; padding: 3px; border-radius: 8px; margin-bottom: 20px; }
+    .view-toggle-btn { padding: 6px 14px; border: none; border-radius: 6px; font-size: 12.5px; font-weight: 700; color: #475569; background: transparent; cursor: pointer; transition: 0.15s; }
+    .view-toggle-btn.active { background: #ffffff; color: #0f172a; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+
+    /* Data Tables */
+    .table-responsive { width: 100%; overflow-x: auto; }
+    .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+    .data-table th { color: #64748b; font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px; border-bottom: 1px solid var(--card-border); background: #f8fafc; white-space: nowrap; }
+    .data-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #0f172a; }
+    .data-table tr:hover td { background: #f8fafc; }
+    .data-table .num { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; }
+    .data-table .th-num { text-align: right; }
+    .data-table .total-row td { font-weight: 800; border-top: 2px solid #cbd5e1; border-bottom: none; color: var(--primary); font-size: 13.5px; background: #f8fafc; }
+    
+    .badge-status { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    .badge-status.healthy { background: var(--accent-green-bg); color: var(--accent-green); border: 1px solid var(--accent-green-border); }
+    .badge-status.warning { background: var(--accent-amber-bg); color: var(--accent-amber); border: 1px solid var(--accent-amber-border); }
+    .badge-status.danger { background: var(--accent-red-bg); color: var(--accent-red); border: 1px solid var(--accent-red-border); }
+    .badge-status.info { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+    .badge-status.star { background: #fefce8; color: #ca8a04; border: 1px solid #fef08a; }
+
+    /* Split-Pane Checks Replica */
+    .replica-layout { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+    .receipt-paper { background: #ffffff; color: #0f172a; padding: 24px; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 4px 15px rgba(0,0,0,0.06); font-family: 'Courier New', Courier, monospace; font-size: 13px; line-height: 1.4; }
+    .receipt-header { text-align: center; border-bottom: 1px dashed #94a3b8; padding-bottom: 12px; margin-bottom: 12px; }
+    .receipt-title { font-weight: 800; font-size: 16px; margin-bottom: 4px; text-transform: uppercase; }
+    .receipt-meta { font-size: 11.5px; color: #64748b; }
+    .receipt-items { width: 100%; border-collapse: collapse; margin-bottom: 12px; border-bottom: 1px dashed #94a3b8; }
+    .receipt-items td { padding: 4px 0; font-size: 12px; }
+    .receipt-totals { width: 100%; font-size: 12.5px; border-bottom: 1px dashed #94a3b8; padding-bottom: 8px; margin-bottom: 8px; }
+    .receipt-footer { text-align: center; font-size: 11px; color: #64748b; margin-top: 12px; }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Support floating button */
+    #merchant-chat-btn { position: fixed; bottom: 20px; right: 20px; background: #16a34a; color: white; border: none; border-radius: 9999px; padding: 10px 18px; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.25); z-index: 990; }
+    #merchant-chat-panel { display: none; position: fixed; bottom: 75px; right: 20px; width: 360px; height: 480px; background: #ffffff; border: 1px solid var(--card-border); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); flex-direction: column; overflow: hidden; z-index: 999; }
+    .m-chat-header { background: #f8fafc; padding: 14px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
+    .m-chat-body { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; }
+    .bubble { max-width: 82%; padding: 8px 12px; border-radius: 10px; line-height: 1.4; }
+    .bubble-merchant { align-self: flex-end; background: var(--primary); color: #fff; }
+    .bubble-agent { align-self: flex-start; background: #f1f5f9; color: #0f172a; border: 1px solid #e2e8f0; }
+    .m-chat-input-bar { display: flex; border-top: 1px solid var(--card-border); background: #f8fafc; }
+    .m-chat-input-bar input { flex: 1; padding: 12px; background: transparent; border: none; color: #0f172a; outline: none; font-size: 12.5px; }
+    .m-chat-send { background: #16a34a; color: white; border: none; padding: 0 16px; font-weight: 700; cursor: pointer; }
+
+    @media (max-width: 1024px) {
+      .sidebar { width: 240px; min-width: 240px; }
+      .main-content { padding: 20px 16px; }
+      .replica-layout { grid-template-columns: 1fr; }
     }
+  </style>
+</head>
+<body>
 
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: {
-        persistSession: safeStorage !== undefined,
-        storage: safeStorage
-      }
-    });
+  <!-- 1. LOGIN SCREEN -->
+  <div id="login-view">
+    <div class="login-box">
+      <div class="login-header-logo">
+        <svg class="brand-logo-svg" style="width: 36px; height: 36px;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="50,22 70,22 25,67 5,67" fill="#1e88e5" />
+          <polygon points="50,52 70,52 35,87 15,87" fill="#29b6f6" />
+          <polygon points="35,67 55,67 70,52 50,52" fill="#4fc3f7" />
+          <polygon points="35,67 55,67 70,87 50,87" fill="#0288d1" />
+        </svg>
+        <h2 style="font-size: 22px; font-weight: 800; color: #0f172a;">FlexiTap Back Office</h2>
+      </div>
+      <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 24px;">Sign in to view real-time store reports.</p>
+      <form id="portal-form">
+        <label>Merchant Email</label>
+        <input type="email" id="p-email" required placeholder="owner@store.com" />
+        <label>Account Password</label>
+        <input type="password" id="p-password" required placeholder="••••••••" />
+        <button type="submit" class="btn-submit" id="p-btn">Sign In to Reports</button>
+      </form>
+      <p id="p-err" style="color: #dc2626; font-size: 13px; margin-top: 14px; text-align: center; font-weight: 600;"></p>
+    </div>
+  </div>
 
-    let activeStore = null;
-    let activeUser = null;
-    let currentSupportSession = null;
-    let currentChatChannel = null;
-    let activeReportId = 'sales-summary';
-    let isShiftApproved = false;
+  <!-- 2. MAIN APPLICATION LAYOUT -->
+  <div id="app-layout">
+    
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar" data-html2canvas-ignore>
+      <div class="logo-container">
+        <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="50,22 70,22 25,67 5,67" fill="#1e88e5" />
+          <polygon points="50,52 70,52 35,87 15,87" fill="#29b6f6" />
+          <polygon points="35,67 55,67 70,52 50,52" fill="#4fc3f7" />
+          <polygon points="35,67 55,67 70,87 50,87" fill="#0288d1" />
+        </svg>
+        <span>Reports Hub</span>
+      </div>
 
-    let currentAgg = {
-      grossSales: 0, netSales: 0, taxes: 0, tips: 0, discounts: 0, refunds: 0,
-      voidsCount: 0, voidsAmount: 0, txnCount: 0, openingBank: 0,
-      cashSales: 0, paidIn: 0, paidOut: 0,
-      payments: {}, categories: {}, hourly: {},
-      terminalSales: [], productMix: [], laborSummary: [],
-      inventorySnapshot: [], auditExceptions: [], customersCrm: [],
-      recentChecks: [], discountsSummary: [], giftCardsSummary: [],
-      loyaltySummary: {}, arLedgerSummary: [], recipeCogsSummary: [],
-      expiringBatches: [], drawerLedgerSummary: [], wasteLossSummary: [],
-      activityClickstream: []
-    };
+      <div class="nav-search-box">
+        <input type="text" class="nav-search-input" id="report-search" placeholder="🔍 Search reports..." oninput="filterReportNav()" />
+      </div>
 
-    function getLocalDateString(d = new Date()) {
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    }
+      <nav class="nav-menu" id="nav-reports-list">
+        <!-- Group 1: Sales & Financials -->
+        <div class="nav-section-title">Sales & Financials</div>
+        <button class="nav-item active" data-report="sales-summary" onclick="switchReport('sales-summary', this)">
+          <span class="icon">📊</span> Sales Summary <span class="badge">KPI</span>
+        </button>
+        <button class="nav-item" data-report="sales-report" onclick="switchReport('sales-report', this)">
+          <span class="icon">🧾</span> Sales Report (Z-Read)
+        </button>
+        <button class="nav-item" data-report="terminal-sales" onclick="switchReport('terminal-sales', this)">
+          <span class="icon">💻</span> Terminal Sales
+        </button>
+        <button class="nav-item" data-report="product-mix" onclick="switchReport('product-mix', this)">
+          <span class="icon">🍕</span> Product Mix (PMIX)
+        </button>
 
-    function formatMoney(amount) {
-      const sym = activeStore?.currency_symbol || '$';
-      const val = Number(amount) || 0;
-      return `${sym}${val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    }
+        <!-- Group 2: Staff & Operations -->
+        <div class="nav-section-title">Staff & Operations</div>
+        <button class="nav-item" data-report="labor-report" onclick="switchReport('labor-report', this)">
+          <span class="icon">⏱️</span> Labor & Wages
+        </button>
+        <button class="nav-item" data-report="discounts-report" onclick="switchReport('discounts-report', this)">
+          <span class="icon">🏷️</span> Discounts & Comps
+        </button>
+        <button class="nav-item" data-report="drawer-ledger" onclick="switchReport('drawer-ledger', this)">
+          <span class="icon">💵</span> Drawer Ledger
+        </button>
 
-    // --- NAVIGATION & REPORT SWITCHING ---
-    function switchReport(reportId, btnElement) {
-      activeReportId = reportId;
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        <!-- Group 3: Inventory & Kitchen -->
+        <div class="nav-section-title">Inventory & Kitchen</div>
+        <button class="nav-item" data-report="inventory-report" onclick="switchReport('inventory-report', this)">
+          <span class="icon">📦</span> Stock & Par Levels
+        </button>
+        <button class="nav-item" data-report="recipe-cogs" onclick="switchReport('recipe-cogs', this)">
+          <span class="icon">🍲</span> Recipe COGS & Profit
+        </button>
+        <button class="nav-item" data-report="expiring-items" onclick="switchReport('expiring-items', this)">
+          <span class="icon">⚠️</span> Expiring & Batch Lots
+        </button>
+        <button class="nav-item" data-report="waste-loss" onclick="switchReport('waste-loss', this)">
+          <span class="icon">🗑️</span> Waste & Spoilage Log
+        </button>
 
-      const targetReport = document.getElementById(`report-${reportId}`);
-      if (targetReport) targetReport.classList.add('active');
+        <!-- Group 4: Auditing & Security -->
+        <div class="nav-section-title">Loss Prevention & Audit</div>
+        <button class="nav-item" data-report="checks-replica" onclick="switchReport('checks-replica', this)">
+          <span class="icon">🔍</span> Checks Replica
+        </button>
+        <button class="nav-item" data-report="exceptions-audit" onclick="switchReport('exceptions-audit', this)">
+          <span class="icon">🚨</span> Exceptions Audit
+        </button>
+        <button class="nav-item" data-report="activity-log" onclick="switchReport('activity-log', this)">
+          <span class="icon">📜</span> Activity Clickstream
+        </button>
 
-      if (btnElement) {
-        btnElement.classList.add('active');
-      } else {
-        const foundBtn = document.querySelector(`.nav-item[data-report="${reportId}"]`);
-        if (foundBtn) foundBtn.classList.add('active');
-      }
+        <!-- Group 5: Customers & Accounts -->
+        <div class="nav-section-title">Customers & CRM</div>
+        <button class="nav-item" data-report="customer-crm" onclick="switchReport('customer-crm', this)">
+          <span class="icon">👥</span> Customer Directory
+        </button>
+        <button class="nav-item" data-report="ar-ledger" onclick="switchReport('ar-ledger', this)">
+          <span class="icon">📑</span> AR House Accounts
+        </button>
+        <button class="nav-item" data-report="loyalty-report" onclick="switchReport('loyalty-report', this)">
+          <span class="icon">⭐</span> Loyalty & Rewards
+        </button>
+        <button class="nav-item" data-report="gift-cards" onclick="switchReport('gift-cards', this)">
+          <span class="icon">🎁</span> Gift Cards & Vouchers
+        </button>
 
-      const titleMap = {
-        'sales-summary': ['Sales Summary', 'Executive overview of sales, liabilities, and mathematical symmetry.'],
-        'sales-report': ['Sales Report (Z-Read)', 'Detailed register totals, cash drawer counts, and official daily Z-reading logs.'],
-        'terminal-sales': ['Terminal Sales', 'Hardware station breakdown of transactions, tips, and cashier volume.'],
-        'product-mix': ['Product Mix (PMIX)', 'Item sales velocity, margin share, and contribution profitability matrix.'],
-        'labor-report': ['Labor & Wages', 'Employee timesheets, wage allocations, overtime, and labor cost percentage.'],
-        'discounts-report': ['Discounts & Comps', 'Applied promotions, coupons, manual comps, and markdown attribution.'],
-        'drawer-ledger': ['Drawer Ledger', 'Cash drops, paid-ins, paid-outs, and cash float activity tracking.'],
-        'inventory-report': ['Stock & Par Levels', 'Real-time catalog stock, par thresholds, reorder warnings, and valuation.'],
-        'recipe-cogs': ['Recipe COGS & Profitability', 'Food cost margins, recipe ingredients, and portion profitability scores.'],
-        'expiring-items': ['Expiring & Batch Lots', 'Perishable batch lot tracking, manufacture dates, and shelf-life expiration alerts.'],
-        'waste-loss': ['Waste & Spoilage Log', 'Recorded kitchen spills, drops, burnt items, and spoilage write-offs.'],
-        'checks-replica': ['Checks Replica', 'Auditor-friendly digital duplicates of customer guest checks and receipts.'],
-        'exceptions-audit': ['Exceptions Audit', 'Loss prevention hub tracking cashier voids, refunds, and manual drawer opens.'],
-        'activity-log': ['Activity Clickstream', 'Forensic record of user interactions, logins, price overrides, and configuration edits.'],
-        'customer-crm': ['Customer Directory', 'Customer CRM database, profiles, visit frequency, and lifetime spend.'],
-        'ar-ledger': ['AR House Accounts', 'Accounts Receivable ledger tracking house accounts, open credit, and payments.'],
-        'loyalty-report': ['Loyalty & Rewards', 'Accrued loyalty points, member tiers, and redeemed rewards impact.'],
-        'gift-cards': ['Gift Cards & Vouchers', 'Issued vouchers, card activations, remaining balances, and store liability.'],
-        'remote-access': ['Remote Access', 'Ad-hoc remote support session — enter the code your support agent gave you.'][cite: 1]
-      };
+        <!-- Group 6: Support[cite: 1] -->
+        <div class="nav-section-title">Support</div>
+        <button class="nav-item" data-report="remote-access" onclick="switchReport('remote-access', this)">
+          <span class="icon">🛠️</span> Remote Access <span class="badge">Live</span>
+        </button>
+      </nav>
 
-      if (titleMap[reportId]) {
-        const titleEl = document.getElementById('active-report-title');
-        const subEl = document.getElementById('active-report-subtitle');
-        if (titleEl) titleEl.innerHTML = `${titleMap[reportId][0]} <span class="status-badge">● Live Synced</span>`;
-        if (subEl) subEl.innerText = titleMap[reportId][1];
-      }
-    }
+      <div class="sidebar-footer">
+        <div class="store-info">
+          <div>
+            <div id="store-name-display" style="font-weight: 700; color: #fff;">My Store</div>
+            <div class="tier" id="store-tier-display">PRO EDITION</div>
+          </div>
+          <span class="status-badge">● ONLINE</span>
+        </div>
+        <button class="logout-btn" onclick="logout()">Sign Out</button>
+      </div>
+    </aside>
 
-    function filterReportNav() {
-      const q = document.getElementById('report-search').value.toLowerCase().trim();
-      document.querySelectorAll('#nav-reports-list .nav-item').forEach(btn => {
-        const text = btn.innerText.toLowerCase();
-        btn.style.display = text.includes(q) ? 'flex' : 'none';
-      });
-    }
+    <!-- MAIN REPORTS WORKSPACE -->
+    <main class="main-content" id="report-export-area">
+      
+      <!-- TOP GLOBAL TOOLBAR -->
+      <div class="header-card" data-html2canvas-ignore>
+        <div class="report-title-wrap">
+          <h1 id="active-report-title">Sales Summary <span class="status-badge">● Live Synced</span></h1>
+          <p id="active-report-subtitle">Executive overview of sales, liabilities, and mathematical symmetry.</p>
+        </div>
 
-    function applyDatePreset(preset, btnElement) {
-      document.querySelectorAll('.preset-pill').forEach(b => b.classList.remove('active'));
-      if (btnElement) btnElement.classList.add('active');
+        <div class="toolbar-group">
+          <!-- Preset Chips -->
+          <button class="preset-pill active" onclick="applyDatePreset('today', this)">Today</button>
+          <button class="preset-pill" onclick="applyDatePreset('yesterday', this)">Yesterday</button>
+          <button class="preset-pill" onclick="applyDatePreset('7days', this)">Last 7 Days</button>
+          <button class="preset-pill" onclick="applyDatePreset('month', this)">This Month</button>
 
-      const today = new Date();
-      let start = new Date();
-      let end = new Date();
+          <!-- Date Range Pickers -->
+          <div class="date-input-group">
+            <span>From:</span><input type="date" id="start-date" onchange="requestOnDemandReport()" />
+            <span>To:</span><input type="date" id="end-date" onchange="requestOnDemandReport()" />
+          </div>
 
-      if (preset === 'today') {
-        // Today
-      } else if (preset === 'yesterday') {
-        start.setDate(today.getDate() - 1);
-        end.setDate(today.getDate() - 1);
-      } else if (preset === '7days') {
-        start.setDate(today.getDate() - 6);
-      } else if (preset === 'month') {
-        start = new Date(today.getFullYear(), today.getMonth(), 1);
-      }
+          <!-- On-Demand Run Button -->
+          <button class="btn-action" style="background:#16a34a; color:#fff; border-color:#16a34a; font-weight:800; cursor:pointer;" id="btn-run-report" onclick="requestOnDemandReport()">
+            <span id="run-report-icon">▶</span> <span id="run-report-text">Run Report</span>
+          </button>
 
-      document.getElementById('start-date').value = getLocalDateString(start);
-      document.getElementById('end-date').value = getLocalDateString(end);
-      requestOnDemandReport();
-    }
+          <!-- Actions: Export CSV & PDF -->
+          <button class="btn-action" onclick="exportActiveTableToCSV()">⬇️ CSV</button>
+          <button class="btn-action btn-primary-action" onclick="exportReportToPDF()">📄 PDF</button>
+        </div>
+      </div>
 
-    // --- REMOTE ACCESS & GATING HELPERS ---
-    function setupRemoteAccessGate(tier) {
-      const isPro = (tier || '').toLowerCase() === 'pro';[cite: 1]
-      const lockedEl = document.getElementById('remote-access-locked');
-      const unlockedEl = document.getElementById('remote-access-unlocked');
-      if (lockedEl) lockedEl.style.display = isPro ? 'none' : 'block';[cite: 1]
-      if (unlockedEl) unlockedEl.style.display = isPro ? 'block' : 'none';[cite: 1]
-    }
+      <!-- AUDIT INTEGRITY BANNER -->
+      <div id="global-audit-banner" class="audit-notice-banner balanced">
+        <span style="font-size: 16px;">✓</span>
+        <span id="audit-banner-text">Audit Verification: Complete mathematical symmetry between recorded settlement media and accountable liabilities.</span>
+      </div>
 
-    function maybeAutoOpenSupportCode() {
-      const params = new URLSearchParams(window.location.search);[cite: 1]
-      const code = (params.get('code') || '').trim().toUpperCase();[cite: 1]
-      if (!code) return;[cite: 1]
-      const navBtn = document.querySelector('.nav-item[data-report="remote-access"]');
-      switchReport('remote-access', navBtn);[cite: 1]
-      const codeInput = document.getElementById('support-code-input');
-      if (codeInput) codeInput.value = code;[cite: 1]
-      checkSupportCode();[cite: 1]
-    }
+      <!-- REPORT 1: SALES SUMMARY -->
+      <div id="report-sales-summary" class="tab-content active">
+        <div class="kpi-grid-8">
+          <div class="kpi-card">
+            <div class="card-head"><h3>Gross Sales</h3><span style="color:#2563eb;">📈</span></div>
+            <div class="metric" id="sum-gross">₱0.00</div>
+            <div class="sub-metric">Before discounts</div>
+          </div>
+          <div class="kpi-card">
+            <div class="card-head"><h3>- Discounts</h3><span style="color:#dc2626;">🏷️</span></div>
+            <div class="metric" style="color:#dc2626;" id="sum-disc">-₱0.00</div>
+            <div class="sub-metric">Promos & comps</div>
+          </div>
+          <div class="kpi-card">
+            <div class="card-head"><h3>= Net Sales</h3><span style="color:#16a34a;">💰</span></div>
+            <div class="metric" style="color:#16a34a;" id="sum-net">₱0.00</div>
+            <div class="sub-metric">Actual sales revenue</div>
+          </div>
+          <div class="kpi-card">
+            <div class="card-head"><h3>+ Taxes</h3><span style="color:#7c3aed;">🏛️</span></div>
+            <div class="metric" style="color:#7c3aed;" id="sum-tax">₱0.00</div>
+            <div class="sub-metric">VAT & local taxes</div>
+          </div>
+          <div class="kpi-card">
+            <div class="card-head"><h3>+ Tips</h3><span style="color:#d97706;">☕</span></div>
+            <div class="metric" style="color:#d97706;" id="sum-tips">₱0.00</div>
+            <div class="sub-metric">Server tips collected</div>
+          </div>
+          <div class="kpi-card">
+            <div class="card-head"><h3>= Total Accountable</h3><span style="color:#0f172a;">⚖️</span></div>
+            <div class="metric" id="sum-total-accountable">₱0.00</div>
+            <div class="sub-metric">Net + Tax + Tips</div>
+          </div>
+          <div class="kpi-card">
+            <div class="card-head"><h3>Transactions</h3><span style="color:#0891b2;">🧾</span></div>
+            <div class="metric" id="sum-txns">0</div>
+            <div class="sub-metric">Paid check count</div>
+          </div>
+          <div class="kpi-card">
+            <div class="card-head"><h3>Average Check</h3><span style="color:#0d9488;">🎯</span></div>
+            <div class="metric" id="sum-avg-chk">₱0.00</div>
+            <div class="sub-metric">Net sales / orders</div>
+          </div>
+        </div>
 
-    async function checkSupportCode() {
-      const input = document.getElementById('support-code-input');
-      const status = document.getElementById('support-code-status');
-      const btn = document.getElementById('support-code-btn');
-      if (!input || !status) return;
-
-      const code = input.value.trim().toUpperCase();[cite: 1]
-      if (!code) {
-        status.innerHTML = '<p style="color:#dc2626; font-size:13px;">Enter the code your support agent gave you.</p>';[cite: 1]
-        return;[cite: 1]
-      }
-
-      if (btn) {
-        btn.disabled = true;[cite: 1]
-        btn.innerText = 'Checking…';[cite: 1]
-      }
-      status.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Checking code…</p>';[cite: 1]
-
-      try {
-        const { data, error } = await supabaseClient.rpc('get_support_session_info', { p_code: code });[cite: 1]
-        const row = Array.isArray(data) ? data[0] : data;[cite: 1]
-
-        if (error || !row) {
-          status.innerHTML = '<p style="color:#dc2626; font-size:13px; font-weight:600;">⏱️ This code is invalid or has expired. Ask your support agent for a new one.</p>';[cite: 1]
-          return;[cite: 1]
-        }
-
-        status.innerHTML = `
-          <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-            <div>
-              <div style="font-weight:700; color:#15803d; font-size:14px;">✓ Ready to connect</div>
-              <div style="font-size:12.5px; color:var(--text-muted); margin-top:2px;">A FlexiTap support agent would like to connect to this device.</div>
+        <div class="panel-card">
+          <div class="panel-header-row">
+            <div class="panel-header-title">
+              <span style="color:#0d9488; font-size: 20px;">💵</span>
+              <span>Cash Drawer Reconciliation & Safe Tracking</span>
             </div>
-            <button class="btn-action btn-primary-action" onclick="allowSupportConnect('${row.id || ''}')">Allow to Connect</button>
-          </div>`;[cite: 1]
-      } catch (e) {
-        status.innerHTML = '<p style="color:#dc2626; font-size:13px;">Could not reach the server. Check your connection and try again.</p>';[cite: 1]
-      } finally {
-        if (btn) {
-          btn.disabled = false;[cite: 1]
-          btn.innerText = 'Connect';[cite: 1]
-        }
-      }
-    }
-
-    function allowSupportConnect(sessionId) {
-      const status = document.getElementById('support-code-status');
-      if (status) {
-        status.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Connecting… (not wired up yet)</p>';[cite: 1]
-      }
-    }
-
-    // --- ON-DEMAND REALTIME RELAY ENGINE ---
-    let relayChannels = [];
-    let currentPendingRequestId = null;
-
-    function initReportRelay() {
-      if (relayChannels.length > 0) return;
-
-      const channelNames = [
-        `store_reports_relay_${activeStore?.id}`,
-        `store_reports_relay_${activeUser?.id}`,
-        'store_reports_relay_a927b91f-0c1a-47b7-bf8b-59a9764aeacd'
-      ].filter(Boolean);
-
-      channelNames.forEach(chName => {
-        const ch = supabaseClient.channel(chName, {
-          config: { broadcast: { self: false } }
-        });
-
-        ch.on('broadcast', { event: 'REPORT_RESPONSE' }, (payload) => {
-          handleRelayResponse(payload.payload);
-        }).subscribe((status) => {
-          if (status === 'SUBSCRIBED') {
-            const badge = document.querySelector('.status-badge');
-            if (badge) badge.innerText = '● Live POS Relay';
-          }
-        });
-
-        relayChannels.push(ch);
-      });
-    }
-
-    function requestOnDemandReport() {
-      const btn = document.getElementById('btn-run-report');
-      const icon = document.getElementById('run-report-icon');
-      const text = document.getElementById('run-report-text');
-
-      if (btn) {
-        btn.disabled = true;
-        btn.style.opacity = '0.75';
-      }
-      if (icon) icon.innerText = '⏳';
-      if (text) text.innerText = 'Running...';
-
-      const s = document.getElementById('start-date')?.value || getLocalDateString();
-      const e = document.getElementById('end-date')?.value || getLocalDateString();
-
-      const banner = document.getElementById('global-audit-banner');
-      const bannerText = document.getElementById('audit-banner-text');
-      if (banner) banner.className = 'audit-notice-banner balanced';
-      if (bannerText) bannerText.innerText = '📡 Pulling live report data on demand from POS terminal (flexitap.db)...';
-
-      const reqId = 'req_' + Date.now();
-      currentPendingRequestId = reqId;
-
-      relayChannels.forEach(ch => {
-        if (ch && ch.state === 'joined') {
-          ch.send({
-            type: 'broadcast',
-            event: 'RUN_REPORT',
-            payload: {
-              requestId: reqId,
-              report: activeReportId,
-              startDate: s,
-              endDate: e
-            }
-          });
-        }
-      });
-
-      fetchAndRenderAllReports(s, e);
-
-      setTimeout(() => {
-        if (currentPendingRequestId === reqId) {
-          currentPendingRequestId = null;
-          resetRunButton();
-        }
-      }, 5000);
-    }
-
-    function resetRunButton() {
-      const btn = document.getElementById('btn-run-report');
-      const icon = document.getElementById('run-report-icon');
-      const text = document.getElementById('run-report-text');
-      if (btn) {
-        btn.disabled = false;
-        btn.style.opacity = '1';
-      }
-      if (icon) icon.innerText = '▶';
-      if (text) text.innerText = 'Run Report';
-    }
-
-    function handleRelayResponse(resp) {
-      if (!resp || resp.status !== 'success' || !resp.data) return;
-      currentPendingRequestId = null;
-      resetRunButton();
-
-      const d = resp.data;
-      currentAgg = {
-        grossSales: Number(d.gross_sales || 0),
-        netSales: Number(d.net_sales || 0),
-        taxes: Number(d.total_taxes || 0),
-        tips: Number(d.tips || 0),
-        discounts: Number(d.total_discounts || 0),
-        refunds: Number(d.total_refunds || 0),
-        voidsCount: Number(d.voided_count || 0),
-        voidsAmount: Number(d.voided_amount || 0),
-        txnCount: Number(d.transactions || 0),
-        openingBank: Number(d.opening_bank || 0),
-        cashSales: Number(d.payment_breakdown?.Cash || d.payment_breakdown?.CASH || 0),
-        paidIn: Number(d.paid_in || 0),
-        paidOut: Number(d.paid_out || 0),
-        expectedCash: Number(d.expected_cash || (d.payment_breakdown?.Cash || 0)),
-        payments: d.payment_breakdown || {},
-        categories: d.category_breakdown || {},
-        hourly: d.hourly_sales || {},
-        terminalSales: d.terminal_sales || [],
-        productMix: d.product_mix || [],
-        laborSummary: d.labor_summary || [],
-        inventorySnapshot: d.inventory_snapshot || [],
-        auditExceptions: d.audit_exceptions || [],
-        customersCrm: d.customers_crm || [],
-        recentChecks: d.recent_checks || [],
-        discountsSummary: d.discounts_summary || [],
-        giftCardsSummary: d.gift_cards_summary || [],
-        loyaltySummary: d.loyalty_summary || {},
-        arLedgerSummary: d.ar_ledger_summary || [],
-        recipeCogsSummary: d.recipe_cogs_summary || [],
-        expiringBatches: d.expiring_batches || [],
-        drawerLedgerSummary: d.drawer_ledger_summary || [],
-        wasteLossSummary: d.waste_loss_summary || [],
-        activityClickstream: d.activity_clickstream || []
-      };
-
-      if (resp.storeName) {
-        const storeDisp = document.getElementById('store-name-display');
-        const zreadDisp = document.getElementById('zread-store-name');
-        if (storeDisp) storeDisp.innerText = resp.storeName;
-        if (zreadDisp) zreadDisp.innerText = resp.storeName;
-      }
-      if (resp.currency && activeStore) {
-        activeStore.currency_symbol = resp.currency === 'PHP' ? '₱' : '$';
-      }
-
-      renderAllViews();
-
-      const banner = document.getElementById('global-audit-banner');
-      const bannerText = document.getElementById('audit-banner-text');
-      if (banner) banner.className = 'audit-notice-banner balanced';
-      if (bannerText) bannerText.innerText = '✓ Live report data pulled on demand from local POS terminal (flexitap.db).';
-    }
-
-    function renderAllViews() {
-      renderSalesSummary();
-      renderSalesReportZRead();
-      renderTerminalSales();
-      renderProductMix();
-      renderLaborReport();
-      renderDiscountsReport();
-      renderDrawerLedger();
-      renderInventoryReport();
-      renderRecipeCogs();
-      renderExpiringItems();
-      renderWasteLoss();
-      renderChecksReplica();
-      renderExceptionsAudit();
-      renderActivityLog();
-      renderCustomerCrm();
-      renderArLedger();
-      renderLoyaltyReport();
-      renderGiftCards();
-    }
-
-    // --- DATA AGGREGATOR & REPORT ENGINE ---
-    async function fetchAndRenderAllReports(startDate, endDate) {
-      try {
-        let query = supabaseClient
-          .from('daily_sales_summaries')
-          .select('*')
-          .gte('date', startDate)
-          .lte('date', endDate);
-
-        if (activeStore?.id) {
-          query = query.or(`store_id.eq.${activeStore.id},store_id.eq.a927b91f-0c1a-47b7-bf8b-59a9764aeacd`);
-        }
-
-        const { data: summaries, error: sumErr } = await query;
-        if (sumErr) {
-          console.warn('Error querying summaries:', sumErr);
-        }
-
-        let gross = 0, net = 0, tax = 0, tips = 0, discounts = 0, refunds = 0;
-        let txns = 0, voidsCount = 0, voidsAmount = 0;
-        let payments = {}, categories = {};
-        let liveTerminalSales = [];
-        let liveProductMix = [];
-        let liveLaborSummary = [];
-        let liveInventory = [];
-        let liveExceptions = [];
-        let liveCustomers = [];
-        let liveChecks = [];
-        let liveDiscounts = [];
-        let liveGiftCards = [];
-        let liveLoyalty = {};
-        let liveArLedger = [];
-        let liveRecipeCogs = [];
-        let liveExpiring = [];
-        let liveDrawer = [];
-        let liveWaste = [];
-        let liveActivity = [];
-
-        if (summaries && summaries.length > 0) {
-          summaries.forEach(row => {
-            gross += Number(row.gross_sales || row.net_sales || 0);
-            net += Number(row.net_sales || 0);
-            tax += Number(row.total_taxes || row.total_tax || 0);
-            tips += Number(row.tips || 0);
-            discounts += Number(row.total_discounts || 0);
-            refunds += Number(row.total_refunds || 0);
-            txns += Number(row.transactions || 0);
-            voidsCount += Number(row.voided_count || 0);
-            voidsAmount += Number(row.voided_amount || 0);
-
-            const pb = row.payment_breakdown || {};
-            for (let k in pb) {
-              const val = typeof pb[k] === 'number' ? pb[k] : (pb[k].total_sales || pb[k].sale_amt || 0);
-              payments[k] = (payments[k] || 0) + val;
-            }
-
-            const cb = row.category_breakdown || {};
-            for (let k in cb) {
-              const netVal = typeof cb[k] === 'number' ? cb[k] : (cb[k].net_sales || cb[k].net || 0);
-              const countVal = cb[k].item_count || cb[k].units || 1;
-              if (!categories[k]) categories[k] = { net: 0, count: 0 };
-              categories[k].net += netVal;
-              categories[k].count += countVal;
-            }
-
-            if (Array.isArray(row.terminal_sales) && row.terminal_sales.length > 0) liveTerminalSales = row.terminal_sales;
-            if (Array.isArray(row.product_mix) && row.product_mix.length > 0) liveProductMix = row.product_mix;
-            if (Array.isArray(row.labor_summary) && row.labor_summary.length > 0) liveLaborSummary = row.labor_summary;
-            if (Array.isArray(row.inventory_snapshot) && row.inventory_snapshot.length > 0) liveInventory = row.inventory_snapshot;
-            if (Array.isArray(row.audit_exceptions) && row.audit_exceptions.length > 0) liveExceptions = row.audit_exceptions;
-            if (Array.isArray(row.customers_crm) && row.customers_crm.length > 0) liveCustomers = row.customers_crm;
-            if (Array.isArray(row.recent_checks) && row.recent_checks.length > 0) liveChecks = row.recent_checks;
-            if (Array.isArray(row.discounts_summary) && row.discounts_summary.length > 0) liveDiscounts = row.discounts_summary;
-            if (Array.isArray(row.gift_cards_summary) && row.gift_cards_summary.length > 0) liveGiftCards = row.gift_cards_summary;
-            if (row.loyalty_summary && typeof row.loyalty_summary === 'object') liveLoyalty = row.loyalty_summary;
-            if (Array.isArray(row.ar_ledger_summary) && row.ar_ledger_summary.length > 0) liveArLedger = row.ar_ledger_summary;
-            if (Array.isArray(row.recipe_cogs_summary) && row.recipe_cogs_summary.length > 0) liveRecipeCogs = row.recipe_cogs_summary;
-            if (Array.isArray(row.expiring_batches) && row.expiring_batches.length > 0) liveExpiring = row.expiring_batches;
-            if (Array.isArray(row.drawer_ledger_summary) && row.drawer_ledger_summary.length > 0) liveDrawer = row.drawer_ledger_summary;
-            if (Array.isArray(row.waste_loss_summary) && row.waste_loss_summary.length > 0) liveWaste = row.waste_loss_summary;
-            if (Array.isArray(row.activity_clickstream) && row.activity_clickstream.length > 0) liveActivity = row.activity_clickstream;
-          });
-        }
-
-        const cashSales = payments['Cash'] || payments['CASH'] || 0;
-        const openingBank = 0;
-        const paidIn = 0;
-        const paidOut = 0;
-        const expectedCash = openingBank + cashSales + paidIn - paidOut;
-
-        currentAgg = {
-          grossSales: gross, netSales: net, taxes: tax, tips: tips, discounts: discounts,
-          refunds: refunds, voidsCount: voidsCount, voidsAmount: voidsAmount,
-          txnCount: txns, openingBank: openingBank, cashSales: cashSales,
-          paidIn: paidIn, paidOut: paidOut, expectedCash: expectedCash,
-          payments: payments, categories: categories,
-          terminalSales: liveTerminalSales,
-          productMix: liveProductMix,
-          laborSummary: liveLaborSummary,
-          inventorySnapshot: liveInventory,
-          auditExceptions: liveExceptions,
-          customersCrm: liveCustomers,
-          recentChecks: liveChecks,
-          discountsSummary: liveDiscounts,
-          giftCardsSummary: liveGiftCards,
-          loyaltySummary: liveLoyalty,
-          arLedgerSummary: liveArLedger,
-          recipeCogsSummary: liveRecipeCogs,
-          expiringBatches: liveExpiring,
-          drawerLedgerSummary: liveDrawer,
-          wasteLossSummary: liveWaste,
-          activityClickstream: liveActivity
-        };
-
-        renderAllViews();
-      } catch (err) {
-        console.error('Error fetching reports data:', err);
-      }
-    }
-
-    // --- 1. SALES SUMMARY RENDERER ---
-    function renderSalesSummary() {
-      const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
-      setTxt('sum-gross', formatMoney(currentAgg.grossSales));
-      setTxt('sum-disc', `-${formatMoney(currentAgg.discounts)}`);
-      setTxt('sum-net', formatMoney(currentAgg.netSales));
-      setTxt('sum-tax', formatMoney(currentAgg.taxes));
-      setTxt('sum-tips', formatMoney(currentAgg.tips));
-      setTxt('sum-total-accountable', formatMoney(currentAgg.netSales + currentAgg.taxes + currentAgg.tips));
-      setTxt('sum-txns', currentAgg.txnCount);
-      const avg = currentAgg.txnCount > 0 ? (currentAgg.netSales / currentAgg.txnCount) : 0;
-      setTxt('sum-avg-chk', formatMoney(avg));
-
-      setTxt('sum-bank', formatMoney(currentAgg.openingBank));
-      setTxt('sum-cash-sales', formatMoney(currentAgg.cashSales));
-      setTxt('sum-paid-in', `+${formatMoney(currentAgg.paidIn)}`);
-      setTxt('sum-paid-out', `-${formatMoney(currentAgg.paidOut)}`);
-      setTxt('sum-expected-cash', formatMoney(currentAgg.expectedCash));
-
-      setTxt('sum-voids-count', currentAgg.voidsCount);
-      setTxt('sum-voids-amount', formatMoney(currentAgg.voidsAmount));
-      setTxt('sum-refunds-count', 0);
-      setTxt('sum-refunds-amount', formatMoney(currentAgg.refunds));
-
-      const accBody = document.getElementById('summary-accountability-tbody');
-      if (accBody) {
-        accBody.innerHTML = `
-          <tr><td>Gross Sales</td><td class="num">${formatMoney(currentAgg.grossSales)}</td></tr>
-          <tr><td>- Discounts & Coupons</td><td class="num" style="color:#dc2626;">-${formatMoney(currentAgg.discounts)}</td></tr>
-          <tr style="font-weight:700;"><td>= Net Sales</td><td class="num" style="color:#16a34a;">${formatMoney(currentAgg.netSales)}</td></tr>
-          <tr><td>+ Tax (VAT & Local)</td><td class="num">${formatMoney(currentAgg.taxes)}</td></tr>
-          <tr><td>+ Tips Recorded</td><td class="num">${formatMoney(currentAgg.tips)}</td></tr>
-          <tr class="total-row"><td>Total Accountable Liability</td><td class="num">${formatMoney(currentAgg.netSales + currentAgg.taxes + currentAgg.tips)}</td></tr>
-        `;
-      }
-
-      let mHtml = '';
-      let mTotal = 0;
-      for (let k in currentAgg.payments) {
-        const val = currentAgg.payments[k];
-        mTotal += val;
-        mHtml += `<tr><td><strong>${k}</strong></td><td class="num">${formatMoney(val)}</td><td class="num">${formatMoney(k.includes('Card') ? currentAgg.tips : 0)}</td><td class="num">${formatMoney(val + (k.includes('Card') ? currentAgg.tips : 0))}</td></tr>`;
-      }
-      const mediaBody = document.getElementById('summary-media-tbody');
-      if (mediaBody) {
-        if (mHtml === '') {
-          mediaBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 24px; color: var(--text-muted);">No payment transactions recorded for this period.</td></tr>';
-        } else {
-          mHtml += `<tr class="total-row"><td>Total Tendered Media</td><td class="num" colspan="3">${formatMoney(mTotal + currentAgg.tips)}</td></tr>`;
-          mediaBody.innerHTML = mHtml;
-        }
-      }
-
-      const totalLiabilities = currentAgg.netSales + currentAgg.taxes + currentAgg.tips;
-      const variance = Math.abs(mTotal + currentAgg.tips - totalLiabilities);
-      const isBalanced = variance < 0.05;
-      const banner = document.getElementById('global-audit-banner');
-      const bannerText = document.getElementById('audit-banner-text');
-      if (banner) banner.className = `audit-notice-banner ${isBalanced ? 'balanced' : 'unbalanced'}`;
-      if (bannerText) {
-        bannerText.innerText = isBalanced
-          ? 'Audit Verification: Complete mathematical symmetry between recorded settlement media and accountable liabilities.'
-          : `Ledger Audit Notice: Tendered settlement media (${formatMoney(mTotal + currentAgg.tips)}) differs by ${formatMoney(variance)} from recorded liabilities (${formatMoney(totalLiabilities)}).`;
-      }
-    }
-
-    // --- 2. SALES REPORT (Z-READ) RENDERER ---
-    function renderSalesReportZRead() {
-      const storeEl = document.getElementById('zread-store-name');
-      if (storeEl) storeEl.innerText = activeStore?.name || 'FlexiTap POS';
-      
-      const taxBody = document.getElementById('zread-tax-tbody');
-      if (taxBody) {
-        taxBody.innerHTML = `
-          <tr><td>VAT 12% Standard Rate</td><td class="num">${formatMoney(currentAgg.netSales)}</td><td class="num">${formatMoney(currentAgg.taxes)}</td></tr>
-          <tr><td>Non-Taxable / Exempt Sales</td><td class="num">₱0.00</td><td class="num">₱0.00</td></tr>
-          <tr class="total-row"><td>Total Taxes</td><td class="num">${formatMoney(currentAgg.netSales)}</td><td class="num">${formatMoney(currentAgg.taxes)}</td></tr>
-        `;
-      }
-
-      const periodBody = document.getElementById('zread-period-tbody');
-      const orderBody = document.getElementById('zread-order-type-tbody');
-
-      if (currentAgg.txnCount > 0) {
-        if (periodBody) {
-          periodBody.innerHTML = `
-            <tr><td>Morning / Breakfast (05:00 - 11:00)</td><td class="num">${Math.round(currentAgg.txnCount * 0.35)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.32)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.32 / (currentAgg.txnCount * 0.35 || 1))}</td></tr>
-            <tr><td>Lunch Shift (11:00 - 16:00)</td><td class="num">${Math.round(currentAgg.txnCount * 0.45)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.48)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.48 / (currentAgg.txnCount * 0.45 || 1))}</td></tr>
-            <tr><td>Dinner Shift (16:00 - 22:00)</td><td class="num">${Math.round(currentAgg.txnCount * 0.20)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.20)}</td><td class="num">${formatMoney(currentAgg.netSales * 0.20 / (currentAgg.txnCount * 0.20 || 1))}</td></tr>
-          `;
-        }
-        if (orderBody) {
-          orderBody.innerHTML = `
-            <tr><td>Dine-In</td><td class="num">${Math.round(currentAgg.txnCount * 0.65)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.68)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.68 / (currentAgg.txnCount * 0.65 || 1))}</td></tr>
-            <tr><td>Takeout / To-Go</td><td class="num">${Math.round(currentAgg.txnCount * 0.25)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.22)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.22 / (currentAgg.txnCount * 0.25 || 1))}</td></tr>
-            <tr><td>Online Delivery</td><td class="num">${Math.round(currentAgg.txnCount * 0.10)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.10)}</td><td class="num">${formatMoney(currentAgg.grossSales * 0.10 / (currentAgg.txnCount * 0.10 || 1))}</td></tr>
-          `;
-        }
-      } else {
-        if (periodBody) periodBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px; color: var(--text-muted);">No serving window activity recorded.</td></tr>';
-        if (orderBody) orderBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px; color: var(--text-muted);">No order types recorded.</td></tr>';
-      }
-
-      const cashBody = document.getElementById('zread-cash-tbody');
-      if (cashBody) {
-        cashBody.innerHTML = `
-          <tr><td>Opening Float Bank</td><td class="num">${formatMoney(currentAgg.openingBank)}</td></tr>
-          <tr><td>+ Cash Sales Collected</td><td class="num">${formatMoney(currentAgg.cashSales)}</td></tr>
-          <tr><td>+ Paid-In Additions</td><td class="num">+${formatMoney(currentAgg.paidIn)}</td></tr>
-          <tr><td>- Paid-Out Expenses</td><td class="num">-${formatMoney(currentAgg.paidOut)}</td></tr>
-          <tr class="total-row"><td>Calculated Closing Cash</td><td class="num">${formatMoney(currentAgg.expectedCash)}</td></tr>
-        `;
-      }
-
-      compileRawTextZRead();
-    }
-
-    function switchZReadView(mode) {
-      const gBtn = document.getElementById('btn-toggle-graphical');
-      const rBtn = document.getElementById('btn-toggle-raw');
-      const gCont = document.getElementById('zread-graphical-container');
-      const rCont = document.getElementById('zread-raw-container');
-
-      if (mode === 'raw') {
-        if (gBtn) gBtn.classList.remove('active');
-        if (rBtn) rBtn.classList.add('active');
-        if (gCont) gCont.style.display = 'none';
-        if (rCont) rCont.style.display = 'block';
-      } else {
-        if (rBtn) rBtn.classList.remove('active');
-        if (gBtn) gBtn.classList.add('active');
-        if (rCont) rCont.style.display = 'none';
-        if (gCont) gCont.style.display = 'block';
-      }
-    }
-
-    function compileRawTextZRead() {
-      const storeName = (activeStore?.name || 'FLEXITAP POS').toUpperCase();
-      const s = document.getElementById('start-date')?.value || 'TODAY';
-      const e = document.getElementById('end-date')?.value || 'TODAY';
-      const lines = [
-        "================================================",
-        `              ${storeName}              `,
-        "           DAILY Z-READING AUDIT LOG            ",
-        `PERIOD: ${s} TO ${e}`,
-        "TERMINAL: MAIN REGISTER (STATION MASTER)        ",
-        "================================================",
-        "FINANCIAL TOTALS:",
-        `  GROSS SALES:                    ${formatMoney(currentAgg.grossSales).padStart(14)}`,
-        `  DISCOUNTS / COMPS:             -${formatMoney(currentAgg.discounts).padStart(14)}`,
-        `  NET SALES:                      ${formatMoney(currentAgg.netSales).padStart(14)}`,
-        `  TAXES COLLECTED:                ${formatMoney(currentAgg.taxes).padStart(14)}`,
-        `  TIPS RECORDED:                  ${formatMoney(currentAgg.tips).padStart(14)}`,
-        `  TOTAL ACCOUNTABLE:              ${formatMoney(currentAgg.netSales + currentAgg.taxes + currentAgg.tips).padStart(14)}`,
-        "------------------------------------------------",
-        "SETTLEMENT MEDIA:",
-        `  CASH TENDERED:                  ${formatMoney(currentAgg.cashSales).padStart(14)}`,
-        `  CARD / DIGITAL:                 ${formatMoney(currentAgg.grossSales - currentAgg.cashSales).padStart(14)}`,
-        `  TOTAL TENDERED:                 ${formatMoney(currentAgg.grossSales + currentAgg.tips).padStart(14)}`,
-        "------------------------------------------------",
-        "CASH DRAWER RECONCILIATION:",
-        `  OPENING BANK:                   ${formatMoney(currentAgg.openingBank).padStart(14)}`,
-        `  + CASH SALES:                   ${formatMoney(currentAgg.cashSales).padStart(14)}`,
-        `  + PAID-IN:                     +${formatMoney(currentAgg.paidIn).padStart(14)}`,
-        `  - PAID-OUT:                    -${formatMoney(currentAgg.paidOut).padStart(14)}`,
-        `  = CLOSING DRAWER CASH:          ${formatMoney(currentAgg.expectedCash).padStart(14)}`,
-        "================================================",
-        "APPROVAL AUDIT:",
-        `  STATUS: ${isShiftApproved ? "CLOSED & APPROVED" : "OPEN BATCH AUDIT"}`,
-        `  CASHIER INITIALS: ${document.getElementById('zread-cashier-init')?.value || "______"}`,
-        `  MANAGER INITIALS: ${document.getElementById('zread-manager-init')?.value || "______"}`,
-        "================================================"
-      ];
-      const paper = document.getElementById('raw-zread-paper');
-      if (paper) paper.innerText = lines.join('\n');
-    }
-
-    function toggleShiftApproval() {
-      const c = document.getElementById('zread-cashier-init')?.value.trim();
-      const m = document.getElementById('zread-manager-init')?.value.trim();
-      if (!c || !m) {
-        alert('Please enter both Cashier and Manager initials before signing off on the shift.');
-        return;
-      }
-      isShiftApproved = !isShiftApproved;
-      const statusLabel = document.getElementById('zread-status-label');
-      const approveText = document.getElementById('zread-approve-text');
-      const approveIcon = document.getElementById('zread-approve-icon');
-      if (statusLabel) statusLabel.innerText = isShiftApproved ? 'Approved & Closed' : 'Open Audit';
-      if (approveText) approveText.innerText = isShiftApproved ? 'REOPEN SHIFT' : 'APPROVE SHIFT';
-      if (approveIcon) approveIcon.innerText = isShiftApproved ? '🔓' : '🔒';
-      compileRawTextZRead();
-    }
-
-    // --- 3. TERMINAL SALES ---
-    function renderTerminalSales() {
-      const tbody = document.getElementById('terminal-sales-tbody');
-      if (!tbody) return;
-      if (currentAgg.terminalSales && currentAgg.terminalSales.length > 0) {
-        let html = '';
-        let totalSales = 0;
-        let totalTxns = 0;
-        currentAgg.terminalSales.forEach(t => {
-          const sales = Number(t.total_sales || t.sales || 0);
-          const txns = Number(t.txn_count || t.transactions || 0);
-          const cash = Number(t.cash_tendered || t.cash || (sales * 0.4));
-          const card = sales - cash;
-          const share = currentAgg.grossSales > 0 ? ((sales / currentAgg.grossSales) * 100).toFixed(1) : '0.0';
-          totalSales += sales;
-          totalTxns += txns;
-
-          html += `
-            <tr>
-              <td><strong>${t.device_name || t.name || 'Terminal'}</strong></td>
-              <td><span class="badge-status ${t.role === 'master' ? 'healthy' : 'info'}">${(t.role || 'STATION').toUpperCase()}</span></td>
-              <td class="num">${txns}</td>
-              <td class="num">${formatMoney(cash)}</td>
-              <td class="num">${formatMoney(card)}</td>
-              <td class="num">${formatMoney(sales)}</td>
-              <td class="num">${share}%</td>
-            </tr>
-          `;
-        });
-        html += `
-          <tr class="total-row">
-            <td>Total All Terminals</td>
-            <td></td>
-            <td class="num">${totalTxns || currentAgg.txnCount}</td>
-            <td class="num">${formatMoney(currentAgg.cashSales)}</td>
-            <td class="num">${formatMoney(totalSales - currentAgg.cashSales)}</td>
-            <td class="num">${formatMoney(totalSales || currentAgg.grossSales)}</td>
-            <td class="num">100.0%</td>
-          </tr>
-        `;
-        tbody.innerHTML = html;
-        return;
-      }
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No terminal activity recorded for this period.</td></tr>';
-    }
-
-    // --- 4. PRODUCT MIX ---
-    function renderProductMix() {
-      const tbody = document.getElementById('pmix-tbody');
-      if (!tbody) return;
-      if (currentAgg.productMix && currentAgg.productMix.length > 0) {
-        const pmixItems = currentAgg.productMix.map(p => {
-          const qty = Number(p.quantitySold || p.quantity || 1);
-          const net = Number(p.netSales || p.sales || 0);
-          const price = qty > 0 ? (net / qty) : 0;
-          const cogs = price * 0.28;
-          return {
-            name: p.itemName || p.name || 'Item',
-            cat: p.categoryName || 'General',
-            qty: qty,
-            price: price,
-            cogs: cogs,
-            tag: qty > 10 ? 'STAR ⭐' : (price > 100 ? 'PUZZLE 🧩' : 'PLOWHORSE 🐎'),
-            cls: qty > 10 ? 'star' : (price > 100 ? 'warning' : 'info')
-          };
-        });
-
-        const topItemEl = document.getElementById('pmix-top-item');
-        const unitsEl = document.getElementById('pmix-total-units');
-        if (topItemEl) topItemEl.innerText = pmixItems[0]?.name || '-';
-        const totalUnits = pmixItems.reduce((acc, i) => acc + i.qty, 0);
-        if (unitsEl) unitsEl.innerText = totalUnits;
-
-        let html = '';
-        pmixItems.forEach(i => {
-          const net = i.qty * i.price;
-          const totalCost = i.qty * i.cogs;
-          const marginPct = net > 0 ? ((net - totalCost) / net * 100).toFixed(1) : '0.0';
-          html += `
-            <tr>
-              <td><strong>${i.name}</strong></td>
-              <td>${i.cat}</td>
-              <td class="num">${i.qty}</td>
-              <td class="num">${formatMoney(i.price)}</td>
-              <td class="num">${formatMoney(net)}</td>
-              <td class="num">${formatMoney(totalCost)}</td>
-              <td class="num" style="color:#16a34a; font-weight:700;">${marginPct}%</td>
-              <td><span class="badge-status ${i.cls}">${i.tag}</span></td>
-            </tr>
-          `;
-        });
-        tbody.innerHTML = html;
-        return;
-      }
-      const topItemEl = document.getElementById('pmix-top-item');
-      const unitsEl = document.getElementById('pmix-total-units');
-      if (topItemEl) topItemEl.innerText = 'None';
-      if (unitsEl) unitsEl.innerText = '0';
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 40px; color: var(--text-muted);">No products sold during this period.</td></tr>';
-    }
-
-    // --- 5. LABOR REPORT ---
-    function renderLaborReport() {
-      const tbody = document.getElementById('labor-tbody');
-      if (!tbody) return;
-      if (currentAgg.laborSummary && currentAgg.laborSummary.length > 0) {
-        let totalCost = 0;
-        let totalHrs = 0;
-        let html = '';
-
-        currentAgg.laborSummary.forEach(s => {
-          const reg = Number(s.regularHours || s.reg || 0);
-          const ot = Number(s.overtimeHours || s.ot || 0);
-          const gross = Number(s.totalPay || s.gross || 0);
-          totalCost += gross;
-          totalHrs += (reg + ot);
-          const rate = (reg + ot) > 0 ? (gross / (reg + ot)) : 75.0;
-
-          html += `
-            <tr>
-              <td><strong>${s.userName || s.name || 'Staff Member'}</strong></td>
-              <td>${s.role || 'Staff'}</td>
-              <td class="num">${reg.toFixed(1)}</td>
-              <td class="num">${ot.toFixed(1)}</td>
-              <td class="num">${(reg + ot).toFixed(1)}</td>
-              <td class="num">${formatMoney(rate)}/hr</td>
-              <td class="num" style="font-weight:700;">${formatMoney(gross)}</td>
-              <td><span class="badge-status healthy">COMPLIANT</span></td>
-            </tr>
-          `;
-        });
-
-        const costEl = document.getElementById('labor-total-cost');
-        const hrsEl = document.getElementById('labor-total-hours');
-        const pctEl = document.getElementById('labor-pct-sales');
-        if (costEl) costEl.innerText = formatMoney(totalCost);
-        if (hrsEl) hrsEl.innerText = `${totalHrs.toFixed(1)} hrs`;
-        const pct = currentAgg.netSales > 0 ? (totalCost / currentAgg.netSales * 100).toFixed(1) : 0;
-        if (pctEl) pctEl.innerText = `${pct}%`;
-        tbody.innerHTML = html;
-        return;
-      }
-      const costEl = document.getElementById('labor-total-cost');
-      const hrsEl = document.getElementById('labor-total-hours');
-      const pctEl = document.getElementById('labor-pct-sales');
-      if (costEl) costEl.innerText = formatMoney(0);
-      if (hrsEl) hrsEl.innerText = '0.0 hrs';
-      if (pctEl) pctEl.innerText = '0.0%';
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 40px; color: var(--text-muted);">No staff shift hours recorded for this date range.</td></tr>';
-    }
-
-    // --- 6. DISCOUNTS REPORT ---
-    function renderDiscountsReport() {
-      const tbody = document.getElementById('discounts-tbody');
-      if (!tbody) return;
-      if (currentAgg.discountsSummary && currentAgg.discountsSummary.length > 0) {
-        let html = '';
-        currentAgg.discountsSummary.forEach(d => {
-          html += `
-            <tr>
-              <td><strong>${d.name || d.title || 'Discount'}</strong></td>
-              <td>${d.type || 'Standard'}</td>
-              <td class="num">${d.appliedCount || d.count || 1}</td>
-              <td class="num">${formatMoney(d.totalMarkdown || d.value || 0)}</td>
-              <td><span class="badge-status info">${d.requiresManager ? 'PIN Required' : 'Eligible'}</span></td>
-              <td>${d.attribution || 'POS Register'}</td>
-            </tr>
-          `;
-        });
-        tbody.innerHTML = html;
-        return;
-      }
-      if (currentAgg.discounts > 0) {
-        tbody.innerHTML = `
-          <tr><td><strong>Discounts & Promos Applied</strong></td><td>Aggregated</td><td class="num">-</td><td class="num">${formatMoney(currentAgg.discounts)}</td><td><span class="badge-status info">Applied</span></td><td>POS Register</td></tr>
-          <tr class="total-row"><td>Total Deductions</td><td></td><td class="num">-</td><td class="num">${formatMoney(currentAgg.discounts)}</td><td></td><td></td></tr>
-        `;
-        return;
-      }
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No discounts or comps recorded for this period.</td></tr>';
-    }
-
-    // --- 7. DRAWER LEDGER ---
-    function renderDrawerLedger() {
-      const tbody = document.getElementById('drawer-ledger-tbody');
-      if (!tbody) return;
-      if (currentAgg.drawerLedgerSummary && currentAgg.drawerLedgerSummary.length > 0) {
-        let html = '';
-        let running = currentAgg.openingBank || 0;
-        currentAgg.drawerLedgerSummary.forEach(e => {
-          const amt = Number(e.amount || 0);
-          running += amt;
-          const isAdd = amt >= 0;
-          html += `
-            <tr>
-              <td>${e.timestamp ? new Date(e.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
-              <td><span class="badge-status ${isAdd ? 'healthy' : 'danger'}">${(e.type || 'LEDGER').toUpperCase()}</span></td>
-              <td>${e.employee_id || 'Staff'}</td>
-              <td>${e.notes || 'Drawer entry'}</td>
-              <td class="num" style="${isAdd ? 'color:#16a34a;' : 'color:#dc2626;'}">${isAdd ? '+' : ''}${formatMoney(amt)}</td>
-              <td class="num">${formatMoney(running)}</td>
-            </tr>
-          `;
-        });
-        tbody.innerHTML = html;
-        return;
-      }
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No cash drops or paid-in/paid-out records for this date.</td></tr>';
-    }
-
-    // --- 8. INVENTORY REPORT ---
-    function renderInventoryReport() {
-      const tbody = document.getElementById('inventory-tbody');
-      if (!tbody) return;
-      if (currentAgg.inventorySnapshot && currentAgg.inventorySnapshot.length > 0) {
-        let html = '';
-        currentAgg.inventorySnapshot.forEach(i => {
-          const stock = Number(i.currentStock || 0);
-          const par = Number(i.reorderPoint || 10);
-          let status = 'healthy';
-          let label = 'OPTIMAL';
-          if (stock <= 0) { status = 'danger'; label = 'OUT OF STOCK'; }
-          else if (stock <= par) { status = 'warning'; label = 'LOW STOCK'; }
-          const cost = Number(i.costPrice || (i.price ? i.price * 0.4 : 50));
-          const val = stock * cost;
-
-          html += `
-            <tr>
-              <td><code>${i.sku || 'SKU'}</code></td>
-              <td><strong>${i.name || 'Catalog Item'}</strong></td>
-              <td>${i.categoryName || 'General'}</td>
-              <td class="num">${stock}</td>
-              <td>units</td>
-              <td class="num">${par}</td>
-              <td class="num">${formatMoney(cost)}</td>
-              <td class="num" style="font-weight:700;">${formatMoney(val)}</td>
-              <td><span class="badge-status ${status}">${label}</span></td>
-            </tr>
-          `;
-        });
-        tbody.innerHTML = html;
-        return;
-      }
-      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 40px; color: var(--text-muted);">No inventory items synced yet. Add items in POS Back Office to view stock counts.</td></tr>';
-    }
-
-    // --- 9. RECIPE COGS ---
-    function renderRecipeCogs() {
-      const tbody = document.getElementById('recipe-cogs-tbody');
-      if (!tbody) return;
-      if (currentAgg.recipeCogsSummary && currentAgg.recipeCogsSummary.length > 0) {
-        let html = '';
-        currentAgg.recipeCogsSummary.forEach(r => {
-          const rev = Number(r.total_revenue || r.revenue || 0);
-          const cogs = Number(r.total_cogs || r.cogs || 0);
-          const profit = rev - cogs;
-          const pct = rev > 0 ? ((cogs / rev) * 100).toFixed(1) : '0.0';
-          html += `
-            <tr>
-              <td><strong>${r.item_name || r.name || 'Recipe'}</strong></td>
-              <td>1 serving</td>
-              <td class="num">${formatMoney(rev)}</td>
-              <td class="num">${formatMoney(cogs)}</td>
-              <td class="num" style="color:#16a34a;">${formatMoney(profit)}</td>
-              <td class="num">${pct}%</td>
-              <td><span class="badge-status ${Number(pct) < 35 ? 'healthy' : 'warning'}">${Number(pct) < 35 ? 'HIGH PROFIT' : 'ON TARGET'}</span></td>
-            </tr>
-          `;
-        });
-        tbody.innerHTML = html;
-        return;
-      }
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No recipe ingredients configured. Build recipes in Back Office > Recipes.</td></tr>';
-    }
-
-    // --- 10. EXPIRING BATCHES ---
-    function renderExpiringItems() {
-      const tbody = document.getElementById('expiring-tbody');
-      if (!tbody) return;
-      if (currentAgg.expiringBatches && currentAgg.expiringBatches.length > 0) {
-        let html = '';
-        currentAgg.expiringBatches.forEach(b => {
-          const exp = b.expiryDate ? new Date(b.expiryDate) : null;
-          let daysLeft = '-';
-          let statusCls = 'healthy';
-          let statusLabel = 'GOOD';
-          if (exp) {
-            const diff = Math.ceil((exp - new Date()) / (1000 * 60 * 60 * 24));
-            daysLeft = `${diff} days`;
-            if (diff <= 0) { statusCls = 'danger'; statusLabel = 'EXPIRED'; }
-            else if (diff <= 7) { statusCls = 'warning'; statusLabel = 'EXPIRING SOON'; }
-          }
-          html += `
-            <tr>
-              <td><code>${b.batchNumber || 'LOT'}</code></td>
-              <td><strong>${b.name || 'Item'}</strong></td>
-              <td>${b.batchDate ? b.batchDate.split('T')[0] : '-'}</td>
-              <td>${b.expiryDate ? b.expiryDate.split('T')[0] : '-'}</td>
-              <td class="num">${b.stockQuantity ?? 0}</td>
-              <td class="num">${daysLeft}</td>
-              <td><span class="badge-status ${statusCls}">${statusLabel}</span></td>
-            </tr>
-          `;
-        });
-        tbody.innerHTML = html;
-        return;
-      }
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No perishable batch lot items expiring.</td></tr>';
-    }
-
-    // --- 11. WASTE & LOSS ---
-    function renderWasteLoss() {
-      const tbody = document.getElementById('waste-tbody');
-      if (!tbody) return;
-      if (currentAgg.wasteLossSummary && currentAgg.wasteLossSummary.length > 0) {
-        let html = '';
-        currentAgg.wasteLossSummary.forEach(w => {
-          html += `
-            <tr>
-              <td>${w.date || w.timestamp || '-'}</td>
-              <td><strong>${w.name || w.item || 'Item'}</strong></td>
-              <td class="num">${w.quantity || w.qty || 1}</td>
-              <td>${w.reason || 'Waste'}</td>
-              <td>${w.staff || w.employee || 'Staff'}</td>
-              <td class="num" style="color:#dc2626;">${formatMoney(w.cost || w.amount || 0)}</td>
-            </tr>
-          `;
-        });
-        tbody.innerHTML = html;
-        return;
-      }
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No waste or spoilage records logged.</td></tr>';
-    }
-
-    // --- 12. CHECKS REPLICA ---
-    let mockChecks = [];
-
-    function renderChecksReplica() {
-      const tbody = document.getElementById('checks-list-tbody');
-      if (!tbody) return;
-      if (currentAgg.recentChecks && currentAgg.recentChecks.length > 0) {
-        mockChecks = currentAgg.recentChecks.map(c => ({
-          id: c.id || '1000',
-          time: c.time ? new Date(c.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '12:00',
-          table: c.table || 'Takeout',
-          cashier: c.cashier || 'Cashier',
-          total: Number(c.total || 0),
-          items: (c.items || []).map(it => ({
-            name: it.name || 'Item',
-            qty: Number(it.qty || 1),
-            price: Number(it.price || 0)
-          })),
-          sub: Number(c.subtotal || c.total || 0),
-          tax: Number(c.tax || 0),
-          tip: Number(c.tip || 0),
-          tender: c.paymentMethod ? c.paymentMethod.toUpperCase() : 'PAID'
-        }));
-
-        let html = '';
-        mockChecks.forEach(c => {
-          html += `
-            <tr style="cursor:pointer;" onclick="selectReceipt('${c.id}')">
-              <td><strong>#${c.id}</strong></td>
-              <td>${c.time}</td>
-              <td>${c.table}</td>
-              <td>${c.cashier}</td>
-              <td class="num">${formatMoney(c.total)}</td>
-              <td><span class="badge-status healthy">PAID</span></td>
-            </tr>
-          `;
-        });
-        tbody.innerHTML = html;
-        selectReceipt(mockChecks[0].id);
-        return;
-      }
-
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No checks found for this date.</td></tr>';
-      const rcptStore = document.getElementById('rcpt-store');
-      const rcptMeta = document.getElementById('rcpt-meta');
-      const rcptItems = document.getElementById('rcpt-items');
-      const rcptSub = document.getElementById('rcpt-subtotal');
-      const rcptTax = document.getElementById('rcpt-tax');
-      const rcptTips = document.getElementById('rcpt-tips');
-      const rcptTotal = document.getElementById('rcpt-total');
-      const rcptTender = document.getElementById('rcpt-tender');
-
-      if (rcptStore) rcptStore.innerText = (activeStore?.name || 'FLEXITAP POS').toUpperCase();
-      if (rcptMeta) rcptMeta.innerText = 'No transaction selected';
-      if (rcptItems) rcptItems.innerHTML = '<tr><td colspan="2" style="text-align:center; padding: 20px; color: #64748b;">No items</td></tr>';
-      if (rcptSub) rcptSub.innerText = formatMoney(0);
-      if (rcptTax) rcptTax.innerText = formatMoney(0);
-      if (rcptTips) rcptTips.innerText = formatMoney(0);
-      if (rcptTotal) rcptTotal.innerText = formatMoney(0);
-      if (rcptTender) rcptTender.innerText = 'NO TRANSACTION';
-    }
-
-    function selectReceipt(id) {
-      const c = mockChecks.find(item => item.id == id) || mockChecks[0];
-      if (!c) return;
-      const rcptStore = document.getElementById('rcpt-store');
-      const rcptMeta = document.getElementById('rcpt-meta');
-      const rcptDate = document.getElementById('rcpt-date');
-      const rcptItems = document.getElementById('rcpt-items');
-      const rcptSub = document.getElementById('rcpt-subtotal');
-      const rcptTax = document.getElementById('rcpt-tax');
-      const rcptTips = document.getElementById('rcpt-tips');
-      const rcptTotal = document.getElementById('rcpt-total');
-      const rcptTender = document.getElementById('rcpt-tender');
-
-      if (rcptStore) rcptStore.innerText = (activeStore?.name || 'FLEXITAP POS').toUpperCase();
-      if (rcptMeta) rcptMeta.innerText = `CHECK #${c.id} • ${c.table} • ${c.cashier}`;
-      if (rcptDate) rcptDate.innerText = c.time || '';
-      
-      let itemRows = '';
-      (c.items || []).forEach(i => {
-        itemRows += `<tr><td>${i.qty}x ${i.name}</td><td style="text-align:right;">${formatMoney(i.price * i.qty)}</td></tr>`;
-      });
-      if (rcptItems) rcptItems.innerHTML = itemRows;
-      if (rcptSub) rcptSub.innerText = formatMoney(c.sub);
-      if (rcptTax) rcptTax.innerText = formatMoney(c.tax);
-      if (rcptTips) rcptTips.innerText = formatMoney(c.tip);
-      if (rcptTotal) rcptTotal.innerText = formatMoney(c.total + c.tip);
-      if (rcptTender) rcptTender.innerText = `SETTLED VIA ${c.tender}`;
-    }
-
-    // --- 13. EXCEPTIONS AUDIT ---
-    function renderExceptionsAudit() {
-      const tbody = document.getElementById('exceptions-tbody');
-      if (!tbody) return;
-      if (currentAgg.auditExceptions && currentAgg.auditExceptions.length > 0) {
-        let html = '';
-        currentAgg.auditExceptions.forEach(e => {
-          const type = e.exceptionType || 'EXCEPTION';
-          const isVoid = type.toLowerCase().includes('void') || type.toLowerCase().includes('refund');
-          html += `
-            <tr>
-              <td><code>${e.id ? e.id.substring(0, 8) : 'EXC'}</code></td>
-              <td>${e.timestamp ? new Date(e.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
-              <td><span class="badge-status ${isVoid ? 'danger' : 'warning'}">${type.toUpperCase()}</span></td>
-              <td>${e.cashierName || 'Staff'}</td>
-              <td>${e.managerName || 'PIN Approved'}</td>
-              <td class="num">${formatMoney(e.financialImpact || 0)}</td>
-              <td>${e.auditReason || 'Manager override'}</td>
-            </tr>
-          `;
-        });
-        tbody.innerHTML = html;
-        return;
-      }
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No void or refund exceptions recorded for this period. Clean audit.</td></tr>';
-    }
-
-    // --- 14. ACTIVITY CLICKSTREAM ---
-    function renderActivityLog() {
-      const tbody = document.getElementById('activity-tbody');
-      if (!tbody) return;
-      if (currentAgg.activityClickstream && currentAgg.activityClickstream.length > 0) {
-        let html = '';
-        currentAgg.activityClickstream.forEach(a => {
-          html += `
-            <tr>
-              <td>${a.timestamp ? new Date(a.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '-'}</td>
-              <td>${a.user_name || 'Staff'}</td>
-              <td>${a.action_type || 'EVENT'}</td>
-              <td>${a.module_category || 'POS'}</td>
-              <td>Terminal</td>
-              <td>${a.description || '-'}</td>
-            </tr>
-          `;
-        });
-        tbody.innerHTML = html;
-        return;
-      }
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No security or clickstream events recorded for this period.</td></tr>';
-    }
-
-    // --- 15. CUSTOMER CRM ---
-    function renderCustomerCrm() {
-      const tbody = document.getElementById('customer-crm-tbody');
-      if (!tbody) return;
-      if (currentAgg.customersCrm && currentAgg.customersCrm.length > 0) {
-        let html = '';
-        currentAgg.customersCrm.forEach(c => {
-          const bal = Number(c.outstanding_balance || 0);
-          const pts = Number(c.loyalty_points || 0);
-          html += `
-            <tr>
-              <td><strong>${c.name || 'Valued Customer'}</strong></td>
-              <td>${c.phone || '-'}</td>
-              <td><span class="badge-status ${pts > 1000 ? 'star' : (pts > 500 ? 'info' : 'healthy')}">${pts > 1000 ? 'VIP GOLD' : (pts > 500 ? 'VIP SILVER' : 'MEMBER')}</span></td>
-              <td class="num">1</td>
-              <td>${new Date().toISOString().split('T')[0]}</td>
-              <td class="num">${formatMoney(pts * 10)}</td>
-              <td class="num">${pts}</td>
-              <td class="num" style="${bal > 0 ? 'color:#dc2626; font-weight:700;' : ''}">${formatMoney(bal)}</td>
-            </tr>
-          `;
-        });
-        tbody.innerHTML = html;
-        return;
-      }
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 40px; color: var(--text-muted);">No customer profiles found. Add customers at checkout to view CRM history.</td></tr>';
-    }
-
-    // --- 16. AR HOUSE ACCOUNTS ---
-    function renderArLedger() {
-      const tbody = document.getElementById('ar-tbody');
-      if (!tbody) return;
-      if (currentAgg.arLedgerSummary && currentAgg.arLedgerSummary.length > 0) {
-        let html = '';
-        currentAgg.arLedgerSummary.forEach(a => {
-          const lim = Number(a.creditLimit || a.limit || 0);
-          const debt = Number(a.outstandingBalance || a.balance || 0);
-          const util = lim > 0 ? ((debt / lim) * 100).toFixed(1) : '0.0';
-          html += `
-            <tr>
-              <td><strong>${a.name || 'Account'}</strong></td>
-              <td>${a.phone || '-'}</td>
-              <td class="num">${formatMoney(lim)}</td>
-              <td class="num" style="${debt > 0 ? 'color:#dc2626; font-weight:700;' : ''}">${formatMoney(debt)}</td>
-              <td class="num">${util}%</td>
-              <td>${a.lastPaymentDate || '-'}</td>
-              <td><span class="badge-status ${debt > lim && lim > 0 ? 'danger' : 'healthy'}">${debt > lim && lim > 0 ? 'OVER LIMIT' : 'HEALTHY'}</span></td>
-            </tr>
-          `;
-        });
-        tbody.innerHTML = html;
-        return;
-      }
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No active AR house accounts with outstanding balances.</td></tr>';
-    }
-
-    // --- 17. LOYALTY ---
-    function renderLoyaltyReport() {
-      const tbody = document.getElementById('loyalty-tbody');
-      if (!tbody) return;
-      if (currentAgg.loyaltySummary && (currentAgg.loyaltySummary.totalCustomers > 0 || (currentAgg.loyaltySummary.rewards && currentAgg.loyaltySummary.rewards.length > 0))) {
-        let html = '';
-        const rewards = currentAgg.loyaltySummary.rewards || [];
-        if (rewards.length > 0) {
-          rewards.forEach(r => {
-            html += `
-              <tr>
-                <td><span class="badge-status star">${(r.tier || r.name || 'TIER').toUpperCase()}</span></td>
-                <td class="num">${currentAgg.loyaltySummary.activeMembers || 0}</td>
-                <td class="num">${currentAgg.loyaltySummary.totalPoints || 0}</td>
-                <td class="num">-</td>
-                <td class="num">${r.pointsRequired || r.points || '-'}</td>
-                <td>${r.rewardBenefit || r.benefit || 'Points redemption'}</td>
-              </tr>
-            `;
-          });
-        } else {
-          html = `
-            <tr>
-              <td><span class="badge-status info">LOYALTY ACTIVE</span></td>
-              <td class="num">${currentAgg.loyaltySummary.totalCustomers || 0}</td>
-              <td class="num">${currentAgg.loyaltySummary.totalPoints || 0}</td>
-              <td class="num">-</td>
-              <td class="num">${currentAgg.loyaltySummary.activeMembers || 0} members</td>
-              <td>Standard 1 point per spend unit</td>
-            </tr>
-          `;
-        }
-        tbody.innerHTML = html;
-        return;
-      }
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No loyalty points or rewards activity recorded for this period.</td></tr>';
-    }
-
-    // --- 18. GIFT CARDS ---
-    function renderGiftCards() {
-      const tbody = document.getElementById('gift-cards-tbody');
-      if (!tbody) return;
-      if (currentAgg.giftCardsSummary && currentAgg.giftCardsSummary.length > 0) {
-        let html = '';
-        currentAgg.giftCardsSummary.forEach(g => {
-          const init = Number(g.initial_amount || g.initialValue || g.amount || 0);
-          const bal = Number(g.current_balance || g.balance || 0);
-          const redeemed = init - bal;
-          html += `
-            <tr>
-              <td><code>${g.code || g.number || 'GC'}</code></td>
-              <td>${g.customer_name || g.recipient || 'Customer'}</td>
-              <td>${g.created_at ? g.created_at.split('T')[0] : (g.issueDate || '-')}</td>
-              <td class="num">${formatMoney(init)}</td>
-              <td class="num">${formatMoney(redeemed)}</td>
-              <td class="num" style="color:#16a34a; font-weight:700;">${formatMoney(bal)}</td>
-              <td><span class="badge-status ${bal > 0 ? 'healthy' : 'info'}">${bal > 0 ? 'ACTIVE' : 'DEPLETED'}</span></td>
-            </tr>
-          `;
-        });
-        tbody.innerHTML = html;
-        return;
-      }
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">No gift cards or vouchers issued on file.</td></tr>';
-    }
-
-    // --- CSV EXPORT ENGINE ---
-    function exportActiveTableToCSV() {
-      const activeTab = document.querySelector('.tab-content.active');
-      if (!activeTab) return;
-
-      const table = activeTab.querySelector('.data-table');
-      if (!table) {
-        alert('No data table found in this report.');
-        return;
-      }
-
-      let csv = [];
-      const rows = table.querySelectorAll('tr');
-      rows.forEach(row => {
-        if (row.style.display === 'none') return;
-        let cols = [];
-        row.querySelectorAll('th, td').forEach(col => {
-          let text = col.innerText.replace(/"/g, '""').trim();
-          cols.push(`"${text}"`);
-        });
-        csv.push(cols.join(','));
-      });
-
-      const csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      const dateStr = document.getElementById('start-date')?.value || 'export';
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `FlexiTap_${activeReportId}_${dateStr}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    // --- PDF EXPORT ENGINE ---
-    function exportReportToPDF() {
-      const area = document.getElementById('report-export-area');
-      const filename = `FlexiTap_${activeReportId}_${document.getElementById('start-date')?.value || 'report'}.pdf`;
-
-      html2pdf().set({
-        margin: [0.3, 0.3],
-        filename: filename,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#f8fafc' },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
-      }).from(area).save();
-    }
-
-    // --- AUTHENTICATION & SESSION HANDLING ---
-    async function loadApp(user) {
-      if (!user) return;
-      activeUser = user;
-
-      // 1. Immediately reveal the workspace so login UI doesn't hang
-      const loginView = document.getElementById('login-view');
-      const appLayout = document.getElementById('app-layout');
-      if (loginView) loginView.style.display = 'none';
-      if (appLayout) appLayout.style.display = 'flex';
-
-      let store = null;
-      let profile = null;
-
-      try {
-        const { data: storeData } = await supabaseClient
-          .from('stores')
-          .select('*')
-          .or(`owner_id.eq.${user.id},user_id.eq.${user.id}`)
-          .maybeSingle();
-        store = storeData;
-      } catch (err) {
-        console.warn('Could not load store data:', err);
-      }
-
-      try {
-        const { data: profileData } = await supabaseClient
-          .from('profiles')
-          .select('subscription_tier, role, store_name')
-          .eq('id', user.id)
-          .maybeSingle();
-        profile = profileData;
-      } catch (err) {
-        console.warn('Could not load profile data:', err);
-      }
-
-      activeStore = store || {
-        id: user.id,
-        name: profile?.store_name || 'My Store',
-        currency_symbol: '$'
-      };
-
-      const storeNameDisplay = document.getElementById('store-name-display');
-      const storeTierDisplay = document.getElementById('store-tier-display');
-      if (storeNameDisplay) storeNameDisplay.innerText = activeStore.name || 'My Store';
-      if (storeTierDisplay) storeTierDisplay.innerText = (profile?.subscription_tier || 'Pro').toUpperCase() + ' EDITION';
-
-      // 2. Safe setup for Remote Access without blocking the app[cite: 1]
-      try {
-        setupRemoteAccessGate(profile?.subscription_tier);[cite: 1]
-        maybeAutoOpenSupportCode();[cite: 1]
-      } catch (err) {
-        console.warn('Remote access setup error:', err);
-      }
-
-      const today = getLocalDateString();
-      const startDateInput = document.getElementById('start-date');
-      const endDateInput = document.getElementById('end-date');
-      if (startDateInput && !startDateInput.value) startDateInput.value = '2026-10-06';
-      if (endDateInput && !endDateInput.value) endDateInput.value = today;
-
-      try {
-        initReportRelay();
-      } catch (e) {
-        console.warn('Relay init skipped:', e);
-      }
-
-      try {
-        requestOnDemandReport();
-      } catch (e) {
-        console.warn('On-demand report query skipped:', e);
-      }
-
-      try {
-        initMerchantSupportChat();
-      } catch (e) {
-        console.warn('Support chat skipped:', e);
-      }
-    }
-
-    document.getElementById('portal-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('p-email').value.trim();
-      const password = document.getElementById('p-password').value;
-      const btn = document.getElementById('p-btn');
-      const err = document.getElementById('p-err');
-
-      if (btn) btn.innerText = 'Signing In...';
-      if (err) err.innerText = '';
-
-      try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-        if (error) {
-          if (err) err.innerText = error.message;
-          if (btn) btn.innerText = 'Sign In to Reports';
-        } else if (data?.user) {
-          await loadApp(data.user);
-        }
-      } catch (signInErr) {
-        if (err) err.innerText = signInErr.message || 'Login failed';
-        if (btn) btn.innerText = 'Sign In to Reports';
-      }
-    });
-
-    async function logout() {
-      try {
-        await supabaseClient.auth.signOut();
-      } catch (_) {}
-      const appLayout = document.getElementById('app-layout');
-      const loginView = document.getElementById('login-view');
-      const passwordInput = document.getElementById('p-password');
-      const btn = document.getElementById('p-btn');
-
-      if (appLayout) appLayout.style.display = 'none';
-      if (passwordInput) passwordInput.value = '';
-      if (btn) btn.innerText = 'Sign In to Reports';
-      if (loginView) loginView.style.display = 'flex';
-    }
-
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-      if (session?.user && (!activeUser || activeUser.id !== session.user.id)) {
-        loadApp(session.user);
-      }
-    });
-
-    // --- SUPPORT CHAT ---
-    function toggleMerchantSupport() {
-      const p = document.getElementById('merchant-chat-panel');
-      if (p) {
-        p.style.display = (p.style.display === 'none' || p.style.display === '') ? 'flex' : 'none';
-      }
-    }
-
-    async function initMerchantSupportChat() {
-      if (currentSupportSession || !activeUser) return;
-      try {
-        const { data: existing } = await supabaseClient
-          .from('support_sessions')
-          .select('*')
-          .eq('merchant_user_id', activeUser.id)
-          .eq('status', 'open')
-          .order('created_at', { ascending: false })
-          .limit(1);
-
-        let session = existing && existing.length > 0 ? existing[0] : null;
-
-        if (!session) {
-          const { data: created } = await supabaseClient
-            .from('support_sessions')
-            .insert([{
-              store_id: activeStore.id,
-              store_name: activeStore.name || 'My Store',
-              merchant_user_id: activeUser.id,
-              merchant_email: activeUser.email
-            }])
-            .select()
-            .single();
-          session = created;
-        }
-
-        currentSupportSession = session;
-        if (!session) return;
-
-        const { data: msgs } = await supabaseClient
-          .from('support_messages')
-          .select('*')
-          .eq('session_id', session.id)
-          .order('created_at', { ascending: true });
-
-        const box = document.getElementById('m-chat-messages');
-        if (box && msgs && msgs.length > 0) {
-          box.innerHTML = '';
-          msgs.forEach(m => renderSupportBubble(m.sender_role, m.message, m.created_at));
-        }
-
-        if (currentChatChannel) {
-          try { supabaseClient.removeChannel(currentChatChannel); } catch (_) {}
-          currentChatChannel = null;
-        }
-
-        currentChatChannel = supabaseClient.channel(`chat-${session.id}`);
-        currentChatChannel.on('postgres_changes', {
-          event: 'INSERT', schema: 'public', table: 'support_messages', filter: `session_id=eq.${session.id}`
-        }, (payload) => {
-          if (payload.new && payload.new.sender_role === 'agent') {
-            renderSupportBubble('agent', payload.new.message, payload.new.created_at);
-          }
-        }).subscribe();
-      } catch (e) {
-        console.warn('Support chat initialization note:', e);
-      }
-    }
-
-    function renderSupportBubble(role, message, timestamp) {
-      const box = document.getElementById('m-chat-messages');
-      if (!box) return;
-      const timeStr = timestamp ? new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
-      const div = document.createElement('div');
-      div.className = `bubble ${role === 'merchant' ? 'bubble-merchant' : 'bubble-agent'}`;
-      div.innerHTML = `${message} <div style="font-size:9.5px; opacity:0.6; margin-top:3px; text-align:right;">${role === 'merchant' ? 'You' : 'Tech Support'} • ${timeStr}</div>`;
-      box.appendChild(div);
-      box.scrollTop = box.scrollHeight;
-    }
-
-    async function sendMerchantMessage(event) {
-      event.preventDefault();
-      const input = document.getElementById('m-chat-input');
-      if (!input) return;
-      const text = input.value.trim();
-      if (!text || !currentSupportSession) return;
-
-      input.value = '';
-      renderSupportBubble('merchant', text, new Date());
-
-      try {
-        await supabaseClient.from('support_messages').insert([{
-          session_id: currentSupportSession.id,
-          sender_id: activeUser.id,
-          sender_role: 'merchant',
-          message: text
-        }]);
-      } catch (err) {
-        console.error('Error sending support message:', err);
-      }
-    }
-  </script>
+            <span class="status-badge">Auditor Verified</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Starting Cash Bank</div><div style="font-size: 18px; font-weight: 700;" id="sum-bank">₱0.00</div></div>
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Cash Sales Tendered</div><div style="font-size: 18px; font-weight: 700; color: #16a34a;" id="sum-cash-sales">₱0.00</div></div>
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Paid-In (Float Adds)</div><div style="font-size: 18px; font-weight: 700; color: #2563eb;" id="sum-paid-in">+₱0.00</div></div>
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Paid-Out (Safe Drops / Petty)</div><div style="font-size: 18px; font-weight: 700; color: #dc2626;" id="sum-paid-out">-₱0.00</div></div>
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Expected Drawer Cash</div><div style="font-size: 20px; font-weight: 800; color: var(--primary);" id="sum-expected-cash">₱0.00</div></div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header-row">
+            <div class="panel-header-title">
+              <span style="color:#d97706; font-size: 20px;">🛡️</span>
+              <span>Loss Prevention & Exception Summary</span>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Voids Count</div><div style="font-size: 18px; font-weight: 700;" id="sum-voids-count">0</div></div>
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Voids Amount</div><div style="font-size: 18px; font-weight: 700; color: #dc2626;" id="sum-voids-amount">₱0.00</div></div>
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Returns / Refunds Count</div><div style="font-size: 18px; font-weight: 700;" id="sum-refunds-count">0</div></div>
+            <div><div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Returns / Refunds Amount</div><div style="font-size: 18px; font-weight: 700; color: #dc2626;" id="sum-refunds-amount">₱0.00</div></div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
+          <div class="panel-card">
+            <div class="panel-header-row">
+              <div class="panel-header-title">Financial Accountability</div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table" id="table-summary-accountability">
+                <tbody id="summary-accountability-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-header-row">
+              <div class="panel-header-title">Settlement Media Breakdown</div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table" id="table-summary-media">
+                <thead>
+                  <tr><th>Payment Media</th><th class="th-num">Sale Amount</th><th class="th-num">Tips</th><th class="th-num">Total Tendered</th></tr>
+                </thead>
+                <tbody id="summary-media-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 2: SALES REPORT (Z-READ) -->
+      <div id="report-sales-report" class="tab-content">
+        <div class="approval-bar">
+          <div class="approval-meta">
+            <div style="width: 38px; height: 38px; border-radius: 50%; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #2563eb; font-size: 18px;">📊</div>
+            <div>
+              <div style="font-weight: 800; font-size: 15px; color: #0f172a;" id="zread-store-name">FlexiTap POS</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Terminal: Main Register | Status: <span id="zread-status-label" style="font-weight: 700; color: #16a34a;">Open Audit</span></div>
+            </div>
+          </div>
+          <div class="approval-inputs">
+            <input type="text" id="zread-cashier-init" placeholder="Cashier Init." />
+            <input type="text" id="zread-manager-init" placeholder="Manager Init." />
+            <button class="btn-approve" onclick="toggleShiftApproval()">
+              <span id="zread-approve-icon">🔒</span> <span id="zread-approve-text">APPROVE SHIFT</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="view-toggle-bar">
+          <button class="view-toggle-btn active" id="btn-toggle-graphical" onclick="switchZReadView('graphical')">📊 GRAPHICAL AUDIT VIEW</button>
+          <button class="view-toggle-btn" id="btn-toggle-raw" onclick="switchZReadView('raw')">🧾 RAW TEXT Z-READING</button>
+        </div>
+
+        <div id="zread-graphical-container">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
+            <div class="panel-card">
+              <div class="panel-header-row"><div class="panel-header-title">Tax Breakdown</div></div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead><tr><th>Tax Name</th><th class="th-num">Taxable Sales</th><th class="th-num">Tax Collected</th></tr></thead>
+                  <tbody id="zread-tax-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-header-row"><div class="panel-header-title">Daily Serving Windows (Dayparts)</div></div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead><tr><th>Daypart</th><th class="th-num">Guests</th><th class="th-num">Net Sales</th><th class="th-num">Avg Check</th></tr></thead>
+                  <tbody id="zread-period-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-header-row"><div class="panel-header-title">Order Type Revenue Distribution</div></div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead><tr><th>Order Type</th><th class="th-num">Checks</th><th class="th-num">Gross</th><th class="th-num">Avg Ticket</th></tr></thead>
+                  <tbody id="zread-order-type-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-header-row"><div class="panel-header-title">Cash Register Balancing</div></div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead><tr><th>Register Category</th><th class="th-num">Recorded</th></tr></thead>
+                  <tbody id="zread-cash-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="zread-raw-container" style="display: none;">
+          <div style="max-width: 500px; margin: 0 auto;">
+            <pre class="receipt-paper" id="raw-zread-paper" style="font-size: 12.5px; line-height: 1.5; white-space: pre-wrap; word-break: break-all;"></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 3: TERMINAL SALES -->
+      <div id="report-terminal-sales" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Hardware Station Terminal Sales & Attribution</div></div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-terminal">
+              <thead>
+                <tr>
+                  <th>Terminal Station</th>
+                  <th>Network Role</th>
+                  <th class="th-num">Transactions</th>
+                  <th class="th-num">Cash Tendered</th>
+                  <th class="th-num">Card / Digital</th>
+                  <th class="th-num">Total Sales</th>
+                  <th class="th-num">% Share</th>
+                </tr>
+              </thead>
+              <tbody id="terminal-sales-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 4: PRODUCT MIX (PMIX) -->
+      <div id="report-product-mix" class="tab-content">
+        <div class="kpi-grid-8" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="kpi-card"><h3>Top Performer</h3><div class="metric" style="color: #d97706;" id="pmix-top-item">-</div><div class="sub-metric">Highest sales velocity</div></div>
+          <div class="kpi-card"><h3>Total Units Sold</h3><div class="metric" style="color: #2563eb;" id="pmix-total-units">0</div><div class="sub-metric">Across all items</div></div>
+          <div class="kpi-card"><h3>Average Item Margin</h3><div class="metric" style="color: #16a34a;" id="pmix-avg-margin">0.0%</div><div class="sub-metric">Food cost gross margin</div></div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Catalog Product Mix & Contribution Matrix</div></div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-pmix">
+              <thead>
+                <tr>
+                  <th>Item Name</th>
+                  <th>Category</th>
+                  <th class="th-num">Qty Sold</th>
+                  <th class="th-num">Unit Price</th>
+                  <th class="th-num">Net Sales</th>
+                  <th class="th-num">Food Cost (COGS)</th>
+                  <th class="th-num">Margin %</th>
+                  <th>Classification</th>
+                </tr>
+              </thead>
+              <tbody id="pmix-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 5: LABOR REPORT & WAGES -->
+      <div id="report-labor-report" class="tab-content">
+        <div class="kpi-grid-8" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="kpi-card"><h3>Total Labor Cost</h3><div class="metric" style="color: #dc2626;" id="labor-total-cost">₱0.00</div><div class="sub-metric">Wages + Overtime</div></div>
+          <div class="kpi-card"><h3>Total Hours Clocked</h3><div class="metric" style="color: #2563eb;" id="labor-total-hours">0.0 hrs</div><div class="sub-metric">Across all shifts</div></div>
+          <div class="kpi-card"><h3>Labor % of Sales</h3><div class="metric" style="color: #16a34a;" id="labor-pct-sales">0.0%</div><div class="sub-metric">Benchmark &lt; 25%</div></div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Employee Timesheets & Wage Allocations</div></div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-labor">
+              <thead>
+                <tr>
+                  <th>Employee Name</th>
+                  <th>Role</th>
+                  <th class="th-num">Reg Hours</th>
+                  <th class="th-num">OT Hours</th>
+                  <th class="th-num">Total Hours</th>
+                  <th class="th-num">Hourly Rate</th>
+                  <th class="th-num">Gross Pay</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="labor-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 6: DISCOUNTS & COMPS -->
+      <div id="report-discounts-report" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Promotions, Coupons & Manager Comps</div></div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-discounts">
+              <thead>
+                <tr>
+                  <th>Discount Rule / Promotion</th>
+                  <th>Type</th>
+                  <th class="th-num">Times Applied</th>
+                  <th class="th-num">Total Markdown</th>
+                  <th>Manager Required</th>
+                  <th>Attribution</th>
+                </tr>
+              </thead>
+              <tbody id="discounts-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 7: DRAWER LEDGER -->
+      <div id="report-drawer-ledger" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Cash Drops, Paid-In Floats & Paid-Out Expenses</div></div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-drawer-ledger">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Type</th>
+                  <th>Cashier / Manager</th>
+                  <th>Reason / Supplier</th>
+                  <th class="th-num">Amount</th>
+                  <th class="th-num">Drawer Balance</th>
+                </tr>
+              </thead>
+              <tbody id="drawer-ledger-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 8: INVENTORY STOCK & PAR LEVELS -->
+      <div id="report-inventory-report" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Stock Counts, Reorder Par Thresholds & Valuation</div></div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-inventory">
+              <thead>
+                <tr>
+                  <th>SKU / Code</th>
+                  <th>Item / Ingredient</th>
+                  <th>Category</th>
+                  <th class="th-num">In Stock</th>
+                  <th>Unit</th>
+                  <th class="th-num">Par Level</th>
+                  <th class="th-num">Unit Cost</th>
+                  <th class="th-num">Total Value</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 9: RECIPE COGS & PROFITABILITY -->
+      <div id="report-recipe-cogs" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Menu Recipe Cost of Goods Sold & Profit Contribution</div></div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-recipe-cogs">
+              <thead>
+                <tr>
+                  <th>Menu Item</th>
+                  <th>Portion Size</th>
+                  <th class="th-num">Retail Price</th>
+                  <th class="th-num">Recipe Cost</th>
+                  <th class="th-num">Gross Margin</th>
+                  <th class="th-num">Food Cost %</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="recipe-cogs-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 10: EXPIRING & BATCH LOTS -->
+      <div id="report-expiring-items" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Batch Lot Numbers & Shelf-Life Expiry Tracker</div></div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-expiring">
+              <thead>
+                <tr>
+                  <th>Batch / Lot #</th>
+                  <th>Item / Ingredient</th>
+                  <th>Manufacture Date</th>
+                  <th>Expiry Date</th>
+                  <th class="th-num">Units Left</th>
+                  <th class="th-num">Days Left</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="expiring-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 11: WASTE & SPOILAGE LOG -->
+      <div id="report-waste-loss" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Recorded Spills, Drops, Burnt Items & Spoilage Write-Offs</div></div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-waste">
+              <thead>
+                <tr>
+                  <th>Date & Time</th>
+                  <th>Item / Ingredient</th>
+                  <th class="th-num">Quantity</th>
+                  <th>Reason</th>
+                  <th>Staff Member</th>
+                  <th class="th-num">Cost Loss</th>
+                </tr>
+              </thead>
+              <tbody id="waste-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 12: CHECKS REPLICA -->
+      <div id="report-checks-replica" class="tab-content">
+        <div class="replica-layout">
+          <div class="panel-card">
+            <div class="panel-header-row"><div class="panel-header-title">Auditor Transaction Receipts</div></div>
+            <div class="table-responsive">
+              <table class="data-table" id="table-checks">
+                <thead>
+                  <tr>
+                    <th>Check #</th>
+                    <th>Time</th>
+                    <th>Table / Type</th>
+                    <th>Cashier</th>
+                    <th class="th-num">Total</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="checks-list-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <div class="receipt-paper" id="paper-receipt">
+              <div class="receipt-header">
+                <div class="receipt-title" id="rcpt-store">FLEXITAP POS</div>
+                <div class="receipt-meta" id="rcpt-address">Official Digital Receipt Copy</div>
+                <div class="receipt-meta" id="rcpt-meta">CHECK #--- • No check selected</div>
+                <div class="receipt-meta" id="rcpt-date">--</div>
+              </div>
+              <table class="receipt-items" id="rcpt-items">
+                <tr><td colspan="2" style="text-align:center; padding: 20px; color: #64748b;">No check selected</td></tr>
+              </table>
+              <table class="receipt-totals">
+                <tr><td>Subtotal:</td><td class="num" id="rcpt-subtotal">₱0.00</td></tr>
+                <tr><td>Tax:</td><td class="num" id="rcpt-tax">₱0.00</td></tr>
+                <tr><td>Tips:</td><td class="num" id="rcpt-tips">₱0.00</td></tr>
+                <tr style="font-weight: 800; font-size: 13.5px;"><td>TOTAL:</td><td class="num" id="rcpt-total">₱0.00</td></tr>
+              </table>
+              <div class="receipt-footer">
+                <div id="rcpt-tender">SETTLED</div>
+                <div>Thank you for dining with us!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 13: EXCEPTIONS AUDIT & LOSS PREVENTION -->
+      <div id="report-exceptions-audit" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Loss Prevention: Voids, Refunds & Drawer Pops</div></div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-exceptions">
+              <thead>
+                <tr>
+                  <th>Event ID</th>
+                  <th>Timestamp</th>
+                  <th>Exception Type</th>
+                  <th>Cashier</th>
+                  <th>Manager Override</th>
+                  <th class="th-num">Amount</th>
+                  <th>Reason Code</th>
+                </tr>
+              </thead>
+              <tbody id="exceptions-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 14: ACTIVITY CLICKSTREAM -->
+      <div id="report-activity-log" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Forensic Clickstream & Security Access Audit</div></div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-activity">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Staff Member</th>
+                  <th>Action / Event</th>
+                  <th>Module</th>
+                  <th>Terminal Station</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody id="activity-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 15: CUSTOMER CRM DIRECTORY -->
+      <div id="report-customer-crm" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Customer CRM Database & Lifetime Spend</div></div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-customer-crm">
+              <thead>
+                <tr>
+                  <th>Customer Name</th>
+                  <th>Phone Number</th>
+                  <th>Tier</th>
+                  <th class="th-num">Total Visits</th>
+                  <th>Last Visit</th>
+                  <th class="th-num">Lifetime Spend</th>
+                  <th class="th-num">Loyalty Points</th>
+                  <th class="th-num">AR Balance</th>
+                </tr>
+              </thead>
+              <tbody id="customer-crm-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 16: AR HOUSE ACCOUNTS -->
+      <div id="report-ar-ledger" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Accounts Receivable Ledger & House Accounts</div></div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-ar">
+              <thead>
+                <tr>
+                  <th>Account Name</th>
+                  <th>Contact Phone</th>
+                  <th class="th-num">Credit Limit</th>
+                  <th class="th-num">Outstanding Debt</th>
+                  <th class="th-num">Utilization</th>
+                  <th>Last Payment</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="ar-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 17: LOYALTY & REWARDS PROGRAM -->
+      <div id="report-loyalty-report" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Loyalty Accruals, Tiers & Redemptions</div></div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-loyalty">
+              <thead>
+                <tr>
+                  <th>Tier Level</th>
+                  <th class="th-num">Members</th>
+                  <th class="th-num">Points Accrued</th>
+                  <th class="th-num">Points Redeemed</th>
+                  <th class="th-num">Active Balance</th>
+                  <th>Reward Benefit</th>
+                </tr>
+              </thead>
+              <tbody id="loyalty-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT 18: GIFT CARDS & VOUCHERS -->
+      <div id="report-gift-cards" class="tab-content">
+        <div class="panel-card">
+          <div class="panel-header-row"><div class="panel-header-title">Issued Gift Cards & Outstanding Voucher Liability</div></div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-gift-cards">
+              <thead>
+                <tr>
+                  <th>Card Code / Number</th>
+                  <th>Recipient / Owner</th>
+                  <th>Issue Date</th>
+                  <th class="th-num">Initial Value</th>
+                  <th class="th-num">Total Redeemed</th>
+                  <th class="th-num">Remaining Balance</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="gift-cards-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REMOTE ACCESS (Ad-hoc support session, Pro-gated)[cite: 1] -->
+      <div id="report-remote-access" class="tab-content">
+        <!-- Shown if the logged-in merchant is NOT on a paying tier[cite: 1] -->
+        <div id="remote-access-locked" class="panel-card" style="display:none; text-align:center; padding: 40px;">
+          <div style="font-size: 40px; margin-bottom: 12px;">🔒</div>
+          <h3 style="margin-bottom: 8px;">Remote Support is a Pro feature</h3>
+          <p style="color: var(--text-muted); font-size: 13.5px;">
+            Upgrade your plan to let our support team connect to this device during a support call.
+          </p>
+        </div>
+
+        <!-- Shown to Pro merchants[cite: 1] -->
+        <div id="remote-access-unlocked" style="display:none;">
+          <div class="panel-card">
+            <div class="panel-header-row">
+              <div class="panel-header-title">
+                <span style="font-size: 20px;">🛠️</span>
+                <span>Ad-hoc Remote Support Session</span>
+              </div>
+            </div>
+
+            <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 18px;">
+              During a support call,
