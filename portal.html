@@ -187,12 +187,7 @@
   <div id="login-view">
     <div class="login-box">
       <div class="login-header-logo">
-        <svg class="brand-logo-svg" style="width: 36px; height: 36px;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <polygon points="50,22 70,22 25,67 5,67" fill="#1e88e5" />
-          <polygon points="50,52 70,52 35,87 15,87" fill="#29b6f6" />
-          <polygon points="35,67 55,67 70,52 50,52" fill="#4fc3f7" />
-          <polygon points="35,67 55,67 70,87 50,87" fill="#0288d1" />
-        </svg>
+        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 36px; height: 36px; border-radius: 50%; object-fit: contain;" />
         <h2 style="font-size: 22px; font-weight: 800; color: #0f172a;">FlexiTap Back Office</h2>
       </div>
       <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 24px;">Sign in to view real-time store reports.</p>
@@ -213,12 +208,7 @@
     <!-- SIDEBAR NAVIGATION -->
     <aside class="sidebar" data-html2canvas-ignore>
       <div class="logo-container">
-        <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <polygon points="50,22 70,22 25,67 5,67" fill="#1e88e5" />
-          <polygon points="50,52 70,52 35,87 15,87" fill="#29b6f6" />
-          <polygon points="35,67 55,67 70,52 50,52" fill="#4fc3f7" />
-          <polygon points="35,67 55,67 70,87 50,87" fill="#0288d1" />
-        </svg>
+        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 28px; height: 28px; border-radius: 50%; object-fit: contain;" />
         <span>Reports Hub</span>
       </div>
 
@@ -1099,13 +1089,23 @@
         'customer-crm': ['Customer Directory', 'Customer CRM database, profiles, visit frequency, and lifetime spend.'],
         'ar-ledger': ['AR House Accounts', 'Accounts Receivable ledger tracking house accounts, open credit, and payments.'],
         'loyalty-report': ['Loyalty & Rewards', 'Accrued loyalty points, member tiers, and redeemed rewards impact.'],
-        'gift-cards': ['Gift Cards & Vouchers', 'Issued vouchers, card activations, remaining balances, and store liability.']
+        'gift-cards': ['Gift Cards & Vouchers', 'Issued vouchers, card activations, remaining balances, and store liability.'],
+        'remote-access': ['Remote Access & Support', 'Live technician assistance, diagnostic sessions, and screen share.']
       };
 
       if (titleMap[reportId]) {
-        document.getElementById('active-report-title').innerHTML = `${titleMap[reportId][0]} <span class="status-badge">● Live Synced</span>`;
+        const badge = reportId === 'remote-access' ? '● Tech Support' : '● Live Synced';
+        document.getElementById('active-report-title').innerHTML = `${titleMap[reportId][0]} <span class="status-badge">${badge}</span>`;
         document.getElementById('active-report-subtitle').innerText = titleMap[reportId][1];
       }
+
+      // Hide reporting controls & audit notice banner for non-reporting tools like Remote Access
+      const isRemoteAccess = reportId === 'remote-access';
+      const toolbarGroup = document.querySelector('.toolbar-group');
+      if (toolbarGroup) toolbarGroup.style.display = isRemoteAccess ? 'none' : 'flex';
+
+      const auditBanner = document.getElementById('global-audit-banner');
+      if (auditBanner) auditBanner.style.display = isRemoteAccess ? 'none' : 'flex';
     }
 
     function filterReportNav() {
