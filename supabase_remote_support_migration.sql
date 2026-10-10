@@ -148,7 +148,7 @@ begin
   set rustdesk_id = trim(p_rustdesk_id),
       status = 'client_ready',
       updated_at = now()
-  where code = upper(trim(p_code)) and status in ('pending', 'client_ready');
+  where (code = upper(trim(p_code)) or id::text = trim(p_code)) and status in ('pending', 'client_ready');
   return found;
 end;
 $func$;
@@ -160,7 +160,7 @@ begin
   return query
   select s.id, s.status, s.rustdesk_id
   from public.remote_support_sessions s
-  where s.code = upper(trim(p_code))
+  where (s.code = upper(trim(p_code)) or s.id::text = trim(p_code))
   order by s.created_at desc limit 1;
 end;
 $func$;

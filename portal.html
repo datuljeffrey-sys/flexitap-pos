@@ -961,6 +961,7 @@
                 id="support-code-input"
                 placeholder="Enter code e.g. 6MGPA7"
                 maxlength="6"
+                onkeydown="if(event.key==='Enter') checkSupportCode()"
                 style="flex:1; padding: 12px 14px; border: 1px solid var(--card-border); border-radius: 8px; font-size: 15px; text-transform: uppercase; letter-spacing: 2px; font-family: 'JetBrains Mono', monospace;"
               />
               <button class="btn-action btn-primary-action" onclick="checkSupportCode()" id="support-code-btn">
@@ -1021,6 +1022,7 @@
         storage: safeStorage
       }
     });
+    window.supabaseClient = supabaseClient;
 
     let activeStore = null;
     let activeUser = null;
@@ -2306,7 +2308,8 @@
       }
 
       try {
-        const client = window.supabase || supabaseClient;
+        const client = supabaseClient;
+        console.log('Verifying support session code:', code);
         const { data: rpcData, error: rpcError } = await client.rpc('get_support_session_status', { p_code: code });
 
         let sessionValid = false;
@@ -2318,31 +2321,39 @@
             sessionValid = true;
             if (row.id) sessionId = row.id;
           }
+        } else if (rpcError) {
+          console.warn('get_support_session_status RPC returned error:', rpcError);
         }
 
         // Fallback to direct table check
         if (!sessionValid) {
-          const { data: tblData } = await client
-            .from('remote_support_sessions')
-            .select('*')
-            .eq('code', code)
-            .maybeSingle();
-          if (tblData && tblData.status !== 'ended' && tblData.status !== 'expired') {
-            sessionValid = true;
-            sessionId = tblData.id;
+          try {
+            const { data: tblData, error: tblError } = await client
+              .from('remote_support_sessions')
+              .select('*')
+              .eq('code', code)
+              .maybeSingle();
+            if (!tblError && tblData && tblData.status !== 'ended' && tblData.status !== 'expired') {
+              sessionValid = true;
+              sessionId = tblData.id;
+            }
+          } catch (tblErr) {
+            console.warn('Fallback direct table check failed:', tblErr);
           }
         }
 
         if (!sessionValid) {
           if (statusDiv) {
-            statusDiv.innerHTML = '<span style="color: #dc2626; font-size: 13px; font-weight: 600;">❌ Code invalid or expired. Please verify with your support agent.</span>';
+            const msg = rpcError ? `❌ Verification failed: ${rpcError.message}` : '❌ Code invalid or expired. Please verify with your support agent.';
+            statusDiv.innerHTML = `<span style="color: #dc2626; font-size: 13px; font-weight: 600;">${msg}</span>`;
           }
         } else {
-          allowSupportConnect(sessionId);
+          allowSupportConnect(sessionId, code);
         }
       } catch (err) {
+        console.error('Support code verification error:', err);
         if (statusDiv) {
-          statusDiv.innerHTML = '<span style="color: #dc2626; font-size: 13px; font-weight: 600;">❌ Network error verifying support code.</span>';
+          statusDiv.innerHTML = `<span style="color: #dc2626; font-size: 13px; font-weight: 600;">❌ ${err?.message ? ('Error: ' + err.message) : 'Network error verifying support code.'}</span>`;
         }
       } finally {
         if (btn) {
@@ -2387,7 +2398,8 @@
       };
     }
 
-    function allowSupportConnect(sessionId) {
+    function allowSupportConnect(sessionId, sessionCode) {
+      const code = sessionCode || sessionId;
       const status = document.getElementById('support-code-status');
       if (!status) return;
       const dl = detectPlatformDownload();
@@ -2433,9 +2445,10 @@
               id="rustdesk-id-input"
               placeholder="e.g. 793024246"
               inputmode="numeric"
+              onkeydown="if(event.key==='Enter') submitRustdeskId('${sessionId}', '${code}')"
               style="flex:1; padding:10px 12px; border:1px solid #cbd5e1; background:#ffffff; color:#0f172a; border-radius:6px; font-size:14px; text-align:center; outline:none;"
             />
-            <button class="btn-action btn-primary-action" onclick="submitRustdeskId('${sessionId}')" id="rustdesk-id-btn" style="padding:10px 16px;">
+            <button class="btn-action btn-primary-action" onclick="submitRustdeskId('${sessionId}', '${code}')" id="rustdesk-id-btn" style="padding:10px 16px;">
               Share with Agent
             </button>
           </div>
@@ -2443,13 +2456,13 @@
         </div>`;
     }
 
-    async function submitRustdeskId(sessionId) {
+    async function submitRustdeskId(sessionId, sessionCode) {
       const idInput = document.getElementById('rustdesk-id-input');
       const result = document.getElementById('rustdesk-id-result');
       const btn = document.getElementById('rustdesk-id-btn');
 
       const codeInput = document.getElementById('support-code-input') || document.getElementById('remoteAccessPinInput');
-      const code = codeInput ? codeInput.value.trim().toUpperCase() : '';
+      const code = sessionCode || (codeInput ? codeInput.value.trim().toUpperCase() : '') || sessionId;
       const rustdeskId = idInput ? idInput.value.trim() : '';
 
       if (!rustdeskId) {
@@ -2463,13 +2476,14 @@
       }
 
       try {
-        const client = window.supabase || supabaseClient;
+        const client = supabaseClient;
         const { error } = await client.rpc('submit_rustdesk_id', {
           p_code: code,
           p_rustdesk_id: rustdeskId,
         });
 
         if (error) {
+          console.error('submit_rustdesk_id error:', error);
           if (result) result.innerHTML = `<p style="color:#dc2626; font-size:12.5px; margin:0; font-weight:600;">Error: ${error.message}</p>`;
           return;
         }
@@ -2480,6 +2494,7 @@
 
         watchSessionStatus(code);
       } catch (e) {
+        console.error('Exception during submitRustdeskId:', e);
         if (result) result.innerHTML = `<p style="color:#dc2626; font-size:12.5px; margin:0;">Connection error: ${e.message}</p>`;
       } finally {
         if (btn) {
@@ -2501,18 +2516,22 @@
           return;
         }
 
-        const client = window.supabase || supabaseClient;
-        const { data, error } = await client.rpc('get_support_session_status', { p_code: code });
-        if (error || !data) return;
+        try {
+          const client = supabaseClient;
+          const { data, error } = await client.rpc('get_support_session_status', { p_code: code });
+          if (error || !data) return;
 
-        const row = Array.isArray(data) ? data[0] : data;
-        if (!row) return;
+          const row = Array.isArray(data) ? data[0] : data;
+          if (!row) return;
 
-        if (row.status === 'active') {
-          box.innerHTML = '<p style="color:#16a34a; font-weight:bold; font-size:12.5px; margin:0;">✓ Your support agent is now connected.</p>';
-        } else if (row.status === 'ended') {
-          box.innerHTML = '<p style="color:#64748b; font-size:12.5px; margin:0;">Session ended. Thanks for using FlexiTap Support.</p>';
-          clearInterval(statusPollInterval);
+          if (row.status === 'active') {
+            box.innerHTML = '<p style="color:#16a34a; font-weight:bold; font-size:12.5px; margin:0;">✓ Your support agent is now connected.</p>';
+          } else if (row.status === 'ended') {
+            box.innerHTML = '<p style="color:#64748b; font-size:12.5px; margin:0;">Session ended. Thanks for using FlexiTap Support.</p>';
+            clearInterval(statusPollInterval);
+          }
+        } catch (e) {
+          console.warn('Polling error in watchSessionStatus:', e);
         }
       }, 3000);
     }
