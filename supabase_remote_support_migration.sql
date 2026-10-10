@@ -16,7 +16,47 @@ create table if not exists public.remote_support_sessions (
 -- Index for fast lookup by 6-character session code
 create index if not exists idx_remote_support_sessions_code on public.remote_support_sessions(code);
 
--- 2. Add table to Supabase Realtime publication
+-- 2. ENABLE ROW LEVEL SECURITY (RLS)
+alter table public.remote_support_sessions enable row level security;
+
+-- Drop existing policies if re-running
+drop policy if exists "Staff can view their own remote support sessions" on public.remote_support_sessions;
+drop policy if exists "Staff can update their own remote support sessions" on public.remote_support_sessions;
+
+-- RLS Policy: Authenticated staff can view their sessions (Required for Supabase Realtime UPDATE events)
+create policy "Staff can view their own remote support sessions"
+on public.remote_support_sessions
+for select
+to authenticated
+using (
+  staff_user_id = auth.uid()
+  or exists (
+    select 1 from public.profiles
+    where profiles.id = auth.uid()
+    and lower(profiles.role) in ('dev', 'developer', 'admin', 'staff', 'support')
+  )
+);
+
+-- RLS Policy: Authenticated staff can update their sessions
+create policy "Staff can update their own remote support sessions"
+on public.remote_support_sessions
+for update
+to authenticated
+using (
+  staff_user_id = auth.uid()
+  or exists (
+    select 1 from public.profiles
+    where profiles.id = auth.uid()
+    and lower(profiles.role) in ('dev', 'developer', 'admin', 'staff', 'support')
+  )
+);
+
+-- Note on Merchants:
+-- Merchants do NOT have direct table SELECT/UPDATE access.
+-- They interact exclusively through the SECURITY DEFINER functions below,
+-- preventing any merchant from seeing other merchants' session codes or RustDesk IDs.
+
+-- 3. Add table to Supabase Realtime publication
 do $$
 begin
   if not exists (
@@ -27,7 +67,7 @@ begin
   end if;
 end $$;
 
--- 3. Stored Procedure: Staff creates new support session with random 6-character code
+-- 4. Stored Procedure: Staff creates new support session with random 6-character code
 create or replace function public.create_support_session()
 returns table (id uuid, code text) language plpgsql security definer as $$
 declare
@@ -44,7 +84,7 @@ begin
 end;
 $$;
 
--- 4. Stored Procedure: Merchant submits their RustDesk ID
+-- 5. Stored Procedure: Merchant submits their RustDesk ID
 create or replace function public.submit_rustdesk_id(p_code text, p_rustdesk_id text)
 returns boolean language plpgsql security definer as $$
 begin
@@ -58,7 +98,7 @@ begin
 end;
 $$;
 
--- 5. Stored Procedure: Safe status check for merchant polling (no broad table access)
+-- 6. Stored Procedure: Safe status check for merchant polling (no broad table access)
 create or replace function public.get_support_session_status(p_code text)
 returns table (id uuid, status varchar, rustdesk_id varchar) language plpgsql security definer as $$
 begin
@@ -70,7 +110,7 @@ begin
 end;
 $$;
 
--- 6. Stored Procedure: Staff starts/activates session
+-- 7. Stored Procedure: Staff starts/activates session
 create or replace function public.staff_start_session(p_session_id uuid)
 returns boolean language plpgsql security definer as $$
 begin
@@ -81,7 +121,7 @@ begin
 end;
 $$;
 
--- 7. Grant Permissions to authenticated and anon users
+-- 8. Grant Permissions
 grant execute on function public.create_support_session to authenticated;
 grant execute on function public.staff_start_session to authenticated;
 grant execute on function public.submit_rustdesk_id to anon, authenticated;
