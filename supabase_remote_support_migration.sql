@@ -13,13 +13,26 @@ create table if not exists public.remote_support_sessions (
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
--- Ensure all columns exist even if table was created previously by an older schema
+-- Ensure all columns exist even if the table already existed previously
 alter table public.remote_support_sessions add column if not exists code varchar(6);
 alter table public.remote_support_sessions add column if not exists status varchar(20) default 'pending';
 alter table public.remote_support_sessions add column if not exists staff_user_id uuid references auth.users(id);
 alter table public.remote_support_sessions add column if not exists rustdesk_id varchar(20);
 alter table public.remote_support_sessions add column if not exists created_at timestamp with time zone default timezone('utc'::text, now());
 alter table public.remote_support_sessions add column if not exists updated_at timestamp with time zone default timezone('utc'::text, now());
+
+-- Drop NOT NULL on created_by / staff_user_id if present from an older schema
+do $$
+begin
+  if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'remote_support_sessions' and column_name = 'created_by') then
+    alter table public.remote_support_sessions alter column created_by drop not null;
+    alter table public.remote_support_sessions alter column created_by set default auth.uid();
+  end if;
+  if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'remote_support_sessions' and column_name = 'staff_user_id') then
+    alter table public.remote_support_sessions alter column staff_user_id drop not null;
+    alter table public.remote_support_sessions alter column staff_user_id set default auth.uid();
+  end if;
+end $$;
 
 -- Migrate legacy column names if present
 do $$
@@ -49,6 +62,12 @@ for select
 to authenticated
 using (
   staff_user_id = auth.uid()
+  or (
+    case when exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'remote_support_sessions' and column_name = 'created_by')
+         then created_by = auth.uid()
+         else false
+    end
+  )
   or exists (
     select 1 from public.profiles
     where profiles.id = auth.uid()
@@ -63,6 +82,12 @@ for update
 to authenticated
 using (
   staff_user_id = auth.uid()
+  or (
+    case when exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'remote_support_sessions' and column_name = 'created_by')
+         then created_by = auth.uid()
+         else false
+    end
+  )
   or exists (
     select 1 from public.profiles
     where profiles.id = auth.uid()
@@ -93,12 +118,23 @@ returns table (id uuid, code text) language plpgsql security definer as $func$
 declare
   new_code text;
   new_id uuid;
+  current_user_id uuid;
 begin
   new_code := upper(substring(md5(random()::text || clock_timestamp()::text) from 1 for 6));
+  current_user_id := auth.uid();
   
-  insert into public.remote_support_sessions (code, staff_user_id, status)
-  values (new_code, auth.uid(), 'pending')
-  returning remote_support_sessions.id into new_id;
+  if exists (
+    select 1 from information_schema.columns 
+    where table_schema = 'public' and table_name = 'remote_support_sessions' and column_name = 'created_by'
+  ) then
+    execute 'insert into public.remote_support_sessions (code, staff_user_id, created_by, status) values ($1, $2, $2, $3) returning id'
+    into new_id
+    using new_code, current_user_id, 'pending';
+  else
+    insert into public.remote_support_sessions (code, staff_user_id, status)
+    values (new_code, current_user_id, 'pending')
+    returning remote_support_sessions.id into new_id;
+  end if;
 
   return query select new_id, new_code;
 end;
@@ -113,7 +149,6 @@ begin
       status = 'client_ready',
       updated_at = now()
   where code = upper(trim(p_code)) and status in ('pending', 'client_ready');
-  
   return found;
 end;
 $func$;
