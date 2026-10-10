@@ -1038,10 +1038,50 @@
       }
     }
 
+    let remoteSessionPollInterval = null;
+
     function watchRemoteSession(sessionId) {
       if (remoteSessionChannel) {
-        supabaseClient.removeChannel(remoteSessionChannel);
+        try { supabaseClient.removeChannel(remoteSessionChannel); } catch (_) {}
       }
+      if (remoteSessionPollInterval) {
+        clearInterval(remoteSessionPollInterval);
+      }
+
+      async function pollRemoteSession() {
+        if (!activeRemoteSession || activeRemoteSession.id !== sessionId) {
+          if (remoteSessionPollInterval) clearInterval(remoteSessionPollInterval);
+          return;
+        }
+        try {
+          const { data, error } = await supabaseClient
+            .from('remote_support_sessions')
+            .select('id, status, rustdesk_id')
+            .eq('id', sessionId)
+            .maybeSingle();
+
+          if (!error && data && activeRemoteSession && activeRemoteSession.id === sessionId) {
+            let changed = false;
+            if (data.status && data.status !== activeRemoteSession.status) {
+              activeRemoteSession.status = data.status;
+              changed = true;
+            }
+            if (data.rustdesk_id && data.rustdesk_id !== activeRemoteSession.rustdeskId) {
+              activeRemoteSession.rustdeskId = data.rustdesk_id;
+              changed = true;
+            }
+            if (changed) {
+              renderRemoteSessionPanel();
+            }
+          }
+        } catch (e) {
+          console.warn('Poll error for remote session:', e);
+        }
+      }
+
+      remoteSessionPollInterval = setInterval(pollRemoteSession, 2000);
+      pollRemoteSession();
+
       remoteSessionChannel = supabaseClient
         .channel('remote-session-' + sessionId)
         .on(
@@ -1073,7 +1113,8 @@
 
     function copyRemoteId() {
       if (!activeRemoteSession || !activeRemoteSession.rustdeskId) return;
-      navigator.clipboard.writeText(activeRemoteSession.rustdeskId).then(function () {
+      const cleanId = String(activeRemoteSession.rustdeskId).replace(/\s+/g, '');
+      navigator.clipboard.writeText(cleanId).then(function () {
         const note = document.getElementById('remote-id-copied-note');
         if (note) {
           note.style.display = 'inline';
@@ -1107,13 +1148,14 @@
       html += '<span style="width: 8px; height: 8px; border-radius: 50%; background: ' + st.color + '; display: inline-block;"></span>' + st.label + '</div>';
 
       if (s.rustdeskId) {
+        const cleanId = String(s.rustdeskId).replace(/\s+/g, '');
         html += '<div style="background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); border-radius: 10px; padding: 16px; margin-bottom: 20px;">';
         html += '<div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px;">Merchant\'s RustDesk ID</div>';
         html += '<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">';
         html += '<span style="font-family: \'JetBrains Mono\', monospace; font-weight: 800; font-size: 1.15rem; color: #fff;">' + s.rustdeskId + '</span>';
         html += '<button class="action-btn" onclick="copyRemoteId()">Copy ID</button>';
         html += '<span id="remote-id-copied-note" style="display:none; color: var(--accent); font-size: 12px; margin-left: 6px;">Copied!</span>';
-        html += '<a class="action-btn" style="text-decoration: none; background: var(--primary); color: #fff; border-color: var(--primary); margin-left: 8px;" href="rustdesk://' + s.rustdeskId + '" onclick="staffConnectRemoteSession()">Connect via RustDesk</a>';
+        html += '<a class="action-btn" style="text-decoration: none; background: var(--primary); color: #fff; border-color: var(--primary); margin-left: 8px;" href="rustdesk://' + cleanId + '" onclick="staffConnectRemoteSession()">Connect via RustDesk</a>';
         html += '</div>';
         html += '<div style="font-size: 11px; color: var(--text-muted); margin-top: 10px;">Clicking Connect tries to open your own RustDesk app directly. If nothing happens (some browsers block this the first time), open RustDesk yourself and paste the ID above into the connect box.</div>';
         html += '</div>';

@@ -94,6 +94,9 @@ begin
   end if;
 end $$;
 
+-- Enable REPLICA IDENTITY FULL so Supabase Realtime sends row updates with filters
+alter table public.remote_support_sessions replica identity full;
+
 -- 4. DROP EXISTING FUNCTIONS (Resolves ERROR 42P13 return type conflict)
 drop function if exists public.create_support_session() cascade;
 drop function if exists public.submit_rustdesk_id(text, text) cascade;
