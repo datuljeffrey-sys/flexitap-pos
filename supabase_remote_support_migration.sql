@@ -2,7 +2,7 @@
 -- FlexiTap Ad-hoc Remote Support Sessions Migration (RustDesk Integration)
 -- ========================================================================
 
--- 1. Create remote_support_sessions table
+-- 1. Create table if missing
 create table if not exists public.remote_support_sessions (
   id uuid primary key default gen_random_uuid(),
   code varchar(6) not null unique,
@@ -12,6 +12,25 @@ create table if not exists public.remote_support_sessions (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
+
+-- Ensure all columns exist even if table was created previously by an older schema
+alter table public.remote_support_sessions add column if not exists code varchar(6);
+alter table public.remote_support_sessions add column if not exists status varchar(20) default 'pending';
+alter table public.remote_support_sessions add column if not exists staff_user_id uuid references auth.users(id);
+alter table public.remote_support_sessions add column if not exists rustdesk_id varchar(20);
+alter table public.remote_support_sessions add column if not exists created_at timestamp with time zone default timezone('utc'::text, now());
+alter table public.remote_support_sessions add column if not exists updated_at timestamp with time zone default timezone('utc'::text, now());
+
+-- Migrate legacy column names if present
+do $$
+begin
+  if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'remote_support_sessions' and column_name = 'agent_id') then
+    execute 'update public.remote_support_sessions set staff_user_id = agent_id where staff_user_id is null';
+  end if;
+  if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'remote_support_sessions' and column_name = 'session_code') then
+    execute 'update public.remote_support_sessions set code = session_code where code is null';
+  end if;
+end $$;
 
 -- Index for fast lookup by 6-character session code
 create index if not exists idx_remote_support_sessions_code on public.remote_support_sessions(code);
@@ -62,7 +81,7 @@ begin
   end if;
 end $$;
 
--- 4. DROP EXISTING FUNCTIONS (Required by PostgreSQL when return types change)
+-- 4. DROP EXISTING FUNCTIONS (Resolves ERROR 42P13 return type conflict)
 drop function if exists public.create_support_session() cascade;
 drop function if exists public.submit_rustdesk_id(text, text) cascade;
 drop function if exists public.get_support_session_status(text) cascade;
@@ -70,7 +89,7 @@ drop function if exists public.staff_start_session(uuid) cascade;
 
 -- 5. Stored Procedure: Staff creates new support session with random 6-character code
 create or replace function public.create_support_session()
-returns table (id uuid, code text) language plpgsql security definer as $$
+returns table (id uuid, code text) language plpgsql security definer as $func$
 declare
   new_code text;
   new_id uuid;
@@ -83,11 +102,11 @@ begin
 
   return query select new_id, new_code;
 end;
-$$;
+$func$;
 
 -- 6. Stored Procedure: Merchant submits their RustDesk ID
 create or replace function public.submit_rustdesk_id(p_code text, p_rustdesk_id text)
-returns boolean language plpgsql security definer as $$
+returns boolean language plpgsql security definer as $func$
 begin
   update public.remote_support_sessions
   set rustdesk_id = trim(p_rustdesk_id),
@@ -97,11 +116,11 @@ begin
   
   return found;
 end;
-$$;
+$func$;
 
 -- 7. Stored Procedure: Safe status check for merchant polling (no broad table access)
 create or replace function public.get_support_session_status(p_code text)
-returns table (id uuid, status varchar, rustdesk_id varchar) language plpgsql security definer as $$
+returns table (id uuid, status varchar, rustdesk_id varchar) language plpgsql security definer as $func$
 begin
   return query
   select s.id, s.status, s.rustdesk_id
@@ -109,18 +128,18 @@ begin
   where s.code = upper(trim(p_code))
   order by s.created_at desc limit 1;
 end;
-$$;
+$func$;
 
 -- 8. Stored Procedure: Staff starts/activates session
 create or replace function public.staff_start_session(p_session_id uuid)
-returns boolean language plpgsql security definer as $$
+returns boolean language plpgsql security definer as $func$
 begin
   update public.remote_support_sessions
   set status = 'active', updated_at = now()
   where id = p_session_id;
   return found;
 end;
-$$;
+$func$;
 
 -- 9. Grant Permissions to authenticated and anon users
 grant execute on function public.create_support_session to authenticated;
