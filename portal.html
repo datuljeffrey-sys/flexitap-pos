@@ -2518,10 +2518,18 @@
 
         try {
           const client = supabaseClient;
+          let row = null;
           const { data, error } = await client.rpc('get_support_session_status', { p_code: code });
-          if (error || !data) return;
-
-          const row = Array.isArray(data) ? data[0] : data;
+          if (!error && data) {
+            row = Array.isArray(data) ? data[0] : data;
+          } else {
+            const { data: tblData } = await client
+              .from('remote_support_sessions')
+              .select('id, status, rustdesk_id')
+              .eq('code', code)
+              .maybeSingle();
+            if (tblData) row = tblData;
+          }
           if (!row) return;
 
           if (row.status === 'active') {

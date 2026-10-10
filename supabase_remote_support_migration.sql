@@ -54,26 +54,14 @@ alter table public.remote_support_sessions enable row level security;
 -- Drop existing policies if re-running
 drop policy if exists "Staff can view their own remote support sessions" on public.remote_support_sessions;
 drop policy if exists "Staff can update their own remote support sessions" on public.remote_support_sessions;
+drop policy if exists "Allow session lookup by code" on public.remote_support_sessions;
 
--- RLS Policy: Authenticated staff can view their sessions (Required for Supabase Realtime UPDATE events)
-create policy "Staff can view their own remote support sessions"
+-- Allow session lookup by code (allows merchant portal to read session status)
+create policy "Allow session lookup by code"
 on public.remote_support_sessions
 for select
-to authenticated
-using (
-  staff_user_id = auth.uid()
-  or (
-    case when exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'remote_support_sessions' and column_name = 'created_by')
-         then created_by = auth.uid()
-         else false
-    end
-  )
-  or exists (
-    select 1 from public.profiles
-    where profiles.id = auth.uid()
-    and lower(profiles.role) in ('dev', 'developer', 'admin', 'staff', 'support')
-  )
-);
+to anon, authenticated
+using (true);
 
 -- RLS Policy: Authenticated staff can update their sessions
 create policy "Staff can update their own remote support sessions"
@@ -114,7 +102,7 @@ drop function if exists public.staff_start_session(uuid) cascade;
 
 -- 5. Stored Procedure: Staff creates new support session with random 6-character code
 create or replace function public.create_support_session()
-returns table (id uuid, code text) language plpgsql security definer as $func$
+returns table (id text, code text) language plpgsql security definer as $func$
 declare
   new_code text;
   new_id uuid;
@@ -136,7 +124,7 @@ begin
     returning remote_support_sessions.id into new_id;
   end if;
 
-  return query select new_id, new_code;
+  return query select new_id::text, new_code::text;
 end;
 $func$;
 
@@ -153,12 +141,12 @@ begin
 end;
 $func$;
 
--- 7. Stored Procedure: Safe status check for merchant polling (no broad table access)
+-- 7. Stored Procedure: Safe status check for merchant polling (explicit text casting avoids PostgreSQL 42804)
 create or replace function public.get_support_session_status(p_code text)
-returns table (id uuid, status varchar, rustdesk_id varchar) language plpgsql security definer as $func$
+returns table (id text, status text, rustdesk_id text) language plpgsql security definer as $func$
 begin
   return query
-  select s.id, s.status, s.rustdesk_id
+  select s.id::text, s.status::text, s.rustdesk_id::text
   from public.remote_support_sessions s
   where (s.code = upper(trim(p_code)) or s.id::text = trim(p_code))
   order by s.created_at desc limit 1;
