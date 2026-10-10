@@ -491,25 +491,14 @@
         <div id="view-remote" class="tab-view">
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title">Remote POS Device Console &amp; ADB Controller</div>
-              <select style="background: var(--bg); border: 1px solid var(--card-border); color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem;" id="target-terminal">
-                <option>Active Testing Device (Android 13 / Tablet POS)</option>
-                <option>Store Counter 01 (Phone Kiosk)</option>
-              </select>
+              <div class="panel-title">Ad-hoc Remote Support Session</div>
+              <button class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary);" onclick="createRemoteSupportSession()" id="new-session-btn">
+                + New Support Session
+              </button>
             </div>
-
-            <div class="terminal-window">
-              <div class="terminal-header">
-                <span>REMOTE SESSION: POS-01 (Flutter Engine v3.24)</span>
-                <span style="color: var(--accent);">● SSL SOCKET ENCRYPTED</span>
-              </div>
-              <div class="terminal-body" id="remote-logs">
-                <div class="log-line"><span class="log-info">[13:10:02]</span> Connecting to remote terminal daemon: wss://pos-gateway.flexitap.io/device/POS-01</div>
-                <div class="log-line"><span class="log-success">[13:10:04]</span> Socket handshake confirmed. SQLite state: 1,420 records. Auth token valid.</div>
-              </div>
-              <div class="terminal-input-bar">
-                <input type="text" id="terminal-cmd" placeholder="Execute diagnostic command (e.g. 'pull-sqlite-schema', 'clear-cache', 'sync-now')..." />
-                <button class="terminal-send" onclick="sendRemoteCommand()">Send Command</button>
+            <div id="remote-session-panel">
+              <div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 40px;">
+                No active session. During a support call, click "New Support Session" above to generate a code and read it to the merchant.
               </div>
             </div>
           </div>
@@ -1010,6 +999,130 @@
 
     function openChatForStore(storeId, storeName) {
       switchNav('support', document.querySelectorAll('.nav-btn')[2]);
+    }
+
+    
+    // ---- Ad-hoc remote support session (staff side) ----
+    let activeRemoteSession = null; // { id, code, status, rustdeskId }
+    let remoteSessionChannel = null;
+
+    async function createRemoteSupportSession() {
+      const btn = document.getElementById('new-session-btn');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Creating…';
+      }
+
+      try {
+        const { data, error } = await supabaseClient.rpc('create_support_session');
+        if (error) {
+          alert('Could not create session: ' + error.message);
+          return;
+        }
+        const row = Array.isArray(data) ? data[0] : data;
+        activeRemoteSession = {
+          id: row.id,
+          code: row.code,
+          status: 'pending',
+          rustdeskId: null,
+        };
+        renderRemoteSessionPanel();
+        watchRemoteSession(row.id);
+      } catch (e) {
+        alert('Error creating session: ' + e.message);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = '+ New Support Session';
+        }
+      }
+    }
+
+    function watchRemoteSession(sessionId) {
+      if (remoteSessionChannel) {
+        supabaseClient.removeChannel(remoteSessionChannel);
+      }
+      remoteSessionChannel = supabaseClient
+        .channel('remote-session-' + sessionId)
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'remote_support_sessions',
+            filter: 'id=eq.' + sessionId,
+          },
+          function (payload) {
+            if (!activeRemoteSession || activeRemoteSession.id !== sessionId) return;
+            activeRemoteSession.status = payload.new.status;
+            activeRemoteSession.rustdeskId = payload.new.rustdesk_id;
+            renderRemoteSessionPanel();
+          }
+        )
+        .subscribe();
+    }
+
+    async function staffConnectRemoteSession() {
+      if (!activeRemoteSession) return;
+      try {
+        await supabaseClient.rpc('staff_start_session', { p_session_id: activeRemoteSession.id });
+      } catch (e) {
+        alert('Could not start session: ' + e.message);
+      }
+    }
+
+    function copyRemoteId() {
+      if (!activeRemoteSession || !activeRemoteSession.rustdeskId) return;
+      navigator.clipboard.writeText(activeRemoteSession.rustdeskId).then(function () {
+        const note = document.getElementById('remote-id-copied-note');
+        if (note) {
+          note.style.display = 'inline';
+          setTimeout(function () { note.style.display = 'none'; }, 1500);
+        }
+      });
+    }
+
+    function renderRemoteSessionPanel() {
+      const panel = document.getElementById('remote-session-panel');
+      if (!panel) return;
+      if (!activeRemoteSession) {
+        panel.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 40px;">No active session. During a support call, click "New Support Session" above to generate a code and read it to the merchant.</div>';
+        return;
+      }
+
+      const s = activeRemoteSession;
+      const statusMap = {
+        pending: { color: '#fbbf24', label: 'Waiting for the merchant to enter the code…' },
+        client_ready: { color: '#34d399', label: 'Merchant is ready — RustDesk ID received.' },
+        active: { color: '#60a5fa', label: 'Session active.' },
+        ended: { color: '#9ca3af', label: 'Session ended.' },
+        expired: { color: '#f87171', label: 'Code expired, unused.' },
+      };
+      const st = statusMap[s.status] || { color: '#9ca3af', label: s.status };
+
+      let html = '<div style="padding: 8px 4px;">';
+      html += '<div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Read this code to the merchant on the phone:</div>';
+      html += '<div style="font-family: \'JetBrains Mono\', monospace; font-size: 2.2rem; font-weight: 800; letter-spacing: 6px; color: #fff; margin-bottom: 16px;">' + s.code + '</div>';
+      html += '<div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: ' + st.color + '; margin-bottom: 22px;">';
+      html += '<span style="width: 8px; height: 8px; border-radius: 50%; background: ' + st.color + '; display: inline-block;"></span>' + st.label + '</div>';
+
+      if (s.rustdeskId) {
+        html += '<div style="background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); border-radius: 10px; padding: 16px; margin-bottom: 20px;">';
+        html += '<div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px;">Merchant\'s RustDesk ID</div>';
+        html += '<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">';
+        html += '<span style="font-family: \'JetBrains Mono\', monospace; font-weight: 800; font-size: 1.15rem; color: #fff;">' + s.rustdeskId + '</span>';
+        html += '<button class="action-btn" onclick="copyRemoteId()">Copy ID</button>';
+        html += '<span id="remote-id-copied-note" style="display:none; color: var(--accent); font-size: 12px; margin-left: 6px;">Copied!</span>';
+        html += '<a class="action-btn" style="text-decoration: none; background: var(--primary); color: #fff; border-color: var(--primary); margin-left: 8px;" href="rustdesk://' + s.rustdeskId + '" onclick="staffConnectRemoteSession()">Connect via RustDesk</a>';
+        html += '</div>';
+        html += '<div style="font-size: 11px; color: var(--text-muted); margin-top: 10px;">Clicking Connect tries to open your own RustDesk app directly. If nothing happens (some browsers block this the first time), open RustDesk yourself and paste the ID above into the connect box.</div>';
+        html += '</div>';
+      }
+
+      html += '<div style="font-size: 11px; color: var(--text-muted);">Session ID: <code>' + s.id + '</code></div>';
+      html += '</div>';
+
+      panel.innerHTML = html;
     }
 
     function sendRemoteCommand() {
