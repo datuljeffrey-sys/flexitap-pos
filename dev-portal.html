@@ -1054,20 +1054,27 @@
           return;
         }
         try {
-          const { data, error } = await supabaseClient
-            .from('remote_support_sessions')
-            .select('id, status, rustdesk_id')
-            .eq('id', sessionId)
-            .maybeSingle();
+          let row = null;
+          const { data: rpcData, error: rpcError } = await supabaseClient.rpc('get_support_session_status', { p_code: sessionId });
+          if (!rpcError && rpcData) {
+            row = Array.isArray(rpcData) ? rpcData[0] : rpcData;
+          } else {
+            const { data: tblData } = await supabaseClient
+              .from('remote_support_sessions')
+              .select('id, status, rustdesk_id')
+              .eq('id', sessionId)
+              .maybeSingle();
+            if (tblData) row = tblData;
+          }
 
-          if (!error && data && activeRemoteSession && activeRemoteSession.id === sessionId) {
+          if (row && activeRemoteSession && activeRemoteSession.id === sessionId) {
             let changed = false;
-            if (data.status && data.status !== activeRemoteSession.status) {
-              activeRemoteSession.status = data.status;
+            if (row.status && row.status !== activeRemoteSession.status) {
+              activeRemoteSession.status = row.status;
               changed = true;
             }
-            if (data.rustdesk_id && data.rustdesk_id !== activeRemoteSession.rustdeskId) {
-              activeRemoteSession.rustdeskId = data.rustdesk_id;
+            if (row.rustdesk_id && row.rustdesk_id !== activeRemoteSession.rustdeskId) {
+              activeRemoteSession.rustdeskId = row.rustdesk_id;
               changed = true;
             }
             if (changed) {

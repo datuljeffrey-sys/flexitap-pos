@@ -172,3 +172,4 @@ grant execute on function public.create_support_session to authenticated;
 grant execute on function public.staff_start_session to authenticated;
 grant execute on function public.submit_rustdesk_id to anon, authenticated;
 grant execute on function public.get_support_session_status to anon, authenticated;
+grant select, insert, update on public.remote_support_sessions to anon, authenticated;
