@@ -51,11 +51,6 @@ using (
   )
 );
 
--- Note on Merchants:
--- Merchants do NOT have direct table SELECT/UPDATE access.
--- They interact exclusively through the SECURITY DEFINER functions below,
--- preventing any merchant from seeing other merchants' session codes or RustDesk IDs.
-
 -- 3. Add table to Supabase Realtime publication
 do $$
 begin
@@ -67,7 +62,13 @@ begin
   end if;
 end $$;
 
--- 4. Stored Procedure: Staff creates new support session with random 6-character code
+-- 4. DROP EXISTING FUNCTIONS (Required by PostgreSQL when return types change)
+drop function if exists public.create_support_session() cascade;
+drop function if exists public.submit_rustdesk_id(text, text) cascade;
+drop function if exists public.get_support_session_status(text) cascade;
+drop function if exists public.staff_start_session(uuid) cascade;
+
+-- 5. Stored Procedure: Staff creates new support session with random 6-character code
 create or replace function public.create_support_session()
 returns table (id uuid, code text) language plpgsql security definer as $$
 declare
@@ -84,7 +85,7 @@ begin
 end;
 $$;
 
--- 5. Stored Procedure: Merchant submits their RustDesk ID
+-- 6. Stored Procedure: Merchant submits their RustDesk ID
 create or replace function public.submit_rustdesk_id(p_code text, p_rustdesk_id text)
 returns boolean language plpgsql security definer as $$
 begin
@@ -98,7 +99,7 @@ begin
 end;
 $$;
 
--- 6. Stored Procedure: Safe status check for merchant polling (no broad table access)
+-- 7. Stored Procedure: Safe status check for merchant polling (no broad table access)
 create or replace function public.get_support_session_status(p_code text)
 returns table (id uuid, status varchar, rustdesk_id varchar) language plpgsql security definer as $$
 begin
@@ -110,7 +111,7 @@ begin
 end;
 $$;
 
--- 7. Stored Procedure: Staff starts/activates session
+-- 8. Stored Procedure: Staff starts/activates session
 create or replace function public.staff_start_session(p_session_id uuid)
 returns boolean language plpgsql security definer as $$
 begin
@@ -121,7 +122,7 @@ begin
 end;
 $$;
 
--- 8. Grant Permissions
+-- 9. Grant Permissions to authenticated and anon users
 grant execute on function public.create_support_session to authenticated;
 grant execute on function public.staff_start_session to authenticated;
 grant execute on function public.submit_rustdesk_id to anon, authenticated;
