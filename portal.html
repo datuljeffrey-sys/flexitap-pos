@@ -2618,16 +2618,67 @@
       document.getElementById('login-view').style.display = 'flex';
     }
 
+    async function restoreSessionFromUrl() {
+      let accessToken = null;
+      let refreshToken = null;
+
+      // 1. Check URL hash (#access_token=...&refresh_token=...)
+      if (window.location.hash && window.location.hash.includes('access_token')) {
+        const hash = window.location.hash.replace(/^#/, '');
+        const params = new URLSearchParams(hash);
+        accessToken = params.get('access_token');
+        refreshToken = params.get('refresh_token');
+      }
+
+      // 2. Check query params fallback (?access_token=...&refresh_token=...)
+      if (!accessToken) {
+        const urlParams = new URLSearchParams(window.location.search);
+        accessToken = urlParams.get('access_token');
+        refreshToken = urlParams.get('refresh_token');
+      }
+
+      if (accessToken) {
+        try {
+          console.log('Restoring Supabase session from URL SSO tokens...');
+          const { data, error } = await supabaseClient.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken || ''
+          });
+
+          // Purge sensitive tokens from address bar immediately
+          const cleanSearch = new URLSearchParams(window.location.search);
+          cleanSearch.delete('access_token');
+          cleanSearch.delete('refresh_token');
+          const cleanQuery = cleanSearch.toString() ? ('?' + cleanSearch.toString()) : '';
+          const cleanUrl = window.location.pathname + cleanQuery;
+          window.history.replaceState({}, document.title, cleanUrl);
+
+          if (data?.session?.user && !error) {
+            return data.session.user;
+          }
+          if (error) {
+            console.warn('Supabase setSession error:', error);
+          }
+        } catch (e) {
+          console.warn('SSO session restoration exception:', e);
+        }
+      }
+      return null;
+    }
+
     // Startup Session Check (Immediate on load + Listener)
     async function checkMerchantSession() {
       try {
+        // First, attempt to restore session from URL SSO tokens
+        const ssoUser = await restoreSessionFromUrl();
+        if (ssoUser) {
+          await loadApp(ssoUser);
+          return;
+        }
+
+        // Otherwise check local persistent session
         const { data: { session }, error } = await supabaseClient.auth.getSession();
         if (session?.user && !error) {
-          // If URL hash contains SSO credentials, immediately purge them from address bar
-          if (window.location.hash && window.location.hash.includes('access_token')) {
-            const cleanUrl = window.location.pathname + window.location.search;
-            window.history.replaceState({}, document.title, cleanUrl);
-          }
           await loadApp(session.user);
         } else {
           const loginView = document.getElementById('login-view');
