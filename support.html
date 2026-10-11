@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>FlexiTap POS — Support & App Downloads</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(22, 30, 49, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent-green: #10b981;
+      --accent-purple: #8b5cf6;
+      --accent-orange: #f59e0b;
+      --accent-red: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+    html, body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; width: 100%; max-width: 100vw; overflow-x: clip; position: relative; }
+    .container { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+
+    /* HEADER & NAV */
+    header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: rgba(9, 13, 22, 0.94); backdrop-filter: blur(12px); z-index: 100; width: 100%; }
+    header .container { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 12px; }
+    .logo { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 800; color: #ffffff; text-decoration: none; letter-spacing: -0.5px; }
+    .brand-logo-svg { width: 34px; height: 34px; flex-shrink: 0; display: block; border-radius: 50%; object-fit: contain; }
+    
+    .nav-links { display: flex; align-items: center; gap: 20px; }
+    .nav-link { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.2s; }
+    .nav-link:hover, .nav-link.active { color: #fff; }
+    .mobile-menu-toggle { display: none; background: none; border: 1px solid var(--card-border); padding: 4px 8px; border-radius: 8px; color: #fff; font-size: 24px; cursor: pointer; }
+
+    .btn-login { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border); color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; }
+    .btn-login:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.2); }
+    .btn-signup { background: var(--primary); border: none; color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; text-decoration: none; display: inline-flex; align-items: center; }
+    .btn-signup:hover { background: var(--primary-hover); }
+
+    /* HERO */
+    .support-hero { padding: 60px 0 40px; text-align: center; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 999px; font-size: 12.5px; font-weight: 700; color: #93c5fd; margin-bottom: 20px; }
+    .hero-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+    .section-title { font-size: clamp(28px, 5vw, 42px); font-weight: 800; margin-bottom: 14px; letter-spacing: -0.8px; line-height: 1.2; }
+    .section-subtitle { color: var(--text-muted); font-size: 16.5px; max-width: 740px; margin: 0 auto 32px; line-height: 1.6; }
+
+    /* SECTION TABS / ANCHORS */
+    .quick-jump-bar { display: inline-flex; gap: 8px; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--card-border); padding: 6px; border-radius: 14px; margin-bottom: 48px; }
+    .quick-jump-btn { color: var(--text-muted); text-decoration: none; padding: 8px 18px; font-size: 13.5px; font-weight: 700; border-radius: 10px; transition: 0.2s; }
+    .quick-jump-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+    .quick-jump-btn.active { color: #fff; background: var(--primary); }
+
+    /* DOWNLOAD CARDS SECTION */
+    .download-section { margin-bottom: 72px; }
+    .section-heading-wrap { text-align: left; margin-bottom: 28px; }
+    .section-pill { font-size: 11.5px; font-weight: 800; color: #60a5fa; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6px; display: inline-block; }
+    .section-header-title { font-size: 26px; font-weight: 800; color: #fff; }
+
+    .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+    .download-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: transform 0.2s, border-color 0.2s; }
+    .download-card:hover { transform: translateY(-3px); border-color: rgba(59, 130, 246, 0.4); }
+    .download-card.highlight { border-color: rgba(59, 130, 246, 0.5); box-shadow: 0 0 30px rgba(59, 130, 246, 0.12); }
+
+    .card-top { margin-bottom: 20px; }
+    .platform-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .platform-icon-wrap { width: 52px; height: 52px; border-radius: 14px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; }
+    .platform-icon-wrap svg { width: 28px; height: 28px; fill: #fff; }
+    .version-tag { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; color: #34d399; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 9999px; }
+
+    .platform-name { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .platform-desc { color: var(--text-muted); font-size: 13.5px; line-height: 1.55; margin-bottom: 18px; }
+
+    .feature-bullets { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; font-size: 13px; color: #cbd5e1; }
+    .feature-bullets li { display: flex; align-items: flex-start; gap: 8px; }
+    .feature-bullets li span { color: var(--accent-green); font-weight: 800; flex-shrink: 0; }
+
+    .btn-download-primary { width: 100%; padding: 13px 18px; border-radius: 12px; background: var(--primary); color: #fff; border: none; font-weight: 700; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; transition: 0.2s; margin-bottom: 10px; }
+    .btn-download-primary:hover { background: var(--primary-hover); }
+    .btn-download-primary svg { width: 18px; height: 18px; fill: currentColor; }
+
+    .btn-download-secondary { width: 100%; padding: 10px 16px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); color: #cbd5e1; border: 1px solid var(--card-border); font-weight: 600; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; transition: 0.2s; }
+    .btn-download-secondary:hover { background: rgba(255, 255, 255, 0.1); color: #fff; border-color: rgba(255, 255, 255, 0.2); }
+
+    /* HARDWARE COMPATIBILITY BANNER */
+    .hardware-banner { background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(22, 30, 49, 0.8)); border: 1px solid var(--card-border); border-radius: 18px; padding: 24px 28px; margin-bottom: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .hw-info h4 { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+    .hw-info p { color: var(--text-muted); font-size: 13.5px; margin: 0; }
+    .hw-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .hw-pill { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 8px; }
+
+    /* TICKET SUBMISSION SECTION */
+    .ticket-section { padding: 40px 0 80px; }
+    .ticket-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 36px; align-items: start; }
+
+    .ticket-info-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 32px 28px; text-align: left; }
+    .ticket-info-card h3 { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .ticket-info-card p { color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+
+    .sla-box { background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 14px; padding: 18px; margin-bottom: 24px; }
+    .sla-title { font-size: 12.5px; font-weight: 800; color: #34d399; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .sla-desc { font-size: 13.5px; color: #cbd5e1; line-height: 1.5; }
+
+    .support-options-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .support-opt-item { display: flex; gap: 14px; align-items: flex-start; }
+    .opt-icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .opt-content strong { display: block; font-size: 14px; color: #fff; margin-bottom: 2px; }
+    .opt-content span { font-size: 12.5px; color: var(--text-muted); line-height: 1.4; display: block; }
+    .opt-content a { color: var(--primary); text-decoration: underline; font-weight: 600; }
+
+    /* FORM CARD */
+    .ticket-form-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 36px 32px; text-align: left; position: relative; }
+    .ticket-form-card h3 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .ticket-form-card .form-subtitle { color: var(--text-muted); font-size: 13.5px; margin-bottom: 24px; }
+
+    .form-group-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 700; color: #cbd5e1; margin-bottom: 6px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 12px 14px;
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    .form-group textarea { resize: vertical; min-height: 110px; line-height: 1.5; }
+    .field-hint { font-size: 11.5px; color: #64748b; margin-top: 4px; }
+
+    .btn-submit-ticket { width: 100%; padding: 14px; border-radius: 12px; background: var(--primary); color: #fff; border: none; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; }
+    .btn-submit-ticket:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-submit-ticket:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* SUCCESS STATE CARD (IN PLACE) */
+    .ticket-success-box { display: none; background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 16px; padding: 32px 24px; text-align: center; }
+    .ticket-success-icon { width: 56px; height: 56px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; font-size: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .ticket-success-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .ticket-success-ref { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: #60a5fa; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); display: inline-block; padding: 4px 12px; border-radius: 8px; margin-bottom: 16px; }
+    .ticket-success-desc { color: #cbd5e1; font-size: 13.5px; line-height: 1.6; max-width: 480px; margin: 0 auto 24px; }
+    .btn-reset-ticket { padding: 9px 18px; border-radius: 10px; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-reset-ticket:hover { background: rgba(255, 255, 255, 0.14); }
+
+    /* REMOTE ACCESS CALLOUT BANNER */
+    .remote-callout-card { background: linear-gradient(135deg, rgba(22, 30, 49, 0.8), rgba(15, 23, 42, 0.95)); border: 1px solid var(--card-border); border-left: 4px solid var(--primary); border-radius: 16px; padding: 24px 28px; margin-top: 36px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; text-align: left; }
+    .remote-callout-text h4 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+    .remote-callout-text p { color: var(--text-muted); font-size: 13.5px; margin: 0; }
+    .btn-remote-quick { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: #93c5fd; padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; transition: 0.2s; }
+    .btn-remote-quick:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* FOOTER & SOCIAL ICONS */
+    footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #0b0f19; font-size: 14px; width: 100%; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 24px; text-align: left; }
+    .footer-brand p { color: var(--text-muted); font-size: 14px; margin: 16px 0 24px 0; max-width: 320px; line-height: 1.6; }
+    
+    .social-links { display: flex; gap: 12px; margin-top: 16px; }
+    .social-icon-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; color: var(--text-muted); text-decoration: none; transition: 0.2s ease; }
+    .social-icon-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-2px); }
+    .social-icon-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+    .footer-col h4 { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 12px; }
+    .footer-col ul li a { color: var(--text-muted); text-decoration: none; font-size: 14px; cursor: pointer; transition: 0.2s; }
+    .footer-col ul li a:hover { color: #fff; }
+    .footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--text-muted); font-size: 13px; }
+
+    /* MODALS & CHAT WIDGET */
+    .modal-overlay { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; padding: 16px; box-sizing: border-box; }
+    .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); padding: 36px 24px; border-radius: 20px; width: 100%; max-width: 440px; position: relative; text-align: center; margin: auto; max-height: 90vh; overflow-y: auto; }
+    .close-btn { position: absolute; top: 18px; right: 18px; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
+    .modal-card label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
+    .modal-card input { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; color: white; font-size: 15px; }
+    .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; }
+    .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
+
+    #chat-btn { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #2563eb); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 24px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 990; transition: transform 0.2s; }
+    #sales-chat-panel { display: none; position: fixed; bottom: 90px; right: 24px; width: min(90vw, 370px); height: 520px; background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); flex-direction: column; overflow: hidden; z-index: 999; }
+    .chat-header { background: rgba(255,255,255,0.03); padding: 14px 18px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
+    .chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 13px; }
+    .chat-msg { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; color: #f8fafc; }
+
+    @media (max-width: 1023px) {
+      .nav-links { display: none; width: 100%; flex-direction: column; align-items: flex-start; background: rgba(15, 23, 42, 0.98); padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); margin-top: 10px; box-sizing: border-box; }
+      .nav-links.mobile-open { display: flex; }
+      .mobile-menu-toggle { display: block; }
+      header { padding: 12px 16px; }
+      .ticket-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .form-group-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .quick-jump-bar { width: 100%; justify-content: center; }
+    }
+  </style>
+
+  <script>
+    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+    let supabaseClient;
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // Initialize Supabase Client
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    });
+
+    // --- SUBMIT SUPPORT TICKET DIRECT TO BACKEND ---
+    async function submitSupportTicket(event) {
+      event.preventDefault();
+
+      const btn = document.getElementById('ticket-submit-btn');
+      const errorDiv = document.getElementById('ticket-error-msg');
+      const formEl = document.getElementById('support-ticket-form');
+      const successBox = document.getElementById('ticket-success-box');
+
+      const storeName = document.getElementById('t-store').value.trim();
+      const contactEmail = document.getElementById('t-email').value.trim();
+      const category = document.getElementById('t-category').value;
+      const priority = document.getElementById('t-priority').value;
+      const subject = document.getElementById('t-subject').value.trim();
+      const description = document.getElementById('t-description').value.trim();
+
+      if (!storeName || !contactEmail || !subject || !description) {
+        errorDiv.innerText = 'Please complete all required fields.';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      errorDiv.style.display = 'none';
+      errorDiv.innerText = '';
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳ Submitting Ticket...</span>';
+
+      const payload = {
+        store_name: storeName,
+        contact_email: contactEmail,
+        category: category,
+        priority: priority,
+        subject: subject,
+        description: description,
+        status: 'open',
+        device_telemetry: {
+          app_version: 'Web Support v2.4.1',
+          device_role: 'Customer Ticket',
+          sqlite_healthy: true,
+          channel: 'Support & Download Portal',
+          user_agent: navigator.userAgent,
+          platform: navigator.platform,
+          language: navigator.language,
+          screen_resolution: `${window.screen.width}x${window.screen.height}`,
+          submitted_at: new Date().toISOString()
+        }
+      };
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('tickets')
+          .insert([payload])
+          .select();
+
+        if (error) {
+          console.error('Supabase ticket submission error:', error);
+          errorDiv.innerText = 'Submission error: ' + error.message;
+          errorDiv.style.display = 'block';
+          btn.disabled = false;
+          btn.innerHTML = 'Submit Support Ticket';
+          return;
+        }
+
+        const createdTicket = (data && data.length > 0) ? data[0] : null;
+        const ticketRef = createdTicket 
+          ? (createdTicket.ticket_number ? `#${createdTicket.ticket_number}` : createdTicket.id.substring(0, 8).toUpperCase())
+          : '#REC-' + Math.floor(1000 + Math.random() * 9000);
+
+        document.getElementById('ticket-ref-display').innerText = 'Ticket Reference: ' + ticketRef;
+        document.getElementById('ticket-confirmed-email').innerText = contactEmail;
+
+        formEl.style.display = 'none';
+        successBox.style.display = 'block';
+
+      } catch (err) {
+        console.error('Ticket network exception:', err);
+        errorDiv.innerText = 'Network error submitting ticket. Please check connection or email support@flexitapapp.com.';
+        errorDiv.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = 'Submit Support Ticket';
+      }
+    }
+
+    function resetTicketForm() {
+      const formEl = document.getElementById('support-ticket-form');
+      const successBox = document.getElementById('ticket-success-box');
+      const btn = document.getElementById('ticket-submit-btn');
+      
+      formEl.reset();
+      formEl.style.display = 'block';
+      successBox.style.display = 'none';
+      btn.disabled = false;
+      btn.innerHTML = 'Submit Support Ticket';
+    }
+
+    // --- MOBILE MENU TOGGLE ---
+    function toggleMobileMenu() {
+      const el = document.getElementById('navLinksContainer');
+      if (el) el.classList.toggle('mobile-open');
+    }
+
+    // --- MODAL CONTROLS ---
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.style.display = 'flex';
+    }
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.style.display = 'none';
+    }
+
+    // --- CHAT WIDGET TOGGLE ---
+    function toggleSalesChat() {
+      const p = document.getElementById('sales-chat-panel');
+      if (p) p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // --- AUTH LOGIN SUBMIT ---
+    async function handleMerchantLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorDiv = document.getElementById('login-modal-error');
+      const btn = document.getElementById('login-submit-btn');
+
+      errorDiv.innerText = '';
+      btn.innerText = 'Verifying credentials...';
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      
+      if (error) {
+        errorDiv.innerText = error.message;
+        btn.innerText = 'Log In';
+        return;
+      }
+
+      window.location.href = 'portal.html';
+    }
+  </script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" />
+        <span>FlexiTap POS</span>
+      </a>
+      
+      <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">☰</button>
+
+      <div class="nav-links" id="navLinksContainer">
+        <a href="features.html" class="nav-link">Capabilities</a>
+        <a href="pricing.html" class="nav-link">Pricing</a>
+        <a href="about.html" class="nav-link">About Us & FAQ</a>
+        <a href="support.html" class="nav-link active">Support & Download</a>
+        <a href="dev_portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <a href="pricing.html" class="btn-signup">Get Started</a>
+        <button class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <main class="container">
+    <section class="support-hero">
+      <div class="hero-badge">
+        <span class="hero-dot"></span> Official Releases & Dedicated Technician Support
+      </div>
+      
+      <h1 class="section-title">Support & App Downloads</h1>
+      <p class="section-subtitle">
+        Get the latest official FlexiTap POS client builds for your tablets, counters, and registers. Connect directly with technical assistance, or dispatch a high-priority ticket directly to our operations engineering team.
+      </p>
+
+      <div class="quick-jump-bar">
+        <a href="#downloads" class="quick-jump-btn active">📦 App Downloads</a>
+        <a href="#ticket" class="quick-jump-btn">🎫 Submit a Ticket</a>
+        <a href="#remote-assist" class="quick-jump-btn">⚡ Remote Diagnostics</a>
+      </div>
+    </section>
+
+    <!-- SECTION 1: DOWNLOADS SHOWCASE -->
+    <section id="downloads" class="download-section">
+      <div class="section-heading-wrap">
+        <span class="section-pill">Official Client Binaries</span>
+        <h2 class="section-header-title">Install FlexiTap on Your Existing Hardware</h2>
+      </div>
+
+      <div class="download-grid">
+        
+        <!-- CARD 1: WINDOWS -->
+        <div class="download-card highlight">
+          <div class="card-top">
+            <div class="platform-header">
+              <div class="platform-icon-wrap" style="background: rgba(0, 120, 215, 0.12); border-color: rgba(0, 120, 215, 0.3);">
+                <!-- Windows Logo Icon -->
+                <svg viewBox="0 0 24 24" style="fill: #0078d7;">
+                  <path d="M0 3.449L9.75 2.1v9.451H0V3.449zm10.75-1.5L24 0v11.551h-13.25V1.949zM0 12.551h9.75V22l-9.75-1.35V12.551zm10.75 0H24V24l-13.25-1.95V12.551z"/>
+                </svg>
+              </div>
+              <span class="version-tag">v2.4.1 Latest Stable</span>
+            </div>
+            
+            <h3 class="platform-name">Windows POS Edition</h3>
+            <p class="platform-desc">
+              Engineered for Windows 10/11 desktops, touchscreen all-in-one cash registers, and backoffice inventory management.
+            </p>
+
+            <ul class="feature-bullets">
+              <li><span>✓</span> Embedded offline SQLite runtime (zero latency checkout)</li>
+              <li><span>✓</span> Native ESC/POS thermal printer driver (USB, Serial, LAN)</li>
+              <li><span>✓</span> Dual-screen Customer Display (CDS) windowing support</li>
+              <li><span>✓</span> Direct hardware Cash Drawer kick-pulse relay</li>
+            </ul>
+          </div>
+
+          <div>
+            <a href="https://github.com/datuljeffrey-sys/flexitap-pos/releases" target="_blank" rel="noopener noreferrer" class="btn-download-primary" style="background: #0078d7;">
+              <!-- Windows download icon -->
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M0 3.449L9.75 2.1v9.451H0V3.449zm10.75-1.5L24 0v11.551h-13.25V1.949zM0 12.551h9.75V22l-9.75-1.35V12.551zm10.75 0H24V24l-13.25-1.95V12.551z"/>
+              </svg>
+              Download for Windows (.exe)
+            </a>
+            <a href="Install-FlexiTapSupport.ps1" download class="btn-download-secondary">
+              🛠️ Windows Remote Support Helper (.ps1)
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 2: GOOGLE PLAY / ANDROID -->
+        <div class="download-card">
+          <div class="card-top">
+            <div class="platform-header">
+              <div class="platform-icon-wrap" style="background: rgba(52, 168, 83, 0.12); border-color: rgba(52, 168, 83, 0.3);">
+                <!-- Google Play Icon -->
+                <svg viewBox="0 0 24 24" style="fill: #34a853;">
+                  <path d="M3.609 1.814L13.793 12 3.61 22.186c-.301-.318-.485-.75-.485-1.229V3.043c0-.479.184-.911.484-1.229zm11.306 11.307l2.42 2.42-11.89 6.842 9.47-9.262zm0-2.242L5.445 1.617l11.89 6.842-2.42 2.42zm1.536 1.536l3.815-2.194c.833-.479.833-1.258 0-1.737L16.451 10.29l-2.115 2.125 2.115 2.126v-.126z"/>
+                </svg>
+              </div>
+              <span class="version-tag">v2.4.1 Android 8.0+</span>
+            </div>
+            
+            <h3 class="platform-name">Android &amp; Sunmi POS</h3>
+            <p class="platform-desc">
+              Designed for Android commercial tablets, Sunmi T2s / V2s handhelds, and Kitchen Display System (KDS) wall monitors.
+            </p>
+
+            <ul class="feature-bullets">
+              <li><span>✓</span> Sunmi internal thermal printer and barcode SDK integrated</li>
+              <li><span>✓</span> Bluetooth Low Energy (BLE) mobile receipt printer pairing</li>
+              <li><span>✓</span> Visual Kitchen Display System (KDS) order routing</li>
+              <li><span>✓</span> Handheld tableside ordering &amp; bill split workflow</li>
+            </ul>
+          </div>
+
+          <div>
+            <a href="https://play.google.com/store/apps/details?id=com.carriez.flutter_hbb" target="_blank" rel="noopener noreferrer" class="btn-download-primary" style="background: #10b981;">
+              <!-- Google Play Icon -->
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3.609 1.814L13.793 12 3.61 22.186c-.301-.318-.485-.75-.485-1.229V3.043c0-.479.184-.911.484-1.229zm11.306 11.307l2.42 2.42-11.89 6.842 9.47-9.262zm0-2.242L5.445 1.617l11.89 6.842-2.42 2.42zm1.536 1.536l3.815-2.194c.833-.479.833-1.258 0-1.737L16.451 10.29l-2.115 2.125 2.115 2.126v-.126z"/>
+              </svg>
+              Get on Google Play Store
+            </a>
+            <a href="https://github.com/datuljeffrey-sys/flexitap-pos/releases" target="_blank" rel="noopener noreferrer" class="btn-download-secondary">
+              📦 Direct APK Download (.apk)
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 3: APPLE APP STORE / IPAD -->
+        <div class="download-card">
+          <div class="card-top">
+            <div class="platform-header">
+              <div class="platform-icon-wrap" style="background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2);">
+                <!-- Apple Icon -->
+                <svg viewBox="0 0 24 24" style="fill: #fff;">
+                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.01c.67-.82 1.13-1.96 1.01-3.1-.97.04-2.15.65-2.85 1.47-.62.72-1.16 1.88-1.02 2.99 1.08.08 2.19-.54 2.86-1.36z"/>
+                </svg>
+              </div>
+              <span class="version-tag">v2.4.1 iOS 15.0+</span>
+            </div>
+            
+            <h3 class="platform-name">iPadOS &amp; iOS Edition</h3>
+            <p class="platform-desc">
+              Tailored for Apple iPad front-of-house registers, bar counters, and iPhone manager floor supervisors.
+            </p>
+
+            <ul class="feature-bullets">
+              <li><span>✓</span> Ultra-smooth Retina touch cashier &amp; item modifier grid</li>
+              <li><span>✓</span> Network AirPrint &amp; Star Micronics SDK auto-detection</li>
+              <li><span>✓</span> Real-time kitchen ticket sync via local broadcast relay</li>
+              <li><span>✓</span> Offline shift balancing and encrypted journal cache</li>
+            </ul>
+          </div>
+
+          <div>
+            <a href="https://apps.apple.com" target="_blank" rel="noopener noreferrer" class="btn-download-primary" style="background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25);">
+              <!-- Apple Store Icon -->
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.01c.67-.82 1.13-1.96 1.01-3.1-.97.04-2.15.65-2.85 1.47-.62.72-1.16 1.88-1.02 2.99 1.08.08 2.19-.54 2.86-1.36z"/>
+              </svg>
+              Download on App Store
+            </a>
+            <a href="https://testflight.apple.com" target="_blank" rel="noopener noreferrer" class="btn-download-secondary">
+              🚀 Apple TestFlight Beta ↗
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- HARDWARE CALLOUT -->
+      <div class="hardware-banner" style="margin-top: 36px; margin-bottom: 0;">
+        <div class="hw-info">
+          <h4>🔌 Open Hardware Freedom — Bring Your Own Device</h4>
+          <p>FlexiTap does not force you to buy overpriced proprietary terminals. Keep your existing printers, tablets, and cash drawers.</p>
+        </div>
+        <div class="hw-pills">
+          <span class="hw-pill">Sunmi Hardware Certified</span>
+          <span class="hw-pill">Epson &amp; Star ESC/POS</span>
+          <span class="hw-pill">Zebra Barcode Scanners</span>
+          <span class="hw-pill">Windows Touch Terminals</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: EXPEDITED TICKET SUBMISSION -->
+    <section id="ticket" class="ticket-section">
+      <div class="ticket-grid">
+
+        <!-- LEFT COLUMN: SUPPORT INFO & SLAs -->
+        <div class="ticket-info-card">
+          <span class="section-pill">Expedited Support Queue</span>
+          <h3>Direct-to-Dev Ticket Dispatch</h3>
+          <p>
+            Encountering an issue with printer sockets, offline sync, or terminal configuration? Fill out this ticket to pipe your diagnostic details directly into our developer and operations queue in real time.
+          </p>
+
+          <div class="sla-box">
+            <div class="sla-title">⚡ Guaranteed Engineering SLA</div>
+            <div class="sla-desc">
+              Urgent and store-down inquiries trigger live audible alerts to our on-call infrastructure engineers with an average response time of under 15 minutes.
+            </div>
+          </div>
+
+          <ul class="support-options-list">
+            <li class="support-opt-item">
+              <div class="opt-icon">⚡</div>
+              <div class="opt-content">
+                <strong>Ad-hoc Remote Assistance</strong>
+                <span>Have an engineer on the phone? Open <a href="portal.html">Merchant Portal Remote Support</a> to share your 6-character code.</span>
+              </div>
+            </li>
+            <li class="support-opt-item">
+              <div class="opt-icon">🛠️</div>
+              <div class="opt-content">
+                <strong>Internal Dev &amp; Ops Portal</strong>
+                <span>Are you on the engineering or support team? Visit the <a href="dev_portal.html">Dev &amp; Ops Console ↗</a> to resolve tickets.</span>
+              </div>
+            </li>
+            <li class="support-opt-item">
+              <div class="opt-icon">📧</div>
+              <div class="opt-content">
+                <strong>Direct Email Channel</strong>
+                <span>Emergency escalation: <a href="mailto:support@flexitapapp.com">support@flexitapapp.com</a></span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- RIGHT COLUMN: TICKET SUBMISSION FORM -->
+        <div class="ticket-form-card">
+          
+          <!-- SUBMISSION FORM -->
+          <form id="support-ticket-form" onsubmit="submitSupportTicket(event)">
+            <h3>Submit a Support Ticket</h3>
+            <p class="form-subtitle">Directly synchronized into the FlexiTap developer operations desk.</p>
+
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="t-store">Store / Merchant Name *</label>
+                <input type="text" id="t-store" required placeholder="e.g. Blue Bottle Coffee Uptown" />
+              </div>
+
+              <div class="form-group">
+                <label for="t-email">Contact Email Address *</label>
+                <input type="email" id="t-email" required placeholder="e.g. manager@bluebottle.com" />
+              </div>
+            </div>
+
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="t-category">Issue Category</label>
+                <select id="t-category">
+                  <option value="printer">Thermal Printer &amp; Cash Drawer</option>
+                  <option value="hardware">Touch Terminal &amp; Sunmi Tablet</option>
+                  <option value="payment">Payment Terminal &amp; Card Reader</option>
+                  <option value="sync">Offline Sync &amp; Database Journal</option>
+                  <option value="billing">Subscription, VIP Pass &amp; License</option>
+                  <option value="general" selected>General Setup / Assistance</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="t-priority">Severity / Priority</label>
+                <select id="t-priority">
+                  <option value="low">Low — General Question / Future Setup</option>
+                  <option value="medium" selected>Medium — Non-blocking Issue</option>
+                  <option value="high">High — Register Degraded / Slow</option>
+                  <option value="urgent">🚨 Urgent — Counter Down / Cannot Checkout</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="t-subject">Ticket Subject / Summary *</label>
+              <input type="text" id="t-subject" required placeholder="e.g. Kitchen printer delays receipt cutter on breakfast rush" />
+            </div>
+
+            <div class="form-group">
+              <label for="t-description">Detailed Description &amp; Error Notes *</label>
+              <textarea id="t-description" required placeholder="Please describe the steps to reproduce, device model, and any error message displayed on your terminal..."></textarea>
+              <div class="field-hint">Hardware telemetry and browser details will be attached automatically to accelerate diagnosis.</div>
+            </div>
+
+            <div id="ticket-error-msg" class="error-msg" style="display:none; text-align:left; margin-bottom:12px;"></div>
+
+            <button type="submit" class="btn-submit-ticket" id="ticket-submit-btn">
+              <span>Submit Support Ticket</span>
+            </button>
+          </form>
+
+          <!-- SUCCESS STATE CARD -->
+          <div id="ticket-success-box" class="ticket-success-box">
+            <div class="ticket-success-icon">✓</div>
+            <h4 class="ticket-success-title">Support Ticket Received!</h4>
+            <div id="ticket-ref-display" class="ticket-success-ref">Ticket Reference: #REC-000</div>
+            <p class="ticket-success-desc">
+              Your inquiry has been inserted directly into our dev operations dispatch. A technician has been notified and a confirmation was dispatched to <strong id="ticket-confirmed-email" style="color: #60a5fa;">your email</strong>.
+            </p>
+            <button type="button" class="btn-reset-ticket" onclick="resetTicketForm()">
+              + Submit Another Ticket
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- REMOTE ASSISTANCE BANNER -->
+      <div id="remote-assist" class="remote-callout-card">
+        <div class="remote-callout-text">
+          <h4>
+            <span>⚡</span>
+            Need Instant Hands-on Technician Access?
+          </h4>
+          <p>
+            During a live phone support call, our technicians can securely inspect your register screen via our ad-hoc session gateway.
+          </p>
+        </div>
+        <div>
+          <a href="portal.html" class="btn-remote-quick">
+            Launch Remote Support ↗
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 26px; height: 26px;" />
+            <div style="font-weight: 800; color: #fff; font-size: 18px;">FlexiTap POS</div>
+          </div>
+          <p>Simplify Sales. Grow Your Business. An offline-first point-of-sale for shop owners, baristas, and anyone who needs things to just work.</p>
+          
+          <div class="social-links">
+            <a href="https://www.facebook.com/FlexiTapPOS" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+            <a href="https://www.youtube.com/@FlexiTapPOS" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="YouTube"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+            <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="X (Twitter)"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="features.html">Capabilities</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="about.html">About &amp; FAQ</a></li>
+            <li><a href="support.html">Support &amp; Download</a></li>
+            <li><a href="portal.html">Merchant Portal</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Legal &amp; Trust</h4>
+          <ul>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="refunds.html">Refund Policy</a></li>
+            <li><a href="dev_portal.html">Dev &amp; Ops Portal</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 FlexiTap POS. All rights reserved.</div>
+        <div>www.flexitapapp.com • Offline-First Point of Sale</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING CHAT WIDGET -->
+  <button id="chat-btn" onclick="toggleSalesChat()" title="FlexiTap Support Chat">💬</button>
+  <div id="sales-chat-panel">
+    <div class="chat-header">
+      <div style="font-size: 13px; font-weight: 800; color: #fff;">FlexiTap Technical Assistant</div>
+      <button onclick="toggleSalesChat()" style="background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer;">&times;</button>
+    </div>
+    <div class="chat-body">
+      <div class="chat-msg">👋 Welcome to FlexiTap Support! Need assistance installing our Windows, Android, or iOS app, or pairing your hardware?</div>
+      <div class="chat-msg" style="background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3);">
+        💡 You can also submit an expedited support ticket using the form on this page to alert our engineering operations desk.
+      </div>
+    </div>
+  </div>
+
+  <!-- MERCHANT LOGIN MODAL -->
+  <div class="modal-overlay" id="login-modal">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
+      <div style="display: flex; justify-content: center; margin-bottom: 16px;">
+        <img src="image_02e503.png" alt="FlexiTap Logo" style="width: 48px; height: 48px; border-radius: 50%;" />
+      </div>
+      <h3 style="font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px;">Merchant Sign In</h3>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Access your store telemetry, cloud reports, and ad-hoc remote support session.</p>
+      
+      <form id="login-form" onsubmit="handleMerchantLogin(event)">
+        <label>Merchant Email</label>
+        <input type="email" id="login-email" required placeholder="owner@store.com" />
+        <label>Password</label>
+        <input type="password" id="login-password" required placeholder="••••••••" />
+        <button type="submit" class="submit-btn" id="login-submit-btn">Log In to Merchant Portal</button>
+      </form>
+      <div id="login-modal-error" class="error-msg"></div>
+    </div>
+  </div>
+
+</body>
+</html>
