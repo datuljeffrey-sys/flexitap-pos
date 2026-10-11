@@ -83,12 +83,9 @@
     .feature-bullets li { display: flex; align-items: flex-start; gap: 8px; }
     .feature-bullets li span { color: var(--accent-green); font-weight: 800; flex-shrink: 0; }
 
-    .btn-download-primary { width: 100%; padding: 13px 18px; border-radius: 12px; background: var(--primary); color: #fff; border: none; font-weight: 700; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; transition: 0.2s; margin-bottom: 10px; }
-    .btn-download-primary:hover { background: var(--primary-hover); }
-    .btn-download-primary svg { width: 18px; height: 18px; fill: currentColor; }
-
-    .btn-download-secondary { width: 100%; padding: 10px 16px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); color: #cbd5e1; border: 1px solid var(--card-border); font-weight: 600; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; transition: 0.2s; }
-    .btn-download-secondary:hover { background: rgba(255, 255, 255, 0.1); color: #fff; border-color: rgba(255, 255, 255, 0.2); }
+    .btn-download-placeholder { width: 100%; padding: 13px 18px; border-radius: 12px; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; margin-bottom: 10px; cursor: default; user-select: none; }
+    .btn-download-placeholder svg { width: 18px; height: 18px; fill: currentColor; }
+    .btn-placeholder-badge { width: 100%; padding: 9px 14px; border-radius: 10px; background: rgba(255, 255, 255, 0.04); border: 1px dashed rgba(255, 255, 255, 0.15); color: #94a3b8; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; text-align: center; }
 
     /* HARDWARE COMPATIBILITY BANNER */
     .hardware-banner { background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(22, 30, 49, 0.8)); border: 1px solid var(--card-border); border-radius: 18px; padding: 24px 28px; margin-bottom: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
@@ -394,7 +391,7 @@
       
       <h1 class="section-title">Support & App Downloads</h1>
       <p class="section-subtitle">
-        Get the latest official FlexiTap POS client builds for your tablets, counters, and registers. Connect directly with technical assistance, or dispatch a high-priority ticket directly to our operations engineering team.
+        Official FlexiTap POS client builds for your tablets, counters, and registers will unlock on Public Launch Day (November 13, 2026). In the meantime, connect directly with technical assistance, or dispatch a high-priority ticket directly to our operations engineering team.
       </p>
 
       <div class="quick-jump-bar">
@@ -407,7 +404,7 @@
     <!-- SECTION 1: DOWNLOADS SHOWCASE -->
     <section id="downloads" class="download-section">
       <div class="section-heading-wrap">
-        <span class="section-pill">Official Client Binaries</span>
+        <span class="section-pill">Public Launch: November 13, 2026</span>
         <h2 class="section-header-title">Install FlexiTap on Your Existing Hardware</h2>
       </div>
 
@@ -423,7 +420,7 @@
                   <path d="M0 3.449L9.75 2.1v9.451H0V3.449zm10.75-1.5L24 0v11.551h-13.25V1.949zM0 12.551h9.75V22l-9.75-1.35V12.551zm10.75 0H24V24l-13.25-1.95V12.551z"/>
                 </svg>
               </div>
-              <span class="version-tag">v2.4.1 Latest Stable</span>
+              <span class="version-tag">Releasing Nov 13, 2026</span>
             </div>
             
             <h3 class="platform-name">Windows POS Edition</h3>
@@ -440,16 +437,16 @@
           </div>
 
           <div>
-            <a href="https://github.com/datuljeffrey-sys/flexitap-pos/releases" target="_blank" rel="noopener noreferrer" class="btn-download-primary" style="background: #0078d7;">
+            <div class="btn-download-placeholder" style="background: rgba(0, 120, 215, 0.18); border: 1px solid rgba(0, 120, 215, 0.4); color: #93c5fd;">
               <!-- Windows download icon -->
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M0 3.449L9.75 2.1v9.451H0V3.449zm10.75-1.5L24 0v11.551h-13.25V1.949zM0 12.551h9.75V22l-9.75-1.35V12.551zm10.75 0H24V24l-13.25-1.95V12.551z"/>
               </svg>
               Download for Windows (.exe)
-            </a>
-            <a href="Install-FlexiTapSupport.ps1" download class="btn-download-secondary">
-              🛠️ Windows Remote Support Helper (.ps1)
-            </a>
+            </div>
+            <div class="btn-placeholder-badge">
+              🔒 Available on Launch Day (Nov 13, 2026)
+            </div>
           </div>
         </div>
 
@@ -463,7 +460,7 @@
                   <path d="M3.609 1.814L13.793 12 3.61 22.186c-.301-.318-.485-.75-.485-1.229V3.043c0-.479.184-.911.484-1.229zm11.306 11.307l2.42 2.42-11.89 6.842 9.47-9.262zm0-2.242L5.445 1.617l11.89 6.842-2.42 2.42zm1.536 1.536l3.815-2.194c.833-.479.833-1.258 0-1.737L16.451 10.29l-2.115 2.125 2.115 2.126v-.126z"/>
                 </svg>
               </div>
-              <span class="version-tag">v2.4.1 Android 8.0+</span>
+              <span class="version-tag">Releasing Nov 13, 2026</span>
             </div>
             
             <h3 class="platform-name">Android &amp; Sunmi POS</h3>
@@ -480,16 +477,16 @@
           </div>
 
           <div>
-            <a href="https://play.google.com/store/apps/details?id=com.carriez.flutter_hbb" target="_blank" rel="noopener noreferrer" class="btn-download-primary" style="background: #10b981;">
+            <div class="btn-download-placeholder" style="background: rgba(16, 185, 129, 0.16); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7;">
               <!-- Google Play Icon -->
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M3.609 1.814L13.793 12 3.61 22.186c-.301-.318-.485-.75-.485-1.229V3.043c0-.479.184-.911.484-1.229zm11.306 11.307l2.42 2.42-11.89 6.842 9.47-9.262zm0-2.242L5.445 1.617l11.89 6.842-2.42 2.42zm1.536 1.536l3.815-2.194c.833-.479.833-1.258 0-1.737L16.451 10.29l-2.115 2.125 2.115 2.126v-.126z"/>
               </svg>
               Get on Google Play Store
-            </a>
-            <a href="https://github.com/datuljeffrey-sys/flexitap-pos/releases" target="_blank" rel="noopener noreferrer" class="btn-download-secondary">
-              📦 Direct APK Download (.apk)
-            </a>
+            </div>
+            <div class="btn-placeholder-badge">
+              🔒 Available on Launch Day (Nov 13, 2026)
+            </div>
           </div>
         </div>
 
@@ -503,7 +500,7 @@
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.01c.67-.82 1.13-1.96 1.01-3.1-.97.04-2.15.65-2.85 1.47-.62.72-1.16 1.88-1.02 2.99 1.08.08 2.19-.54 2.86-1.36z"/>
                 </svg>
               </div>
-              <span class="version-tag">v2.4.1 iOS 15.0+</span>
+              <span class="version-tag">Releasing Nov 13, 2026</span>
             </div>
             
             <h3 class="platform-name">iPadOS &amp; iOS Edition</h3>
@@ -520,16 +517,16 @@
           </div>
 
           <div>
-            <a href="https://apps.apple.com" target="_blank" rel="noopener noreferrer" class="btn-download-primary" style="background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25);">
+            <div class="btn-download-placeholder" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.25); color: #f8fafc;">
               <!-- Apple Store Icon -->
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.01c.67-.82 1.13-1.96 1.01-3.1-.97.04-2.15.65-2.85 1.47-.62.72-1.16 1.88-1.02 2.99 1.08.08 2.19-.54 2.86-1.36z"/>
               </svg>
               Download on App Store
-            </a>
-            <a href="https://testflight.apple.com" target="_blank" rel="noopener noreferrer" class="btn-download-secondary">
-              🚀 Apple TestFlight Beta ↗
-            </a>
+            </div>
+            <div class="btn-placeholder-badge">
+              🔒 Available on Launch Day (Nov 13, 2026)
+            </div>
           </div>
         </div>
 
