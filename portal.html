@@ -2261,6 +2261,8 @@
           lockedEl.style.display = isProOrAbove ? 'none' : 'block';
         }
 
+        maybeAutoOpenSupportCode(tier, profile?.role);
+
         // Default date range
         const today = getLocalDateString();
         const startDateEl = document.getElementById('start-date');
@@ -2285,7 +2287,30 @@
       }
     }
 
-    // Remote Access Support Code Verifier
+    // Remote Access Support Code Auto-Open & Verifier
+    let autoCodeChecked = false;
+    function maybeAutoOpenSupportCode(tier, role) {
+      if (autoCodeChecked) return;
+      const params = new URLSearchParams(window.location.search);
+      const code = (params.get('code') || '').trim().toUpperCase();
+      const tab = (params.get('tab') || '').trim().toLowerCase();
+
+      if (tab === 'remote-access' || code) {
+        autoCodeChecked = true;
+        switchReport('remote-access');
+
+        const tierLower = (tier || '').toLowerCase();
+        const isEligible = ['pro', 'vip', 'enterprise', 'unlimited'].some(t => tierLower.includes(t)) || role === 'admin' || role === 'owner';
+        if (!isEligible) return;
+
+        if (code) {
+          const input = document.getElementById('support-code-input');
+          if (input) input.value = code;
+          checkSupportCode();
+        }
+      }
+    }
+
     async function checkSupportCode() {
       const codeInput = document.getElementById('support-code-input');
       const statusDiv = document.getElementById('support-code-status');
@@ -2598,6 +2623,11 @@
       try {
         const { data: { session }, error } = await supabaseClient.auth.getSession();
         if (session?.user && !error) {
+          // If URL hash contains SSO credentials, immediately purge them from address bar
+          if (window.location.hash && window.location.hash.includes('access_token')) {
+            const cleanUrl = window.location.pathname + window.location.search;
+            window.history.replaceState({}, document.title, cleanUrl);
+          }
           await loadApp(session.user);
         } else {
           const loginView = document.getElementById('login-view');
@@ -2612,6 +2642,10 @@
 
     supabaseClient.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
+        if (window.location.hash && window.location.hash.includes('access_token')) {
+          const cleanUrl = window.location.pathname + window.location.search;
+          window.history.replaceState({}, document.title, cleanUrl);
+        }
         loadApp(session.user);
       } else if (event === 'SIGNED_OUT') {
         const loginView = document.getElementById('login-view');
