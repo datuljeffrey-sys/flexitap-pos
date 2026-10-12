@@ -200,6 +200,7 @@
     .badge-pill { padding: 2px 8px; border-radius: 10px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; }
     .badge-open { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
     .badge-in_progress { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .badge-escalated { background: rgba(239, 68, 68, 0.25); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.5); font-weight: 800; }
     .badge-resolved { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
     .badge-closed { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.4); }
     .badge-urgent { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
@@ -927,25 +928,52 @@
 
         <!-- ================= 3.5 TICKETS CRM VIEW ================= -->
         <div id="view-tickets" class="tab-view">
-          <div class="kpi-row">
+          <div class="kpi-row" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
             <div class="kpi-card">
               <div class="kpi-title">Open Tickets Queue</div>
               <div class="kpi-val" style="color: var(--primary);" id="kpi-tickets-open">0</div>
               <div class="kpi-status" style="color: var(--accent);">● Requiring Action</div>
             </div>
             <div class="kpi-card">
-              <div class="kpi-title">In Progress / Investigating</div>
-              <div class="kpi-val" style="color: #fbbf24;" id="kpi-tickets-progress">0</div>
-              <div class="kpi-status" style="color: var(--text-muted);">Assigned to Devs</div>
+              <div class="kpi-title">Customer Support Desk</div>
+              <div class="kpi-val" style="color: #60a5fa;" id="kpi-tickets-support">0</div>
+              <div class="kpi-status" style="color: var(--text-muted);">Tier 1 &amp; 2 Merchant Ops</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Core Dev Engineering</div>
+              <div class="kpi-val" style="color: #c084fc;" id="kpi-tickets-dev">0</div>
+              <div class="kpi-status" style="color: var(--text-muted);">Tier 3 Bugs &amp; Sync</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Escalated to Dev</div>
+              <div class="kpi-val" style="color: #f87171;" id="kpi-tickets-escalated">0</div>
+              <div class="kpi-status" style="color: #f87171;">⚡ Urgent Handoff</div>
             </div>
             <div class="kpi-card">
               <div class="kpi-title">Resolved &amp; Closed</div>
               <div class="kpi-val" style="color: var(--accent);" id="kpi-tickets-resolved">0</div>
-              <div class="kpi-status" style="color: var(--accent);">● Fix Verified</div>
+              <div class="kpi-status" style="color: var(--accent);">✓ Verified Fixed</div>
             </div>
           </div>
 
           <div class="panel" style="margin-bottom: 0;">
+            
+            <!-- Tier / Department Queue Switcher Tabs -->
+            <div class="crm-tabs-nav" style="margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 8px;">
+              <button class="crm-tab-btn active" id="t-queue-tab-all" onclick="switchTicketQueue('all')">
+                <span>👥</span> All Tickets <span class="nav-badge" id="t-badge-count-all" style="margin-left: 6px;">0</span>
+              </button>
+              <button class="crm-tab-btn" id="t-queue-tab-support" onclick="switchTicketQueue('support')">
+                <span>💬</span> Customer Support Queue <span class="nav-badge" id="t-badge-count-support" style="margin-left: 6px; background: rgba(59,130,246,0.2); color: #60a5fa;">0</span>
+              </button>
+              <button class="crm-tab-btn" id="t-queue-tab-dev" onclick="switchTicketQueue('dev')">
+                <span>💻</span> Dev Engineering Queue <span class="nav-badge" id="t-badge-count-dev" style="margin-left: 6px; background: rgba(139,92,246,0.2); color: #c084fc;">0</span>
+              </button>
+              <button class="crm-tab-btn" id="t-queue-tab-escalated" onclick="switchTicketQueue('escalated')">
+                <span>⚡</span> Escalated to Dev <span class="nav-badge" id="t-badge-count-escalated" style="margin-left: 6px; background: rgba(239,68,68,0.25); color: #f87171;">0</span>
+              </button>
+            </div>
+
             <div class="panel-header">
               <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                 <button class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary); padding: 8px 16px;" onclick="openCreateTicketModal()">+ New Ticket</button>
@@ -954,7 +982,9 @@
                   <option value="all">All Statuses</option>
                   <option value="open">Open Only</option>
                   <option value="in_progress">In Progress</option>
+                  <option value="escalated">⚡ Escalated to Dev</option>
                   <option value="resolved">Resolved</option>
+                  <option value="closed">Closed</option>
                 </select>
                 <select id="ticket-filter-priority" onchange="filterTickets()" style="background: var(--bg); border: 1px solid var(--card-border); color: #fff; padding: 7px 12px; border-radius: 8px; font-size: 0.85rem;">
                   <option value="all">All Priorities</option>
@@ -2046,7 +2076,7 @@
       monitoring: { title: 'Telemetry & Sockets Monitoring', subtitle: 'Live Supabase real-time channels, API latencies, and sync performance.' },
       errors: { title: 'Exception Log & Sync Repairs', subtitle: 'Diagnose SQLite/Supabase conflicts, schema mismatches, and failed upserts.' },
       analytics: { title: 'Traffic & Platform Demand Analytics', subtitle: 'Real-time site visits, conversion funnels, and download button clicks across Windows, Android, and iOS.' },
-      sla: { title: 'SLA Performance & Operational Intelligence', subtitle: 'Live Service Level Agreement monitoring, response velocity, breach monitoring, and specialist scorecards (Admins excluded).' },
+      sla: { title: 'SLA Performance & Operational Intelligence (Admin Only)', subtitle: 'Executive Service Level Agreement monitoring, response velocity, breach monitoring, and specialist scorecards.' },
       chat: { title: 'Team Chat, Huddles & Calling', subtitle: 'Real-time internal chat, cross-functional channels, peer-to-peer audio/video huddles, and screen sharing.' },
       workforce: { title: 'Staff Workforce, Timecard & Shifts', subtitle: 'Personal punch clock, live shift timecard, PTO leave requests, and weekly coverage schedule.' },
       team: { title: 'Staff Directory & RBAC Administration', subtitle: 'Provision team members, configure granular role permissions, and manage backend staff access.' }
@@ -2091,7 +2121,21 @@
 
       if (key === 'clients') loadDevData();
       if (key === 'support') loadSupportDeskSessions();
-      if (key === 'tickets') fetchTickets();
+      if (key === 'tickets') {
+        const effRole = typeof getEffectiveRole === 'function' ? getEffectiveRole() : 'admin';
+        if (effRole === 'support' || effRole === 'customer_support' || effRole === 'agent') {
+          activeTicketQueue = 'support';
+        } else if (effRole === 'dev' || effRole === 'developer' || effRole === 'devops') {
+          activeTicketQueue = 'dev';
+        } else {
+          activeTicketQueue = 'all';
+        }
+        ['all', 'support', 'dev', 'escalated'].forEach(q => {
+          const btn = document.getElementById('t-queue-tab-' + q);
+          if (btn) btn.classList.toggle('active', q === activeTicketQueue);
+        });
+        fetchTickets();
+      }
       if (key === 'analytics') fetchSiteAnalytics();
       if (key === 'sla') loadSlaDashboardData();
       if (key === 'chat') loadTeamChatData();
@@ -3958,11 +4002,24 @@
               subject: 'Sunmi Bluetooth printer cuts off receipts',
               category: 'printer',
               priority: 'urgent',
-              status: 'open',
-              assigned_to: 'alex.dev@flexitap.io',
+              status: 'escalated',
+              is_escalated: true,
+              escalated_to: 'dev',
+              escalated_by: 'sarah.support@flexitapapp.com',
+              escalation_reason: 'Thermal Printer Driver / Bluetooth Socket Crash',
+              assigned_to: 'david.ops@flexitapapp.com',
               description: 'During morning breakfast rush, the thermal cutter delays by 5 seconds and drops Bluetooth socket pairing.',
-              device_telemetry: { app_version: 'v2.4.1 (Build 184)', device_role: 'Master Register', sqlite_healthy: true, unsynced_invoices: 0 },
-              created_at: new Date(Date.now() - 25 * 60 * 1000).toISOString()
+              device_telemetry: {
+                app_version: 'v2.4.1 (Build 184)',
+                device_role: 'Master Register',
+                sqlite_healthy: true,
+                unsynced_invoices: 0,
+                is_escalated: true,
+                escalation_reason: 'Thermal Printer Driver / Bluetooth Socket Crash',
+                auto_assigned: { staff_name: 'David Kim', role: 'dev', email: 'david.ops@flexitapapp.com' }
+              },
+              created_at: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
+              escalated_at: new Date(Date.now() - 10 * 60 * 1000).toISOString()
             },
             {
               id: 'tck_sample_2',
@@ -3973,10 +4030,36 @@
               category: 'payment',
               priority: 'high',
               status: 'in_progress',
-              assigned_to: 'dev@flexitap.io',
+              assigned_to: 'sarah.support@flexitapapp.com',
               description: 'Splitting an invoice 3 ways with cash and card resulted in a balance mismatch alert.',
-              device_telemetry: { app_version: 'v2.4.1 (Build 184)', device_role: 'Satellite Register', sqlite_healthy: true, unsynced_invoices: 0 },
+              device_telemetry: {
+                app_version: 'v2.4.1 (Build 184)',
+                device_role: 'Satellite Register',
+                sqlite_healthy: true,
+                unsynced_invoices: 0,
+                auto_assigned: { staff_name: 'Sarah Jenkins', role: 'support', email: 'sarah.support@flexitapapp.com' }
+              },
               created_at: new Date(Date.now() - 120 * 60 * 1000).toISOString()
+            },
+            {
+              id: 'tck_sample_4',
+              ticket_number: 105,
+              store_name: 'Harbor Fish Market',
+              contact_email: 'dock@harborfish.com',
+              subject: 'SQLite WAL mode checkpoint contention during nightly sync',
+              category: 'sync',
+              priority: 'high',
+              status: 'open',
+              assigned_to: 'david.ops@flexitapapp.com',
+              description: 'Database lock encountered during end-of-day z-report sync when batch-posting 140 offline cash receipts.',
+              device_telemetry: {
+                app_version: 'v2.4.1 (Build 184)',
+                device_role: 'Master Register',
+                sqlite_healthy: false,
+                unsynced_invoices: 12,
+                auto_assigned: { staff_name: 'David Kim', role: 'dev', email: 'david.ops@flexitapapp.com' }
+              },
+              created_at: new Date(Date.now() - 45 * 60 * 1000).toISOString()
             },
             {
               id: 'tck_sample_3',
@@ -3987,10 +4070,15 @@
               category: 'general',
               priority: 'low',
               status: 'resolved',
-              assigned_to: 'dev@flexitap.io',
+              assigned_to: 'marcus.support@flexitapapp.com',
               description: 'Needed assistance setting 5 AM to 11 AM Breakfast serving period for dynamic menuboard.',
               resolution_notes: 'Walked merchant through Back Office > Menus > Serving Periods. Verified on kitchen tablet.',
-              device_telemetry: { app_version: 'v2.4.0 (Build 180)', device_role: 'Master Register', sqlite_healthy: true },
+              device_telemetry: {
+                app_version: 'v2.4.0 (Build 180)',
+                device_role: 'Master Register',
+                sqlite_healthy: true,
+                auto_assigned: { staff_name: 'Marcus Vance', role: 'support', email: 'marcus.support@flexitapapp.com' }
+              },
               created_at: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
               resolved_at: new Date(Date.now() - 20 * 3600 * 1000).toISOString()
             }
@@ -4002,7 +4090,10 @@
 
       updateTicketKPIs();
       renderTicketsList();
-      if (!selectedTicket && cachedTickets.length > 0) {
+      const currentFiltered = typeof getFilteredTickets === 'function' ? getFilteredTickets() : cachedTickets;
+      if (!selectedTicket && currentFiltered.length > 0) {
+        selectTicket(currentFiltered[0].id);
+      } else if (!selectedTicket && cachedTickets.length > 0) {
         selectTicket(cachedTickets[0].id);
       }
 
@@ -4036,17 +4127,70 @@
       } catch (_) {}
     }
 
+    let activeTicketQueue = 'all';
+
+    function isEscalatedTicket(t) {
+      if (!t) return false;
+      return t.status === 'escalated' || t.is_escalated === true || t.device_telemetry?.is_escalated === true || t.escalated_to === 'dev';
+    }
+
+    function isDevTicket(t) {
+      if (!t) return false;
+      if (isEscalatedTicket(t)) return true;
+      const cat = (t.category || '').toLowerCase();
+      if (['printer', 'sync', 'bug', 'firmware', 'hardware', 'api', 'crash', 'error'].includes(cat)) return true;
+      if (t.device_telemetry?.auto_assigned?.role === 'dev') return true;
+      const assignee = (t.assigned_to || '').toLowerCase();
+      if (assignee.includes('dev') || assignee.includes('ops') || assignee.includes('david') || assignee.includes('alex.dev') || assignee.includes('maya')) return true;
+      return false;
+    }
+
+    function isSupportTicket(t) {
+      if (!t) return false;
+      if (isEscalatedTicket(t)) return false;
+      if (isDevTicket(t)) return false;
+      return true;
+    }
+
+    function switchTicketQueue(queue) {
+      activeTicketQueue = queue;
+      ['all', 'support', 'dev', 'escalated'].forEach(q => {
+        const btn = document.getElementById('t-queue-tab-' + q);
+        if (btn) btn.classList.toggle('active', q === queue);
+      });
+      renderTicketsList();
+      const currentFiltered = getFilteredTickets();
+      if (currentFiltered.length > 0 && (!selectedTicket || !currentFiltered.some(t => t.id === selectedTicket.id))) {
+        selectTicket(currentFiltered[0].id);
+      }
+    }
+
     function updateTicketKPIs() {
-      const openCount = cachedTickets.filter(t => t.status === 'open').length;
-      const progressCount = cachedTickets.filter(t => t.status === 'in_progress').length;
+      const openCount = cachedTickets.filter(t => t.status === 'open' || t.status === 'escalated').length;
+      const supportCount = cachedTickets.filter(t => isSupportTicket(t) && t.status !== 'resolved' && t.status !== 'closed').length;
+      const devCount = cachedTickets.filter(t => isDevTicket(t) && t.status !== 'resolved' && t.status !== 'closed').length;
+      const escalatedCount = cachedTickets.filter(t => isEscalatedTicket(t) && t.status !== 'resolved' && t.status !== 'closed').length;
       const resolvedCount = cachedTickets.filter(t => t.status === 'resolved' || t.status === 'closed').length;
 
       const openEl = document.getElementById('kpi-tickets-open');
-      const progEl = document.getElementById('kpi-tickets-progress');
+      const supEl = document.getElementById('kpi-tickets-support');
+      const devEl = document.getElementById('kpi-tickets-dev');
+      const escEl = document.getElementById('kpi-tickets-escalated');
       const resEl = document.getElementById('kpi-tickets-resolved');
       if (openEl) openEl.textContent = openCount;
-      if (progEl) progEl.textContent = progressCount;
+      if (supEl) supEl.textContent = supportCount;
+      if (devEl) devEl.textContent = devCount;
+      if (escEl) escEl.textContent = escalatedCount;
       if (resEl) resEl.textContent = resolvedCount;
+
+      const bAll = document.getElementById('t-badge-count-all');
+      const bSup = document.getElementById('t-badge-count-support');
+      const bDev = document.getElementById('t-badge-count-dev');
+      const bEsc = document.getElementById('t-badge-count-escalated');
+      if (bAll) bAll.textContent = cachedTickets.filter(t => t.status !== 'closed').length;
+      if (bSup) bSup.textContent = supportCount;
+      if (bDev) bDev.textContent = devCount;
+      if (bEsc) bEsc.textContent = escalatedCount;
 
       const badge = document.getElementById('open-tickets-badge');
       if (badge) {
@@ -4059,27 +4203,41 @@
       renderTicketsList();
     }
 
-    function renderTicketsList() {
-      const listEl = document.getElementById('tickets-queue-list');
-      if (!listEl) return;
+    function getFilteredTickets() {
       const search = (document.getElementById('ticket-search')?.value || '').toLowerCase().trim();
       const statusFilter = document.getElementById('ticket-filter-status')?.value || 'all';
       const priorityFilter = document.getElementById('ticket-filter-priority')?.value || 'all';
 
-      const filtered = cachedTickets.filter(t => {
+      return cachedTickets.filter(t => {
+        // Queue filter
+        if (activeTicketQueue === 'support' && !isSupportTicket(t)) return false;
+        if (activeTicketQueue === 'dev' && !isDevTicket(t)) return false;
+        if (activeTicketQueue === 'escalated' && !isEscalatedTicket(t)) return false;
+
+        // Status & Priority
         if (statusFilter !== 'all' && t.status !== statusFilter) return false;
         if (priorityFilter !== 'all' && t.priority !== priorityFilter) return false;
+
+        // Text search
         if (search) {
           const matchStore = (t.store_name || '').toLowerCase().includes(search);
           const matchSub = (t.subject || '').toLowerCase().includes(search);
           const matchNum = String(t.ticket_number || '').includes(search);
-          if (!matchStore && !matchSub && !matchNum) return false;
+          const matchAssignee = (t.assigned_to || '').toLowerCase().includes(search);
+          if (!matchStore && !matchSub && !matchNum && !matchAssignee) return false;
         }
         return true;
       });
+    }
+
+    function renderTicketsList() {
+      const listEl = document.getElementById('tickets-queue-list');
+      if (!listEl) return;
+      const filtered = getFilteredTickets();
 
       if (filtered.length === 0) {
-        listEl.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 13px; margin: auto; padding: 24px;">No matching tickets found.</div>';
+        const queueLabel = activeTicketQueue === 'all' ? 'the tickets queue' : activeTicketQueue + ' queue';
+        listEl.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 13px; margin: auto; padding: 28px;">No tickets found in ${queueLabel}.</div>`;
         return;
       }
 
@@ -4088,23 +4246,38 @@
         const isActive = selectedTicket && selectedTicket.id === t.id ? 'active' : '';
         const timeAgo = getTimeAgo(t.created_at);
         const numLabel = t.ticket_number ? '#' + t.ticket_number : '#NEW';
+        const isEsc = isEscalatedTicket(t);
+
+        const statusBadge = isEsc
+          ? `<span class="badge-pill badge-escalated">⚡ ESCALATED TO DEV</span>`
+          : `<span class="badge-pill badge-${t.status}">${t.status.replace('_', ' ')}</span>`;
+
+        const deptBadge = isEsc
+          ? `<span style="color: #f87171; font-weight: 700; font-size: 0.68rem;">⚡ Tier 3 Dev</span>`
+          : (isDevTicket(t)
+              ? `<span style="color: #c084fc; font-weight: 700; font-size: 0.68rem;">💻 Dev Engineering</span>`
+              : `<span style="color: #60a5fa; font-weight: 700; font-size: 0.68rem;">💬 Customer Support</span>`);
+
+        const assigneeName = t.device_telemetry?.auto_assigned?.staff_name || (t.assigned_to ? t.assigned_to.split('@')[0] : 'Auto-Assigned');
 
         html += `
           <div class="ticket-card ${isActive}" onclick="selectTicket('${t.id}')">
             <div class="ticket-header">
               <span class="ticket-number">${numLabel}</span>
-              <span class="badge-pill badge-${t.status}">${t.status.replace('_', ' ')}</span>
+              ${statusBadge}
             </div>
             <div class="ticket-store">${escapeHtml(t.store_name)}</div>
             <div class="ticket-subject">${escapeHtml(t.subject)}</div>
-            <div class="ticket-meta">
+            <div class="ticket-meta" style="flex-wrap: wrap; gap: 6px;">
               <span class="badge-pill badge-${t.priority}">${t.priority}</span>
+              <span>•</span>
+              ${deptBadge}
               <span>•</span>
               <span>${(t.category || 'general').toUpperCase()}</span>
               <span>•</span>
               <span>${timeAgo}</span>
               <span>•</span>
-              <span style="color: #38bdf8; font-weight: 700;">👤 ${escapeHtml(t.assigned_to ? t.assigned_to.split('@')[0] : 'Auto-Assigned')}</span>
+              <span style="color: #38bdf8; font-weight: 700;">👤 ${escapeHtml(assigneeName)}</span>
             </div>
           </div>
         `;
@@ -4120,6 +4293,8 @@
       const workspaceEl = document.getElementById('ticket-workspace');
       if (!workspaceEl) return;
 
+      const isEsc = isEscalatedTicket(selectedTicket);
+      const isDev = isDevTicket(selectedTicket);
       const numLabel = selectedTicket.ticket_number ? '#' + selectedTicket.ticket_number : '#NEW';
       const timeStr = new Date(selectedTicket.created_at).toLocaleString();
       const telemetry = selectedTicket.device_telemetry || {};
@@ -4128,12 +4303,42 @@
         ? `${selectedTicket.device_telemetry.auto_assigned.staff_name} (${selectedTicket.device_telemetry.auto_assigned.role === 'dev' ? 'Dev Engineering' : 'Customer Support'})`
         : (selectedTicket.assigned_to || 'sarah.support@flexitapapp.com');
 
+      const escalationBannerHtml = isEsc ? `
+        <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.16) 0%, rgba(185, 28, 28, 0.1) 100%); border: 1px solid rgba(239, 68, 68, 0.45); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 1.8rem; filter: drop-shadow(0 0 6px rgba(239,68,68,0.5));">⚡</span>
+            <div>
+              <div style="font-size: 0.92rem; font-weight: 800; color: #f87171; letter-spacing: 0.02em;">
+                ESCALATED TIER 3 DEFECT — ASSIGNED TO CORE DEV ENGINEERING
+              </div>
+              <div style="font-size: 0.77rem; color: #fca5a5; margin-top: 3px;">
+                Reason: <strong>${escapeHtml(selectedTicket.escalation_reason || telemetry.escalation_reason || 'Thermal Printer / DB Sync Defect')}</strong>
+                • Escalated by: <strong>${escapeHtml(selectedTicket.escalated_by || 'Customer Support Desk')}</strong>
+                ${selectedTicket.escalated_at ? ` • ${new Date(selectedTicket.escalated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}
+              </div>
+            </div>
+          </div>
+          <button class="action-btn" onclick="handbackTicketToSupport('${selectedTicket.id}')" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border-color: rgba(59, 130, 246, 0.5); font-weight: 700; padding: 7px 14px; font-size: 0.78rem;">
+            ↩️ Hand Back to Support
+          </button>
+        </div>
+      ` : '';
+
+      const deptIndicator = isEsc
+        ? '<span style="background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 800;">⚡ ESCALATED TO DEV</span>'
+        : (isDev
+            ? '<span style="background: rgba(139,92,246,0.2); color: #c084fc; border: 1px solid rgba(139,92,246,0.4); padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 800;">💻 DEV ENGINEERING</span>'
+            : '<span style="background: rgba(59,130,246,0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.4); padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 800;">💬 CUSTOMER SUPPORT</span>');
+
       workspaceEl.innerHTML = `
+        ${escalationBannerHtml}
+
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--card-border); flex-wrap: wrap; gap: 12px;">
           <div>
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: 1.25rem; font-weight: 800; color: var(--primary);">${numLabel}</span>
               <span style="font-size: 1.2rem; font-weight: 800; color: #fff;">${escapeHtml(selectedTicket.subject)}</span>
+              ${deptIndicator}
             </div>
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
               Store: <strong style="color: #fff;">${escapeHtml(selectedTicket.store_name)}</strong>
@@ -4155,6 +4360,7 @@
             <select id="t-edit-status">
               <option value="open" ${selectedTicket.status === 'open' ? 'selected' : ''}>Open</option>
               <option value="in_progress" ${selectedTicket.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+              <option value="escalated" ${selectedTicket.status === 'escalated' ? 'selected' : ''}>⚡ Escalated to Dev</option>
               <option value="resolved" ${selectedTicket.status === 'resolved' ? 'selected' : ''}>Resolved</option>
               <option value="closed" ${selectedTicket.status === 'closed' ? 'selected' : ''}>Closed</option>
             </select>
@@ -4191,20 +4397,28 @@
           </div>
         </div>
 
-        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
           <button class="action-btn" onclick="discussTicketInTeamChat('${selectedTicket.id}')" style="color: #60a5fa; border-color: rgba(59, 130, 246, 0.35);">
             💬 Discuss in Team Chat
           </button>
+          ${isEsc
+            ? `<button class="action-btn" onclick="handbackTicketToSupport('${selectedTicket.id}')" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(59, 130, 246, 0.4); font-weight: 700;">
+                 ↩️ Hand Back to Support
+               </button>`
+            : `<button class="action-btn" onclick="openEscalateTicketModal('${selectedTicket.id}')" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.4); font-weight: 700;">
+                 ⚡ Escalate to Dev Engineering
+               </button>`
+          }
           <button class="action-btn" onclick="saveTicketDetails()">💾 Save Changes</button>
         </div>
 
-        <!-- 2. INTERNAL DEV NOTES & AUDIT TRAIL -->
-        <div class="ticket-section-title"><span>💬</span> 2. Internal Dev Notes &amp; Activity Log</div>
+        <!-- 2. INTERNAL DEV & SUPPORT NOTES & AUDIT TRAIL -->
+        <div class="ticket-section-title"><span>💬</span> 2. Internal Engineering &amp; Support Notes</div>
         <div class="notes-timeline" id="ticket-notes-box">
           <div style="text-align: center; color: var(--text-muted); font-size: 12px; margin: auto;">Loading notes...</div>
         </div>
         <form onsubmit="addTicketNote(event)" style="display: flex; gap: 10px; margin-bottom: 24px;">
-          <input type="text" id="t-note-input" placeholder="Type internal developer note or investigation log..." style="flex: 1; padding: 10px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.82rem; outline: none;" />
+          <input type="text" id="t-note-input" placeholder="Type internal diagnostic note, investigation log, or handoff note..." style="flex: 1; padding: 10px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.82rem; outline: none;" />
           <button type="submit" class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary);">Post Note</button>
         </form>
 
@@ -4264,7 +4478,7 @@
               <span>${escapeHtml(n.author_email)}</span>
               <span>${timeStr}</span>
             </div>
-            <div>${escapeHtml(n.note)}</div>
+            <div style="white-space: pre-wrap;">${escapeHtml(n.note)}</div>
           </div>
         `;
       });
@@ -4284,6 +4498,11 @@
       selectedTicket.category = category;
       selectedTicket.assigned_to = assignee;
 
+      if (status === 'escalated') {
+        selectedTicket.is_escalated = true;
+        if (!selectedTicket.escalated_to) selectedTicket.escalated_to = 'dev';
+      }
+
       try {
         await supabaseClient.from('tickets').update({
           status: status,
@@ -4296,6 +4515,7 @@
 
       updateTicketKPIs();
       renderTicketsList();
+      selectTicket(selectedTicket.id, false);
       alert('Ticket details updated successfully!');
     }
 
@@ -4307,7 +4527,7 @@
       if (!text) return;
 
       input.value = '';
-      const email = activeDevUser?.email || 'dev@flexitap.io';
+      const email = typeof getEffectiveUserEmail === 'function' ? getEffectiveUserEmail() : (activeDevUser?.email || 'dev@flexitap.io');
       const newNote = {
         ticket_id: selectedTicket.id,
         author_email: email,
@@ -4329,7 +4549,7 @@
             <span>${escapeHtml(email)}</span>
             <span>${timeStr}</span>
           </div>
-          <div>${escapeHtml(text)}</div>
+          <div style="white-space: pre-wrap;">${escapeHtml(text)}</div>
         `;
         box.appendChild(div);
         box.scrollTop = box.scrollHeight;
@@ -4361,6 +4581,276 @@
       renderTicketsList();
       selectTicket(selectedTicket.id, false);
       alert('Ticket #' + (selectedTicket.ticket_number || '') + ' marked as RESOLVED!');
+    }
+
+    function searchTicketsByNumber(num) {
+      if (!num) return;
+      const target = cachedTickets.find(t => String(t.ticket_number) === String(num) || String(t.id).includes(String(num)));
+      if (target) {
+        activeTicketQueue = 'all';
+        ['all', 'support', 'dev', 'escalated'].forEach(q => {
+          const btn = document.getElementById('t-queue-tab-' + q);
+          if (btn) btn.classList.toggle('active', q === 'all');
+        });
+        const searchInput = document.getElementById('ticket-search');
+        if (searchInput) searchInput.value = '';
+        renderTicketsList();
+        selectTicket(target.id);
+      }
+    }
+
+    function openEscalateTicketModal(ticketId) {
+      const t = cachedTickets.find(x => x.id === ticketId);
+      if (!t) return;
+
+      const modal = document.getElementById('crm-modal-ticket-escalate');
+      if (!modal) return;
+
+      document.getElementById('esc-ticket-id').value = t.id;
+      const subEl = document.getElementById('escalate-modal-subheading');
+      if (subEl) {
+        subEl.textContent = `Ticket #${t.ticket_number || 'NEW'} — ${t.store_name} (${t.subject})`;
+      }
+
+      // Populate dev engineer dropdown
+      const devSelect = document.getElementById('esc-assign-dev');
+      if (devSelect) {
+        let devOptions = '<option value="auto">🤖 Auto-Assign Next Available Clocked-In Dev</option>';
+        let devs = [];
+        if (typeof teamStaffMembers !== 'undefined' && Array.isArray(teamStaffMembers)) {
+          devs = teamStaffMembers.filter(m => {
+            const r = (m.role || '').toLowerCase();
+            return r === 'dev' || r === 'developer' || r === 'devops';
+          });
+        }
+        if (devs.length === 0) {
+          devs = [
+            { full_name: 'David Kim', email: 'david.ops@flexitapapp.com', role_title: 'Senior DevOps & Platform Engineer' },
+            { full_name: 'Maya Lin', email: 'maya.dev@flexitapapp.com', role_title: 'Lead POS Kernel & Android Engineer' }
+          ];
+        }
+        devs.forEach(d => {
+          devOptions += `<option value="${escapeHtml(d.email)}">${escapeHtml(d.full_name)} (${escapeHtml(d.role_title || 'Dev')})</option>`;
+        });
+        devSelect.innerHTML = devOptions;
+      }
+
+      const notesEl = document.getElementById('esc-troubleshooting-notes');
+      if (notesEl) notesEl.value = '';
+
+      modal.classList.add('open');
+    }
+
+    function closeEscalateTicketModal() {
+      const modal = document.getElementById('crm-modal-ticket-escalate');
+      if (modal) modal.classList.remove('open');
+    }
+
+    async function handleConfirmEscalateTicket(event) {
+      event.preventDefault();
+      const ticketId = document.getElementById('esc-ticket-id').value;
+      const t = cachedTickets.find(x => x.id === ticketId);
+      if (!t) return;
+
+      const reasonCat = document.getElementById('esc-reason-category').value;
+      const elevatedPrio = document.getElementById('esc-priority').value;
+      const assignDevVal = document.getElementById('esc-assign-dev').value;
+      const troubleshootingNotes = document.getElementById('esc-troubleshooting-notes').value.trim();
+
+      let devEmail = assignDevVal;
+      let devName = 'Core Dev Engineering';
+      if (assignDevVal === 'auto') {
+        const autoStaff = typeof getAutoAssignedStaff === 'function' ? getAutoAssignedStaff({ category: 'bug', subject: reasonCat, description: troubleshootingNotes }) : null;
+        if (autoStaff) {
+          devEmail = autoStaff.email;
+          devName = autoStaff.staff_name;
+        } else {
+          devEmail = 'david.ops@flexitapapp.com';
+          devName = 'David Kim';
+        }
+      } else {
+        if (typeof teamStaffMembers !== 'undefined' && Array.isArray(teamStaffMembers)) {
+          const match = teamStaffMembers.find(m => m.email && m.email.toLowerCase() === assignDevVal.toLowerCase());
+          if (match) devName = match.full_name;
+        }
+      }
+
+      const effUser = typeof getEffectiveUserEmail === 'function' ? getEffectiveUserEmail() : 'support@flexitapapp.com';
+      const nowIso = new Date().toISOString();
+
+      t.status = 'escalated';
+      t.priority = elevatedPrio;
+      t.is_escalated = true;
+      t.escalated_to = 'dev';
+      t.escalated_by = effUser;
+      t.escalated_at = nowIso;
+      t.escalation_reason = reasonCat;
+      t.assigned_to = devEmail;
+      if (!t.device_telemetry) t.device_telemetry = {};
+      t.device_telemetry.is_escalated = true;
+      t.device_telemetry.escalation_reason = reasonCat;
+      t.device_telemetry.auto_assigned = {
+        staff_name: devName,
+        email: devEmail,
+        role: 'dev'
+      };
+
+      const noteText = `⚡ FORMAL TIER 3 ESCALATION TO DEV ENGINEERING:
+Category: ${reasonCat}
+Priority Elevated to: ${elevatedPrio.toUpperCase()}
+Assigned Engineer: ${devName} (${devEmail})
+Support Diagnostics: ${troubleshootingNotes}`;
+
+      await addTicketNoteDirect(t.id, noteText);
+
+      postTeamsSystemMessage('dev-engineering', `🚨 **ESCALATION NOTICE [Ticket #${t.ticket_number || 'NEW'}]** for **${t.store_name}**:
+• Issue: ${t.subject}
+• Category: ${reasonCat}
+• Priority: ${elevatedPrio.toUpperCase()}
+• Assigned Dev: ${devName}
+• Diagnostics: ${troubleshootingNotes}`);
+
+      try {
+        await supabaseClient.from('tickets').update({
+          status: 'escalated',
+          priority: elevatedPrio,
+          assigned_to: devEmail,
+          device_telemetry: t.device_telemetry,
+          updated_at: nowIso
+        }).eq('id', t.id);
+      } catch (err) {
+        console.warn('Could not update escalated ticket in Supabase:', err);
+      }
+
+      closeEscalateTicketModal();
+      updateTicketKPIs();
+      switchTicketQueue('dev');
+      selectTicket(t.id);
+      alert(`⚡ Ticket #${t.ticket_number || ''} successfully escalated to ${devName}! Urgent notification dispatched to #dev-engineering.`);
+    }
+
+    async function handbackTicketToSupport(ticketId) {
+      const t = cachedTickets.find(x => x.id === ticketId);
+      if (!t) return;
+
+      const handbackNotes = prompt(
+        `↩️ Hand Back Ticket #${t.ticket_number || ''} to Customer Support Desk:\nEnter engineering resolution / instructions for Support to guide the merchant:`,
+        'Engineering hotfix applied / root cause mitigated. Please instruct merchant to restart POS and verify.'
+      );
+
+      if (handbackNotes === null) return; // user cancelled prompt
+
+      const effUser = typeof getEffectiveUserEmail === 'function' ? getEffectiveUserEmail() : 'david.ops@flexitapapp.com';
+      const nowIso = new Date().toISOString();
+
+      let supportStaff = { staff_name: 'Sarah Jenkins', email: 'sarah.support@flexitapapp.com' };
+      if (typeof teamStaffMembers !== 'undefined' && Array.isArray(teamStaffMembers)) {
+        const sup = teamStaffMembers.find(m => {
+          const r = (m.role || '').toLowerCase();
+          return r === 'support' || r === 'customer_support' || r === 'agent';
+        });
+        if (sup) supportStaff = { staff_name: sup.full_name, email: sup.email };
+      }
+
+      t.status = 'in_progress';
+      t.is_escalated = false;
+      t.assigned_to = supportStaff.email;
+      if (t.device_telemetry) {
+        t.device_telemetry.is_escalated = false;
+        t.device_telemetry.auto_assigned = {
+          staff_name: supportStaff.staff_name,
+          email: supportStaff.email,
+          role: 'support'
+        };
+      }
+
+      const noteText = `↩️ HANDED BACK TO CUSTOMER SUPPORT DESK:
+Dev Resolution Notes: ${handbackNotes}
+Handed back by: ${effUser}
+Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
+
+      await addTicketNoteDirect(t.id, noteText);
+
+      postTeamsSystemMessage('customer-support', `↩️ **TICKET HANDBACK [Ticket #${t.ticket_number || 'NEW'}]** for **${t.store_name}**:
+• Issue: ${t.subject}
+• Engineering Resolution: ${handbackNotes}
+• Returned to Support Specialist: ${supportStaff.staff_name}`);
+
+      try {
+        await supabaseClient.from('tickets').update({
+          status: 'in_progress',
+          assigned_to: supportStaff.email,
+          device_telemetry: t.device_telemetry,
+          updated_at: nowIso
+        }).eq('id', t.id);
+      } catch (err) {
+        console.warn('Could not sync handback to Supabase:', err);
+      }
+
+      updateTicketKPIs();
+      switchTicketQueue('support');
+      selectTicket(t.id);
+      alert(`Ticket #${t.ticket_number || ''} handed back to Customer Support (${supportStaff.staff_name}) with resolution notes.`);
+    }
+
+    async function addTicketNoteDirect(ticketId, noteText) {
+      if (!ticketId || !noteText) return;
+      const email = typeof getEffectiveUserEmail === 'function' ? getEffectiveUserEmail() : 'system@flexitapapp.com';
+      const newNote = {
+        ticket_id: ticketId,
+        author_email: email,
+        note: noteText,
+        created_at: new Date().toISOString()
+      };
+      try {
+        await supabaseClient.from('ticket_notes').insert([newNote]);
+      } catch (_) {}
+
+      if (selectedTicket && selectedTicket.id === ticketId) {
+        const box = document.getElementById('ticket-notes-box');
+        if (box) {
+          const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const div = document.createElement('div');
+          div.className = 'note-bubble';
+          div.innerHTML = `
+            <div class="note-author">
+              <span>${escapeHtml(email)}</span>
+              <span>${timeStr}</span>
+            </div>
+            <div style="white-space: pre-wrap;">${escapeHtml(noteText)}</div>
+          `;
+          box.appendChild(div);
+          box.scrollTop = box.scrollHeight;
+        }
+      }
+    }
+
+    function postTeamsSystemMessage(channelKey, text) {
+      try {
+        if (typeof teamsChannels === 'undefined' || !Array.isArray(teamsChannels)) return;
+        let chan = teamsChannels.find(c => c.id === channelKey || c.name === channelKey);
+        if (!chan) chan = teamsChannels.find(c => c.id === 'c-dev') || teamsChannels[0];
+        if (!chan) return;
+        const msg = {
+          id: 'msg-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+          channelId: chan.id,
+          senderName: 'FlexiBot Ops Desk',
+          senderEmail: 'bot@flexitapapp.com',
+          senderRole: 'system',
+          content: text,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          reactions: ['⚡']
+        };
+        if (typeof teamsMessages !== 'undefined' && Array.isArray(teamsMessages)) {
+          teamsMessages.push(msg);
+        }
+        chan.unread = (chan.unread || 0) + 1;
+        if (typeof renderTeamsMessages === 'function' && typeof activeTeamsChannelId !== 'undefined' && activeTeamsChannelId === chan.id) {
+          renderTeamsMessages();
+        }
+      } catch (e) {
+        console.warn('Could not post teams system message:', e);
+      }
     }
 
     function getTimeAgo(dateStr) {
@@ -4976,8 +5466,11 @@
       const r = getEffectiveRole();
       if (r === 'super_admin' || r === 'admin') return true;
 
-      // Workforce, Chat, and SLA are open to all platform staff
-      if (tabKey === 'workforce' || tabKey === 'chat' || tabKey === 'sla') return true;
+      // SLA Dashboard and Team & RBAC are strictly EXCLUSIVE to Admins only
+      if (tabKey === 'sla' || tabKey === 'team') return false;
+
+      // Workforce and Chat are open to all platform staff
+      if (tabKey === 'workforce' || tabKey === 'chat') return true;
 
       // Check current staff member's specific configured permissions if available
       const effEmail = getEffectiveUserEmail().toLowerCase();
@@ -4991,11 +5484,11 @@
 
       // Default role fallback:
       if (r === 'dev' || r === 'developer' || r === 'devops') {
-        return ['clients', 'updates', 'support', 'tickets', 'remote', 'monitoring', 'errors', 'analytics', 'sla', 'chat', 'workforce'].includes(tabKey);
+        return ['clients', 'updates', 'support', 'tickets', 'remote', 'monitoring', 'errors', 'analytics', 'chat', 'workforce'].includes(tabKey);
       }
 
       if (r === 'support' || r === 'agent' || r === 'customer_support' || r === 'technician' || r === 'tech') {
-        return ['clients', 'support', 'tickets', 'remote', 'sla', 'chat', 'workforce'].includes(tabKey);
+        return ['clients', 'support', 'tickets', 'remote', 'chat', 'workforce'].includes(tabKey);
       }
       return false;
     }
@@ -8234,6 +8727,75 @@ Role: ${lastProvisionedCreds.role}`;
           <button type="button" class="action-btn" onclick="closeNewGroupModal()">Cancel</button>
           <button type="submit" class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary); padding: 9px 18px;">
             Create Channel
+          </button>
+        </div>
+      </form>
+  <!-- Modal: Escalate Support Ticket to Core Dev Engineering -->
+  <div id="crm-modal-ticket-escalate" class="crm-modal-backdrop" style="z-index: 2200;">
+    <div class="crm-modal-box" style="max-width: 540px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.4rem;">⚡</span>
+          <div>
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0;">Escalate Ticket to Dev Engineering</h3>
+            <p id="escalate-modal-subheading" style="font-size: 0.76rem; color: var(--text-muted); margin: 2px 0 0 0;">Formal Tier 3 Platform &amp; Engineering Handoff</p>
+          </div>
+        </div>
+        <button onclick="closeEscalateTicketModal()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <form id="form-ticket-escalate" onsubmit="handleConfirmEscalateTicket(event)">
+        <input type="hidden" id="esc-ticket-id" />
+
+        <div class="crm-form-group" style="margin-bottom: 14px;">
+          <label>Target Operational Tier</label>
+          <input type="text" class="crm-input" value="💻 Tier 3: Core Platform &amp; Dev Engineering" readonly style="opacity: 0.85; background: rgba(0,0,0,0.3);" />
+        </div>
+
+        <div class="crm-form-grid" style="margin-bottom: 14px;">
+          <div class="crm-form-group">
+            <label>Escalation Failure Category *</label>
+            <select id="esc-reason-category" class="crm-select" required>
+              <option value="Thermal Printer Driver / Bluetooth Socket Crash">🖨️ Thermal Printer / BT Socket Crash</option>
+              <option value="SQLite & Cloud Database Sync Conflict">🔄 SQLite &amp; Cloud DB Sync Conflict</option>
+              <option value="App Crash / Exception / UI Freeze">🐞 App Crash / Exception / UI Freeze</option>
+              <option value="Payment Gateway / Transaction Settlement Failure">💳 Payment Gateway / SDK Settlement Failure</option>
+              <option value="OTA Firmware / Build Regression">📦 OTA Firmware / Build Regression</option>
+              <option value="API Timeout / Sockets Disconnection">📡 API Timeout / Sockets Disconnection</option>
+              <option value="Other Complex Platform Failure">⚠️ Other Complex Platform Defect</option>
+            </select>
+          </div>
+
+          <div class="crm-form-group">
+            <label>Elevate Priority (SLA Recalculation) *</label>
+            <select id="esc-priority" class="crm-select" required>
+              <option value="urgent">🔴 Urgent (1 Hour SLA - Critical Outage)</option>
+              <option value="high" selected>🟠 High (4 Hours SLA - Degraded Ops)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="crm-form-group" style="margin-bottom: 14px;">
+          <label>Assign to Dev Engineer *</label>
+          <select id="esc-assign-dev" class="crm-select" required>
+            <option value="auto">🤖 Auto-Assign Next Available Clocked-In Dev</option>
+          </select>
+        </div>
+
+        <div class="crm-form-group" style="margin-bottom: 16px;">
+          <label>Support Troubleshooting Log &amp; Reproduction Notes *</label>
+          <textarea id="esc-troubleshooting-notes" class="crm-input" rows="3" required placeholder="Describe steps already taken (e.g. cleared SQLite cache, restarted Sunmi terminal, verified on Build 184)..." style="resize: vertical;"></textarea>
+        </div>
+
+        <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; padding: 10px 12px; margin-bottom: 18px; font-size: 0.74rem; color: #fbbf24; display: flex; align-items: center; gap: 8px;">
+          <span>📢</span>
+          <span>An urgent escalation notification will automatically be posted to <strong>#dev-engineering</strong> in FlexiTeams with this ticket's context.</span>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--card-border); padding-top: 14px;">
+          <button type="button" class="action-btn" onclick="closeEscalateTicketModal()">Cancel</button>
+          <button type="submit" class="action-btn" style="background: #ef4444; color: #fff; border-color: #ef4444; padding: 9px 20px; font-weight: 700;">
+            ⚡ Confirm Escalation &amp; Dispatch
           </button>
         </div>
       </form>
