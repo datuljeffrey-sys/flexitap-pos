@@ -334,13 +334,13 @@
     <div class="dev-login-box">
       <div class="dev-login-header">
         <img class="brand-logo-img" src="image_02e503.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/datuljeffrey-sys/flexitap/main/image_02e503.png'; this.onerror=null;" />
-        <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Dev &amp; Ops Login</h2>
+        <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Staff &amp; Dev Portal</h2>
       </div>
-      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px;">Restricted Super Admin &amp; Support Access</p>
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px;">Backend Workforce, Support &amp; Administration</p>
       
       <form id="dev-login-form">
-        <label>Developer / Admin Email</label>
-        <input type="email" id="dev-email" required placeholder="dev@flexitap.io" autocomplete="username" />
+        <label>Staff / Developer Email</label>
+        <input type="email" id="dev-email" required placeholder="employee@flexitapapp.com" autocomplete="username" />
         <label>Password</label>
         <input type="password" id="dev-password" required placeholder="••••••••" autocomplete="current-password" />
         <button type="submit" class="dev-btn-submit" id="dev-btn-text">Authenticate</button>
@@ -1583,24 +1583,132 @@
     }
 
     async function verifyDevRole(user) {
-      const profileResponse = await supabaseClient
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle();
+      let profile = null;
+      try {
+        const profileResponse = await supabaseClient
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+        profile = profileResponse.data;
+      } catch (err) {
+        console.warn('Profile fetch note:', err);
+      }
 
-      const profile = profileResponse.data;
-      const role = (profile && profile.role ? profile.role : '').toLowerCase();
+      // 1. Resolve role from profile if present
+      let role = (profile && profile.role ? String(profile.role) : '').toLowerCase();
 
-      const backendRoles = ['dev', 'developer', 'admin', 'super_admin', 'devops', 'tech', 'technician', 'agent', 'support', 'dispatch', 'lead', 'staff'];
-      if (backendRoles.includes(role)) {
+      // 2. Resolve role from user auth metadata if not in profile
+      if (!role && user.user_metadata && user.user_metadata.role) {
+        role = String(user.user_metadata.role).toLowerCase();
+      }
+
+      // 3. Resolve role from local staff directory
+      let localStaff = [];
+      try {
+        const saved = localStorage.getItem('flexitap_staff_team_members');
+        if (saved) localStaff = JSON.parse(saved);
+      } catch (e) {}
+
+      const localMember = localStaff.find(m => m.email && user.email && m.email.toLowerCase() === user.email.toLowerCase());
+      if (!role && localMember && localMember.role) {
+        role = String(localMember.role).toLowerCase();
+      }
+
+      // 4. Resolve role from internal company email (@flexitapapp.com, @flexitap.io, or containing employee/tech/dev/support/dispatch)
+      const emailLower = (user.email || '').toLowerCase();
+      const isOfficialStaffEmail = emailLower.endsWith('@flexitapapp.com') ||
+                                   emailLower.endsWith('@flexitap.io') ||
+                                   emailLower.includes('employee') ||
+                                   emailLower.includes('technician') ||
+                                   emailLower.includes('tech') ||
+                                   emailLower.includes('support') ||
+                                   emailLower.includes('dev') ||
+                                   emailLower.includes('admin') ||
+                                   emailLower.includes('dispatch') ||
+                                   emailLower.includes('staff');
+
+      if (!role && isOfficialStaffEmail) {
+        if (emailLower.includes('tech')) role = 'technician';
+        else if (emailLower.includes('support')) role = 'support';
+        else if (emailLower.includes('dev')) role = 'dev';
+        else if (emailLower.includes('admin')) role = 'admin';
+        else if (emailLower.includes('dispatch')) role = 'dispatch';
+        else role = 'technician'; // Default employee to technician role
+      }
+
+      const backendRoles = [
+        'dev', 'developer', 'admin', 'super_admin', 'devops',
+        'tech', 'technician', 'agent', 'support', 'dispatch',
+        'lead', 'staff', 'employee', 'technician_lead', 'ops'
+      ];
+
+      const isBackendStaff = backendRoles.includes(role) || isOfficialStaffEmail;
+
+      if (isBackendStaff) {
+        if (!role || role === 'employee') role = 'technician';
+
+        // Auto-provision or update profile in Supabase profiles table
+        if (!profile || !profile.role) {
+          const profileUpsertData = {
+            id: user.id,
+            email: user.email,
+            full_name: (profile && profile.full_name) || (user.user_metadata && user.user_metadata.full_name) || (localMember && localMember.full_name) || user.email.split('@')[0],
+            role: role,
+            subscription_tier: 'pro'
+          };
+          try {
+            await supabaseClient.from('profiles').upsert([profileUpsertData]);
+            profile = { ...(profile || {}), ...profileUpsertData };
+          } catch (upsertErr) {
+            console.warn('Auto-upsert profile note:', upsertErr);
+          }
+        }
+
         activeDevUser = user;
-        activeDevProfile = profile;
+        activeDevProfile = profile || { id: user.id, email: user.email, role: role, full_name: user.email.split('@')[0] };
+
+        // Ensure user is present in local staff list
+        if (!localMember) {
+          localStaff.push({
+            id: user.id,
+            full_name: activeDevProfile.full_name || user.email.split('@')[0],
+            email: user.email,
+            department: role === 'technician' ? 'Field Operations & Hardware' : (role === 'support' ? 'Customer Success & Support' : 'Platform & DevOps Engineering'),
+            role_title: role === 'technician' ? 'Field Technician' : (role === 'support' ? 'Support Specialist' : 'Backend Staff'),
+            role: role,
+            status: 'active',
+            clock_status: 'clocked_out',
+            shift_time: 'Ready for shift',
+            current_assignment: 'General Operations',
+            permissions: {
+              clients: true,
+              tickets: true,
+              remote: role === 'technician' || role === 'devops' || role === 'admin',
+              support: role === 'support' || role === 'admin',
+              updates: role === 'devops' || role === 'admin',
+              monitoring: role === 'devops' || role === 'admin',
+              errors: role === 'devops' || role === 'admin',
+              analytics: role === 'devops' || role === 'admin',
+              team: role === 'admin' || role === 'super_admin'
+            }
+          });
+          try {
+            localStorage.setItem('flexitap_staff_team_members', JSON.stringify(localStaff));
+          } catch (e) {}
+        }
+
         document.getElementById('dev-auth-view').style.display = 'none';
         document.getElementById('dev-app-layout').style.display = 'flex';
-        document.getElementById('active-dev-user').innerText = (profile && profile.full_name) ? `${profile.full_name} (${user.email})` : user.email;
-        loadDevData();
-        loadTeamData();
+        document.getElementById('active-dev-user').innerText = (activeDevProfile && activeDevProfile.full_name) ? `${activeDevProfile.full_name} (${user.email})` : user.email;
+
+        // Auto-navigate: field technicians, support agents, and staff route directly to Workforce & Shifts
+        if (role === 'technician' || role === 'tech' || role === 'support' || role === 'agent' || role === 'employee' || role === 'staff') {
+          switchNav('workforce');
+        } else {
+          loadDevData();
+          loadTeamData();
+        }
       } else {
         await supabaseClient.auth.signOut();
         document.getElementById('dev-err').innerText = 'Access Denied: Backend Staff, Technician, or Admin role required.';
