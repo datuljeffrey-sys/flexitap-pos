@@ -1,0 +1,26 @@
+{
+  "name": "FlexiTap POS Support & Diagnostics",
+  "short_name": "FlexiSupport",
+  "description": "Instant ticket submission, live diagnostic tracking, and merchant technical care for FlexiTap POS.",
+  "start_url": "./flexi-app.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#080c14",
+  "theme_color": "#3b82f6",
+  "categories": ["business", "utilities", "productivity"],
+  "icons": [
+    {
+      "src": "./image_02e503.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./image_02e503.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

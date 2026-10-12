@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FlexiTap POS — Support & Diagnostics PWA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#080c14">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FlexiSupport">
+  
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./image_02e503.png">
+  <link rel="icon" type="image/png" href="./image_02e503.png">
+  
+  <!-- Supabase JS Client & Google Fonts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #080c14;
+      --surface: #0d1422;
+      --surface2: #111827;
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f0f4ff;
+      --muted: #6b7a99;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent-glow: rgba(59, 130, 246, 0.25);
+      --green: #10b981;
+      --purple: #8b5cf6;
+      --amber: #f59e0b;
+      --red: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    body {
+      font-family: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      padding: 32px 16px;
+    }
+
+    /* Ambient Drifting Glow */
+    body::before {
+      content: '';
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+      top: -120px;
+      right: -120px;
+      pointer-events: none;
+      animation: drift 9s ease-in-out infinite alternate;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      width: 450px;
+      height: 450px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.07) 0%, transparent 70%);
+      bottom: -120px;
+      left: -120px;
+      pointer-events: none;
+      animation: drift 11s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes drift {
+      from { transform: translate(0, 0); }
+      to { transform: translate(25px, 20px); }
+    }
+
+    /* Screens & Transition Physics */
+    .screen {
+      display: none;
+      width: 100%;
+      max-width: 480px;
+      min-height: calc(100dvh - 64px);
+      opacity: 0;
+      transform: translateY(18px) scale(0.98);
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .screen.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      position: relative;
+    }
+    .screen > .card { width: 100%; }
+    #screen-form.active, #screen-review.active { align-items: flex-start; padding-block: 12px; }
+
+    /* Card Shell */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 30px;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03) inset, 0 20px 60px rgba(0, 0, 0, 0.55);
+      position: relative;
+    }
+
+    /* Brand Header */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      min-height: 38px;
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      object-fit: contain;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .brand-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.25;
+    }
+    .brand-sub {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .brand-login {
+      justify-content: center;
+      margin-bottom: 26px;
+      text-align: center;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .brand-login .brand-logo {
+      width: 58px;
+      height: 58px;
+      margin: 0 auto;
+    }
+
+    /* Header Action Pills */
+    #pwaInstallBtn {
+      display: none;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid var(--primary);
+      color: #93c5fd;
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-left: auto;
+      letter-spacing: 0.04em;
+      transition: 0.2s;
+    }
+    #pwaInstallBtn:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 5px 12px;
+      border-radius: 100px;
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-left: auto;
+      transition: 0.2s;
+    }
+    .logout-btn:hover {
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Typography */
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #fff 65%, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 22px;
+    }
+
+    /* Disclaimer Box */
+    .disclaimer-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 22px;
+      text-align: left;
+    }
+    .disclaimer-box::-webkit-scrollbar { width: 4px; }
+    .disclaimer-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+    .disclaimer-text { font-size: 12px; line-height: 1.6; color: var(--muted); }
+    .disclaimer-text strong { color: #fff; display: block; margin-top: 10px; margin-bottom: 2px; }
+
+    /* Form Fields */
+    .field { margin-bottom: 12px; }
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 6px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    select option { background: var(--surface2); color: var(--text); }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .file-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .file-upload {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+    }
+    .file-actions {
+      display: flex;
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .action-btn {
+      flex: 1;
+      padding: 8px 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text);
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: background 0.15s;
+    }
+    .action-btn:hover { background: rgba(255, 255, 255, 0.05); }
+    .action-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+    /* Interactive Buttons */
+    .btn {
+      width: 100%;
+      padding: 13px 20px;
+      border-radius: 12px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #2563eb);
+      color: white;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+    .btn-primary:hover:not(:disabled) {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: #fff;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: #93c5fd;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      padding: 0 20px;
+      text-align: left;
+      border-radius: 14px;
+    }
+    .btn-outline:hover {
+      background: rgba(59, 130, 246, 0.08);
+      border-color: var(--primary);
+    }
+
+    /* Badges & Pills */
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-open { background: rgba(59, 130, 246, 0.18); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .badge-in_progress { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .badge-escalated { background: rgba(239, 68, 68, 0.22); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.5); font-weight: 800; }
+    .badge-resolved { background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .badge-closed { background: rgba(107, 114, 128, 0.18); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.4); }
+    .badge-urgent { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .badge-high { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .badge-normal { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+
+    /* Timeline & Notes Box */
+    .timeline-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      max-height: 220px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .timeline-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 0.8rem;
+    }
+    .timeline-meta {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 0.72rem;
+      margin-bottom: 4px;
+    }
+
+    .error-text {
+      color: #f87171;
+      font-size: 12.5px;
+      margin-top: 10px;
+      min-height: 18px;
+      text-align: center;
+    }
+    .hidden { display: none !important; }
+
+    /* Mobile Responsive */
+    @media (max-width: 640px) {
+      body { padding: 12px 8px; justify-content: center; }
+      body::before, body::after { display: none; }
+      .screen { max-width: none; min-height: calc(100dvh - 24px); }
+      .card { border-radius: 16px; padding: 20px 16px; }
+      h1 { font-size: 21px; }
+      .row, .file-row { grid-template-columns: 1fr; }
+      .btn-outline { height: 54px; padding: 0 16px; font-size: 13.5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= SCREEN 1: SIGN IN / TERMINAL ACCESS ================= -->
+  <div class="screen active" id="screen-login">
+    <div class="card">
+      <div class="brand brand-login">
+        <img class="brand-logo" src="./image_02e503.png" alt="FlexiTap POS">
+        <div>
+          <div style="font-size: 17px; font-weight: 800; color: #fff;">FlexiTap POS Support</div>
+          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Merchant Operations &amp; Diagnostic Care</div>
+        </div>
+      </div>
+      
+      <h1>Merchant Portal Access</h1>
+      <p class="subtitle">Sign in to your store account or continue as terminal guest to submit urgent tickets.</p>
+
+      <form onsubmit="handleLoginSubmit(event)">
+        <div class="field">
+          <label>Store Email or Login ID</label>
+          <input id="loginEmail" type="text" autocomplete="username" placeholder="e.g. manager@centralbakery.com">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Account Password">
+        </div>
+        <button type="submit" class="btn btn-primary" id="loginBtn">Sign In to Store Account</button>
+      </form>
+
+      <div style="display: flex; align-items: center; gap: 12px; margin: 18px 0;">
+        <div style="flex: 1; height: 1px; background: var(--border);"></div>
+        <span style="font-size: 11px; color: var(--muted); text-transform: uppercase;">Or</span>
+        <div style="flex: 1; height: 1px; background: var(--border);"></div>
+      </div>
+
+      <button type="button" class="btn btn-secondary" onclick="loginAsGuest()">
+        ⚡ Quick Access as Terminal Guest
+      </button>
+
+      <div id="loginError" class="error-text"></div>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN 2: REMOTE SERVICE DISCLAIMER ================= -->
+  <div class="screen" id="screen-disclaimer">
+    <div class="card">
+      <div class="brand">
+        <img class="brand-logo" src="./image_02e503.png" alt="FlexiTap POS">
+        <div class="brand-name">
+          <span>FlexiTap Support</span>
+          <span class="brand-sub">Diagnostic Service Terms</span>
+        </div>
+        <button id="pwaInstallBtn">INSTALL APP ↓</button>
+        <button class="logout-btn" onclick="logoutApp()">LOGOUT</button>
+      </div>
+
+      <h1>Operations &amp; Diagnostic Terms</h1>
+      <p class="subtitle">Please confirm authorization for terminal diagnostics and telemetry.</p>
+
+      <div class="disclaimer-box">
+        <div class="disclaimer-text">
+          <strong>1. Diagnostic Telemetry &amp; Access Authorization</strong>
+          By submitting a ticket and initiating diagnostic troubleshooting, you authorize FlexiTap Operations to inspect POS telemetry, SQLite synchronization health, device platform versions, and hardware peripherals (thermal printer cutter, cash drawer, and Bluetooth sockets) solely for incident remediation.
+
+          <strong>2. Data Privacy &amp; End-to-End Encryption</strong>
+          FlexiTap is committed to absolute merchant data confidentiality. Diagnostic telemetry, receipt photos, and error recordings are stored securely inside our encrypted Supabase database and are never shared with unauthorized third parties.
+
+          <strong>3. Live Remote Assistance Consent</strong>
+          If you request a live remote assistance session, screen sharing and terminal diagnostics are conducted over secure WebRTC sessions. Please ensure no customer payment card PANs or CVVs are visible during video inspection.
+
+          <strong>4. Continuous Service SLA</strong>
+          Support tickets are automatically prioritized and routed to Core Dev Engineering or Customer Support based on incident classification.
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="goTo('landing')">Accept &amp; Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN 3: LANDING HUB ================= -->
+  <div class="screen" id="screen-landing">
+    <div class="card">
+      <div class="brand">
+        <img class="brand-logo" src="./image_02e503.png" alt="FlexiTap POS">
+        <div class="brand-name">
+          <span id="landingGreeting">Hello, Merchant</span>
+          <span class="brand-sub">FlexiTap Diagnostic Hub</span>
+        </div>
+        <button class="logout-btn" onclick="logoutApp()">LOGOUT</button>
+      </div>
+
+      <h1>Support &amp; Operations</h1>
+      <p class="subtitle">Submit an issue, track live ticket resolution, or inspect recent terminal tickets.</p>
+
+      <button class="btn btn-outline" onclick="startNew()" style="margin-bottom: 12px;">
+        <div>
+          <div style="font-weight: 700; color: #fff;">Submit a Support Ticket</div>
+          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Printer cuts, SQLite sync, app crashes, or billing</div>
+        </div>
+        <span style="font-size: 1.4rem;">🎫</span>
+      </button>
+
+      <button class="btn btn-outline" onclick="startReview()" style="margin-bottom: 12px;">
+        <div>
+          <div style="font-weight: 700; color: #fff;">Track &amp; Review Ticket</div>
+          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Inspect real-time status, dev notes &amp; reply</div>
+        </div>
+        <span style="font-size: 1.4rem;">🔍</span>
+      </button>
+
+      <button class="btn btn-outline" onclick="showRecent()">
+        <div>
+          <div style="font-weight: 700; color: #fff;">Recent Submissions</div>
+          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">View tickets submitted from this device</div>
+        </div>
+        <span style="font-size: 1.4rem;">🕘</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN 4: TICKET SUBMISSION FORM ================= -->
+  <div class="screen" id="screen-form">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <button onclick="goTo('landing')" style="background: none; border: none; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer;">&larr; Back to Hub</button>
+        <span class="badge-pill badge-open">Direct Supabase Sync</span>
+      </div>
+
+      <h1 id="formTitle">Submit Support Ticket</h1>
+      <p class="subtitle" style="margin-bottom: 16px;">Your ticket will auto-route to Dev Engineering or Customer Support.</p>
+
+      <form id="support-ticket-form" onsubmit="handleTicketFormSubmit(event)">
+        <div class="row">
+          <div class="field">
+            <label>Store / Business Name *</label>
+            <input id="storeName" placeholder="e.g. Central Bakery" required>
+          </div>
+          <div class="field">
+            <label>Contact Full Name *</label>
+            <input id="fullName" placeholder="e.g. Maria Gonzalez" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Contact Phone *</label>
+            <input id="phone" type="tel" placeholder="e.g. 555-0192" required>
+          </div>
+          <div class="field">
+            <label>Email Address</label>
+            <input id="email" type="email" placeholder="manager@store.com">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Issue Category *</label>
+            <select id="category" required onchange="handleCategoryChange()">
+              <option value="payment">💳 Payment &amp; Checkout</option>
+              <option value="printer">🖨️ Printer &amp; Bluetooth Cutter</option>
+              <option value="sync">🔄 SQLite DB &amp; Sync Lock</option>
+              <option value="bug">🐞 App Crash / Exception</option>
+              <option value="general">⚙️ Menus, Back Office &amp; General</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Priority SLA *</label>
+            <select id="priority" required>
+              <option value="urgent">🔴 Urgent (1 Hour SLA - Register Down)</option>
+              <option value="high">🟠 High (4 Hours SLA - Degraded Ops)</option>
+              <option value="normal" selected>🔵 Normal (12 Hours SLA - Standard)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Issue Subject / Brief Headline *</label>
+          <input id="subject" placeholder="e.g. Bluetooth printer drops pairing after 3 receipts" required>
+        </div>
+
+        <div class="field">
+          <label>Detailed Description *</label>
+          <textarea id="description" rows="3" placeholder="Describe symptoms, steps to reproduce, or exact error messages shown on screen..." required style="resize: vertical;"></textarea>
+        </div>
+
+        <!-- File / Camera Attachment Pickers -->
+        <label style="display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px;">
+          Diagnostic Media (Optional Photo / Screen Video)
+        </label>
+        <div class="file-row">
+          <div class="file-upload">
+            <div style="font-size: 11px; color: var(--muted); font-weight: 600;">Receipt / Terminal Photo</div>
+            <div class="file-actions">
+              <div class="action-btn">📁 Photo <input type="file" id="photoFile" accept="image/*" onchange="updateFileLabel('photoFile', 'photoLabel')"></div>
+              <div class="action-btn">📷 Snap <input type="file" id="photoCamera" accept="image/*" capture="environment" onchange="updateFileLabel('photoCamera', 'photoLabel')"></div>
+            </div>
+            <div id="photoLabel" style="font-size: 10px; color: var(--green); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></div>
+          </div>
+          <div class="file-upload">
+            <div style="font-size: 11px; color: var(--muted); font-weight: 600;">Terminal Crash Video</div>
+            <div class="file-actions">
+              <div class="action-btn">📁 Video <input type="file" id="videoFile" accept="video/*" onchange="updateFileLabel('videoFile', 'videoLabel')"></div>
+              <div class="action-btn">🎥 Record <input type="file" id="videoRecord" accept="video/*" capture="environment" onchange="updateFileLabel('videoRecord', 'videoLabel')"></div>
+            </div>
+            <div id="videoLabel" style="font-size: 10px; color: var(--green); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></div>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-outline" id="liveDiagBtn" onclick="toggleLiveDiagnosis()" style="height: 48px; font-size: 12.5px; margin-bottom: 14px;">
+          <span>📡 Request Live Diagnostics Call</span>
+          <span id="liveDiagState" style="color: var(--muted); font-size: 11px;">Off</span>
+        </button>
+
+        <button type="submit" class="btn btn-primary" id="submitTicketBtn">
+          🚀 Submit Ticket to Operations
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN 5: LIVE TICKET REVIEW & TRACKING ================= -->
+  <div class="screen" id="screen-review">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <button onclick="goTo('landing')" style="background: none; border: none; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer;">&larr; Back to Hub</button>
+        <span class="badge-pill badge-open" id="review-realtime-pill">⚡ Live Supabase Synced</span>
+      </div>
+
+      <h1>Track &amp; Review Ticket</h1>
+      <p class="subtitle" style="margin-bottom: 16px;">Inspect real-time investigation progress, technician notes, and reply.</p>
+
+      <!-- Ticket Selection & Search -->
+      <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+        <select id="reviewTicketSelect" onchange="handleReviewTicketSelect()" style="flex: 1;">
+          <option value="">Select Recent Ticket...</option>
+        </select>
+        <input type="text" id="reviewManualNum" placeholder="#104" style="width: 80px; text-align: center;">
+        <button class="btn btn-primary" onclick="lookupManualTicket()" style="width: auto; padding: 0 14px; margin: 0; font-size: 13px;">Find</button>
+      </div>
+
+      <!-- Ticket Live Details Card -->
+      <div id="reviewDetailsCard" style="display: none; background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <span id="rd-number" style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 800; color: var(--primary);">#104</span>
+            <span id="rd-store" style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-left: 8px;">Store</span>
+          </div>
+          <span id="rd-status-badge" class="badge-pill badge-open">OPEN</span>
+        </div>
+
+        <div id="rd-subject" style="font-size: 0.98rem; font-weight: 700; color: #fff; margin-bottom: 6px;">Subject</div>
+        <div id="rd-desc" style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 12px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">Description</div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.76rem; color: var(--muted); margin-bottom: 12px;">
+          <span>Category: <strong id="rd-category" style="color: #fff;">Printer</strong></span>
+          <span>•</span>
+          <span>Priority: <strong id="rd-priority" style="color: #fff;">Urgent</strong></span>
+          <span>•</span>
+          <span>Assigned: <strong id="rd-assignee" style="color: #60a5fa;">Dev Engineering</strong></span>
+        </div>
+
+        <!-- Escalation Notice Banner (Rendered if escalated) -->
+        <div id="rd-escalation-banner" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 0.78rem; color: #fca5a5;">
+          ⚡ <strong>Tier 3 Escalation:</strong> This ticket was elevated by Customer Support to Core Dev Engineering for kernel/sync diagnosis.
+        </div>
+
+        <!-- Resolution Notes Box (Rendered if resolved) -->
+        <div id="rd-resolution-box" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px;">
+          <div style="font-size: 0.75rem; font-weight: 800; color: #34d399; margin-bottom: 4px;">✓ OFFICIAL RESOLUTION NOTES:</div>
+          <div id="rd-resolution-text" style="font-size: 0.84rem; color: #e2e8f0; line-height: 1.5;">Resolution notes will appear here.</div>
+        </div>
+
+        <!-- Live Technician Notes & Activity Log -->
+        <div style="font-size: 0.82rem; font-weight: 700; color: #fff; margin-bottom: 6px;">
+          💬 Activity &amp; Technician Audit Trail
+        </div>
+        <div class="timeline-box" id="rd-timeline-box">
+          <div style="text-align: center; color: var(--muted); font-size: 12px; margin: auto;">Loading notes...</div>
+        </div>
+
+        <!-- Two-Way Reply / Follow-Up Box -->
+        <form onsubmit="handleReviewReplySubmit(event)" style="margin-top: 14px;">
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="replyInput" placeholder="Add additional context or reply to technician..." required style="flex: 1; font-size: 13px;">
+            <button type="submit" class="btn btn-primary" id="replySubmitBtn" style="width: auto; padding: 0 16px; margin: 0; font-size: 13px;">Send</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="reviewEmptyPrompt" style="text-align: center; color: var(--muted); font-size: 13px; padding: 30px 10px;">
+        Select an open ticket from the dropdown above or enter your ticket number to track resolution progress.
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN 6: RECENT SUBMISSIONS LIST ================= -->
+  <div class="screen" id="screen-recent">
+    <div class="card">
+      <button onclick="goTo('landing')" style="background: none; border: none; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 18px;">&larr; Back to Hub</button>
+      <h1>Recent Submissions</h1>
+      <p class="subtitle" style="margin-bottom: 16px;">Tap any ticket to review live status and technician notes.</p>
+      <div id="recentListContainer"></div>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN 7: SUBMISSION SUCCESS ================= -->
+  <div class="screen" id="screen-success">
+    <div class="card" style="text-align: center;">
+      <div style="width: 58px; height: 58px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; font-size: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+        ✓
+      </div>
+      <h1 style="color: #34d399;">Ticket Dispatched!</h1>
+      <p class="subtitle" style="margin-bottom: 16px;">Your incident has been written to the FlexiTap Operations Portal.</p>
+
+      <div style="background: var(--surface2); padding: 18px; border-radius: 14px; margin-bottom: 18px; border: 1px solid var(--border);">
+        <div style="font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em;">Official Ticket Reference</div>
+        <div id="caseDisplay" style="font-family: 'JetBrains Mono', monospace; font-size: 34px; font-weight: 800; color: #38bdf8; margin: 6px 0;">#NEW</div>
+        <div id="assignedQueueBadge" style="font-size: 12px; color: #cbd5e1;">Auto-routed to Operations</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="btn btn-primary" onclick="trackCurrentSubmittedTicket()">
+          🔍 Track &amp; Review This Ticket
+        </button>
+        <button class="btn btn-secondary" onclick="goTo('landing')">
+          Return to Hub
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT LOGIC & SUPABASE INTEGRATION ================= -->
+  <script>
+    // 1. SUPABASE CLIENT INITIALIZATION
+    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+    let supabaseClient = null;
+    try {
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch (e) {
+      console.warn('Supabase client initialization warning:', e);
+    }
+
+    // 2. APP STATE
+    let deferredPrompt = null;
+    let isLiveRequested = false;
+    let currentAuthUser = JSON.parse(localStorage.getItem('flexitap_pwa_user') || 'null');
+    let lastCreatedTicket = null;
+    let activeReviewTicket = null;
+    let realtimeChannel = null;
+
+    // 3. PWA INSTALLATION HOOKS & SERVICE WORKER
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const installBtn = document.getElementById('pwaInstallBtn');
+      if (installBtn) installBtn.style.display = 'block';
+    });
+
+    const pwaBtn = document.getElementById('pwaInstallBtn');
+    if (pwaBtn) {
+      pwaBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          deferredPrompt = null;
+          pwaBtn.style.display = 'none';
+        }
+      });
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => {
+          console.warn('Service worker registration:', err);
+        });
+      });
+    }
+
+    // 4. NAVIGATION / SCREEN ROUTER
+    function goTo(id) {
+      document.querySelectorAll('.screen').forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none';
+      });
+      const next = document.getElementById('screen-' + id);
+      if (next) {
+        next.style.display = 'flex';
+        setTimeout(() => {
+          next.classList.add('active');
+        }, 35);
+      }
+    }
+
+    // 5. AUTHENTICATION & GUEST ACCESS
+    async function handleLoginSubmit(event) {
+      event.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('loginBtn');
+      const err = document.getElementById('loginError');
+
+      err.innerText = '';
+      if (!email || !password) {
+        err.innerText = 'Please enter your email and password.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = 'Verifying credentials...';
+
+      try {
+        if (!supabaseClient) throw new Error('Supabase client offline.');
+        const res = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (res.error) throw res.error;
+
+        currentAuthUser = {
+          email: res.data.user.email,
+          displayName: res.data.user.email.split('@')[0],
+          isGuest: false
+        };
+        localStorage.setItem('flexitap_pwa_user', JSON.stringify(currentAuthUser));
+        updateGreeting();
+        goTo('disclaimer');
+      } catch (e) {
+        err.innerText = e.message || 'Authentication failed. Please verify credentials.';
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Sign In to Store Account';
+      }
+    }
+
+    function loginAsGuest() {
+      currentAuthUser = {
+        email: 'terminal.guest@store.pos',
+        displayName: 'Terminal Guest',
+        isGuest: true
+      };
+      localStorage.setItem('flexitap_pwa_user', JSON.stringify(currentAuthUser));
+      updateGreeting();
+      goTo('disclaimer');
+    }
+
+    function logoutApp() {
+      localStorage.removeItem('flexitap_pwa_user');
+      currentAuthUser = null;
+      if (supabaseClient) supabaseClient.auth.signOut().catch(() => {});
+      goTo('login');
+    }
+
+    function updateGreeting() {
+      const g = document.getElementById('landingGreeting');
+      if (g) {
+        g.innerText = currentAuthUser ? `Hello, ${currentAuthUser.displayName}` : 'Hello, Merchant';
+      }
+    }
+
+    // 6. RATE LIMITING ENGINE (3 submissions per 10-minute cooldown)
+    function checkRateLimit() {
+      const limit = 3;
+      const cooldownMs = 10 * 60 * 1000;
+      const now = Date.now();
+      let data = JSON.parse(localStorage.getItem('flexitap_pwa_rate_limit') || '{"count":0,"firstTime":0}');
+
+      if (data.firstTime && (now - data.firstTime > cooldownMs)) {
+        data = { count: 0, firstTime: 0 };
+        localStorage.setItem('flexitap_pwa_rate_limit', JSON.stringify(data));
+      }
+
+      if (data.count >= limit) {
+        const remainingMin = Math.ceil((cooldownMs - (now - data.firstTime)) / 60000);
+        alert(`Rate limit reached: To prevent duplicate submissions, please wait ${remainingMin} minute(s) before submitting another ticket.`);
+        return false;
+      }
+      return true;
+    }
+
+    function recordSubmissionRate() {
+      const now = Date.now();
+      let data = JSON.parse(localStorage.getItem('flexitap_pwa_rate_limit') || '{"count":0,"firstTime":0}');
+      if (data.count === 0) data.firstTime = now;
+      data.count += 1;
+      localStorage.setItem('flexitap_pwa_rate_limit', JSON.stringify(data));
+    }
+
+    // 7. AUTO-ASSIGNMENT ENGINE (DEV vs SUPPORT ONLY - ADMIN EXCLUDED)
+    function getAutoAssignedStaff(ticketData = {}) {
+      const defaultPool = [
+        { full_name: 'David Kim', email: 'david.ops@flexitapapp.com', role: 'dev', role_title: 'Senior DevOps & Platform Engineer' },
+        { full_name: 'Maya Lin', email: 'maya.dev@flexitapapp.com', role: 'dev', role_title: 'Kernel & Android POS Engineer' },
+        { full_name: 'Marcus Vance', email: 'marcus.support@flexitapapp.com', role: 'support', role_title: 'Customer Support Lead' },
+        { full_name: 'Sarah Jenkins', email: 'sarah.support@flexitapapp.com', role: 'support', role_title: 'Senior Support Desk Specialist' },
+        { full_name: 'Alex Rivera', email: 'employee@flexitapapp.com', role: 'support', role_title: 'Customer Support Specialist' }
+      ];
+
+      const category = (ticketData.category || '').toLowerCase();
+      const text = ((ticketData.subject || '') + ' ' + (ticketData.description || '')).toLowerCase();
+
+      // Technical categories -> Core Devs. Customer/payment/menus -> Customer Support. Admins strictly excluded.
+      const isTech = ['printer', 'sync', 'bug', 'firmware', 'hardware', 'api', 'crash', 'error'].includes(category) ||
+                     text.includes('printer') || text.includes('bluetooth') || text.includes('cutter') || 
+                     text.includes('sync') || text.includes('freeze') || text.includes('socket') || text.includes('exception');
+
+      let targetPool = defaultPool.filter(m => isTech ? m.role === 'dev' : m.role === 'support');
+      if (targetPool.length === 0) targetPool = defaultPool;
+
+      let idx = 0;
+      try {
+        const saved = parseInt(localStorage.getItem('flexitap_ticket_assign_idx') || '0', 10);
+        idx = (saved + 1) % targetPool.length;
+        localStorage.setItem('flexitap_ticket_assign_idx', String(idx));
+      } catch (e) {
+        idx = Math.floor(Math.random() * targetPool.length);
+      }
+
+      const assigned = targetPool[idx] || targetPool[0];
+      return {
+        assigned_to: assigned.email,
+        staff_name: assigned.full_name,
+        role: assigned.role,
+        role_title: assigned.role_title,
+        routing_reason: isTech ? 'Technical defect routed to Core Dev Engineering' : 'Merchant operational request routed to Customer Support Desk'
+      };
+    }
+
+    // 8. TICKET SUBMISSION HANDLER
+    function startNew() {
+      goTo('form');
+    }
+
+    function toggleLiveDiagnosis() {
+      isLiveRequested = !isLiveRequested;
+      const stateEl = document.getElementById('liveDiagState');
+      const btn = document.getElementById('liveDiagBtn');
+      if (isLiveRequested) {
+        stateEl.textContent = 'Requested ✓';
+        stateEl.style.color = 'var(--green)';
+        btn.style.borderColor = 'var(--green)';
+      } else {
+        stateEl.textContent = 'Off';
+        stateEl.style.color = 'var(--muted)';
+        btn.style.borderColor = 'rgba(59, 130, 246, 0.35)';
+      }
+    }
+
+    function updateFileLabel(inputId, labelId) {
+      const input = document.getElementById(inputId);
+      const label = document.getElementById(labelId);
+      if (input && input.files && input.files[0]) {
+        label.innerText = '✓ ' + input.files[0].name;
+      }
+    }
+
+    function handleCategoryChange() {
+      const cat = document.getElementById('category').value;
+      const prio = document.getElementById('priority');
+      if (cat === 'printer' || cat === 'sync' || cat === 'bug') {
+        if (prio.value === 'normal') prio.value = 'high';
+      }
+    }
+
+    // Convert file to base64 safely for telemetry attachment
+    function fileToBase64(file) {
+      return new Promise((resolve) => {
+        if (!file) return resolve(null);
+        // Only inline files up to 3MB
+        if (file.size > 3 * 1024 * 1024) {
+          return resolve({ name: file.name, size: file.size, type: file.type, note: 'File size exceeded 3MB threshold' });
+        }
+        const reader = new FileReader();
+        reader.onload = () => resolve({ name: file.name, type: file.type, data: reader.result });
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleTicketFormSubmit(event) {
+      event.preventDefault();
+      if (!checkRateLimit()) return;
+
+      const storeName = document.getElementById('storeName').value.trim();
+      const fullName = document.getElementById('fullName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const category = document.getElementById('category').value;
+      const priority = document.getElementById('priority').value;
+      const subject = document.getElementById('subject').value.trim();
+      const description = document.getElementById('description').value.trim();
+
+      const btn = document.getElementById('submitTicketBtn');
+      btn.disabled = true;
+      btn.innerText = 'Dispatching to Operations...';
+
+      // Attachments
+      const photo = document.getElementById('photoCamera').files[0] || document.getElementById('photoFile').files[0];
+      const video = document.getElementById('videoRecord').files[0] || document.getElementById('videoFile').files[0];
+      const photoData = await fileToBase64(photo);
+      const videoData = await fileToBase64(video);
+
+      const attachments = [];
+      if (photoData) attachments.push({ type: 'image', ...photoData });
+      if (videoData) attachments.push({ type: 'video', ...videoData });
+
+      const autoAssign = getAutoAssignedStaff({ category, subject, description });
+
+      const payload = {
+        store_name: storeName,
+        contact_email: email || (currentAuthUser?.email !== 'terminal.guest@store.pos' ? currentAuthUser?.email : ''),
+        contact_phone: phone,
+        subject: subject,
+        category: category,
+        priority: priority,
+        status: 'open',
+        description: `${description}\n\n[Contact: ${fullName} | Tel: ${phone}]`,
+        assigned_to: autoAssign.assigned_to,
+        device_telemetry: {
+          app_version: 'v2.4.1 (FlexiSupport PWA)',
+          device_role: 'Merchant POS Terminal',
+          sqlite_healthy: true,
+          live_diagnostics_requested: isLiveRequested,
+          auto_assigned: autoAssign,
+          contact_name: fullName,
+          attachments: attachments,
+          user_agent: navigator.userAgent,
+          submitted_at: new Date().toISOString()
+        }
+      };
+
+      let ticketNumber = Math.floor(100 + Math.random() * 900);
+      let ticketId = 'tck_' + Date.now();
+
+      try {
+        if (supabaseClient) {
+          const res = await supabaseClient.from('tickets').insert([payload]).select();
+          if (res.data && res.data.length > 0) {
+            const saved = res.data[0];
+            ticketNumber = saved.ticket_number || ticketNumber;
+            ticketId = saved.id || ticketId;
+          }
+        }
+      } catch (err) {
+        console.warn('Direct Supabase insert fallback:', err);
+      }
+
+      recordSubmissionRate();
+
+      const ticketRecord = {
+        id: ticketId,
+        ticketNumber: ticketNumber,
+        subject: subject,
+        category: category,
+        priority: priority,
+        storeName: storeName,
+        status: 'open',
+        assignedTo: autoAssign.staff_name,
+        assignedRole: autoAssign.role,
+        createdAt: new Date().toLocaleString()
+      };
+      lastCreatedTicket = ticketRecord;
+      saveLocalTicket(ticketRecord);
+
+      // Reset form fields
+      document.getElementById('support-ticket-form').reset();
+      document.getElementById('photoLabel').innerText = '';
+      document.getElementById('videoLabel').innerText = '';
+      isLiveRequested = false;
+      document.getElementById('liveDiagState').textContent = 'Off';
+
+      // Update success screen
+      document.getElementById('caseDisplay').innerText = '#' + ticketNumber;
+      document.getElementById('assignedQueueBadge').innerHTML = `
+        Auto-routed to <strong>${autoAssign.staff_name}</strong> (${autoAssign.role === 'dev' ? 'Core Dev Engineering' : 'Customer Support Desk'})
+      `;
+
+      btn.disabled = false;
+      btn.innerText = '🚀 Submit Ticket to Operations';
+      goTo('success');
+    }
+
+    function saveLocalTicket(record) {
+      const list = getLocalTickets();
+      list.unshift(record);
+      // Keep up to 15 recent tickets
+      localStorage.setItem('flexitap_pwa_tickets', JSON.stringify(list.slice(0, 15)));
+    }
+
+    function getLocalTickets() {
+      return JSON.parse(localStorage.getItem('flexitap_pwa_tickets') || '[]');
+    }
+
+    function trackCurrentSubmittedTicket() {
+      if (lastCreatedTicket) {
+        openReviewForTicket(lastCreatedTicket.ticketNumber || lastCreatedTicket.id);
+      } else {
+        startReview();
+      }
+    }
+
+    // 9. TICKET REVIEW & REAL-TIME TRACKING ENGINE
+    function startReview() {
+      populateReviewDropdown();
+      goTo('review');
+    }
+
+    function populateReviewDropdown() {
+      const select = document.getElementById('reviewTicketSelect');
+      const tickets = getLocalTickets();
+      select.innerHTML = '<option value="">Select Recent Ticket...</option>';
+
+      if (tickets.length > 0) {
+        tickets.forEach(t => {
+          const opt = document.createElement('option');
+          opt.value = t.ticketNumber || t.id;
+          opt.textContent = `#${t.ticketNumber || 'TICK'} — ${t.subject || t.storeName}`;
+          select.appendChild(opt);
+        });
+      }
+    }
+
+    function handleReviewTicketSelect() {
+      const val = document.getElementById('reviewTicketSelect').value;
+      if (val) {
+        openReviewForTicket(val);
+      }
+    }
+
+    function lookupManualTicket() {
+      const raw = document.getElementById('reviewManualNum').value.trim();
+      const num = raw.replace(/[^0-9]/g, '');
+      if (!num) {
+        alert('Please enter a ticket number (e.g. 104).');
+        return;
+      }
+      openReviewForTicket(num);
+    }
+
+    async function openReviewForTicket(targetIdentifier) {
+      goTo('review');
+      const card = document.getElementById('reviewDetailsCard');
+      const emptyPrompt = document.getElementById('reviewEmptyPrompt');
+      const timeline = document.getElementById('rd-timeline-box');
+
+      card.style.display = 'block';
+      emptyPrompt.style.display = 'none';
+      timeline.innerHTML = '<div style="text-align: center; color: var(--muted); font-size: 12px; margin: auto;">Loading live details...</div>';
+
+      let liveTicket = null;
+
+      // Query Supabase for latest live ticket record
+      try {
+        if (supabaseClient) {
+          const isNum = !isNaN(Number(targetIdentifier));
+          let query = supabaseClient.from('tickets').select();
+          if (isNum) {
+            query = query.eq('ticket_number', Number(targetIdentifier));
+          } else {
+            query = query.eq('id', targetIdentifier);
+          }
+          const { data, error } = await query;
+          if (data && data.length > 0) {
+            liveTicket = data[0];
+          }
+        }
+      } catch (e) {
+        console.warn('Could not fetch ticket from Supabase:', e);
+      }
+
+      // Fallback to local stored record
+      if (!liveTicket) {
+        const localList = getLocalTickets();
+        liveTicket = localList.find(t => String(t.ticketNumber) === String(targetIdentifier) || t.id === targetIdentifier);
+      }
+
+      if (!liveTicket) {
+        card.style.display = 'none';
+        emptyPrompt.style.display = 'block';
+        emptyPrompt.innerHTML = `<span style="color: #f87171;">Ticket #${escapeHtml(targetIdentifier)} could not be found. Please double check the number.</span>`;
+        return;
+      }
+
+      activeReviewTicket = liveTicket;
+
+      // Populate card fields
+      document.getElementById('rd-number').innerText = '#' + (liveTicket.ticket_number || liveTicket.ticketNumber || 'NEW');
+      document.getElementById('rd-store').innerText = liveTicket.store_name || liveTicket.storeName || 'Store';
+      document.getElementById('rd-subject').innerText = liveTicket.subject || 'Ticket Details';
+      document.getElementById('rd-desc').innerText = liveTicket.description || 'No description provided.';
+      document.getElementById('rd-category').innerText = (liveTicket.category || 'general').toUpperCase();
+      document.getElementById('rd-priority').innerText = (liveTicket.priority || 'normal').toUpperCase();
+
+      const assigneeLabel = liveTicket.device_telemetry?.auto_assigned?.staff_name || liveTicket.assigned_to || 'Assigned Specialist';
+      document.getElementById('rd-assignee').innerText = assigneeLabel;
+
+      // Status Badge
+      const status = (liveTicket.status || 'open').toLowerCase();
+      const statusBadge = document.getElementById('rd-status-badge');
+      statusBadge.className = 'badge-pill badge-' + status;
+      statusBadge.innerText = status === 'escalated' ? '⚡ ESCALATED TO DEV' : status.replace('_', ' ').toUpperCase();
+
+      // Escalation Banner
+      const isEsc = status === 'escalated' || liveTicket.is_escalated || liveTicket.device_telemetry?.is_escalated;
+      document.getElementById('rd-escalation-banner').style.display = isEsc ? 'block' : 'none';
+
+      // Resolution Box
+      const resBox = document.getElementById('rd-resolution-box');
+      const resText = document.getElementById('rd-resolution-text');
+      if (liveTicket.resolution_notes) {
+        resBox.style.display = 'block';
+        resText.innerText = liveTicket.resolution_notes;
+      } else {
+        resBox.style.display = 'none';
+      }
+
+      // Load Ticket Notes & Timeline
+      loadLiveTicketNotes(liveTicket.id);
+
+      // Subscribe to Realtime Updates
+      subscribeRealtimeForTicket(liveTicket.id);
+    }
+
+    async function loadLiveTicketNotes(ticketId) {
+      const box = document.getElementById('rd-timeline-box');
+      if (!box) return;
+
+      try {
+        if (supabaseClient && ticketId) {
+          const { data, error } = await supabaseClient
+            .from('ticket_notes')
+            .select()
+            .eq('ticket_id', ticketId)
+            .order('created_at', { ascending: true });
+
+          if (data && data.length > 0) {
+            renderReviewNotes(data);
+            return;
+          }
+        }
+      } catch (_) {}
+
+      // Fallback default timeline note
+      renderReviewNotes([
+        {
+          author_email: activeReviewTicket?.assigned_to || 'operations@flexitapapp.com',
+          note: 'Ticket received and queued for investigation. Telemetry inspection in progress.',
+          created_at: activeReviewTicket?.created_at || new Date().toISOString()
+        }
+      ]);
+    }
+
+    function renderReviewNotes(notes) {
+      const box = document.getElementById('rd-timeline-box');
+      if (!box) return;
+      if (!notes || notes.length === 0) {
+        box.innerHTML = '<div style="text-align: center; color: var(--muted); font-size: 12px; margin: auto;">No notes logged yet.</div>';
+        return;
+      }
+
+      let html = '';
+      notes.forEach(n => {
+        const time = new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        html += `
+          <div class="timeline-item">
+            <div class="timeline-meta">
+              <strong style="color: #60a5fa;">${escapeHtml(n.author_email ? n.author_email.split('@')[0] : 'Operations')}</strong>
+              <span>${time}</span>
+            </div>
+            <div style="color: #f1f5f9; line-height: 1.45; white-space: pre-wrap;">${escapeHtml(n.note)}</div>
+          </div>
+        `;
+      });
+      box.innerHTML = html;
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function handleReviewReplySubmit(event) {
+      event.preventDefault();
+      if (!activeReviewTicket) return;
+      const input = document.getElementById('replyInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const btn = document.getElementById('replySubmitBtn');
+      btn.disabled = true;
+      btn.innerText = 'Posting...';
+
+      const author = currentAuthUser?.email || 'merchant@store.pos';
+      const newNote = {
+        ticket_id: activeReviewTicket.id,
+        author_email: author,
+        note: `[Merchant Update]: ${text}`,
+        created_at: new Date().toISOString()
+      };
+
+      try {
+        if (supabaseClient) {
+          await supabaseClient.from('ticket_notes').insert([newNote]);
+        }
+      } catch (e) {
+        console.warn('Could not post note to Supabase:', e);
+      }
+
+      input.value = '';
+      btn.disabled = false;
+      btn.innerText = 'Send';
+
+      // Append immediately to review timeline
+      const box = document.getElementById('rd-timeline-box');
+      if (box) {
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const div = document.createElement('div');
+        div.className = 'timeline-item';
+        div.innerHTML = `
+          <div class="timeline-meta">
+            <strong style="color: #34d399;">You (Merchant)</strong>
+            <span>${time}</span>
+          </div>
+          <div style="color: #f1f5f9; line-height: 1.45; white-space: pre-wrap;">${escapeHtml(text)}</div>
+        `;
+        box.appendChild(div);
+        box.scrollTop = box.scrollHeight;
+      }
+    }
+
+    function subscribeRealtimeForTicket(ticketId) {
+      if (!supabaseClient || !ticketId) return;
+      if (realtimeChannel) {
+        supabaseClient.removeChannel(realtimeChannel);
+      }
+
+      realtimeChannel = supabaseClient
+        .channel('pwa-ticket-' + ticketId)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'tickets', filter: `id=eq.${ticketId}` }, payload => {
+          if (payload.new && activeReviewTicket && activeReviewTicket.id === ticketId) {
+            activeReviewTicket = payload.new;
+            const status = (payload.new.status || 'open').toLowerCase();
+            const badge = document.getElementById('rd-status-badge');
+            if (badge) {
+              badge.className = 'badge-pill badge-' + status;
+              badge.innerText = status === 'escalated' ? '⚡ ESCALATED TO DEV' : status.replace('_', ' ').toUpperCase();
+            }
+            if (payload.new.resolution_notes) {
+              document.getElementById('rd-resolution-box').style.display = 'block';
+              document.getElementById('rd-resolution-text').innerText = payload.new.resolution_notes;
+            }
+          }
+        })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'ticket_notes', filter: `ticket_id=eq.${ticketId}` }, payload => {
+          if (payload.new) {
+            loadLiveTicketNotes(ticketId);
+          }
+        })
+        .subscribe();
+    }
+
+    // 10. RECENT SUBMISSIONS SCREEN
+    function showRecent() {
+      const container = document.getElementById('recentListContainer');
+      const list = getLocalTickets();
+
+      if (!list || list.length === 0) {
+        container.innerHTML = '<p class="subtitle" style="text-align: center; padding: 24px 0;">No tickets submitted from this browser/terminal yet.</p>';
+        goTo('recent');
+        return;
+      }
+
+      container.innerHTML = list.map(item => `
+        <div onclick="openReviewForTicket('${item.ticketNumber || item.id}')" style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 10px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+            <strong style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--primary);">#${escapeHtml(item.ticketNumber || 'TICK')}</strong>
+            <span class="badge-pill badge-${(item.status || 'open').toLowerCase()}">${(item.status || 'OPEN').toUpperCase()}</span>
+          </div>
+          <div style="font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 4px;">${escapeHtml(item.subject || 'Ticket')}</div>
+          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--muted);">
+            <span>${escapeHtml(item.storeName || 'Store')}</span>
+            <span>${escapeHtml(item.createdAt || '')}</span>
+          </div>
+        </div>
+      `).join('');
+
+      goTo('recent');
+    }
+
+    // Safe HTML Escaping
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, c => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[c]));
+    }
+
+    // Initialize state on boot
+    updateGreeting();
+    if (currentAuthUser) {
+      goTo('landing');
+    }
+  </script>
+</body>
+</html>
