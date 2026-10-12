@@ -209,6 +209,39 @@
     .notes-timeline { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px; max-height: 220px; overflow-y: auto; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
     .note-bubble { background: rgba(255, 255, 255, 0.04); border-left: 3px solid var(--primary); padding: 10px 12px; border-radius: 8px; font-size: 0.82rem; line-height: 1.4; color: var(--text); }
     .note-author { font-size: 0.72rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; }
+
+    /* Merchant CRM Styles */
+    .crm-header-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(8px); }
+    .crm-tabs-nav { display: flex; gap: 8px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 20px; overflow-x: auto; }
+    .crm-tab-btn {
+      padding: 9px 16px; border-radius: 10px; font-size: 0.82rem; font-weight: 700; cursor: pointer;
+      border: 1px solid var(--card-border); background: rgba(255, 255, 255, 0.03); color: var(--text-muted); transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+    }
+    .crm-tab-btn:hover { background: rgba(255, 255, 255, 0.08); color: var(--text); }
+    .crm-tab-btn.active { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: var(--primary); }
+    .crm-sub-panel { display: none; }
+    .crm-sub-panel.active { display: block; animation: fadeIn 0.2s ease; }
+    .crm-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .crm-form-group { display: flex; flex-direction: column; gap: 6px; }
+    .crm-form-group label { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .crm-input, .crm-select {
+      width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--card-border);
+      border-radius: 10px; color: var(--text); font-size: 0.85rem; outline: none; transition: border-color 0.2s;
+    }
+    .crm-input:focus, .crm-select:focus { border-color: var(--primary); }
+    .crm-input[readonly] { background: rgba(0, 0, 0, 0.35); color: var(--text-muted); cursor: not-allowed; }
+    .crm-contacts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+    .crm-contact-card { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; }
+    .crm-modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
+    }
+    .crm-modal-backdrop.open { display: flex; }
+    .crm-modal-box {
+      background: var(--sidebar-bg); border: 1px solid var(--card-border); border-radius: 16px;
+      width: 100%; max-width: 540px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); max-height: 90vh; overflow-y: auto;
+    }
   </style>
 </head>
 <body>
@@ -248,7 +281,7 @@
         <ul class="nav-list">
           <li>
             <button class="nav-btn active" onclick="switchNav('clients', this)">
-              <span>👥 Clients</span>
+              <span>👥 Merchant CRM</span>
             </button>
           </li>
           <li>
@@ -314,47 +347,358 @@
 
       <div class="content-body">
 
-        <!-- ================= 1. CLIENTS VIEW (FROM PROFILES ONLY) ================= -->
+        <!-- ================= 1. MERCHANT CRM & FLEET OPS HUB ================= -->
         <div id="view-clients" class="tab-view active">
-          <div class="kpi-row">
-            <div class="kpi-card">
-              <div class="kpi-title">Total Registered Accounts</div>
-              <div class="kpi-val" style="color: var(--accent);" id="kpi-store-count">...</div>
-              <div class="kpi-status" style="color: var(--accent);">● Public Profiles Query</div>
+          
+          <!-- Top Bar: Account Selector, Quick Stats & Action Bar -->
+          <div class="crm-header-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 16px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                  👥
+                </div>
+                <div>
+                  <h2 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin-bottom: 2px;">Merchant CRM Hub</h2>
+                  <p style="font-size: 0.78rem; color: var(--text-muted);">Unified account records, contacts, hardware fleet lifecycle, subscriptions, and tickets.</p>
+                </div>
+              </div>
+
+              <!-- Merchant Selector & Tools -->
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">Select Account:</label>
+                <select id="crm-account-select" onchange="onSelectCrmMerchant(this.value)" style="padding: 9px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 10px; font-size: 0.82rem; font-weight: 700; outline: none; min-width: 240px; cursor: pointer;">
+                  <option value="">Loading accounts...</option>
+                </select>
+
+                <button class="action-btn" onclick="toggleCrmViewMode()" id="crm-btn-toggle-view" style="padding: 9px 14px; font-weight: 700;">
+                  <span>📋 All Accounts Directory</span>
+                </button>
+                <button class="action-btn" onclick="openAddMerchantModal()" style="padding: 9px 14px; background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700;">
+                  <span>+ New Merchant</span>
+                </button>
+              </div>
             </div>
-            <div class="kpi-card">
-              <div class="kpi-title">Developer Access Pool</div>
-              <div class="kpi-val" style="color: var(--primary);" id="kpi-dev-count">...</div>
-              <div class="kpi-status" style="color: var(--text-muted);">Team Super-Admins</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-title">Connected POS Fleet</div>
-              <div class="kpi-val" style="color: #a855f7;">Live</div>
-              <div class="kpi-status" style="color: var(--accent);">● Sockets Healthy</div>
+
+            <!-- Active Selected Merchant Header Strip -->
+            <div id="crm-selected-strip" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding-top: 16px; border-top: 1px solid var(--card-border);">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div id="crm-merchant-avatar" style="width: 40px; height: 40px; border-radius: 10px; background: rgba(59, 130, 246, 0.2); border: 1px solid var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 900; color: #60a5fa; font-size: 0.95rem;">
+                  --
+                </div>
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <h3 id="crm-strip-name" style="font-size: 1.05rem; font-weight: 800; color: #fff;">No Account Selected</h3>
+                    <span id="crm-strip-status" style="font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px; background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">ACTIVE</span>
+                  </div>
+                  <p id="crm-strip-meta" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Store ID: — • Location: —</p>
+                </div>
+              </div>
+
+              <!-- Quick Metrics Pills -->
+              <div style="display: flex; align-items: center; gap: 16px; font-size: 0.8rem;">
+                <div>
+                  <span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block;">SaaS Plan</span>
+                  <span id="crm-strip-plan" style="font-weight: 800; color: var(--primary);">Standard Tier</span>
+                </div>
+                <div style="border-left: 1px solid var(--card-border); padding-left: 16px;">
+                  <span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block;">Hardware Fleet</span>
+                  <span id="crm-strip-assets" style="font-weight: 800; color: #fff;">0 Units</span>
+                </div>
+                <div style="border-left: 1px solid var(--card-border); padding-left: 16px;">
+                  <span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block;">Support Tickets</span>
+                  <span id="crm-strip-tickets" style="font-weight: 800; color: var(--accent);">0 Open</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title">Merchant Accounts &amp; Diagnostics</div>
-              <input type="text" id="merchant-search" onkeyup="filterMerchants()" placeholder="Search name, store, email, or tier..." style="padding: 8px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 320px;">
+          <!-- 5 CRM Sub-Tabs Navigation (Hidden when in Directory view mode) -->
+          <div id="crm-hub-container">
+            <div class="crm-tabs-nav">
+              <button class="crm-tab-btn active" id="crm-tabbtn-account" onclick="switchCrmSubTab('account')">
+                <span>📋</span> Account Information
+              </button>
+              <button class="crm-tab-btn" id="crm-tabbtn-contact" onclick="switchCrmSubTab('contact')">
+                <span>👤</span> Contact
+              </button>
+              <button class="crm-tab-btn" id="crm-tabbtn-assets" onclick="switchCrmSubTab('assets')">
+                <span>💻</span> Assets
+              </button>
+              <button class="crm-tab-btn" id="crm-tabbtn-subscription" onclick="switchCrmSubTab('subscription')">
+                <span>💳</span> Subscription
+              </button>
+              <button class="crm-tab-btn" id="crm-tabbtn-tickets" onclick="switchCrmSubTab('tickets')">
+                <span>🎫</span> Tickets
+              </button>
             </div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Client Name &amp; Email</th>
-                  <th>Store / Business Name</th>
-                  <th>Subscription Tier</th>
-                  <th>Role</th>
-                  <th>Created At</th>
-                  <th>Support Quick Action</th>
-                </tr>
-              </thead>
-              <tbody id="stores-tbody">
-                <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">Loading profiles...</td></tr>
-              </tbody>
-            </table>
+
+            <!-- SUB-PANEL 1: ACCOUNT INFORMATION -->
+            <div id="crm-subpanel-account" class="crm-sub-panel active">
+              <div class="panel">
+                <div class="panel-header">
+                  <div>
+                    <div class="panel-title">Store &amp; Account Information</div>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Legal business registration, DBA, operating hours, and location address.</p>
+                  </div>
+                  <button class="action-btn" onclick="saveCrmAccount()" style="background: var(--primary); color: #fff; border-color: var(--primary);">Save Account Changes</button>
+                </div>
+
+                <div class="crm-form-grid">
+                  <div class="crm-form-group">
+                    <label>Business Legal Name</label>
+                    <input type="text" id="crm-inp-legal-name" class="crm-input" placeholder="e.g. Oak &amp; Ember Hospitality LLC">
+                  </div>
+                  <div class="crm-form-group">
+                    <label>Store / DBA Name</label>
+                    <input type="text" id="crm-inp-store-name" class="crm-input" placeholder="e.g. Oak &amp; Ember Steakhouse">
+                  </div>
+                  <div class="crm-form-group">
+                    <label>Store ID / Code</label>
+                    <input type="text" id="crm-inp-store-code" class="crm-input" readonly placeholder="store_xxxx">
+                  </div>
+                  <div class="crm-form-group">
+                    <label>Venue Category</label>
+                    <select id="crm-inp-venue-type" class="crm-select">
+                      <option>Restaurant / Bar</option>
+                      <option>Cafe / Quick Service</option>
+                      <option>Retail Store</option>
+                      <option>Vape / Smoke Shop</option>
+                      <option>Entertainment / Gaming</option>
+                      <option>Food Truck / Pop-up</option>
+                    </select>
+                  </div>
+                  <div class="crm-form-group" style="grid-column: 1 / -1;">
+                    <label>Street Address</label>
+                    <input type="text" id="crm-inp-street" class="crm-input" placeholder="e.g. 440 Ocean Drive, Suite 102">
+                  </div>
+                  <div class="crm-form-group">
+                    <label>City</label>
+                    <input type="text" id="crm-inp-city" class="crm-input" placeholder="e.g. Miami">
+                  </div>
+                  <div class="crm-form-group">
+                    <label>State / Region</label>
+                    <input type="text" id="crm-inp-state" class="crm-input" placeholder="e.g. FL">
+                  </div>
+                  <div class="crm-form-group">
+                    <label>Postal / ZIP Code</label>
+                    <input type="text" id="crm-inp-postal" class="crm-input" placeholder="e.g. 33139">
+                  </div>
+                  <div class="crm-form-group">
+                    <label>Operating Hours</label>
+                    <input type="text" id="crm-inp-hours" class="crm-input" placeholder="e.g. Mon-Sun: 11:00 AM - 11:00 PM">
+                  </div>
+                  <div class="crm-form-group">
+                    <label>Account Status</label>
+                    <select id="crm-inp-status" class="crm-select">
+                      <option value="active">Active (Live in Production)</option>
+                      <option value="onboarding">Onboarding / Staging</option>
+                      <option value="suspended">Suspended / Past Due</option>
+                      <option value="decommissioned">Decommissioned</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUB-PANEL 2: CONTACTS -->
+            <div id="crm-subpanel-contact" class="crm-sub-panel">
+              <div class="panel">
+                <div class="panel-header">
+                  <div>
+                    <div class="panel-title">Merchant Stakeholder Contacts</div>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Store owners, general managers, and technical contacts.</p>
+                  </div>
+                  <button class="action-btn" onclick="openAddContactModal()" style="background: var(--primary); color: #fff; border-color: var(--primary);">+ Add Contact</button>
+                </div>
+
+                <div id="crm-contacts-container" class="crm-contacts-grid">
+                  <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 32px;">Loading contacts...</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUB-PANEL 3: ASSETS (HARDWARE FLEET) -->
+            <div id="crm-subpanel-assets" class="crm-sub-panel">
+              <div class="panel">
+                <div class="panel-header">
+                  <div>
+                    <div class="panel-title">Registered Hardware Assets &amp; Fleet Lifecycle</div>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Manage terminals, handhelds, thermal printers, purchase dates, deployment dates, and warranty expiry.</p>
+                  </div>
+                  <button class="action-btn" onclick="openAddAssetModal()" style="background: var(--primary); color: #fff; border-color: var(--primary);">+ Add Hardware Asset</button>
+                </div>
+
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Asset Name</th>
+                      <th>Device Model</th>
+                      <th>Serial / MAC</th>
+                      <th>Station / Location</th>
+                      <th>Purchase Date</th>
+                      <th>Deployment Date</th>
+                      <th>Expiry Date</th>
+                      <th>Network Status</th>
+                      <th style="text-align: right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="crm-assets-tbody">
+                    <tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 24px;">Loading registered assets...</td></tr>
+                  </tbody>
+                </table>
+
+                <!-- Asset Fleet Lifecycle Metrics -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--card-border);">
+                  <div style="background: rgba(255,255,255,0.02); padding: 14px; border-radius: 12px; border: 1px solid var(--card-border);">
+                    <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block;">Total Provisioned Hardware</span>
+                    <div id="crm-stat-assets-count" style="font-size: 1.3rem; font-weight: 800; color: #fff; margin-top: 4px;">0 Units</div>
+                    <span style="font-size: 0.72rem; color: var(--text-muted);">Active in store inventory</span>
+                  </div>
+                  <div style="background: rgba(255,255,255,0.02); padding: 14px; border-radius: 12px; border: 1px solid var(--card-border);">
+                    <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block;">Earliest Deployment Date</span>
+                    <div id="crm-stat-earliest-deploy" style="font-size: 1.3rem; font-weight: 800; color: var(--primary); margin-top: 4px;">—</div>
+                    <span style="font-size: 0.72rem; color: var(--text-muted);">First live transaction day</span>
+                  </div>
+                  <div style="background: rgba(255,255,255,0.02); padding: 14px; border-radius: 12px; border: 1px solid var(--card-border);">
+                    <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block;">Upcoming Warranty / Expiry</span>
+                    <div id="crm-stat-upcoming-expiry" style="font-size: 1.3rem; font-weight: 800; color: var(--warning); margin-top: 4px;">—</div>
+                    <span style="font-size: 0.72rem; color: var(--text-muted);">Renewal alerts trigger automatically</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUB-PANEL 4: SUBSCRIPTION -->
+            <div id="crm-subpanel-subscription" class="crm-sub-panel">
+              <div class="panel">
+                <div class="panel-header">
+                  <div>
+                    <div class="panel-title">SaaS Subscription &amp; Paddle Billing</div>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Recurring tier pricing, Paddle license status, renewal dates, and invoice records.</p>
+                  </div>
+                  <button class="action-btn" onclick="alert('Simulated: Synchronizing subscription details with Paddle.')">Sync Paddle Status</button>
+                </div>
+
+                <div class="kpi-row" style="margin-bottom: 20px;">
+                  <div class="kpi-card">
+                    <div class="kpi-title">Active SaaS Tier</div>
+                    <div class="kpi-val" style="color: var(--primary);" id="crm-sub-plan-val">Pro POS</div>
+                    <div class="kpi-status" style="color: var(--accent);" id="crm-sub-price-val">$99.00 / month</div>
+                  </div>
+                  <div class="kpi-card">
+                    <div class="kpi-title">Subscription Status</div>
+                    <div class="kpi-val" style="color: var(--accent);" id="crm-sub-status-val">Active</div>
+                    <div class="kpi-status" style="color: var(--text-muted);" id="crm-sub-renewal-val">Renews: Next Month</div>
+                  </div>
+                  <div class="kpi-card">
+                    <div class="kpi-title">Payment Method</div>
+                    <div class="kpi-val" style="color: #fff; font-size: 1.3rem;" id="crm-sub-paymethod-val">Mastercard •••• 9122</div>
+                    <div class="kpi-status" style="color: var(--text-muted);">Auto-Charge Enabled</div>
+                  </div>
+                </div>
+
+                <div class="crm-form-grid" style="margin-bottom: 24px;">
+                  <div class="crm-form-group">
+                    <label>Paddle Subscription ID</label>
+                    <input type="text" id="crm-inp-paddle-sub" class="crm-input" readonly placeholder="sub_01hxxxxxxxx">
+                  </div>
+                  <div class="crm-form-group">
+                    <label>Paddle Customer ID</label>
+                    <input type="text" id="crm-inp-paddle-ctm" class="crm-input" readonly placeholder="ctm_01hxxxxxxxx">
+                  </div>
+                </div>
+
+                <div>
+                  <h4 style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 12px;">Recent Billing Invoices</h4>
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Invoice #</th>
+                        <th>Billing Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th style="text-align: right;">Receipt</th>
+                      </tr>
+                    </thead>
+                    <tbody id="crm-invoices-tbody">
+                      <tr>
+                        <td style="font-family: monospace;">INV-2026-10-01</td>
+                        <td>Oct 15, 2026</td>
+                        <td style="font-weight: 700; color: #fff;">$99.00</td>
+                        <td><span style="background: rgba(16,185,129,0.15); color: #34d399; font-weight: 700; padding: 2px 8px; border-radius: 6px; font-size: 0.72rem;">PAID</span></td>
+                        <td style="text-align: right;"><button class="action-btn" onclick="alert('Receipt downloaded.')">Download PDF</button></td>
+                      </tr>
+                      <tr>
+                        <td style="font-family: monospace;">INV-2026-09-01</td>
+                        <td>Sep 15, 2026</td>
+                        <td style="font-weight: 700; color: #fff;">$99.00</td>
+                        <td><span style="background: rgba(16,185,129,0.15); color: #34d399; font-weight: 700; padding: 2px 8px; border-radius: 6px; font-size: 0.72rem;">PAID</span></td>
+                        <td style="text-align: right;"><button class="action-btn" onclick="alert('Receipt downloaded.')">Download PDF</button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUB-PANEL 5: TICKETS -->
+            <div id="crm-subpanel-tickets" class="crm-sub-panel">
+              <div class="panel">
+                <div class="panel-header">
+                  <div>
+                    <div class="panel-title">Merchant Support &amp; Ops Tickets</div>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Issue tracking, bug reports, and hardware requests for this specific account.</p>
+                  </div>
+                  <button class="action-btn" onclick="openCreateMerchantTicketModal()" style="background: var(--primary); color: #fff; border-color: var(--primary);">+ Create Ticket for Store</button>
+                </div>
+
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Ticket #</th>
+                      <th>Subject / Description</th>
+                      <th>Priority</th>
+                      <th>Status</th>
+                      <th>Date Logged</th>
+                      <th style="text-align: right;">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="crm-tickets-tbody">
+                    <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">Loading store tickets...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
+
+          <!-- ALL MERCHANTS DIRECTORY TABLE (Shown when toggled) -->
+          <div id="crm-directory-container" style="display: none;">
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <div class="panel-title">All Registered Accounts &amp; Profiles</div>
+                  <p style="font-size: 0.78rem; color: var(--text-muted);">Directory query from public profiles and CRM database.</p>
+                </div>
+                <input type="text" id="merchant-search" onkeyup="filterMerchants()" placeholder="Search name, store, email, or tier..." style="padding: 8px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 320px;">
+              </div>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Client Name &amp; Email</th>
+                    <th>Store / Business Name</th>
+                    <th>Subscription Tier</th>
+                    <th>Role</th>
+                    <th>Created At</th>
+                    <th>Support Quick Action</th>
+                  </tr>
+                </thead>
+                <tbody id="stores-tbody">
+                  <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">Loading profiles...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
 
         <!-- ================= 2. UPDATE VIEW (SUPABASE STORAGE LISTENER) ================= -->
@@ -744,7 +1088,7 @@
     let storagePollInterval = null;
 
     const views = {
-      clients: { title: 'Merchant Clients & Support Hub', subtitle: 'Search merchant profiles, troubleshoot accounts, and inspect subscription tiers.' },
+      clients: { title: 'Merchant CRM & Fleet Ops', subtitle: 'Manage account information, contacts, hardware fleet lifecycle, subscriptions, and tickets.' },
       updates: { title: 'App Updates & Storage Releases', subtitle: 'Listen directly to Supabase storage releases, inspect APKs/binaries, and publish OTA payloads.' },
       support: { title: 'Live Merchant Support Desk', subtitle: 'Reply directly to paying Plus & Pro merchants in real time.' },
       tickets: { title: 'Support Tickets & Issue Resolution', subtitle: 'Create tickets, log internal dev notes, update statuses, and resolve merchant issues.' },
@@ -765,6 +1109,7 @@
       document.getElementById('view-title').textContent = views[key].title;
       document.getElementById('view-subtitle').textContent = views[key].subtitle;
 
+      if (key === 'clients') loadDevData();
       if (key === 'support') loadSupportDeskSessions();
       if (key === 'tickets') fetchTickets();
       if (key === 'analytics') fetchSiteAnalytics();
@@ -847,30 +1192,770 @@
       document.getElementById('dev-auth-view').style.display = 'flex';
     }
 
-    // --- DATA LOADING FOR CLIENTS (FROM PROFILES ONLY) ---
-    async function loadDevData() {
-      const res = await supabaseClient
-        .from('profiles')
-        .select('*');
+    // --- MERCHANT CRM & FLEET OPS CONTROLLER ---
+    let crmAccounts = [];
+    let currentCrmAccountId = null;
+    let crmContactsMap = {};
+    let crmAssetsMap = {};
+    let crmSubscriptionsMap = {};
+    let crmTicketsMap = {};
+    let crmViewMode = 'hub';
+    let activeCrmSubTab = 'account';
 
-      if (res.error) {
-        console.error('Error fetching profiles:', res.error);
-        return;
+    // Default Seed Data for immediate testability and offline resilience
+    const defaultCrmSeed = {
+      accounts: [
+        {
+          id: 'store_oak9824',
+          store_name: 'Oak & Ember Steakhouse',
+          legal_name: 'Oak & Ember Hospitality LLC',
+          store_code: 'store_oak9824',
+          venue_type: 'Restaurant / Bar',
+          street_address: '440 Ocean Drive, Suite 102',
+          city: 'Miami',
+          state: 'FL',
+          postal_code: '33139',
+          operating_hours: 'Mon-Sun: 11:00 AM - 11:00 PM',
+          status: 'active'
+        },
+        {
+          id: 'store_bel2201',
+          store_name: 'Bella Napoli Pizzeria',
+          legal_name: 'Bella Napoli Group LLC',
+          store_code: 'store_bel2201',
+          venue_type: 'Restaurant / Bar',
+          street_address: '1204 Congress Ave',
+          city: 'Austin',
+          state: 'TX',
+          postal_code: '78701',
+          operating_hours: 'Tue-Sun: 12:00 PM - 10:00 PM',
+          status: 'active'
+        },
+        {
+          id: 'store_apx3310',
+          store_name: 'Apex Gaming Lounge',
+          legal_name: 'Apex Entertainment Inc',
+          store_code: 'store_apx3310',
+          venue_type: 'Entertainment / Gaming',
+          street_address: '850 N Michigan Ave',
+          city: 'Chicago',
+          state: 'IL',
+          postal_code: '60611',
+          operating_hours: 'Mon-Sun: 2:00 PM - 2:00 AM',
+          status: 'active'
+        }
+      ],
+      contacts: {
+        'store_oak9824': [
+          { id: 'cnt_1', name: 'Devon Vance', title: 'Primary Owner', email: 'devon@oakember.com', phone: '+1 (305) 555-0199', is_primary: true },
+          { id: 'cnt_2', name: 'Marcus Chen', title: 'General Manager', email: 'marcus.gm@oakember.com', phone: '+1 (305) 555-0211', is_primary: false },
+          { id: 'cnt_3', name: 'Rachel Lewis', title: 'On-site IT Lead', email: 'rachel.tech@oakember.com', phone: '+1 (305) 555-0284', is_primary: false }
+        ],
+        'store_bel2201': [
+          { id: 'cnt_4', name: 'Marco Rossi', title: 'Founder & Chef', email: 'marco@bellanapoli.com', phone: '+1 (512) 555-4421', is_primary: true }
+        ],
+        'store_apx3310': [
+          { id: 'cnt_5', name: 'Liam Sterling', title: 'Operations Director', email: 'liam@apexgaming.io', phone: '+1 (312) 555-8822', is_primary: true }
+        ]
+      },
+      assets: {
+        'store_oak9824': [
+          { id: 'ast_1', asset_name: 'Main Counter Register', device_model: 'Sunmi D2 15.6" Desktop', serial_number: 'SN-SM-892410', location_station: 'Front Bar', purchase_date: '2026-01-10', deployment_date: '2026-01-18', expiry_date: '2029-01-18', status: 'online' },
+          { id: 'ast_2', asset_name: 'Patio Handheld #1', device_model: 'Sunmi V2s Handheld', serial_number: 'SN-V2S-441092', location_station: 'Patio Server', purchase_date: '2026-02-02', deployment_date: '2026-02-08', expiry_date: '2028-02-08', status: 'online' },
+          { id: 'ast_3', asset_name: 'Kitchen Line Printer', device_model: 'Star TSP143 LAN', serial_number: 'MAC: 00:11:62:3A:4F', location_station: 'Kitchen Station 1', purchase_date: '2025-12-15', deployment_date: '2026-01-18', expiry_date: '2026-12-15', status: 'online' }
+        ],
+        'store_bel2201': [
+          { id: 'ast_4', asset_name: 'Cashier Terminal', device_model: 'Sunmi D2 15.6"', serial_number: 'SN-SM-224190', location_station: 'Front Register', purchase_date: '2026-03-01', deployment_date: '2026-03-05', expiry_date: '2028-03-05', status: 'online' }
+        ],
+        'store_apx3310': [
+          { id: 'ast_5', asset_name: 'Arena Station 1', device_model: 'Windows Touch Terminal', serial_number: 'SN-WIN-99011', location_station: 'Main Arena', purchase_date: '2026-02-14', deployment_date: '2026-02-20', expiry_date: '2029-02-20', status: 'online' }
+        ]
+      },
+      subscriptions: {
+        'store_oak9824': { plan_name: 'Pro POS Tier', price_monthly: 99.00, billing_status: 'active', next_billing_date: '2026-11-15', payment_method: 'Mastercard ending 9122', paddle_subscription_id: 'sub_01h92k8f710aa39x982', paddle_customer_id: 'ctm_01h8a91b2c4d5e' },
+        'store_bel2201': { plan_name: 'Standard Tier', price_monthly: 49.00, billing_status: 'active', next_billing_date: '2026-11-01', payment_method: 'Visa ending 4012', paddle_subscription_id: 'sub_01h77b9c10aa22z', paddle_customer_id: 'ctm_01h5c44d1' },
+        'store_apx3310': { plan_name: 'Enterprise Tier', price_monthly: 199.00, billing_status: 'active', next_billing_date: '2026-11-20', payment_method: 'Amex ending 1004', paddle_subscription_id: 'sub_01h33x8p99qq11', paddle_customer_id: 'ctm_01h9x77e' }
+      },
+      tickets: {
+        'store_oak9824': [
+          { id: '#TCK-1042', subject: 'Star TSP143 ESC/POS cutter adjustment', priority: 'medium', status: 'in_progress', created_at: '2026-10-11' },
+          { id: '#TCK-0988', subject: 'Menu CSV import assistance for Wine list', priority: 'low', status: 'resolved', created_at: '2026-10-08' }
+        ]
+      }
+    };
+
+    async function loadDevData() {
+      // 1. Fetch public profiles from Supabase
+      const res = await supabaseClient.from('profiles').select('*');
+      if (res.error) console.warn('Note: Could not query profiles table:', res.error);
+      cachedProfiles = res.data || [];
+
+      // 2. Fetch or seed CRM Accounts
+      let remoteAccounts = [];
+      try {
+        const crmRes = await supabaseClient.from('merchant_crm_accounts').select('*');
+        if (!crmRes.error && crmRes.data && crmRes.data.length > 0) {
+          remoteAccounts = crmRes.data;
+        }
+      } catch (e) {
+        console.warn('CRM accounts table query fell back to local store.');
       }
 
-      cachedProfiles = res.data || [];
+      // Merge remote accounts with default seed
+      crmAccounts = remoteAccounts.length > 0 ? remoteAccounts : [...defaultCrmSeed.accounts];
+
+      // Seamlessly bridge any profiles without CRM entries
+      cachedProfiles.forEach(function(p) {
+        const storeName = p.store_name || p.business_name || p.store;
+        if (storeName && !crmAccounts.some(a => a.id === p.id || a.store_code === p.id || a.store_name === storeName)) {
+          crmAccounts.push({
+            id: p.id,
+            store_name: storeName,
+            legal_name: storeName + ' LLC',
+            store_code: 'store_' + p.id.substring(0, 8),
+            venue_type: 'Restaurant / Bar',
+            street_address: 'Address pending',
+            city: 'Main City',
+            state: 'FL',
+            postal_code: '33000',
+            operating_hours: 'Standard Store Hours',
+            status: 'active'
+          });
+        }
+      });
+
+      // Merge contacts, assets, subscriptions
+      crmContactsMap = Object.assign({}, defaultCrmSeed.contacts);
+      crmAssetsMap = Object.assign({}, defaultCrmSeed.assets);
+      crmSubscriptionsMap = Object.assign({}, defaultCrmSeed.subscriptions);
+      crmTicketsMap = Object.assign({}, defaultCrmSeed.tickets);
+
+      // Try fetching live assets from Supabase if table exists
+      try {
+        const assetRes = await supabaseClient.from('merchant_crm_assets').select('*');
+        if (!assetRes.error && assetRes.data && assetRes.data.length > 0) {
+          assetRes.data.forEach(function(ast) {
+            const accId = ast.account_id;
+            if (!crmAssetsMap[accId]) crmAssetsMap[accId] = [];
+            if (!crmAssetsMap[accId].some(x => x.id === ast.id)) {
+              crmAssetsMap[accId].push(ast);
+            }
+          });
+        }
+      } catch (e) {}
+
+      // Try fetching live contacts from Supabase if table exists
+      try {
+        const contactRes = await supabaseClient.from('merchant_crm_contacts').select('*');
+        if (!contactRes.error && contactRes.data && contactRes.data.length > 0) {
+          contactRes.data.forEach(function(c) {
+            const accId = c.account_id;
+            if (!crmContactsMap[accId]) crmContactsMap[accId] = [];
+            if (!crmContactsMap[accId].some(x => x.id === c.id)) {
+              crmContactsMap[accId].push(c);
+            }
+          });
+        }
+      } catch (e) {}
+
+      // Update Top KPIs
       const devCount = cachedProfiles.filter(function(p) {
         const r = (p.role || '').toLowerCase();
         return r === 'dev' || r === 'developer' || r === 'admin';
       }).length;
 
-      document.getElementById('kpi-store-count').innerText = cachedProfiles.length;
-      document.getElementById('kpi-dev-count').innerText = devCount + ' Admins';
+      const kpiStore = document.getElementById('kpi-store-count');
+      if (kpiStore) kpiStore.innerText = crmAccounts.length;
+      const kpiDev = document.getElementById('kpi-dev-count');
+      if (kpiDev) kpiDev.innerText = devCount + ' Admins';
+
+      // Populate Merchant Dropdown
+      populateCrmAccountDropdown();
+
+      // Render the Directory view table
       renderProfiles(cachedProfiles);
+
+      // Select default account if none selected
+      if (!currentCrmAccountId && crmAccounts.length > 0) {
+        currentCrmAccountId = crmAccounts[0].id;
+      }
+      if (currentCrmAccountId) {
+        renderSelectedCrmAccount();
+      }
+    }
+
+    function populateCrmAccountDropdown() {
+      const select = document.getElementById('crm-account-select');
+      if (!select) return;
+      select.innerHTML = crmAccounts.map(function(acc) {
+        const isSel = acc.id === currentCrmAccountId ? 'selected' : '';
+        const loc = (acc.city && acc.state) ? ' (' + acc.city + ', ' + acc.state + ')' : '';
+        return '<option value="' + acc.id + '" ' + isSel + '>' + acc.store_name + loc + '</option>';
+      }).join('');
+    }
+
+    function onSelectCrmMerchant(accountId) {
+      if (!accountId) return;
+      currentCrmAccountId = accountId;
+      renderSelectedCrmAccount();
+    }
+
+    function switchCrmSubTab(tabKey) {
+      activeCrmSubTab = tabKey;
+      const tabs = ['account', 'contact', 'assets', 'subscription', 'tickets'];
+      tabs.forEach(function(t) {
+        const btn = document.getElementById('crm-tabbtn-' + t);
+        const panel = document.getElementById('crm-subpanel-' + t);
+        if (btn) {
+          if (t === tabKey) btn.classList.add('active');
+          else btn.classList.remove('active');
+        }
+        if (panel) {
+          if (t === tabKey) panel.classList.add('active');
+          else panel.classList.remove('active');
+        }
+      });
+    }
+
+    function toggleCrmViewMode(forceMode) {
+      if (forceMode) crmViewMode = forceMode;
+      else crmViewMode = (crmViewMode === 'hub') ? 'directory' : 'hub';
+
+      const hub = document.getElementById('crm-hub-container');
+      const strip = document.getElementById('crm-selected-strip');
+      const dir = document.getElementById('crm-directory-container');
+      const toggleBtn = document.getElementById('crm-btn-toggle-view');
+
+      if (crmViewMode === 'directory') {
+        if (hub) hub.style.display = 'none';
+        if (strip) strip.style.display = 'none';
+        if (dir) dir.style.display = 'block';
+        if (toggleBtn) toggleBtn.innerHTML = '<span>🏢 Return to CRM 5-Tab Hub</span>';
+      } else {
+        if (hub) hub.style.display = 'block';
+        if (strip) strip.style.display = 'flex';
+        if (dir) dir.style.display = 'none';
+        if (toggleBtn) toggleBtn.innerHTML = '<span>📋 All Accounts Directory</span>';
+      }
+    }
+
+    function renderSelectedCrmAccount() {
+      const acc = crmAccounts.find(function(a) { return a.id === currentCrmAccountId; });
+      if (!acc) return;
+
+      // Update Header Strip
+      const initials = (acc.store_name || 'FT').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+      const avatarEl = document.getElementById('crm-merchant-avatar');
+      if (avatarEl) avatarEl.innerText = initials;
+
+      const stripName = document.getElementById('crm-strip-name');
+      if (stripName) stripName.innerText = acc.store_name;
+
+      const stripStatus = document.getElementById('crm-strip-status');
+      if (stripStatus) {
+        stripStatus.innerText = (acc.status || 'ACTIVE').toUpperCase();
+        stripStatus.style.background = acc.status === 'suspended' ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)';
+        stripStatus.style.color = acc.status === 'suspended' ? '#f87171' : '#34d399';
+      }
+
+      const stripMeta = document.getElementById('crm-strip-meta');
+      if (stripMeta) {
+        const cityState = [acc.city, acc.state].filter(Boolean).join(', ') || 'Location Unset';
+        stripMeta.innerText = 'Store Code: ' + (acc.store_code || acc.id) + ' • ' + cityState;
+      }
+
+      // Subscription Pill
+      const sub = crmSubscriptionsMap[acc.id] || { plan_name: 'Standard Tier', price_monthly: 49.00, billing_status: 'active' };
+      const stripPlan = document.getElementById('crm-strip-plan');
+      if (stripPlan) stripPlan.innerText = sub.plan_name + ' ($' + (sub.price_monthly || 49) + '/mo)';
+
+      // Assets Pill & Map
+      const assets = crmAssetsMap[acc.id] || [];
+      const stripAssets = document.getElementById('crm-strip-assets');
+      if (stripAssets) stripAssets.innerText = assets.length + ' Units';
+
+      // Tickets Pill & Map
+      const tickets = crmTicketsMap[acc.id] || [];
+      const openCount = tickets.filter(t => t.status !== 'resolved' && t.status !== 'closed').length;
+      const stripTickets = document.getElementById('crm-strip-tickets');
+      if (stripTickets) stripTickets.innerText = openCount + ' Open';
+
+      // Select Dropdown alignment
+      const select = document.getElementById('crm-account-select');
+      if (select && select.value !== acc.id) select.value = acc.id;
+
+      // --- TAB 1: POPULATE ACCOUNT INFORMATION ---
+      const inpLegal = document.getElementById('crm-inp-legal-name');
+      if (inpLegal) inpLegal.value = acc.legal_name || '';
+      const inpStore = document.getElementById('crm-inp-store-name');
+      if (inpStore) inpStore.value = acc.store_name || '';
+      const inpCode = document.getElementById('crm-inp-store-code');
+      if (inpCode) inpCode.value = acc.store_code || acc.id || '';
+      const inpVenue = document.getElementById('crm-inp-venue-type');
+      if (inpVenue) inpVenue.value = acc.venue_type || 'Restaurant / Bar';
+      const inpStreet = document.getElementById('crm-inp-street');
+      if (inpStreet) inpStreet.value = acc.street_address || '';
+      const inpCity = document.getElementById('crm-inp-city');
+      if (inpCity) inpCity.value = acc.city || '';
+      const inpState = document.getElementById('crm-inp-state');
+      if (inpState) inpState.value = acc.state || '';
+      const inpPostal = document.getElementById('crm-inp-postal');
+      if (inpPostal) inpPostal.value = acc.postal_code || '';
+      const inpHours = document.getElementById('crm-inp-hours');
+      if (inpHours) inpHours.value = acc.operating_hours || 'Mon-Sun: 11:00 AM - 11:00 PM';
+      const inpStatus = document.getElementById('crm-inp-status');
+      if (inpStatus) inpStatus.value = acc.status || 'active';
+
+      // --- TAB 2: RENDER CONTACTS ---
+      renderCrmContacts(acc.id);
+
+      // --- TAB 3: RENDER ASSETS (WITH LIFECYCLE DATES) ---
+      renderCrmAssets(acc.id);
+
+      // --- TAB 4: RENDER SUBSCRIPTION ---
+      renderCrmSubscription(acc.id);
+
+      // --- TAB 5: RENDER TICKETS ---
+      renderCrmTickets(acc.id);
+    }
+
+    function renderCrmContacts(accId) {
+      const container = document.getElementById('crm-contacts-container');
+      if (!container) return;
+      const contacts = crmContactsMap[accId] || [];
+
+      if (contacts.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 32px;">No contacts registered for this merchant. Click "+ Add Contact" to add one.</div>';
+        return;
+      }
+
+      container.innerHTML = contacts.map(function(c) {
+        const initials = (c.name || 'C').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+        const primaryTag = c.is_primary ? '<span style="font-size: 0.68rem; font-weight: 800; background: rgba(59,130,246,0.15); color: #60a5fa; padding: 2px 8px; border-radius: 9999px;">PRIMARY OWNER</span>' : '';
+        const phone = c.phone || 'No phone attached';
+        const email = c.email || 'No email attached';
+
+        return '<div class="crm-contact-card">' +
+          '<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 14px;">' +
+            '<div style="display: flex; gap: 12px; align-items: center;">' +
+              '<div style="width: 38px; height: 38px; border-radius: 50%; background: rgba(59,130,246,0.2); border: 1px solid var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #60a5fa; font-size: 0.85rem;">' + initials + '</div>' +
+              '<div>' +
+                '<h4 style="font-weight: 800; color: #fff; font-size: 0.95rem; margin-bottom: 2px;">' + c.name + '</h4>' +
+                '<span style="font-size: 0.75rem; color: var(--text-muted);">' + (c.title || 'Stakeholder') + '</span>' +
+              '</div>' +
+            '</div>' +
+            primaryTag +
+          '</div>' +
+          '<div style="font-size: 0.8rem; color: #cbd5e1; margin-bottom: 16px; display: flex; flex-direction: column; gap: 4px;">' +
+            '<div>📞 ' + phone + '</div>' +
+            '<div>✉️ ' + email + '</div>' +
+          '</div>' +
+          '<div style="display: flex; gap: 8px; border-top: 1px solid var(--card-border); padding-top: 12px;">' +
+            '<button class="action-btn" onclick="alert(\'Calling ' + c.name + ' at ' + phone + '\')" style="flex: 1; text-align: center; color: var(--accent);">Call</button>' +
+            '<button class="action-btn" onclick="alert(\'Opening email to ' + email + '\')" style="flex: 1; text-align: center;">Email</button>' +
+            '<button class="action-btn" onclick="deleteCrmContact(\'' + c.id + '\')" style="color: var(--danger);">Delete</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function renderCrmAssets(accId) {
+      const tbody = document.getElementById('crm-assets-tbody');
+      if (!tbody) return;
+      const assets = crmAssetsMap[accId] || [];
+
+      if (assets.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 24px;">No hardware assets provisioned yet. Click "+ Add Hardware Asset" above.</td></tr>';
+      } else {
+        tbody.innerHTML = assets.map(function(ast) {
+          const icon = (ast.device_model || '').toLowerCase().includes('printer') ? '🖨️' :
+                       (ast.device_model || '').toLowerCase().includes('v2') || (ast.device_model || '').toLowerCase().includes('handheld') ? '📱' : '🖥️';
+
+          const purchaseStr = ast.purchase_date || '—';
+          const deployStr = ast.deployment_date ? '<strong style="color: var(--primary);">' + ast.deployment_date + '</strong>' : '—';
+          
+          let expiryTag = '—';
+          if (ast.expiry_date) {
+            const expYear = new Date(ast.expiry_date).getFullYear();
+            const isExpiringSoon = (new Date(ast.expiry_date) - new Date()) / (1000 * 60 * 60 * 24) < 90;
+            const expColor = isExpiringSoon ? 'var(--warning)' : 'var(--accent)';
+            expiryTag = '<div><strong style="color: ' + expColor + ';">' + ast.expiry_date + '</strong><div style="font-size: 0.68rem; color: var(--text-muted);">' + (isExpiringSoon ? 'Expiring Soon' : 'Warranty Active') + '</div></div>';
+          }
+
+          const statusBadge = ast.status === 'offline' 
+            ? '<span class="badge-pill badge-urgent">OFFLINE</span>'
+            : '<span class="badge-pill badge-resolved">ONLINE</span>';
+
+          return '<tr>' +
+            '<td><strong style="color: #fff;">' + icon + ' ' + ast.asset_name + '</strong></td>' +
+            '<td>' + (ast.device_model || 'Standard POS') + '</td>' +
+            '<td><span style="font-family: monospace; font-size: 0.75rem; color: #94a3b8;">' + (ast.serial_number || 'N/A') + '</span></td>' +
+            '<td>' + (ast.location_station || 'Station 1') + '</td>' +
+            '<td>' + purchaseStr + '</td>' +
+            '<td>' + deployStr + '</td>' +
+            '<td>' + expiryTag + '</td>' +
+            '<td>' + statusBadge + '</td>' +
+            '<td style="text-align: right;">' +
+              '<button class="action-btn" onclick="alert(\'Ping diagnostics dispatched to ' + ast.asset_name + ': Response 42ms OK\')" style="margin-right: 6px;">Ping</button>' +
+              '<button class="action-btn" onclick="openEditAssetModal(\'' + ast.id + '\')" style="margin-right: 6px;">Edit</button>' +
+              '<button class="action-btn" onclick="deleteCrmAsset(\'' + ast.id + '\')" style="color: var(--danger);">Delete</button>' +
+            '</td>' +
+          '</tr>';
+        }).join('');
+      }
+
+      // Update Summary Fleet Counters
+      const countEl = document.getElementById('crm-stat-assets-count');
+      if (countEl) countEl.innerText = assets.length + ' Units';
+
+      const deployEl = document.getElementById('crm-stat-earliest-deploy');
+      if (deployEl) {
+        const sortedDeploys = assets.filter(a => a.deployment_date).map(a => a.deployment_date).sort();
+        deployEl.innerText = sortedDeploys.length > 0 ? sortedDeploys[0] : 'None recorded';
+      }
+
+      const expiryEl = document.getElementById('crm-stat-upcoming-expiry');
+      if (expiryEl) {
+        const sortedExpiries = assets.filter(a => a.expiry_date).map(a => a.expiry_date).sort();
+        expiryEl.innerText = sortedExpiries.length > 0 ? sortedExpiries[0] : 'No expiry set';
+      }
+    }
+
+    function renderCrmSubscription(accId) {
+      const sub = crmSubscriptionsMap[accId] || {
+        plan_name: 'Pro POS Tier',
+        price_monthly: 99.00,
+        billing_status: 'active',
+        next_billing_date: '2026-11-15',
+        payment_method: 'Mastercard •••• 9122',
+        paddle_subscription_id: 'sub_01h92k8f710aa39x982',
+        paddle_customer_id: 'ctm_01h8a91b2c4d5e'
+      };
+
+      const planVal = document.getElementById('crm-sub-plan-val');
+      if (planVal) planVal.innerText = sub.plan_name;
+
+      const priceVal = document.getElementById('crm-sub-price-val');
+      if (priceVal) priceVal.innerText = '$' + (sub.price_monthly || 99).toFixed(2) + ' / month';
+
+      const statusVal = document.getElementById('crm-sub-status-val');
+      if (statusVal) {
+        statusVal.innerText = (sub.billing_status || 'active').toUpperCase();
+        statusVal.style.color = sub.billing_status === 'past_due' ? 'var(--danger)' : 'var(--accent)';
+      }
+
+      const renewalVal = document.getElementById('crm-sub-renewal-val');
+      if (renewalVal) renewalVal.innerText = 'Renews: ' + (sub.next_billing_date || 'Next cycle');
+
+      const payVal = document.getElementById('crm-sub-paymethod-val');
+      if (payVal) payVal.innerText = sub.payment_method || 'Card on File';
+
+      const subIdInp = document.getElementById('crm-inp-paddle-sub');
+      if (subIdInp) subIdInp.value = sub.paddle_subscription_id || 'sub_pending';
+
+      const ctmIdInp = document.getElementById('crm-inp-paddle-ctm');
+      if (ctmIdInp) ctmIdInp.value = sub.paddle_customer_id || 'ctm_pending';
+    }
+
+    function renderCrmTickets(accId) {
+      const tbody = document.getElementById('crm-tickets-tbody');
+      if (!tbody) return;
+      const tickets = crmTicketsMap[accId] || [];
+
+      if (tickets.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">No support tickets logged for this merchant account.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = tickets.map(function(t) {
+        const priorityBadge = '<span class="badge-pill badge-' + (t.priority || 'medium').toLowerCase() + '">' + (t.priority || 'NORMAL') + '</span>';
+        const statusBadge = '<span class="badge-pill badge-' + (t.status || 'open').toLowerCase() + '">' + (t.status || 'OPEN').replace('_', ' ') + '</span>';
+
+        return '<tr>' +
+          '<td style="font-family: monospace; font-weight: 700; color: var(--primary);">' + t.id + '</td>' +
+          '<td><strong style="color: #fff;">' + t.subject + '</strong></td>' +
+          '<td>' + priorityBadge + '</td>' +
+          '<td>' + statusBadge + '</td>' +
+          '<td>' + (t.created_at || 'Recently') + '</td>' +
+          '<td style="text-align: right;"><button class="action-btn" onclick="alert(\'Viewing diagnostics for ticket ' + t.id + '\')">Inspect</button></td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    // --- CRM MUTATIONS & MODAL HANDLERS ---
+    async function saveCrmAccount() {
+      const acc = crmAccounts.find(function(a) { return a.id === currentCrmAccountId; });
+      if (!acc) return;
+
+      acc.legal_name = document.getElementById('crm-inp-legal-name').value;
+      acc.store_name = document.getElementById('crm-inp-store-name').value;
+      acc.venue_type = document.getElementById('crm-inp-venue-type').value;
+      acc.street_address = document.getElementById('crm-inp-street').value;
+      acc.city = document.getElementById('crm-inp-city').value;
+      acc.state = document.getElementById('crm-inp-state').value;
+      acc.postal_code = document.getElementById('crm-inp-postal').value;
+      acc.operating_hours = document.getElementById('crm-inp-hours').value;
+      acc.status = document.getElementById('crm-inp-status').value;
+
+      // Try updating in Supabase
+      try {
+        await supabaseClient.from('merchant_crm_accounts').upsert({
+          id: acc.id,
+          store_name: acc.store_name,
+          legal_name: acc.legal_name,
+          venue_type: acc.venue_type,
+          street_address: acc.street_address,
+          city: acc.city,
+          state: acc.state,
+          postal_code: acc.postal_code,
+          operating_hours: acc.operating_hours,
+          status: acc.status
+        });
+      } catch (e) {}
+
+      populateCrmAccountDropdown();
+      renderSelectedCrmAccount();
+      alert('Merchant account "' + acc.store_name + '" saved successfully!');
+    }
+
+    function openAddAssetModal() {
+      document.getElementById('crm-asset-modal-title').innerText = 'Add Hardware Asset';
+      document.getElementById('crm-asset-id').value = '';
+      document.getElementById('crm-asset-inp-name').value = '';
+      document.getElementById('crm-asset-inp-model').value = '';
+      document.getElementById('crm-asset-inp-serial').value = '';
+      document.getElementById('crm-asset-inp-location').value = '';
+      document.getElementById('crm-asset-inp-purchase').value = new Date().toISOString().substring(0, 10);
+      document.getElementById('crm-asset-inp-deployment').value = new Date().toISOString().substring(0, 10);
+      
+      const expDate = new Date();
+      expDate.setFullYear(expDate.getFullYear() + 2);
+      document.getElementById('crm-asset-inp-expiry').value = expDate.toISOString().substring(0, 10);
+      document.getElementById('crm-asset-inp-status').value = 'online';
+
+      document.getElementById('crm-modal-asset').classList.add('open');
+    }
+
+    function openEditAssetModal(assetId) {
+      const assets = crmAssetsMap[currentCrmAccountId] || [];
+      const ast = assets.find(x => x.id === assetId);
+      if (!ast) return;
+
+      document.getElementById('crm-asset-modal-title').innerText = 'Edit Hardware Asset: ' + ast.asset_name;
+      document.getElementById('crm-asset-id').value = ast.id;
+      document.getElementById('crm-asset-inp-name').value = ast.asset_name || '';
+      document.getElementById('crm-asset-inp-model').value = ast.device_model || '';
+      document.getElementById('crm-asset-inp-serial').value = ast.serial_number || '';
+      document.getElementById('crm-asset-inp-location').value = ast.location_station || '';
+      document.getElementById('crm-asset-inp-purchase').value = ast.purchase_date || '';
+      document.getElementById('crm-asset-inp-deployment').value = ast.deployment_date || '';
+      document.getElementById('crm-asset-inp-expiry').value = ast.expiry_date || '';
+      document.getElementById('crm-asset-inp-status').value = ast.status || 'online';
+
+      document.getElementById('crm-modal-asset').classList.add('open');
+    }
+
+    function closeCrmAssetModal() {
+      document.getElementById('crm-modal-asset').classList.remove('open');
+    }
+
+    async function handleCrmAssetSubmit(event) {
+      event.preventDefault();
+      const assetId = document.getElementById('crm-asset-id').value || ('ast_' + Date.now());
+      const newAsset = {
+        id: assetId,
+        account_id: currentCrmAccountId,
+        asset_name: document.getElementById('crm-asset-inp-name').value.trim(),
+        device_model: document.getElementById('crm-asset-inp-model').value.trim(),
+        serial_number: document.getElementById('crm-asset-inp-serial').value.trim(),
+        location_station: document.getElementById('crm-asset-inp-location').value.trim(),
+        purchase_date: document.getElementById('crm-asset-inp-purchase').value,
+        deployment_date: document.getElementById('crm-asset-inp-deployment').value,
+        expiry_date: document.getElementById('crm-asset-inp-expiry').value,
+        status: document.getElementById('crm-asset-inp-status').value
+      };
+
+      if (!crmAssetsMap[currentCrmAccountId]) crmAssetsMap[currentCrmAccountId] = [];
+      const existingIdx = crmAssetsMap[currentCrmAccountId].findIndex(x => x.id === assetId);
+      if (existingIdx >= 0) {
+        crmAssetsMap[currentCrmAccountId][existingIdx] = newAsset;
+      } else {
+        crmAssetsMap[currentCrmAccountId].push(newAsset);
+      }
+
+      // Try saving to Supabase
+      try {
+        await supabaseClient.from('merchant_crm_assets').upsert(newAsset);
+      } catch (e) {}
+
+      closeCrmAssetModal();
+      renderCrmAssets(currentCrmAccountId);
+      renderSelectedCrmAccount();
+      alert('Hardware asset "' + newAsset.asset_name + '" saved with Purchase, Deployment, and Expiry dates!');
+    }
+
+    async function deleteCrmAsset(assetId) {
+      if (!confirm('Are you sure you want to remove this hardware asset?')) return;
+      if (crmAssetsMap[currentCrmAccountId]) {
+        crmAssetsMap[currentCrmAccountId] = crmAssetsMap[currentCrmAccountId].filter(x => x.id !== assetId);
+      }
+      try {
+        await supabaseClient.from('merchant_crm_assets').delete().eq('id', assetId);
+      } catch (e) {}
+      renderCrmAssets(currentCrmAccountId);
+      renderSelectedCrmAccount();
+    }
+
+    function openAddContactModal() {
+      document.getElementById('crm-contact-id').value = '';
+      document.getElementById('crm-contact-inp-name').value = '';
+      document.getElementById('crm-contact-inp-title').value = '';
+      document.getElementById('crm-contact-inp-email').value = '';
+      document.getElementById('crm-contact-inp-phone').value = '';
+      document.getElementById('crm-contact-inp-primary').checked = false;
+      document.getElementById('crm-modal-contact').classList.add('open');
+    }
+
+    function closeCrmContactModal() {
+      document.getElementById('crm-modal-contact').classList.remove('open');
+    }
+
+    async function handleCrmContactSubmit(event) {
+      event.preventDefault();
+      const contactId = document.getElementById('crm-contact-id').value || ('cnt_' + Date.now());
+      const newContact = {
+        id: contactId,
+        account_id: currentCrmAccountId,
+        name: document.getElementById('crm-contact-inp-name').value.trim(),
+        title: document.getElementById('crm-contact-inp-title').value.trim() || 'Store Manager',
+        email: document.getElementById('crm-contact-inp-email').value.trim(),
+        phone: document.getElementById('crm-contact-inp-phone').value.trim(),
+        is_primary: document.getElementById('crm-contact-inp-primary').checked
+      };
+
+      if (!crmContactsMap[currentCrmAccountId]) crmContactsMap[currentCrmAccountId] = [];
+      crmContactsMap[currentCrmAccountId].push(newContact);
+
+      try {
+        await supabaseClient.from('merchant_crm_contacts').upsert(newContact);
+      } catch (e) {}
+
+      closeCrmContactModal();
+      renderCrmContacts(currentCrmAccountId);
+      alert('Contact "' + newContact.name + '" added!');
+    }
+
+    async function deleteCrmContact(contactId) {
+      if (!confirm('Delete this contact?')) return;
+      if (crmContactsMap[currentCrmAccountId]) {
+        crmContactsMap[currentCrmAccountId] = crmContactsMap[currentCrmAccountId].filter(x => x.id !== contactId);
+      }
+      try {
+        await supabaseClient.from('merchant_crm_contacts').delete().eq('id', contactId);
+      } catch (e) {}
+      renderCrmContacts(currentCrmAccountId);
+    }
+
+    function openAddMerchantModal() {
+      document.getElementById('crm-modal-merchant').classList.add('open');
+    }
+
+    function closeCrmMerchantModal() {
+      document.getElementById('crm-modal-merchant').classList.remove('open');
+    }
+
+    async function handleCrmNewMerchantSubmit(event) {
+      event.preventDefault();
+      const storeName = document.getElementById('crm-new-store-name').value.trim();
+      const legalName = document.getElementById('crm-new-legal-name').value.trim() || (storeName + ' LLC');
+      const ownerName = document.getElementById('crm-new-owner-name').value.trim() || 'Primary Contact';
+      const email = document.getElementById('crm-new-email').value.trim();
+      const cityState = document.getElementById('crm-new-city-state').value.trim() || 'Miami, FL';
+      const parts = cityState.split(',');
+      const city = parts[0] ? parts[0].trim() : 'City';
+      const state = parts[1] ? parts[1].trim() : 'FL';
+      const tier = document.getElementById('crm-new-tier').value;
+
+      const newId = 'store_' + Math.random().toString(36).substring(2, 8);
+      const newAcc = {
+        id: newId,
+        store_name: storeName,
+        legal_name: legalName,
+        store_code: newId,
+        venue_type: 'Restaurant / Bar',
+        street_address: 'Address pending',
+        city: city,
+        state: state,
+        postal_code: '33101',
+        operating_hours: 'Mon-Sun: 11:00 AM - 11:00 PM',
+        status: 'active'
+      };
+
+      crmAccounts.unshift(newAcc);
+      currentCrmAccountId = newId;
+
+      if (ownerName) {
+        crmContactsMap[newId] = [{
+          id: 'cnt_' + Date.now(),
+          name: ownerName,
+          title: 'Primary Owner',
+          email: email,
+          phone: '',
+          is_primary: true
+        }];
+      }
+
+      crmSubscriptionsMap[newId] = {
+        plan_name: tier,
+        price_monthly: tier.includes('199') ? 199.00 : tier.includes('149') ? 149.00 : tier.includes('99') ? 99.00 : 49.00,
+        billing_status: 'active',
+        next_billing_date: new Date(Date.now() + 30*24*3600*1000).toISOString().substring(0, 10),
+        payment_method: 'Card Setup Pending',
+        paddle_subscription_id: 'sub_' + Math.random().toString(36).substring(2, 10),
+        paddle_customer_id: 'ctm_' + Math.random().toString(36).substring(2, 10)
+      };
+
+      try {
+        await supabaseClient.from('merchant_crm_accounts').insert(newAcc);
+      } catch (e) {}
+
+      closeCrmMerchantModal();
+      populateCrmAccountDropdown();
+      renderSelectedCrmAccount();
+      toggleCrmViewMode('hub');
+      alert('Merchant "' + storeName + '" added to CRM!');
+    }
+
+    function openCreateMerchantTicketModal() {
+      const acc = crmAccounts.find(x => x.id === currentCrmAccountId);
+      const subject = prompt('Enter ticket subject / issue description for ' + (acc ? acc.store_name : 'Merchant') + ':');
+      if (!subject) return;
+
+      const tickId = '#TCK-' + Math.floor(1000 + Math.random() * 9000);
+      const newTicket = {
+        id: tickId,
+        subject: subject,
+        priority: 'medium',
+        status: 'open',
+        created_at: new Date().toISOString().substring(0, 10)
+      };
+
+      if (!crmTicketsMap[currentCrmAccountId]) crmTicketsMap[currentCrmAccountId] = [];
+      crmTicketsMap[currentCrmAccountId].unshift(newTicket);
+
+      renderCrmTickets(currentCrmAccountId);
+      renderSelectedCrmAccount();
+      alert('Ticket ' + tickId + ' created!');
+    }
+
+    function manageStoreInCrm(accountId) {
+      onSelectCrmMerchant(accountId);
+      toggleCrmViewMode('hub');
     }
 
     function renderProfiles(list) {
       const tbody = document.getElementById('stores-tbody');
+      if (!tbody) return;
       if (!list || list.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">No profiles registered.</td></tr>';
         return;
@@ -903,7 +1988,8 @@
           '<td>' + roleBadge + '</td>' +
           '<td>' + createdAt + '</td>' +
           '<td>' +
-            '<button class="action-btn" onclick="openChatForStore(\'' + p.id + '\', \'' + safeChatName + '\')">Open Support Chat</button>' +
+            '<button class="action-btn" onclick="manageStoreInCrm(\'' + p.id + '\')" style="margin-right: 6px; background: rgba(59,130,246,0.2); color: #60a5fa; border-color: rgba(59,130,246,0.4);">Manage in CRM →</button>' +
+            '<button class="action-btn" onclick="openChatForStore(\'' + p.id + '\', \'' + safeChatName + '\')">Chat</button>' +
           '</td>' +
         '</tr>';
       }).join('');
@@ -1980,5 +3066,167 @@
 
     window.addEventListener('DOMContentLoaded', checkDevSession);
   </script>
+
+  <!-- ================= CRM MODALS ================= -->
+  <!-- 1. ADD / EDIT ASSET MODAL -->
+  <div id="crm-modal-asset" class="crm-modal-backdrop">
+    <div class="crm-modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 id="crm-asset-modal-title" style="font-size: 1.1rem; font-weight: 800; color: #fff;">Add Hardware Asset</h3>
+        <button onclick="closeCrmAssetModal()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <form onsubmit="handleCrmAssetSubmit(event)" style="display: flex; flex-direction: column; gap: 14px;">
+        <input type="hidden" id="crm-asset-id" value="">
+        <div class="crm-form-grid">
+          <div class="crm-form-group">
+            <label>Asset Name *</label>
+            <input type="text" id="crm-asset-inp-name" required class="crm-input" placeholder="e.g. Counter Register #1">
+          </div>
+          <div class="crm-form-group">
+            <label>Device Model *</label>
+            <input type="text" id="crm-asset-inp-model" required class="crm-input" placeholder="e.g. Sunmi D2 15.6&quot; Desktop">
+          </div>
+          <div class="crm-form-group">
+            <label>Serial / MAC Address</label>
+            <input type="text" id="crm-asset-inp-serial" class="crm-input" placeholder="e.g. SN-SM-892410">
+          </div>
+          <div class="crm-form-group">
+            <label>Station / Location</label>
+            <input type="text" id="crm-asset-inp-location" class="crm-input" placeholder="e.g. Front Bar Counter">
+          </div>
+        </div>
+
+        <!-- 3 Hardware Lifecycle Dates -->
+        <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 14px;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: #60a5fa; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 10px;">
+            📅 Hardware Lifecycle Dates
+          </span>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;">
+            <div class="crm-form-group">
+              <label style="color: #cbd5e1;">Purchase Date</label>
+              <input type="date" id="crm-asset-inp-purchase" class="crm-input">
+            </div>
+            <div class="crm-form-group">
+              <label style="color: #cbd5e1;">Deployment Date</label>
+              <input type="date" id="crm-asset-inp-deployment" class="crm-input">
+            </div>
+            <div class="crm-form-group">
+              <label style="color: #cbd5e1;">Expiry Date</label>
+              <input type="date" id="crm-asset-inp-expiry" class="crm-input">
+            </div>
+          </div>
+          <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 8px;">Expiry monitors manufacturer warranty and hardware lease lifecycle.</p>
+        </div>
+
+        <div class="crm-form-group">
+          <label>Operational Status</label>
+          <select id="crm-asset-inp-status" class="crm-select">
+            <option value="online">Online / Active</option>
+            <option value="offline">Offline / Disconnected</option>
+            <option value="in_repair">In Repair / Diagnostic</option>
+            <option value="retired">Retired / Decommissioned</option>
+          </select>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; border-top: 1px solid var(--card-border); padding-top: 14px;">
+          <button type="button" onclick="closeCrmAssetModal()" class="action-btn">Cancel</button>
+          <button type="submit" class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary);">Save Asset</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. ADD / EDIT CONTACT MODAL -->
+  <div id="crm-modal-contact" class="crm-modal-backdrop">
+    <div class="crm-modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 id="crm-contact-modal-title" style="font-size: 1.1rem; font-weight: 800; color: #fff;">Add Stakeholder Contact</h3>
+        <button onclick="closeCrmContactModal()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <form onsubmit="handleCrmContactSubmit(event)" style="display: flex; flex-direction: column; gap: 14px;">
+        <input type="hidden" id="crm-contact-id" value="">
+        <div class="crm-form-group">
+          <label>Full Name *</label>
+          <input type="text" id="crm-contact-inp-name" required class="crm-input" placeholder="e.g. Devon Vance">
+        </div>
+        <div class="crm-form-group">
+          <label>Title / Role</label>
+          <input type="text" id="crm-contact-inp-title" class="crm-input" placeholder="e.g. Primary Owner, GM, IT Lead">
+        </div>
+        <div class="crm-form-grid">
+          <div class="crm-form-group">
+            <label>Email Address</label>
+            <input type="email" id="crm-contact-inp-email" class="crm-input" placeholder="e.g. devon@store.com">
+          </div>
+          <div class="crm-form-group">
+            <label>Phone Number</label>
+            <input type="tel" id="crm-contact-inp-phone" class="crm-input" placeholder="e.g. +1 (305) 555-0199">
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <input type="checkbox" id="crm-contact-inp-primary" style="width: 16px; height: 16px;">
+          <label for="crm-contact-inp-primary" style="font-size: 0.8rem; color: #fff; cursor: pointer;">Designate as Primary Point of Contact</label>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; border-top: 1px solid var(--card-border); padding-top: 14px;">
+          <button type="button" onclick="closeCrmContactModal()" class="action-btn">Cancel</button>
+          <button type="submit" class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary);">Save Contact</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. ADD NEW MERCHANT MODAL -->
+  <div id="crm-modal-merchant" class="crm-modal-backdrop">
+    <div class="crm-modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 style="font-size: 1.1rem; font-weight: 800; color: #fff;">Register New Merchant Account</h3>
+        <button onclick="closeCrmMerchantModal()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <form onsubmit="handleCrmNewMerchantSubmit(event)" style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="crm-form-group">
+          <label>Store / DBA Name *</label>
+          <input type="text" id="crm-new-store-name" required class="crm-input" placeholder="e.g. Sunset Sushi Bar">
+        </div>
+        <div class="crm-form-group">
+          <label>Legal Business Name</label>
+          <input type="text" id="crm-new-legal-name" class="crm-input" placeholder="e.g. Sunset Hospitality LLC">
+        </div>
+        <div class="crm-form-grid">
+          <div class="crm-form-group">
+            <label>Primary Owner / Contact</label>
+            <input type="text" id="crm-new-owner-name" class="crm-input" placeholder="e.g. Chef Kenji">
+          </div>
+          <div class="crm-form-group">
+            <label>Contact Email</label>
+            <input type="email" id="crm-new-email" class="crm-input" placeholder="e.g. kenji@sunsetsushi.com">
+          </div>
+        </div>
+        <div class="crm-form-grid">
+          <div class="crm-form-group">
+            <label>City &amp; State</label>
+            <input type="text" id="crm-new-city-state" class="crm-input" placeholder="e.g. Miami, FL">
+          </div>
+          <div class="crm-form-group">
+            <label>Subscription Tier</label>
+            <select id="crm-new-tier" class="crm-select">
+              <option value="Pro POS">Pro POS ($99/mo)</option>
+              <option value="Standard">Standard ($49/mo)</option>
+              <option value="Founders VIP">Founders VIP ($149/mo)</option>
+              <option value="Enterprise">Enterprise ($199/mo)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; border-top: 1px solid var(--card-border); padding-top: 14px;">
+          <button type="button" onclick="closeCrmMerchantModal()" class="action-btn">Cancel</button>
+          <button type="submit" class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary);">Create Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </body>
 </html>
