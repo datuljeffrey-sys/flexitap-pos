@@ -439,6 +439,13 @@
           </div>
         </div>
         <div class="header-actions">
+          <div id="header-role-simulator" style="display: flex; align-items: center; gap: 6px; background: rgba(139, 92, 246, 0.12); border: 1px solid rgba(139, 92, 246, 0.3); padding: 4px 10px; border-radius: 9999px;">
+            <span style="font-size: 0.72rem; color: #a78bfa; font-weight: 700;">Role:</span>
+            <button class="crm-pill-btn active" id="hdr-sim-role-admin" onclick="simulateRole('admin')" style="padding: 3px 8px; font-size: 0.72rem;">👑 Admin</button>
+            <button class="crm-pill-btn" id="hdr-sim-role-dev" onclick="simulateRole('dev')" style="padding: 3px 8px; font-size: 0.72rem;">💻 Dev</button>
+            <button class="crm-pill-btn" id="hdr-sim-role-support" onclick="simulateRole('support')" style="padding: 3px 8px; font-size: 0.72rem;">💬 Support</button>
+            <button class="crm-pill-btn" id="hdr-sim-role-reset" onclick="simulateRole('reset')" style="padding: 3px 8px; font-size: 0.72rem; color: var(--danger); border-color: rgba(239, 68, 68, 0.3);">Reset</button>
+          </div>
           <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light">☀️</button>
           <button class="btn-exit" onclick="devLogout()">Sign Out</button>
         </div>
@@ -1798,6 +1805,17 @@
         document.getElementById('dev-auth-view').style.display = 'none';
         document.getElementById('dev-app-layout').style.display = 'flex';
         document.getElementById('active-dev-user').innerText = (activeDevProfile && activeDevProfile.full_name) ? `${activeDevProfile.full_name} (${user.email})` : user.email;
+
+        // Apply RBAC scope sidebar tab visibility
+        if (typeof updateSidebarNavVisibility === 'function') {
+          updateSidebarNavVisibility();
+        }
+
+        // Show header simulator for Admins / Developers
+        const hdrSim = document.getElementById('header-role-simulator');
+        if (hdrSim) {
+          hdrSim.style.display = (role === 'admin' || role === 'super_admin' || role === 'dev' || role === 'developer') ? 'flex' : 'none';
+        }
 
         // Auto-navigate: customer support agents and staff route directly to Workforce & Shifts
         if (role === 'support' || role === 'agent' || role === 'employee' || role === 'staff') {
@@ -4430,15 +4448,18 @@
         currentSimulatedRole = role;
       }
 
-      // Update simulator buttons UI
+      // Update simulator buttons UI across all bars (team view & header)
       ['admin', 'dev', 'support', 'reset'].forEach(function(r) {
         const btn = document.getElementById('sim-role-' + r);
+        const hdrBtn = document.getElementById('hdr-sim-role-' + r);
+        const isActive = (currentSimulatedRole === null && r === 'admin') || (currentSimulatedRole === r);
         if (btn) {
-          if ((currentSimulatedRole === null && r === 'admin') || (currentSimulatedRole === r)) {
-            btn.classList.add('active');
-          } else {
-            btn.classList.remove('active');
-          }
+          if (isActive) btn.classList.add('active');
+          else btn.classList.remove('active');
+        }
+        if (hdrBtn) {
+          if (isActive) hdrBtn.classList.add('active');
+          else hdrBtn.classList.remove('active');
         }
       });
 
@@ -4457,6 +4478,9 @@
       // Hide alert banner
       const banner = document.getElementById('team-rbac-alert-banner');
       if (banner) banner.style.display = 'none';
+
+      // Update sidebar nav items visibility: unlisted tabs disappear completely
+      updateSidebarNavVisibility();
 
       // Verify active view is allowed
       const currentActiveViewEl = document.querySelector('.tab-view.active');
@@ -4512,15 +4536,56 @@
 
     function isTabAllowedForRole(tabKey) {
       const r = getEffectiveRole();
-      if (r === 'super_admin' || r === 'admin' || r === 'dev' || r === 'developer' || r === 'devops') return true;
+      if (r === 'super_admin' || r === 'admin') return true;
 
       // Workforce is open to all staff members without restriction
       if (tabKey === 'workforce') return true;
+
+      // Check current staff member's specific configured permissions if available
+      const effEmail = getEffectiveUserEmail().toLowerCase();
+      const staffMember = teamStaffMembers.find(m => m.email && m.email.toLowerCase() === effEmail);
+
+      if (staffMember && staffMember.permissions && typeof staffMember.permissions === 'object') {
+        if (staffMember.permissions[tabKey] !== undefined) {
+          return Boolean(staffMember.permissions[tabKey]);
+        }
+      }
+
+      // Default role fallback:
+      if (r === 'dev' || r === 'developer' || r === 'devops') {
+        return ['clients', 'updates', 'support', 'tickets', 'remote', 'monitoring', 'errors', 'analytics', 'workforce'].includes(tabKey);
+      }
 
       if (r === 'support' || r === 'agent' || r === 'customer_support' || r === 'technician' || r === 'tech') {
         return ['clients', 'support', 'tickets', 'remote', 'workforce'].includes(tabKey);
       }
       return false;
+    }
+
+    // Hide sidebar navigation tabs completely if not in an employee's RBAC scope
+    function updateSidebarNavVisibility() {
+      const allTabs = ['clients', 'updates', 'support', 'tickets', 'remote', 'monitoring', 'errors', 'analytics', 'workforce', 'team'];
+
+      allTabs.forEach(function(key) {
+        const allowed = isTabAllowedForRole(key);
+        const btn = document.querySelector(`.nav-btn[onclick*="'${key}'"]`);
+        if (btn) {
+          const li = btn.closest('li') || btn;
+          li.style.display = allowed ? '' : 'none';
+        }
+      });
+
+      // If active tab is no longer permitted, redirect to workforce or first allowed tab
+      const currentActiveViewEl = document.querySelector('.tab-view.active');
+      if (currentActiveViewEl) {
+        const viewId = currentActiveViewEl.id.replace('view-', '');
+        if (!isTabAllowedForRole(viewId)) {
+          const allowedTabs = allTabs.filter(k => isTabAllowedForRole(k));
+          const targetKey = allowedTabs.includes('workforce') ? 'workforce' : (allowedTabs[0] || 'workforce');
+          const targetBtn = document.querySelector(`.nav-btn[onclick*="'${targetKey}'"]`);
+          switchNav(targetKey, targetBtn);
+        }
+      }
     }
 
     function showRbacAlert(msg) {
@@ -4580,18 +4645,23 @@
           };
         });
 
+        let deletedEmails = [];
+        try {
+          deletedEmails = JSON.parse(localStorage.getItem('flexitap_deleted_staff_emails') || '[]');
+        } catch (e) {}
+
         const emailSet = new Set();
         teamStaffMembers = [];
 
         dbStaff.forEach(s => {
-          if (s.email && !emailSet.has(s.email.toLowerCase())) {
+          if (s.email && !deletedEmails.includes(s.email.toLowerCase()) && !emailSet.has(s.email.toLowerCase())) {
             emailSet.add(s.email.toLowerCase());
             teamStaffMembers.push(s);
           }
         });
 
         localStaff.forEach(s => {
-          if (s.email && !emailSet.has(s.email.toLowerCase())) {
+          if (s.email && !deletedEmails.includes(s.email.toLowerCase()) && !emailSet.has(s.email.toLowerCase())) {
             emailSet.add(s.email.toLowerCase());
             teamStaffMembers.push(s);
           }
@@ -4603,6 +4673,7 @@
         renderAttendanceTable();
         renderPtoTable();
         renderScheduleTable();
+        if (typeof updateSidebarNavVisibility === 'function') updateSidebarNavVisibility();
       } catch (err) {
         console.error('loadTeamData error:', err);
       }
@@ -4710,6 +4781,9 @@
                 </button>
                 <button class="action-btn" onclick="resetStaffPassword('${m.id}')" title="Generate New Temp Password">
                   🔑 Reset
+                </button>
+                <button class="action-btn" onclick="deleteStaffMember('${m.id}')" style="font-size: 0.72rem; color: #ef4444; border-color: rgba(239, 68, 68, 0.35);" title="Delete Team Member">
+                  🗑️ Delete
                 </button>
               </div>
             </td>
@@ -4883,6 +4957,13 @@
       localStaff.unshift(newMember);
       localStorage.setItem('flexitap_staff_team_members', JSON.stringify(localStaff));
 
+      // Clear from deleted blacklist if previously removed
+      try {
+        let deletedEmails = JSON.parse(localStorage.getItem('flexitap_deleted_staff_emails') || '[]');
+        deletedEmails = deletedEmails.filter(e => e !== email);
+        localStorage.setItem('flexitap_deleted_staff_emails', JSON.stringify(deletedEmails));
+      } catch (e) {}
+
       submitBtn.textContent = originalText;
       submitBtn.disabled = false;
       closeAddStaffModal();
@@ -5037,6 +5118,72 @@
         password: pass
       };
       openStaffCredsModal(lastProvisionedCreds);
+    }
+
+    async function deleteStaffMember(staffId) {
+      const target = teamStaffMembers.find(m => m.id === staffId);
+      if (!target) return false;
+      const currentUserEmail = (activeDevUser && activeDevUser.email) ? activeDevUser.email.toLowerCase() : '';
+      if (target.email && target.email.toLowerCase() === currentUserEmail) {
+        alert('Action Denied: You cannot delete your currently authenticated account.');
+        return false;
+      }
+      if (!confirm(`Are you sure you want to permanently delete team member "${target.full_name}" (${target.email})?\n\nThis will revoke portal access, remove them from directory rosters, and delete their RBAC permissions.`)) {
+        return false;
+      }
+
+      // Add to deleted staff emails blacklist
+      try {
+        let deletedEmails = JSON.parse(localStorage.getItem('flexitap_deleted_staff_emails') || '[]');
+        if (target.email && !deletedEmails.includes(target.email.toLowerCase())) {
+          deletedEmails.push(target.email.toLowerCase());
+          localStorage.setItem('flexitap_deleted_staff_emails', JSON.stringify(deletedEmails));
+        }
+      } catch (e) {}
+
+      // Remove from in-memory staff array
+      teamStaffMembers = teamStaffMembers.filter(m => m.id !== staffId && m.email !== target.email);
+
+      // Remove from localStorage
+      let localStaff = [];
+      try {
+        const saved = localStorage.getItem('flexitap_staff_team_members');
+        if (saved) localStaff = JSON.parse(saved);
+        localStaff = localStaff.filter(m => m.id !== staffId && m.email !== target.email);
+        localStorage.setItem('flexitap_staff_team_members', JSON.stringify(localStaff));
+      } catch (e) {}
+
+      // Remove from weekly schedule roster
+      if (Array.isArray(weeklyScheduleRoster)) {
+        weeklyScheduleRoster = weeklyScheduleRoster.filter(s => s.staff_name !== target.full_name && s.staff_email !== target.email);
+      }
+
+      // Delete from Supabase profiles if possible
+      try {
+        await supabaseClient.from('profiles').delete().eq('email', target.email);
+      } catch (err) {
+        console.warn('Supabase profile delete notice:', err);
+      }
+
+      updateTeamKpis();
+      populateStaffSelectors();
+      renderStaffDirectory();
+      if (typeof renderAttendanceTable === 'function') renderAttendanceTable();
+      if (typeof renderTimecardReportTable === 'function') renderTimecardReportTable();
+      if (typeof renderScheduleTable === 'function') renderScheduleTable();
+      if (typeof updateSidebarNavVisibility === 'function') updateSidebarNavVisibility();
+
+      alert(`Team member "${target.full_name}" has been successfully removed.`);
+      return true;
+    }
+
+    async function deleteCurrentEditStaff() {
+      const staffId = document.getElementById('edit-staff-id').value;
+      if (!staffId) return;
+      const deleted = await deleteStaffMember(staffId);
+      if (deleted) {
+        closeEditStaffModal();
+      }
     }
 
     function openStaffCredsModal(creds) {
@@ -5755,6 +5902,7 @@ Role: ${lastProvisionedCreds.role}`;
     window.addEventListener('DOMContentLoaded', () => {
       checkDevSession();
       initWorkforcePunch();
+      if (typeof updateSidebarNavVisibility === 'function') updateSidebarNavVisibility();
     });
   </script>
 
@@ -6233,11 +6381,16 @@ Role: ${lastProvisionedCreds.role}`;
           </div>
         </div>
 
-        <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--card-border); padding-top: 14px;">
-          <button type="button" class="action-btn" onclick="closeEditStaffModal()">Cancel</button>
-          <button type="submit" class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary); padding: 9px 18px;">
-            Save Changes
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--card-border); padding-top: 14px;">
+          <button type="button" class="action-btn" onclick="deleteCurrentEditStaff()" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.35); font-size: 0.78rem;" title="Delete Team Member">
+            🗑️ Delete Member
           </button>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="action-btn" onclick="closeEditStaffModal()">Cancel</button>
+            <button type="submit" class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary); padding: 9px 18px;">
+              Save Changes
+            </button>
+          </div>
         </div>
       </form>
     </div>
