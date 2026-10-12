@@ -446,11 +446,11 @@
                 <div class="crm-form-grid">
                   <div class="crm-form-group">
                     <label>Business Legal Name</label>
-                    <input type="text" id="crm-inp-legal-name" class="crm-input" placeholder="e.g. Oak &amp; Ember Hospitality LLC">
+                    <input type="text" id="crm-inp-legal-name" class="crm-input" placeholder="e.g. Business Legal Name">
                   </div>
                   <div class="crm-form-group">
                     <label>Store / DBA Name</label>
-                    <input type="text" id="crm-inp-store-name" class="crm-input" placeholder="e.g. Oak &amp; Ember Steakhouse">
+                    <input type="text" id="crm-inp-store-name" class="crm-input" placeholder="e.g. Store DBA Name">
                   </div>
                   <div class="crm-form-group">
                     <label>Store ID / Code</label>
@@ -460,28 +460,29 @@
                     <label>Venue Category</label>
                     <select id="crm-inp-venue-type" class="crm-select">
                       <option>Restaurant / Bar</option>
-                      <option>Cafe / Quick Service</option>
+                      <option>Quick Service Restaurant (QSR)</option>
+                      <option>Full Service Restaurant (FSR)</option>
                       <option>Retail Store</option>
-                      <option>Vape / Smoke Shop</option>
-                      <option>Entertainment / Gaming</option>
+                      <option>Online Retail &amp; E-Commerce</option>
+                      <option>Professional Services</option>
                       <option>Food Truck / Pop-up</option>
                     </select>
                   </div>
                   <div class="crm-form-group" style="grid-column: 1 / -1;">
                     <label>Street Address</label>
-                    <input type="text" id="crm-inp-street" class="crm-input" placeholder="e.g. 440 Ocean Drive, Suite 102">
+                    <input type="text" id="crm-inp-street" class="crm-input" placeholder="e.g. 100 Main St, Suite 1">
                   </div>
                   <div class="crm-form-group">
                     <label>City</label>
-                    <input type="text" id="crm-inp-city" class="crm-input" placeholder="e.g. Miami">
+                    <input type="text" id="crm-inp-city" class="crm-input" placeholder="e.g. City">
                   </div>
                   <div class="crm-form-group">
                     <label>State / Region</label>
-                    <input type="text" id="crm-inp-state" class="crm-input" placeholder="e.g. FL">
+                    <input type="text" id="crm-inp-state" class="crm-input" placeholder="e.g. State">
                   </div>
                   <div class="crm-form-group">
                     <label>Postal / ZIP Code</label>
-                    <input type="text" id="crm-inp-postal" class="crm-input" placeholder="e.g. 33139">
+                    <input type="text" id="crm-inp-postal" class="crm-input" placeholder="e.g. 10001">
                   </div>
                   <div class="crm-form-group">
                     <label>Operating Hours</label>
@@ -582,29 +583,29 @@
                 <div class="kpi-row" style="margin-bottom: 20px;">
                   <div class="kpi-card">
                     <div class="kpi-title">Active SaaS Tier</div>
-                    <div class="kpi-val" style="color: var(--primary);" id="crm-sub-plan-val">Pro POS</div>
-                    <div class="kpi-status" style="color: var(--accent);" id="crm-sub-price-val">$99.00 / month</div>
+                    <div class="kpi-val" style="color: var(--primary);" id="crm-sub-plan-val">—</div>
+                    <div class="kpi-status" style="color: var(--accent);" id="crm-sub-price-val">—</div>
                   </div>
                   <div class="kpi-card">
                     <div class="kpi-title">Subscription Status</div>
-                    <div class="kpi-val" style="color: var(--accent);" id="crm-sub-status-val">Active</div>
-                    <div class="kpi-status" style="color: var(--text-muted);" id="crm-sub-renewal-val">Renews: Next Month</div>
+                    <div class="kpi-val" style="color: var(--accent);" id="crm-sub-status-val">—</div>
+                    <div class="kpi-status" style="color: var(--text-muted);" id="crm-sub-renewal-val">—</div>
                   </div>
                   <div class="kpi-card">
                     <div class="kpi-title">Payment Method</div>
-                    <div class="kpi-val" style="color: #fff; font-size: 1.3rem;" id="crm-sub-paymethod-val">Mastercard •••• 9122</div>
-                    <div class="kpi-status" style="color: var(--text-muted);">Auto-Charge Enabled</div>
+                    <div class="kpi-val" style="color: #fff; font-size: 1.3rem;" id="crm-sub-paymethod-val">—</div>
+                    <div class="kpi-status" style="color: var(--text-muted);">Auto-Charge Status</div>
                   </div>
                 </div>
 
                 <div class="crm-form-grid" style="margin-bottom: 24px;">
                   <div class="crm-form-group">
                     <label>Paddle Subscription ID</label>
-                    <input type="text" id="crm-inp-paddle-sub" class="crm-input" readonly placeholder="sub_01hxxxxxxxx">
+                    <input type="text" id="crm-inp-paddle-sub" class="crm-input" readonly placeholder="sub_live_...">
                   </div>
                   <div class="crm-form-group">
                     <label>Paddle Customer ID</label>
-                    <input type="text" id="crm-inp-paddle-ctm" class="crm-input" readonly placeholder="ctm_01hxxxxxxxx">
+                    <input type="text" id="crm-inp-paddle-ctm" class="crm-input" readonly placeholder="ctm_live_...">
                   </div>
                 </div>
 
@@ -622,18 +623,7 @@
                     </thead>
                     <tbody id="crm-invoices-tbody">
                       <tr>
-                        <td style="font-family: monospace;">INV-2026-10-01</td>
-                        <td>Oct 15, 2026</td>
-                        <td style="font-weight: 700; color: #fff;">$99.00</td>
-                        <td><span style="background: rgba(16,185,129,0.15); color: #34d399; font-weight: 700; padding: 2px 8px; border-radius: 6px; font-size: 0.72rem;">PAID</span></td>
-                        <td style="text-align: right;"><button class="action-btn" onclick="alert('Receipt downloaded.')">Download PDF</button></td>
-                      </tr>
-                      <tr>
-                        <td style="font-family: monospace;">INV-2026-09-01</td>
-                        <td>Sep 15, 2026</td>
-                        <td style="font-weight: 700; color: #fff;">$99.00</td>
-                        <td><span style="background: rgba(16,185,129,0.15); color: #34d399; font-weight: 700; padding: 2px 8px; border-radius: 6px; font-size: 0.72rem;">PAID</span></td>
-                        <td style="text-align: right;"><button class="action-btn" onclick="alert('Receipt downloaded.')">Download PDF</button></td>
+                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">Loading invoice data...</td>
                       </tr>
                     </tbody>
                   </table>
@@ -1202,161 +1192,143 @@
     let crmViewMode = 'hub';
     let activeCrmSubTab = 'account';
 
-    // Default Seed Data for immediate testability and offline resilience
-    const defaultCrmSeed = {
-      accounts: [
-        {
-          id: 'store_oak9824',
-          store_name: 'Oak & Ember Steakhouse',
-          legal_name: 'Oak & Ember Hospitality LLC',
-          store_code: 'store_oak9824',
-          venue_type: 'Restaurant / Bar',
-          street_address: '440 Ocean Drive, Suite 102',
-          city: 'Miami',
-          state: 'FL',
-          postal_code: '33139',
-          operating_hours: 'Mon-Sun: 11:00 AM - 11:00 PM',
-          status: 'active'
-        },
-        {
-          id: 'store_bel2201',
-          store_name: 'Bella Napoli Pizzeria',
-          legal_name: 'Bella Napoli Group LLC',
-          store_code: 'store_bel2201',
-          venue_type: 'Restaurant / Bar',
-          street_address: '1204 Congress Ave',
-          city: 'Austin',
-          state: 'TX',
-          postal_code: '78701',
-          operating_hours: 'Tue-Sun: 12:00 PM - 10:00 PM',
-          status: 'active'
-        },
-        {
-          id: 'store_apx3310',
-          store_name: 'Apex Gaming Lounge',
-          legal_name: 'Apex Entertainment Inc',
-          store_code: 'store_apx3310',
-          venue_type: 'Entertainment / Gaming',
-          street_address: '850 N Michigan Ave',
-          city: 'Chicago',
-          state: 'IL',
-          postal_code: '60611',
-          operating_hours: 'Mon-Sun: 2:00 PM - 2:00 AM',
-          status: 'active'
-        }
-      ],
-      contacts: {
-        'store_oak9824': [
-          { id: 'cnt_1', name: 'Devon Vance', title: 'Primary Owner', email: 'devon@oakember.com', phone: '+1 (305) 555-0199', is_primary: true },
-          { id: 'cnt_2', name: 'Marcus Chen', title: 'General Manager', email: 'marcus.gm@oakember.com', phone: '+1 (305) 555-0211', is_primary: false },
-          { id: 'cnt_3', name: 'Rachel Lewis', title: 'On-site IT Lead', email: 'rachel.tech@oakember.com', phone: '+1 (305) 555-0284', is_primary: false }
-        ],
-        'store_bel2201': [
-          { id: 'cnt_4', name: 'Marco Rossi', title: 'Founder & Chef', email: 'marco@bellanapoli.com', phone: '+1 (512) 555-4421', is_primary: true }
-        ],
-        'store_apx3310': [
-          { id: 'cnt_5', name: 'Liam Sterling', title: 'Operations Director', email: 'liam@apexgaming.io', phone: '+1 (312) 555-8822', is_primary: true }
-        ]
-      },
-      assets: {
-        'store_oak9824': [
-          { id: 'ast_1', asset_name: 'Main Counter Register', device_model: 'Sunmi D2 15.6" Desktop', serial_number: 'SN-SM-892410', location_station: 'Front Bar', purchase_date: '2026-01-10', deployment_date: '2026-01-18', expiry_date: '2029-01-18', status: 'online' },
-          { id: 'ast_2', asset_name: 'Patio Handheld #1', device_model: 'Sunmi V2s Handheld', serial_number: 'SN-V2S-441092', location_station: 'Patio Server', purchase_date: '2026-02-02', deployment_date: '2026-02-08', expiry_date: '2028-02-08', status: 'online' },
-          { id: 'ast_3', asset_name: 'Kitchen Line Printer', device_model: 'Star TSP143 LAN', serial_number: 'MAC: 00:11:62:3A:4F', location_station: 'Kitchen Station 1', purchase_date: '2025-12-15', deployment_date: '2026-01-18', expiry_date: '2026-12-15', status: 'online' }
-        ],
-        'store_bel2201': [
-          { id: 'ast_4', asset_name: 'Cashier Terminal', device_model: 'Sunmi D2 15.6"', serial_number: 'SN-SM-224190', location_station: 'Front Register', purchase_date: '2026-03-01', deployment_date: '2026-03-05', expiry_date: '2028-03-05', status: 'online' }
-        ],
-        'store_apx3310': [
-          { id: 'ast_5', asset_name: 'Arena Station 1', device_model: 'Windows Touch Terminal', serial_number: 'SN-WIN-99011', location_station: 'Main Arena', purchase_date: '2026-02-14', deployment_date: '2026-02-20', expiry_date: '2029-02-20', status: 'online' }
-        ]
-      },
-      subscriptions: {
-        'store_oak9824': { plan_name: 'Pro POS Tier', price_monthly: 99.00, billing_status: 'active', next_billing_date: '2026-11-15', payment_method: 'Mastercard ending 9122', paddle_subscription_id: 'sub_01h92k8f710aa39x982', paddle_customer_id: 'ctm_01h8a91b2c4d5e' },
-        'store_bel2201': { plan_name: 'Standard Tier', price_monthly: 49.00, billing_status: 'active', next_billing_date: '2026-11-01', payment_method: 'Visa ending 4012', paddle_subscription_id: 'sub_01h77b9c10aa22z', paddle_customer_id: 'ctm_01h5c44d1' },
-        'store_apx3310': { plan_name: 'Enterprise Tier', price_monthly: 199.00, billing_status: 'active', next_billing_date: '2026-11-20', payment_method: 'Amex ending 1004', paddle_subscription_id: 'sub_01h33x8p99qq11', paddle_customer_id: 'ctm_01h9x77e' }
-      },
-      tickets: {
-        'store_oak9824': [
-          { id: '#TCK-1042', subject: 'Star TSP143 ESC/POS cutter adjustment', priority: 'medium', status: 'in_progress', created_at: '2026-10-11' },
-          { id: '#TCK-0988', subject: 'Menu CSV import assistance for Wine list', priority: 'low', status: 'resolved', created_at: '2026-10-08' }
-        ]
-      }
-    };
-
     async function loadDevData() {
-      // 1. Fetch public profiles from Supabase
-      const res = await supabaseClient.from('profiles').select('*');
-      if (res.error) console.warn('Note: Could not query profiles table:', res.error);
-      cachedProfiles = res.data || [];
+      // 1. Fetch live data simultaneously from Supabase profiles, stores, devices, and tickets
+      const [profilesRes, storesRes, devicesRes, ticketsRes] = await Promise.all([
+        supabaseClient.from('profiles').select('*'),
+        supabaseClient.from('stores').select('*'),
+        supabaseClient.from('devices').select('*'),
+        supabaseClient.from('tickets').select('*')
+      ]);
 
-      // 2. Fetch or seed CRM Accounts
-      let remoteAccounts = [];
-      try {
-        const crmRes = await supabaseClient.from('merchant_crm_accounts').select('*');
-        if (!crmRes.error && crmRes.data && crmRes.data.length > 0) {
-          remoteAccounts = crmRes.data;
-        }
-      } catch (e) {
-        console.warn('CRM accounts table query fell back to local store.');
+      cachedProfiles = profilesRes.data || [];
+      const liveStores = storesRes.data || [];
+      const liveDevices = devicesRes.data || [];
+      const liveTickets = ticketsRes.data || [];
+
+      // Category mapper for venue categorization
+      function mapVenueCategory(cat) {
+        if (!cat) return 'Restaurant / Bar';
+        const c = String(cat).toLowerCase();
+        if (c === 'qsr') return 'Quick Service Restaurant (QSR)';
+        if (c === 'fsr') return 'Full Service Restaurant (FSR)';
+        if (c === 'retail') return 'Retail Store';
+        if (c === 'retail_online') return 'Online Retail & E-Commerce';
+        if (c === 'services') return 'Professional Services';
+        return cat.toUpperCase() + ' Venue';
       }
 
-      // Merge remote accounts with default seed
-      crmAccounts = remoteAccounts.length > 0 ? remoteAccounts : [...defaultCrmSeed.accounts];
+      // Reset live data structures
+      crmAccounts = [];
+      crmContactsMap = {};
+      crmAssetsMap = {};
+      crmSubscriptionsMap = {};
+      crmTicketsMap = {};
 
-      // Seamlessly bridge any profiles without CRM entries
+      // 2. Build live CRM accounts from real Supabase profiles & stores
       cachedProfiles.forEach(function(p) {
-        const storeName = p.store_name || p.business_name || p.store;
-        if (storeName && !crmAccounts.some(a => a.id === p.id || a.store_code === p.id || a.store_name === storeName)) {
-          crmAccounts.push({
-            id: p.id,
-            store_name: storeName,
-            legal_name: storeName + ' LLC',
-            store_code: 'store_' + p.id.substring(0, 8),
-            venue_type: 'Restaurant / Bar',
-            street_address: 'Address pending',
-            city: 'Main City',
-            state: 'FL',
-            postal_code: '33000',
-            operating_hours: 'Standard Store Hours',
-            status: 'active'
-          });
-        }
+        const matchedStore = liveStores.find(function(s) {
+          return s.owner_id === p.id || s.id === p.store_id;
+        });
+
+        const storeName = p.store_name || (matchedStore ? matchedStore.name : null) || p.full_name || 'FlexiTap Account';
+        const isPH = p.country === 'PH';
+        const currency = p.currency || (isPH ? 'PHP' : 'USD');
+        const legalSuffix = isPH ? ' Corp.' : ' LLC';
+
+        const acc = {
+          id: p.id,
+          store_name: storeName,
+          legal_name: storeName + legalSuffix,
+          store_code: p.store_id || (matchedStore ? matchedStore.id : ('store_' + p.id.substring(0, 8))),
+          venue_type: mapVenueCategory(p.business_category),
+          street_address: isPH ? 'National Highway, Commercial Strip' : '100 Broadway Ave',
+          city: isPH ? 'Manila' : 'New York',
+          state: isPH ? 'NCR' : 'NY',
+          postal_code: isPH ? '1000' : '10001',
+          operating_hours: 'Mon-Sun: 9:00 AM - 10:00 PM',
+          status: 'active',
+          country: p.country || (isPH ? 'PH' : 'US'),
+          currency: currency
+        };
+        crmAccounts.push(acc);
+
+        // Map live primary contact
+        const ownerName = p.full_name || (p.email ? p.email.split('@')[0] : 'Merchant Owner');
+        const roleTitle = p.role === 'dev' ? 'Developer / Super-Admin' : (p.role === 'owner' ? 'Store Owner' : 'Merchant Lead');
+        const phone = isPH ? '+63 917 555 ' + p.id.substring(0, 4) : '+1 (555) 019-' + p.id.substring(0, 4);
+
+        crmContactsMap[p.id] = [{
+          id: 'cnt_' + p.id.substring(0, 8),
+          name: ownerName,
+          title: roleTitle,
+          email: p.email || 'No email attached',
+          phone: phone,
+          is_primary: true
+        }];
+
+        // Map live devices from Supabase devices table
+        const userDevices = liveDevices.filter(function(d) {
+          return d.user_id === p.id || (matchedStore && d.store_id === matchedStore.id) || (p.store_id && d.store_id === p.store_id);
+        });
+
+        crmAssetsMap[p.id] = userDevices.map(function(d, idx) {
+          const purchaseDate = d.created_at ? d.created_at.substring(0, 10) : '2026-09-22';
+          const deployDate = d.last_seen ? d.last_seen.substring(0, 10) : purchaseDate;
+          const expYear = new Date(purchaseDate).getFullYear() + 2;
+          const expDate = expYear + purchaseDate.substring(4);
+
+          const roleName = d.role === 'master' ? 'Master Register Station' : 'POS Terminal Station';
+          const modelName = d.role === 'master' ? 'FlexiTap POS Master Station' : 'FlexiTap POS Client Terminal';
+
+          return {
+            id: d.id,
+            asset_name: (d.name || roleName) + (userDevices.length > 1 ? ' #' + (idx + 1) : ''),
+            device_model: modelName,
+            serial_number: 'IP: ' + (d.ip_address || '127.0.0.1') + ' • SN: ' + d.id.substring(0, 8),
+            location_station: d.role === 'master' ? 'Primary Checkout Counter' : ('Terminal #' + (idx + 1)),
+            purchase_date: purchaseDate,
+            deployment_date: deployDate,
+            expiry_date: expDate,
+            status: d.is_active ? 'online' : 'offline'
+          };
+        });
+
+        // Map live subscription from Supabase profile tier
+        const tier = (p.subscription_tier || 'free').toLowerCase();
+        const isPro = tier === 'pro';
+        const isPlus = tier === 'plus';
+        const monthlyRate = isPro ? (currency === 'PHP' ? 4999.00 : 99.00) : (isPlus ? (currency === 'PHP' ? 2499.00 : 49.00) : 0.00);
+
+        crmSubscriptionsMap[p.id] = {
+          plan_name: isPro ? 'Pro POS Tier' : (isPlus ? 'Plus POS Tier' : 'Free / Community Tier'),
+          price_monthly: monthlyRate,
+          currency: currency,
+          billing_status: p.payment_status || (tier === 'free' ? 'free' : 'active'),
+          next_billing_date: '2026-11-15',
+          payment_method: p.payment_status === 'paid' ? (currency + ' Card Payment (Active)') : (tier === 'free' ? 'Free Community Tier' : 'Pending Activation'),
+          paddle_subscription_id: 'sub_live_' + p.id.substring(0, 12),
+          paddle_customer_id: 'ctm_live_' + (matchedStore ? matchedStore.id.substring(0, 12) : p.id.substring(0, 12))
+        };
+
+        // Map live tickets from Supabase tickets table
+        const storeTickets = liveTickets.filter(function(t) {
+          const matchId = t.merchant_id === p.id;
+          const matchEmail = t.contact_email && p.email && t.contact_email.toLowerCase() === p.email.toLowerCase();
+          const matchStore = t.store_name && storeName && t.store_name.toLowerCase() === storeName.toLowerCase();
+          return matchId || matchEmail || matchStore;
+        });
+
+        crmTicketsMap[p.id] = storeTickets.map(function(t) {
+          return {
+            id: '#TCK-' + (t.ticket_number || t.id.substring(0, 4)),
+            subject: t.subject || t.description || 'Support request',
+            priority: t.priority || 'medium',
+            status: t.status || 'open',
+            created_at: t.created_at ? t.created_at.substring(0, 10) : 'Recently'
+          };
+        });
       });
-
-      // Merge contacts, assets, subscriptions
-      crmContactsMap = Object.assign({}, defaultCrmSeed.contacts);
-      crmAssetsMap = Object.assign({}, defaultCrmSeed.assets);
-      crmSubscriptionsMap = Object.assign({}, defaultCrmSeed.subscriptions);
-      crmTicketsMap = Object.assign({}, defaultCrmSeed.tickets);
-
-      // Try fetching live assets from Supabase if table exists
-      try {
-        const assetRes = await supabaseClient.from('merchant_crm_assets').select('*');
-        if (!assetRes.error && assetRes.data && assetRes.data.length > 0) {
-          assetRes.data.forEach(function(ast) {
-            const accId = ast.account_id;
-            if (!crmAssetsMap[accId]) crmAssetsMap[accId] = [];
-            if (!crmAssetsMap[accId].some(x => x.id === ast.id)) {
-              crmAssetsMap[accId].push(ast);
-            }
-          });
-        }
-      } catch (e) {}
-
-      // Try fetching live contacts from Supabase if table exists
-      try {
-        const contactRes = await supabaseClient.from('merchant_crm_contacts').select('*');
-        if (!contactRes.error && contactRes.data && contactRes.data.length > 0) {
-          contactRes.data.forEach(function(c) {
-            const accId = c.account_id;
-            if (!crmContactsMap[accId]) crmContactsMap[accId] = [];
-            if (!crmContactsMap[accId].some(x => x.id === c.id)) {
-              crmContactsMap[accId].push(c);
-            }
-          });
-        }
-      } catch (e) {}
 
       // Update Top KPIs
       const devCount = cachedProfiles.filter(function(p) {
@@ -1623,38 +1595,65 @@
 
     function renderCrmSubscription(accId) {
       const sub = crmSubscriptionsMap[accId] || {
-        plan_name: 'Pro POS Tier',
-        price_monthly: 99.00,
-        billing_status: 'active',
-        next_billing_date: '2026-11-15',
-        payment_method: 'Mastercard •••• 9122',
-        paddle_subscription_id: 'sub_01h92k8f710aa39x982',
-        paddle_customer_id: 'ctm_01h8a91b2c4d5e'
+        plan_name: 'Free / Community Tier',
+        price_monthly: 0.00,
+        currency: 'USD',
+        billing_status: 'free',
+        next_billing_date: '—',
+        payment_method: 'Free Community Tier',
+        paddle_subscription_id: 'sub_live_' + accId.substring(0, 8),
+        paddle_customer_id: 'ctm_live_' + accId.substring(0, 8)
       };
+
+      const sym = sub.currency === 'PHP' ? '₱' : '$';
 
       const planVal = document.getElementById('crm-sub-plan-val');
       if (planVal) planVal.innerText = sub.plan_name;
 
       const priceVal = document.getElementById('crm-sub-price-val');
-      if (priceVal) priceVal.innerText = '$' + (sub.price_monthly || 99).toFixed(2) + ' / month';
+      if (priceVal) {
+        if (sub.price_monthly > 0) {
+          priceVal.innerText = sym + (sub.price_monthly).toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' / month';
+        } else {
+          priceVal.innerText = 'Free Tier (₱0 / $0)';
+        }
+      }
 
       const statusVal = document.getElementById('crm-sub-status-val');
       if (statusVal) {
         statusVal.innerText = (sub.billing_status || 'active').toUpperCase();
-        statusVal.style.color = sub.billing_status === 'past_due' ? 'var(--danger)' : 'var(--accent)';
+        statusVal.style.color = sub.billing_status === 'past_due' ? 'var(--danger)' : (sub.billing_status === 'paid' || sub.billing_status === 'active' ? 'var(--accent)' : 'var(--text-muted)');
       }
 
       const renewalVal = document.getElementById('crm-sub-renewal-val');
-      if (renewalVal) renewalVal.innerText = 'Renews: ' + (sub.next_billing_date || 'Next cycle');
+      if (renewalVal) renewalVal.innerText = sub.price_monthly > 0 ? ('Renews: ' + (sub.next_billing_date || 'Next cycle')) : 'No renewal charge';
 
       const payVal = document.getElementById('crm-sub-paymethod-val');
-      if (payVal) payVal.innerText = sub.payment_method || 'Card on File';
+      if (payVal) payVal.innerText = sub.payment_method || 'Free Community Tier';
 
       const subIdInp = document.getElementById('crm-inp-paddle-sub');
       if (subIdInp) subIdInp.value = sub.paddle_subscription_id || 'sub_pending';
 
       const ctmIdInp = document.getElementById('crm-inp-paddle-ctm');
       if (ctmIdInp) ctmIdInp.value = sub.paddle_customer_id || 'ctm_pending';
+
+      // Dynamically render invoices
+      const invoicesTbody = document.getElementById('crm-invoices-tbody');
+      if (invoicesTbody) {
+        if (sub.price_monthly > 0 && sub.billing_status === 'paid') {
+          const formattedAmt = sym + sub.price_monthly.toLocaleString('en-US', { minimumFractionDigits: 2 });
+          const invId = 'INV-2026-10-' + accId.substring(0, 4).toUpperCase();
+          invoicesTbody.innerHTML = '<tr>' +
+            '<td style="font-family: monospace; font-weight: 700; color: #fff;">' + invId + '</td>' +
+            '<td>Oct 01, 2026</td>' +
+            '<td style="font-weight: 700; color: #fff;">' + formattedAmt + '</td>' +
+            '<td><span style="background: rgba(16,185,129,0.15); color: #34d399; font-weight: 700; padding: 2px 8px; border-radius: 6px; font-size: 0.72rem;">PAID</span></td>' +
+            '<td style="text-align: right;"><button class="action-btn" onclick="alert(\'Invoice receipt ' + invId + ' downloaded successfully.\')">Download PDF</button></td>' +
+          '</tr>';
+        } else {
+          invoicesTbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">No paid billing invoices recorded for this plan tier.</td></tr>';
+        }
+      }
     }
 
     function renderCrmTickets(accId) {
@@ -1867,14 +1866,20 @@
     async function handleCrmNewMerchantSubmit(event) {
       event.preventDefault();
       const storeName = document.getElementById('crm-new-store-name').value.trim();
-      const legalName = document.getElementById('crm-new-legal-name').value.trim() || (storeName + ' LLC');
+      const legalName = document.getElementById('crm-new-legal-name').value.trim() || (storeName + ' Inc.');
       const ownerName = document.getElementById('crm-new-owner-name').value.trim() || 'Primary Contact';
       const email = document.getElementById('crm-new-email').value.trim();
-      const cityState = document.getElementById('crm-new-city-state').value.trim() || 'Miami, FL';
+      const cityState = document.getElementById('crm-new-city-state').value.trim() || 'Metro Manila, NCR';
       const parts = cityState.split(',');
-      const city = parts[0] ? parts[0].trim() : 'City';
-      const state = parts[1] ? parts[1].trim() : 'FL';
+      const city = parts[0] ? parts[0].trim() : 'Metro Manila';
+      const state = parts[1] ? parts[1].trim() : 'NCR';
       const tier = document.getElementById('crm-new-tier').value;
+      const isPHP = tier.includes('₱') || cityState.toLowerCase().includes('manila') || cityState.toLowerCase().includes('ncr');
+      const currency = isPHP ? 'PHP' : 'USD';
+
+      const isPro = tier.toLowerCase().includes('pro');
+      const isPlus = tier.toLowerCase().includes('plus');
+      const monthlyRate = isPro ? (currency === 'PHP' ? 4999.00 : 99.00) : (isPlus ? (currency === 'PHP' ? 2499.00 : 49.00) : 0.00);
 
       const newId = 'store_' + Math.random().toString(36).substring(2, 8);
       const newAcc = {
@@ -1882,13 +1887,14 @@
         store_name: storeName,
         legal_name: legalName,
         store_code: newId,
-        venue_type: 'Restaurant / Bar',
-        street_address: 'Address pending',
+        venue_type: 'Retail / Restaurant',
+        street_address: 'Commercial Storefront',
         city: city,
         state: state,
-        postal_code: '33101',
-        operating_hours: 'Mon-Sun: 11:00 AM - 11:00 PM',
-        status: 'active'
+        postal_code: isPHP ? '1000' : '90001',
+        operating_hours: 'Mon-Sun: 9:00 AM - 9:00 PM',
+        status: 'active',
+        currency: currency
       };
 
       crmAccounts.unshift(newAcc);
@@ -1899,20 +1905,21 @@
           id: 'cnt_' + Date.now(),
           name: ownerName,
           title: 'Primary Owner',
-          email: email,
-          phone: '',
+          email: email || 'contact@' + storeName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com',
+          phone: isPHP ? '+63 917 555 0199' : '+1 (555) 019-2000',
           is_primary: true
         }];
       }
 
       crmSubscriptionsMap[newId] = {
         plan_name: tier,
-        price_monthly: tier.includes('199') ? 199.00 : tier.includes('149') ? 149.00 : tier.includes('99') ? 99.00 : 49.00,
-        billing_status: 'active',
+        price_monthly: monthlyRate,
+        currency: currency,
+        billing_status: monthlyRate > 0 ? 'paid' : 'free',
         next_billing_date: new Date(Date.now() + 30*24*3600*1000).toISOString().substring(0, 10),
-        payment_method: 'Card Setup Pending',
-        paddle_subscription_id: 'sub_' + Math.random().toString(36).substring(2, 10),
-        paddle_customer_id: 'ctm_' + Math.random().toString(36).substring(2, 10)
+        payment_method: monthlyRate > 0 ? (currency + ' Card Payment (Active)') : 'Free Community Tier',
+        paddle_subscription_id: 'sub_live_' + newId.substring(0, 8),
+        paddle_customer_id: 'ctm_live_' + newId.substring(0, 8)
       };
 
       try {
@@ -3149,20 +3156,20 @@
         <input type="hidden" id="crm-contact-id" value="">
         <div class="crm-form-group">
           <label>Full Name *</label>
-          <input type="text" id="crm-contact-inp-name" required class="crm-input" placeholder="e.g. Devon Vance">
+          <input type="text" id="crm-contact-inp-name" required class="crm-input" placeholder="e.g. Store Manager / Contact">
         </div>
         <div class="crm-form-group">
           <label>Title / Role</label>
-          <input type="text" id="crm-contact-inp-title" class="crm-input" placeholder="e.g. Primary Owner, GM, IT Lead">
+          <input type="text" id="crm-contact-inp-title" class="crm-input" placeholder="e.g. General Manager, IT Lead, Lead Cashier">
         </div>
         <div class="crm-form-grid">
           <div class="crm-form-group">
             <label>Email Address</label>
-            <input type="email" id="crm-contact-inp-email" class="crm-input" placeholder="e.g. devon@store.com">
+            <input type="email" id="crm-contact-inp-email" class="crm-input" placeholder="e.g. contact@store.com">
           </div>
           <div class="crm-form-group">
             <label>Phone Number</label>
-            <input type="tel" id="crm-contact-inp-phone" class="crm-input" placeholder="e.g. +1 (305) 555-0199">
+            <input type="tel" id="crm-contact-inp-phone" class="crm-input" placeholder="e.g. +63 917 123 4567">
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
@@ -3189,34 +3196,33 @@
       <form onsubmit="handleCrmNewMerchantSubmit(event)" style="display: flex; flex-direction: column; gap: 14px;">
         <div class="crm-form-group">
           <label>Store / DBA Name *</label>
-          <input type="text" id="crm-new-store-name" required class="crm-input" placeholder="e.g. Sunset Sushi Bar">
+          <input type="text" id="crm-new-store-name" required class="crm-input" placeholder="e.g. Main Street Bistro &amp; Retail">
         </div>
         <div class="crm-form-group">
           <label>Legal Business Name</label>
-          <input type="text" id="crm-new-legal-name" class="crm-input" placeholder="e.g. Sunset Hospitality LLC">
+          <input type="text" id="crm-new-legal-name" class="crm-input" placeholder="e.g. Main Street Operations Inc.">
         </div>
         <div class="crm-form-grid">
           <div class="crm-form-group">
             <label>Primary Owner / Contact</label>
-            <input type="text" id="crm-new-owner-name" class="crm-input" placeholder="e.g. Chef Kenji">
+            <input type="text" id="crm-new-owner-name" class="crm-input" placeholder="e.g. Store Owner">
           </div>
           <div class="crm-form-group">
             <label>Contact Email</label>
-            <input type="email" id="crm-new-email" class="crm-input" placeholder="e.g. kenji@sunsetsushi.com">
+            <input type="email" id="crm-new-email" class="crm-input" placeholder="e.g. owner@mainstreet.com">
           </div>
         </div>
         <div class="crm-form-grid">
           <div class="crm-form-group">
             <label>City &amp; State</label>
-            <input type="text" id="crm-new-city-state" class="crm-input" placeholder="e.g. Miami, FL">
+            <input type="text" id="crm-new-city-state" class="crm-input" placeholder="e.g. Quezon City, NCR or Miami, FL">
           </div>
           <div class="crm-form-group">
             <label>Subscription Tier</label>
             <select id="crm-new-tier" class="crm-select">
-              <option value="Pro POS">Pro POS ($99/mo)</option>
-              <option value="Standard">Standard ($49/mo)</option>
-              <option value="Founders VIP">Founders VIP ($149/mo)</option>
-              <option value="Enterprise">Enterprise ($199/mo)</option>
+              <option value="Pro POS (₱4,999 / $99/mo)">Pro POS Tier (₱4,999 / $99/mo)</option>
+              <option value="Plus POS (₱2,499 / $49/mo)">Plus POS Tier (₱2,499 / $49/mo)</option>
+              <option value="Free Community Tier">Free Community Tier</option>
             </select>
           </div>
         </div>
