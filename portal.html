@@ -291,6 +291,9 @@
         <button class="nav-item" data-report="remote-access" onclick="switchReport('remote-access', this)">
           <span class="icon">🛠️</span> Remote Access <span class="badge">Live</span>
         </button>
+        <button class="nav-item" data-report="submit-ticket" onclick="switchReport('submit-ticket', this)">
+          <span class="icon">🎫</span> Submit a Ticket <span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">Help Desk</span>
+        </button>
       </nav>
 
       <div class="sidebar-footer">
@@ -970,6 +973,101 @@
             </div>
 
             <div id="support-code-status" style="margin-top: 18px;"></div>
+
+            <!-- Submit a Ticket Callout Below Remote Access -->
+            <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 12px; padding: 18px 20px;">
+              <div>
+                <h4 style="font-size: 14.5px; font-weight: 700; color: #fff; margin-bottom: 3px;">Need technician assistance or reporting a bug?</h4>
+                <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Submit an issue ticket directly to our Tier 3 engineering desk.</p>
+              </div>
+              <button class="btn-action btn-primary-action" onclick="switchReport('submit-ticket')" style="padding: 10px 18px; font-size: 13.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px;">
+                <span>🎫</span> Submit a Ticket
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= 7. SUBMIT A TICKET VIEW ================= -->
+      <div id="report-submit-ticket" class="tab-content" style="display: none;">
+        <div class="panel-card" style="max-width: 820px; margin: 0 auto 24px;">
+          <div class="panel-header-row" style="margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 14px;">
+            <div class="panel-header-title">
+              <span style="font-size: 22px;">🎫</span>
+              <span>Submit a Support &amp; Ops Ticket</span>
+            </div>
+            <span style="font-size: 12px; font-weight: 700; color: #60a5fa; background: rgba(59, 130, 246, 0.12); padding: 4px 10px; border-radius: 9999px;">
+              ● Engineering Desk Live
+            </span>
+          </div>
+
+          <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 22px; line-height: 1.5;">
+            Facing terminal freezes, printer cutter issues, network sync delays, or billing questions? Submit a ticket below. Our support engineers will diagnose your store's live telemetry and resolve it.
+          </p>
+
+          <form id="merchant-submit-ticket-form" onsubmit="handleMerchantTicketSubmit(event)" style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+              <div>
+                <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Store DBA Name</label>
+                <input type="text" id="mt-store" readonly style="width: 100%; padding: 11px 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; font-size: 14px;" />
+              </div>
+              <div>
+                <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Contact Email *</label>
+                <input type="email" id="mt-email" required placeholder="owner@store.com" style="width: 100%; padding: 11px 14px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; font-size: 14px;" />
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+              <div>
+                <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Issue Category *</label>
+                <select id="mt-category" required style="width: 100%; padding: 11px 14px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; font-size: 14px;">
+                  <option value="printer">🖨️ Thermal Receipt Printer &amp; Hardware</option>
+                  <option value="payment">💳 Card Reader, Checkout &amp; Payments</option>
+                  <option value="sync">🌐 Network, LAN &amp; Device Sync</option>
+                  <option value="bug">🐛 POS Software Glitch or Crash</option>
+                  <option value="general">❓ Billing, Account or General Question</option>
+                </select>
+              </div>
+              <div>
+                <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Priority Level</label>
+                <select id="mt-priority" style="width: 100%; padding: 11px 14px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; font-size: 14px;">
+                  <option value="medium">Medium (Normal daily operations)</option>
+                  <option value="high">High (Impacting register checkout)</option>
+                  <option value="urgent">Urgent (Entire store POS blocked)</option>
+                  <option value="low">Low (Minor inquiry or cosmetic)</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Issue Subject *</label>
+              <input type="text" id="mt-subject" required placeholder="e.g. Receipt printer cutter jams during rush shift" style="width: 100%; padding: 11px 14px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; font-size: 14px;" />
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Description &amp; Steps to Reproduce *</label>
+              <textarea id="mt-description" required rows="4" placeholder="Please describe what happens, which terminal station is affected, and any error messages displayed on screen..." style="width: 100%; padding: 11px 14px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; font-size: 14px; resize: vertical;"></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 6px;">
+              <button type="submit" class="btn-action btn-primary-action" id="mt-submit-btn" style="padding: 12px 24px; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px;">
+                <span>🚀</span> Submit Support Ticket
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- RECENT TICKETS FOR THIS MERCHANT -->
+        <div class="panel-card" style="max-width: 820px; margin: 0 auto;">
+          <div class="panel-header-row" style="margin-bottom: 14px;">
+            <div class="panel-header-title">
+              <span style="font-size: 18px;">📋</span>
+              <span>Your Support Tickets &amp; Status</span>
+            </div>
+            <button class="btn-action" onclick="loadMerchantTickets()" style="font-size: 12px; padding: 6px 12px;">Refresh</button>
+          </div>
+          <div id="merchant-tickets-list">
+            <p style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px;">Loading ticket history...</p>
           </div>
         </div>
       </div>
@@ -1092,22 +1190,140 @@
         'ar-ledger': ['AR House Accounts', 'Accounts Receivable ledger tracking house accounts, open credit, and payments.'],
         'loyalty-report': ['Loyalty & Rewards', 'Accrued loyalty points, member tiers, and redeemed rewards impact.'],
         'gift-cards': ['Gift Cards & Vouchers', 'Issued vouchers, card activations, remaining balances, and store liability.'],
-        'remote-access': ['Remote Access & Support', 'Live technician assistance, diagnostic sessions, and screen share.']
+        'remote-access': ['Remote Access & Support', 'Live technician assistance, diagnostic sessions, and screen share.'],
+        'submit-ticket': ['Merchant Support & Tickets', 'Open a diagnostic support ticket, report hardware issues, or track open resolutions.']
       };
 
       if (titleMap[reportId]) {
-        const badge = reportId === 'remote-access' ? '● Tech Support' : '● Live Synced';
+        const badge = reportId === 'submit-ticket' ? '● Help Desk' : (reportId === 'remote-access' ? '● Tech Support' : '● Live Synced');
         document.getElementById('active-report-title').innerHTML = `${titleMap[reportId][0]} <span class="status-badge">${badge}</span>`;
         document.getElementById('active-report-subtitle').innerText = titleMap[reportId][1];
       }
 
-      // Hide reporting controls & audit notice banner for non-reporting tools like Remote Access
-      const isRemoteAccess = reportId === 'remote-access';
+      // Hide reporting controls & audit notice banner for non-reporting tools like Remote Access & Ticket Desk
+      const isSupportTool = reportId === 'remote-access' || reportId === 'submit-ticket';
       const toolbarGroup = document.querySelector('.toolbar-group');
-      if (toolbarGroup) toolbarGroup.style.display = isRemoteAccess ? 'none' : 'flex';
+      if (toolbarGroup) toolbarGroup.style.display = isSupportTool ? 'none' : 'flex';
 
       const auditBanner = document.getElementById('global-audit-banner');
-      if (auditBanner) auditBanner.style.display = isRemoteAccess ? 'none' : 'flex';
+      if (auditBanner) auditBanner.style.display = isSupportTool ? 'none' : 'flex';
+
+      if (reportId === 'submit-ticket') {
+        initMerchantTicketForm();
+        loadMerchantTickets();
+      }
+    }
+
+    // --- MERCHANT TICKET SUBMISSION HANDLERS ---
+    function initMerchantTicketForm() {
+      const storeInp = document.getElementById('mt-store');
+      if (storeInp) storeInp.value = activeStore?.name || document.getElementById('store-name-display')?.innerText || 'My Store';
+      const emailInp = document.getElementById('mt-email');
+      if (emailInp && !emailInp.value) {
+        emailInp.value = activeUser?.email || '';
+      }
+    }
+
+    async function handleMerchantTicketSubmit(e) {
+      e.preventDefault();
+      const storeName = document.getElementById('mt-store').value.trim() || activeStore?.name || 'Store';
+      const email = document.getElementById('mt-email').value.trim() || activeUser?.email || '';
+      const category = document.getElementById('mt-category').value;
+      const priority = document.getElementById('mt-priority').value;
+      const subject = document.getElementById('mt-subject').value.trim();
+      const description = document.getElementById('mt-description').value.trim();
+      const btn = document.getElementById('mt-submit-btn');
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Submitting ticket...';
+      }
+
+      const payload = {
+        merchant_id: activeUser?.id || null,
+        store_name: storeName,
+        contact_email: email,
+        category: category,
+        priority: priority,
+        subject: subject,
+        description: description,
+        status: 'open',
+        device_telemetry: {
+          channel: 'Merchant Reporting Portal',
+          platform: navigator.platform || 'Web',
+          user_agent: navigator.userAgent,
+          screen_resolution: `${window.screen.width}x${window.screen.height}`,
+          submitted_at: new Date().toISOString()
+        }
+      };
+
+      try {
+        const res = await supabaseClient.from('tickets').insert([payload]);
+        if (res.error) throw res.error;
+        alert('Ticket submitted successfully! Our engineering team has received your ticket and will investigate.');
+        document.getElementById('mt-subject').value = '';
+        document.getElementById('mt-description').value = '';
+        loadMerchantTickets();
+      } catch (err) {
+        console.error('Failed to submit ticket:', err);
+        alert('Failed to submit ticket: ' + (err.message || 'Please check connection'));
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>🚀</span> Submit Support Ticket';
+        }
+      }
+    }
+
+    async function loadMerchantTickets() {
+      const container = document.getElementById('merchant-tickets-list');
+      if (!container) return;
+      container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px;">Fetching open tickets...</p>';
+
+      try {
+        let query = supabaseClient.from('tickets').select('*').order('created_at', { ascending: false }).limit(10);
+        if (activeUser?.id || activeStore?.name) {
+          if (activeUser?.id) {
+            query = query.or(`merchant_id.eq.${activeUser.id},store_name.eq.${activeStore?.name || ''}`);
+          } else {
+            query = query.eq('store_name', activeStore.name);
+          }
+        }
+        const { data, error } = await query;
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 24px;">No support tickets logged yet.</p>';
+          return;
+        }
+
+        container.innerHTML = '<div style="display: flex; flex-direction: column; gap: 10px;">' +
+          data.map(function(t) {
+            const isClosed = t.status === 'resolved' || t.status === 'closed';
+            const badgeColor = isClosed ? '#10b981' : (t.status === 'in_progress' ? '#f59e0b' : '#3b82f6');
+            const badgeBg = isClosed ? 'rgba(16,185,129,0.15)' : (t.status === 'in_progress' ? 'rgba(245,158,11,0.15)' : 'rgba(59,130,246,0.15)');
+            const numLabel = t.ticket_number ? '#' + t.ticket_number : '#TCK';
+            const dateStr = t.created_at ? new Date(t.created_at).toLocaleDateString() : 'Recent';
+
+            return '<div style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">' +
+              '<div>' +
+                '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">' +
+                  '<span style="font-family: monospace; font-weight: 800; color: var(--primary); font-size: 13px;">' + numLabel + '</span>' +
+                  '<span style="font-weight: 700; color: #fff; font-size: 14px;">' + (t.subject || 'Ticket') + '</span>' +
+                '</div>' +
+                '<div style="font-size: 12px; color: var(--text-muted);">' +
+                  (t.category || 'General').toUpperCase() + ' • ' + dateStr +
+                '</div>' +
+              '</div>' +
+              '<span style="font-size: 11px; font-weight: 800; color: ' + badgeColor + '; background: ' + badgeBg + '; padding: 3px 10px; border-radius: 9999px; text-transform: uppercase;">' +
+                (t.status || 'OPEN').replace('_', ' ') +
+              '</span>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+      } catch (err) {
+        container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px;">Could not load ticket history.</p>';
+      }
     }
 
     function filterReportNav() {

@@ -86,11 +86,11 @@
     .user-tag { font-size: 0.72rem; color: var(--accent); font-weight: 800; display: block; }
 
     /* --- MAIN CONTENT AREA --- */
-    main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background-color: var(--bg); }
+    main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; background-color: var(--bg); min-width: 0; width: 100%; }
 
     header {
-      padding: 18px 36px; background-color: var(--sidebar-bg); border-bottom: 1px solid var(--card-border);
-      display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50;
+      padding: 16px 32px; background-color: var(--sidebar-bg); border-bottom: 1px solid var(--card-border);
+      display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; width: 100%; box-sizing: border-box;
     }
     .header-title h1 { font-size: 1.35rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
     .header-title p { font-size: 0.85rem; color: var(--text-muted); }
@@ -100,7 +100,14 @@
     .btn-exit { padding: 9px 16px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.25); }
     .btn-exit:hover { background: var(--danger); color: #fff; }
 
-    .content-body { padding: 32px 36px; max-width: 1400px; margin: 0 auto; width: 100%; }
+    .sidebar-toggle-btn {
+      display: none; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border);
+      color: var(--text); width: 38px; height: 38px; border-radius: 10px; cursor: pointer;
+      align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+    }
+
+    .content-body { padding: 24px 32px; width: 100%; max-width: 100%; margin: 0; box-sizing: border-box; }
+    .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
     /* --- VIEW SECTIONS --- */
     .tab-view { display: none; animation: fadeIn 0.25s ease; }
@@ -220,6 +227,16 @@
     }
     .crm-tab-btn:hover { background: rgba(255, 255, 255, 0.08); color: var(--text); }
     .crm-tab-btn.active { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: var(--primary); }
+    .crm-pill-btn {
+      padding: 6px 14px; border-radius: 9999px; font-size: 0.78rem; font-weight: 700; cursor: pointer;
+      border: 1px solid var(--card-border); background: rgba(255, 255, 255, 0.03); color: var(--text-muted);
+      display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;
+    }
+    .crm-pill-btn:hover { background: rgba(255, 255, 255, 0.08); color: var(--text); }
+    .crm-pill-btn.active { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: var(--primary); }
+    .crm-pill-badge {
+      padding: 2px 7px; border-radius: 9999px; font-size: 0.7rem; font-weight: 800; background: rgba(255,255,255,0.08); color: inherit;
+    }
     .crm-sub-panel { display: none; }
     .crm-sub-panel.active { display: block; animation: fadeIn 0.2s ease; }
     .crm-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
@@ -241,6 +258,49 @@
     .crm-modal-box {
       background: var(--sidebar-bg); border: 1px solid var(--card-border); border-radius: 16px;
       width: 100%; max-width: 540px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); max-height: 90vh; overflow-y: auto;
+    }
+
+    /* --- RESPONSIVE MEDIA QUERIES (Mobile, Tablet, Desktop) --- */
+    @media (max-width: 1024px) {
+      aside {
+        position: fixed; top: 0; bottom: 0; left: 0; z-index: 1050;
+        width: 280px; max-width: 85vw; height: 100vh;
+        transform: translateX(-100%); transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 0 35px rgba(0, 0, 0, 0.8);
+      }
+      aside.open { transform: translateX(0); }
+      .sidebar-toggle-btn { display: flex; }
+      header { padding: 14px 20px; }
+      .content-body { padding: 20px 20px; }
+      .support-desk-grid { grid-template-columns: 1fr; height: auto; }
+      .tickets-workspace-grid { grid-template-columns: 1fr; min-height: auto; }
+      .tickets-queue-col { max-height: 420px; }
+    }
+
+    @media (max-width: 768px) {
+      header { padding: 12px 16px; }
+      .header-title h1 { font-size: 1.15rem; }
+      .header-title p { font-size: 0.75rem; }
+      .content-body { padding: 14px 14px; }
+      .panel { padding: 16px 14px; border-radius: 12px; margin-bottom: 16px; }
+      .crm-header-card { padding: 14px 14px; border-radius: 12px; }
+      .kpi-row { grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+      .kpi-card { padding: 14px 12px; border-radius: 10px; }
+      .kpi-val { font-size: 1.35rem; }
+      .crm-tabs-nav { gap: 6px; padding-bottom: 10px; margin-bottom: 16px; }
+      .crm-tab-btn { padding: 7px 12px; font-size: 0.78rem; }
+      .data-table th, .data-table td { padding: 10px 8px; font-size: 0.8rem; }
+      .crm-modal-box { padding: 18px 14px; max-width: 95vw; }
+      .crm-form-grid { grid-template-columns: 1fr; gap: 12px; }
+      #crm-account-select { min-width: 100% !important; }
+    }
+
+    @media (max-width: 480px) {
+      .kpi-row { grid-template-columns: 1fr; }
+      .header-title p { display: none; }
+      .btn-exit { padding: 7px 10px; font-size: 0.78rem; }
+      .theme-toggle { width: 34px; height: 34px; font-size: 0.9rem; }
+      .sidebar-toggle-btn { width: 34px; height: 34px; font-size: 1.05rem; }
     }
   </style>
 </head>
@@ -332,12 +392,16 @@
         </div>
       </div>
     </aside>
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 1040; backdrop-filter: blur(4px);"></div>
 
     <main>
       <header>
-        <div class="header-title">
-          <h1 id="view-title">Merchant Clients &amp; Support Hub</h1>
-          <p id="view-subtitle">Search merchant profiles, troubleshoot accounts, and inspect subscription tiers.</p>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="sidebar-toggle-btn" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+          <div class="header-title">
+            <h1 id="view-title">Merchant Clients &amp; Support Hub</h1>
+            <p id="view-subtitle">Search merchant profiles, troubleshoot accounts, and inspect subscription tiers.</p>
+          </div>
         </div>
         <div class="header-actions">
           <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light">☀️</button>
@@ -639,18 +703,57 @@
                     <div class="panel-title">Merchant Support &amp; Ops Tickets</div>
                     <p style="font-size: 0.78rem; color: var(--text-muted);">Issue tracking, bug reports, and hardware requests for this specific account.</p>
                   </div>
-                  <button class="action-btn" onclick="openCreateMerchantTicketModal()" style="background: var(--primary); color: #fff; border-color: var(--primary);">+ Create Ticket for Store</button>
+                  <button class="action-btn" onclick="openCreateMerchantTicketModal()" style="background: var(--primary); color: #fff; border-color: var(--primary); display: inline-flex; align-items: center; gap: 6px;">
+                    <span>➕</span> Open Ticket for Store
+                  </button>
+                </div>
+
+                <!-- KPI Mini-Cards -->
+                <div class="kpi-row" style="margin-bottom: 20px;">
+                  <div class="kpi-card" onclick="setCrmTicketFilter('open')" style="cursor: pointer;">
+                    <div class="kpi-title">Open Tickets</div>
+                    <div class="kpi-val" style="color: var(--warning);" id="crm-kpi-tickets-open">0 Active</div>
+                    <div class="kpi-status" style="color: var(--text-muted);">Requires investigation / fix</div>
+                  </div>
+                  <div class="kpi-card" onclick="setCrmTicketFilter('closed')" style="cursor: pointer;">
+                    <div class="kpi-title">Closed / Resolved</div>
+                    <div class="kpi-val" style="color: var(--accent);" id="crm-kpi-tickets-closed">0 Resolved</div>
+                    <div class="kpi-status" style="color: var(--text-muted);">Completed tickets</div>
+                  </div>
+                  <div class="kpi-card" onclick="setCrmTicketFilter('all')" style="cursor: pointer;">
+                    <div class="kpi-title">Resolution Rate</div>
+                    <div class="kpi-val" style="color: #60a5fa;" id="crm-kpi-tickets-rate">100%</div>
+                    <div class="kpi-status" style="color: var(--text-muted);" id="crm-kpi-tickets-total">0 Total Logged</div>
+                  </div>
+                </div>
+
+                <!-- Filter Pills: Open vs Closed vs All -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                  <div style="display: flex; gap: 8px; align-items: center;">
+                    <button class="crm-pill-btn active" id="crm-ticket-pill-open" onclick="setCrmTicketFilter('open')">
+                      <span>🟢</span> Open Tickets <span id="crm-ticket-count-open" class="crm-pill-badge">0</span>
+                    </button>
+                    <button class="crm-pill-btn" id="crm-ticket-pill-closed" onclick="setCrmTicketFilter('closed')">
+                      <span>✅</span> Closed / Resolved <span id="crm-ticket-count-closed" class="crm-pill-badge">0</span>
+                    </button>
+                    <button class="crm-pill-btn" id="crm-ticket-pill-all" onclick="setCrmTicketFilter('all')">
+                      <span>📋</span> All Tickets <span id="crm-ticket-count-all" class="crm-pill-badge">0</span>
+                    </button>
+                  </div>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">
+                    Click any ticket row or "Inspect" to view diagnostic telemetry &amp; live notes.
+                  </span>
                 </div>
 
                 <table class="data-table">
                   <thead>
                     <tr>
                       <th>Ticket #</th>
-                      <th>Subject / Description</th>
+                      <th>Category &amp; Subject</th>
                       <th>Priority</th>
                       <th>Status</th>
                       <th>Date Logged</th>
-                      <th style="text-align: right;">Action</th>
+                      <th style="text-align: right;">Actions</th>
                     </tr>
                   </thead>
                   <tbody id="crm-tickets-tbody">
@@ -1088,7 +1191,25 @@
       analytics: { title: 'Traffic & Platform Demand Analytics', subtitle: 'Real-time site visits, conversion funnels, and download button clicks across Windows, Android, and iOS.' }
     };
 
+    function toggleSidebar() {
+      const sb = document.querySelector('aside');
+      const bd = document.getElementById('sidebar-backdrop');
+      if (!sb) return;
+      sb.classList.toggle('open');
+      if (bd) {
+        bd.style.display = sb.classList.contains('open') ? 'block' : 'none';
+      }
+    }
+
     function switchNav(key, element) {
+      // Auto-close sidebar drawer on mobile/tablet after navigation
+      const sb = document.querySelector('aside');
+      const bd = document.getElementById('sidebar-backdrop');
+      if (sb && sb.classList.contains('open')) {
+        sb.classList.remove('open');
+        if (bd) bd.style.display = 'none';
+      }
+
       document.querySelectorAll('.tab-view').forEach(function(v) { v.classList.remove('active'); });
       document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
       
@@ -1191,6 +1312,8 @@
     let crmTicketsMap = {};
     let crmViewMode = 'hub';
     let activeCrmSubTab = 'account';
+    let crmTicketFilter = 'open'; // 'open' | 'closed' | 'all'
+    let crmSelectedTicketForDetail = null;
 
     async function loadDevData() {
       // 1. Fetch live data simultaneously from Supabase profiles, stores, devices, and tickets
@@ -1205,6 +1328,7 @@
       const liveStores = storesRes.data || [];
       const liveDevices = devicesRes.data || [];
       const liveTickets = ticketsRes.data || [];
+      cachedTickets = liveTickets;
 
       // Category mapper for venue categorization
       function mapVenueCategory(cat) {
@@ -1322,9 +1446,17 @@
         crmTicketsMap[p.id] = storeTickets.map(function(t) {
           return {
             id: '#TCK-' + (t.ticket_number || t.id.substring(0, 4)),
-            subject: t.subject || t.description || 'Support request',
+            raw_id: t.id,
+            ticket_number: t.ticket_number,
+            store_name: t.store_name || storeName,
+            contact_email: t.contact_email || p.email || '',
+            category: t.category || 'general',
             priority: t.priority || 'medium',
             status: t.status || 'open',
+            subject: t.subject || t.description || 'Support request',
+            description: t.description || t.subject || 'No details provided.',
+            device_telemetry: t.device_telemetry || {},
+            resolution_notes: t.resolution_notes || '',
             created_at: t.created_at ? t.created_at.substring(0, 10) : 'Recently'
           };
         });
@@ -1656,27 +1788,84 @@
       }
     }
 
+    function setCrmTicketFilter(filter) {
+      crmTicketFilter = filter;
+      ['open', 'closed', 'all'].forEach(function(f) {
+        const btn = document.getElementById('crm-ticket-pill-' + f);
+        if (btn) {
+          if (f === filter) btn.classList.add('active');
+          else btn.classList.remove('active');
+        }
+      });
+      renderCrmTickets(currentCrmAccountId);
+    }
+
     function renderCrmTickets(accId) {
       const tbody = document.getElementById('crm-tickets-tbody');
       if (!tbody) return;
-      const tickets = crmTicketsMap[accId] || [];
+      const allTickets = crmTicketsMap[accId] || [];
 
-      if (tickets.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">No support tickets logged for this merchant account.</td></tr>';
+      const openTickets = allTickets.filter(function(t) { return t.status !== 'resolved' && t.status !== 'closed'; });
+      const closedTickets = allTickets.filter(function(t) { return t.status === 'resolved' || t.status === 'closed'; });
+
+      // Update counters on pill filters
+      const cntOpen = document.getElementById('crm-ticket-count-open');
+      if (cntOpen) cntOpen.innerText = openTickets.length;
+      const cntClosed = document.getElementById('crm-ticket-count-closed');
+      if (cntClosed) cntClosed.innerText = closedTickets.length;
+      const cntAll = document.getElementById('crm-ticket-count-all');
+      if (cntAll) cntAll.innerText = allTickets.length;
+
+      // Update KPI mini cards
+      const kpiOpen = document.getElementById('crm-kpi-tickets-open');
+      if (kpiOpen) kpiOpen.innerText = openTickets.length + ' Active';
+      const kpiClosed = document.getElementById('crm-kpi-tickets-closed');
+      if (kpiClosed) kpiClosed.innerText = closedTickets.length + ' Resolved';
+      const kpiRate = document.getElementById('crm-kpi-tickets-rate');
+      if (kpiRate) {
+        const pct = allTickets.length === 0 ? 100 : Math.round((closedTickets.length / allTickets.length) * 100);
+        kpiRate.innerText = pct + '%';
+      }
+      const kpiTotal = document.getElementById('crm-kpi-tickets-total');
+      if (kpiTotal) kpiTotal.innerText = allTickets.length + ' Total Logged';
+
+      // Select list to display based on active filter
+      let displayList = openTickets;
+      if (crmTicketFilter === 'closed') displayList = closedTickets;
+      else if (crmTicketFilter === 'all') displayList = allTickets;
+
+      if (displayList.length === 0) {
+        let msg = '✅ No open support tickets for this merchant account. All issues resolved!';
+        if (crmTicketFilter === 'closed') msg = 'No closed or resolved tickets recorded for this merchant.';
+        else if (crmTicketFilter === 'all') msg = 'No support tickets logged for this merchant account.';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 32px; font-size: 0.88rem;">' + msg + '</td></tr>';
         return;
       }
 
-      tbody.innerHTML = tickets.map(function(t) {
-        const priorityBadge = '<span class="badge-pill badge-' + (t.priority || 'medium').toLowerCase() + '">' + (t.priority || 'NORMAL') + '</span>';
-        const statusBadge = '<span class="badge-pill badge-' + (t.status || 'open').toLowerCase() + '">' + (t.status || 'OPEN').replace('_', ' ') + '</span>';
+      tbody.innerHTML = displayList.map(function(t) {
+        const priorityBadge = '<span class="badge-pill badge-' + (t.priority || 'medium').toLowerCase() + '">' + (t.priority || 'NORMAL').toUpperCase() + '</span>';
+        const isClosed = t.status === 'resolved' || t.status === 'closed';
+        const statusBadge = '<span class="badge-pill badge-' + (t.status || 'open').toLowerCase() + '">' + (t.status || 'OPEN').replace('_', ' ').toUpperCase() + '</span>';
+        const catIcon = t.category === 'printer' ? '🖨️' : t.category === 'payment' ? '💳' : t.category === 'sync' ? '🌐' : t.category === 'bug' ? '🐛' : '📋';
+        const catLabel = (t.category || 'general').toUpperCase();
+
+        const toggleBtn = isClosed
+          ? '<button class="action-btn" onclick="toggleCrmTicketStatus(\'' + (t.raw_id || t.id) + '\', \'open\')" style="color: #60a5fa; border-color: rgba(59,130,246,0.3); margin-left: 6px;">Reopen</button>'
+          : '<button class="action-btn" onclick="toggleCrmTicketStatus(\'' + (t.raw_id || t.id) + '\', \'resolved\')" style="color: var(--accent); border-color: rgba(16,185,129,0.3); margin-left: 6px;">Resolve</button>';
 
         return '<tr>' +
-          '<td style="font-family: monospace; font-weight: 700; color: var(--primary);">' + t.id + '</td>' +
-          '<td><strong style="color: #fff;">' + t.subject + '</strong></td>' +
+          '<td style="font-family: monospace; font-weight: 700; color: var(--primary); cursor: pointer;" onclick="openCrmTicketDetails(\'' + (t.raw_id || t.id) + '\')">' + t.id + '</td>' +
+          '<td>' +
+            '<div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; margin-bottom: 2px;">' + catIcon + ' ' + catLabel + '</div>' +
+            '<strong style="color: #fff; cursor: pointer;" onclick="openCrmTicketDetails(\'' + (t.raw_id || t.id) + '\')">' + escapeHtml(t.subject) + '</strong>' +
+          '</td>' +
           '<td>' + priorityBadge + '</td>' +
           '<td>' + statusBadge + '</td>' +
           '<td>' + (t.created_at || 'Recently') + '</td>' +
-          '<td style="text-align: right;"><button class="action-btn" onclick="alert(\'Viewing diagnostics for ticket ' + t.id + '\')">Inspect</button></td>' +
+          '<td style="text-align: right; white-space: nowrap;">' +
+            '<button class="action-btn" onclick="openCrmTicketDetails(\'' + (t.raw_id || t.id) + '\')">Inspect</button>' +
+            toggleBtn +
+          '</td>' +
         '</tr>';
       }).join('');
     }
@@ -1934,25 +2123,237 @@
     }
 
     function openCreateMerchantTicketModal() {
-      const acc = crmAccounts.find(x => x.id === currentCrmAccountId);
-      const subject = prompt('Enter ticket subject / issue description for ' + (acc ? acc.store_name : 'Merchant') + ':');
-      if (!subject) return;
+      const acc = crmAccounts.find(function(x) { return x.id === currentCrmAccountId; });
+      if (!acc) return;
 
-      const tickId = '#TCK-' + Math.floor(1000 + Math.random() * 9000);
-      const newTicket = {
-        id: tickId,
+      const storeInp = document.getElementById('crm-nt-store');
+      if (storeInp) storeInp.value = acc.store_name;
+
+      const emailInp = document.getElementById('crm-nt-email');
+      const contacts = crmContactsMap[acc.id] || [];
+      const primaryContact = contacts.find(function(c) { return c.is_primary; }) || contacts[0];
+      if (emailInp) emailInp.value = (primaryContact ? primaryContact.email : '') || '';
+
+      const subInp = document.getElementById('crm-nt-subject');
+      if (subInp) subInp.value = '';
+
+      const descInp = document.getElementById('crm-nt-description');
+      if (descInp) descInp.value = '';
+
+      const modal = document.getElementById('crm-modal-ticket-create');
+      if (modal) modal.classList.add('open');
+    }
+
+    function closeCrmCreateTicketModal() {
+      const modal = document.getElementById('crm-modal-ticket-create');
+      if (modal) modal.classList.remove('open');
+    }
+
+    async function handleCrmCreateTicketSubmit(event) {
+      event.preventDefault();
+      const acc = crmAccounts.find(function(x) { return x.id === currentCrmAccountId; });
+      if (!acc) return;
+
+      const subject = document.getElementById('crm-nt-subject').value.trim();
+      const description = document.getElementById('crm-nt-description').value.trim();
+      const category = document.getElementById('crm-nt-category').value;
+      const priority = document.getElementById('crm-nt-priority').value;
+      const contactEmail = document.getElementById('crm-nt-email').value.trim();
+
+      const newTicketPayload = {
+        merchant_id: acc.id,
+        store_name: acc.store_name,
+        contact_email: contactEmail || null,
+        category: category,
+        priority: priority,
         subject: subject,
-        priority: 'medium',
+        description: description,
         status: 'open',
-        created_at: new Date().toISOString().substring(0, 10)
+        device_telemetry: {
+          channel: 'Merchant CRM Portal',
+          app_version: 'v2.4.1 (Admin Console)',
+          device_role: 'Customer Ticket',
+          sqlite_healthy: true
+        }
       };
 
-      if (!crmTicketsMap[currentCrmAccountId]) crmTicketsMap[currentCrmAccountId] = [];
-      crmTicketsMap[currentCrmAccountId].unshift(newTicket);
+      try {
+        const res = await supabaseClient.from('tickets').insert([newTicketPayload]).select();
+        if (res.data && res.data.length > 0) {
+          const inserted = res.data[0];
+          const crmTicket = {
+            id: '#TCK-' + (inserted.ticket_number || inserted.id.substring(0, 4)),
+            raw_id: inserted.id,
+            ticket_number: inserted.ticket_number,
+            store_name: inserted.store_name,
+            contact_email: inserted.contact_email,
+            category: inserted.category,
+            priority: inserted.priority,
+            status: inserted.status,
+            subject: inserted.subject,
+            description: inserted.description,
+            device_telemetry: inserted.device_telemetry,
+            resolution_notes: inserted.resolution_notes || '',
+            created_at: inserted.created_at ? inserted.created_at.substring(0, 10) : new Date().toISOString().substring(0, 10)
+          };
+          if (!crmTicketsMap[acc.id]) crmTicketsMap[acc.id] = [];
+          crmTicketsMap[acc.id].unshift(crmTicket);
+          cachedTickets.unshift(inserted);
+        }
+      } catch (err) {
+        console.error('Error inserting ticket in Supabase:', err);
+        const fallbackTicket = {
+          id: '#TCK-' + Math.floor(1000 + Math.random() * 9000),
+          raw_id: 'tck_local_' + Date.now(),
+          store_name: acc.store_name,
+          contact_email: contactEmail,
+          category: category,
+          priority: priority,
+          status: 'open',
+          subject: subject,
+          description: description,
+          device_telemetry: newTicketPayload.device_telemetry,
+          resolution_notes: '',
+          created_at: new Date().toISOString().substring(0, 10)
+        };
+        if (!crmTicketsMap[acc.id]) crmTicketsMap[acc.id] = [];
+        crmTicketsMap[acc.id].unshift(fallbackTicket);
+      }
+
+      closeCrmCreateTicketModal();
+      crmTicketFilter = 'open';
+      ['open', 'closed', 'all'].forEach(function(f) {
+        const btn = document.getElementById('crm-ticket-pill-' + f);
+        if (btn) {
+          if (f === 'open') btn.classList.add('active');
+          else btn.classList.remove('active');
+        }
+      });
+      renderCrmTickets(acc.id);
+      renderSelectedCrmAccount();
+      if (typeof updateTicketKPIs === 'function') updateTicketKPIs();
+      alert('Support ticket opened successfully for ' + acc.store_name + '!');
+    }
+
+    function openCrmTicketDetails(ticketId) {
+      const tickets = crmTicketsMap[currentCrmAccountId] || [];
+      const t = tickets.find(function(x) { return x.raw_id === ticketId || x.id === ticketId; }) || cachedTickets.find(function(x) { return x.id === ticketId; });
+      if (!t) return;
+
+      crmSelectedTicketForDetail = t;
+
+      document.getElementById('crm-td-num').innerText = t.id || ('#TCK-' + (t.ticket_number || ''));
+      
+      const isClosed = t.status === 'resolved' || t.status === 'closed';
+      const statusEl = document.getElementById('crm-td-status');
+      if (statusEl) {
+        statusEl.className = 'badge-pill badge-' + (t.status || 'open').toLowerCase();
+        statusEl.innerText = (t.status || 'OPEN').replace('_', ' ').toUpperCase();
+      }
+
+      document.getElementById('crm-td-subject').innerText = t.subject || 'Ticket Details';
+      document.getElementById('crm-td-store').innerText = t.store_name || 'Store';
+      document.getElementById('crm-td-email').innerText = t.contact_email || 'No email provided';
+      document.getElementById('crm-td-category').innerText = (t.category || 'general').toUpperCase();
+      
+      const priorityEl = document.getElementById('crm-td-priority');
+      if (priorityEl) {
+        priorityEl.className = 'badge-pill badge-' + (t.priority || 'medium').toLowerCase();
+        priorityEl.innerText = (t.priority || 'medium').toUpperCase();
+      }
+
+      document.getElementById('crm-td-desc').innerText = t.description || 'No detailed description provided.';
+
+      const telem = t.device_telemetry || {};
+      const telemParts = [];
+      if (telem.platform) telemParts.push('Platform: ' + telem.platform);
+      if (telem.app_version) telemParts.push('Version: ' + telem.app_version);
+      if (telem.device_station_name) telemParts.push('Station: ' + telem.device_station_name);
+      if (telem.channel) telemParts.push('Channel: ' + telem.channel);
+      if (telem.sqlite_healthy !== undefined) telemParts.push('DB: ' + (telem.sqlite_healthy ? 'SQLite Healthy' : 'Offline'));
+      document.getElementById('crm-td-telemetry').innerText = telemParts.length > 0 ? telemParts.join(' • ') : 'Standard telemetry recorded.';
+
+      const resBox = document.getElementById('crm-td-resolution-box');
+      const resText = document.getElementById('crm-td-resolution');
+      if (t.resolution_notes) {
+        resBox.style.display = 'block';
+        resText.innerText = t.resolution_notes;
+      } else {
+        resBox.style.display = 'none';
+      }
+
+      const toggleBtn = document.getElementById('crm-td-toggle-status-btn');
+      if (toggleBtn) {
+        if (isClosed) {
+          toggleBtn.innerText = '↺ Reopen Ticket';
+          toggleBtn.style.color = '#60a5fa';
+          toggleBtn.style.borderColor = 'rgba(59,130,246,0.4)';
+        } else {
+          toggleBtn.innerText = '✓ Mark as Resolved / Close Ticket';
+          toggleBtn.style.color = 'var(--accent)';
+          toggleBtn.style.borderColor = 'rgba(16,185,129,0.4)';
+        }
+      }
+
+      document.getElementById('crm-modal-ticket-detail').classList.add('open');
+    }
+
+    function closeCrmTicketDetailModal() {
+      document.getElementById('crm-modal-ticket-detail').classList.remove('open');
+    }
+
+    async function toggleCrmCurrentTicketStatus() {
+      if (!crmSelectedTicketForDetail) return;
+      const isClosed = crmSelectedTicketForDetail.status === 'resolved' || crmSelectedTicketForDetail.status === 'closed';
+      const targetStatus = isClosed ? 'open' : 'resolved';
+      await toggleCrmTicketStatus(crmSelectedTicketForDetail.raw_id || crmSelectedTicketForDetail.id, targetStatus);
+      closeCrmTicketDetailModal();
+    }
+
+    async function toggleCrmTicketStatus(ticketId, targetStatus) {
+      const tickets = crmTicketsMap[currentCrmAccountId] || [];
+      const t = tickets.find(function(x) { return x.raw_id === ticketId || x.id === ticketId; });
+      if (t) {
+        t.status = targetStatus;
+        if (targetStatus === 'resolved' && !t.resolution_notes) {
+          t.resolution_notes = 'Resolved via CRM Console by developer on ' + new Date().toISOString().substring(0, 10);
+        }
+      }
+
+      const cached = cachedTickets.find(function(x) { return x.id === ticketId || x.id === (t ? t.raw_id : null); });
+      if (cached) {
+        cached.status = targetStatus;
+        if (targetStatus === 'resolved') {
+          cached.resolution_notes = t ? t.resolution_notes : 'Resolved via CRM';
+          cached.resolved_at = new Date().toISOString();
+        }
+      }
+
+      const rawId = (t && t.raw_id) ? t.raw_id : ticketId;
+      try {
+        await supabaseClient.from('tickets').update({
+          status: targetStatus,
+          resolution_notes: targetStatus === 'resolved' ? (t ? t.resolution_notes : 'Resolved via CRM') : null,
+          resolved_at: targetStatus === 'resolved' ? new Date().toISOString() : null,
+          updated_at: new Date().toISOString()
+        }).eq('id', rawId);
+      } catch (err) {
+        console.error('Error updating ticket in Supabase:', err);
+      }
 
       renderCrmTickets(currentCrmAccountId);
       renderSelectedCrmAccount();
-      alert('Ticket ' + tickId + ' created!');
+      if (typeof updateTicketKPIs === 'function') updateTicketKPIs();
+    }
+
+    function jumpToFullSupportDesk() {
+      if (!crmSelectedTicketForDetail) return;
+      const targetId = crmSelectedTicketForDetail.raw_id || crmSelectedTicketForDetail.id;
+      closeCrmTicketDetailModal();
+      switchView('support');
+      if (typeof selectTicket === 'function') {
+        selectTicket(targetId);
+      }
     }
 
     function manageStoreInCrm(accountId) {
@@ -3232,6 +3633,121 @@
           <button type="submit" class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary);">Create Account</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- 4. OPEN / CREATE CRM TICKET MODAL -->
+  <div id="crm-modal-ticket-create" class="crm-modal-backdrop">
+    <div class="crm-modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 style="font-size: 1.1rem; font-weight: 800; color: #fff;">Open Ticket for Merchant</h3>
+        <button onclick="closeCrmCreateTicketModal()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <form onsubmit="handleCrmCreateTicketSubmit(event)" style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="crm-form-grid">
+          <div class="crm-form-group">
+            <label>Store Name</label>
+            <input type="text" id="crm-nt-store" readonly class="crm-input" style="background: rgba(0,0,0,0.3); color: #cbd5e1;">
+          </div>
+          <div class="crm-form-group">
+            <label>Merchant Contact Email</label>
+            <input type="email" id="crm-nt-email" class="crm-input" placeholder="merchant@store.com">
+          </div>
+        </div>
+
+        <div class="crm-form-grid">
+          <div class="crm-form-group">
+            <label>Category</label>
+            <select id="crm-nt-category" class="crm-select">
+              <option value="printer">Printer &amp; Hardware</option>
+              <option value="payment">Payment &amp; Checkout</option>
+              <option value="sync">Network &amp; Station Sync</option>
+              <option value="bug">POS App Bug / Crash</option>
+              <option value="general">Account &amp; General Question</option>
+            </select>
+          </div>
+          <div class="crm-form-group">
+            <label>Priority</label>
+            <select id="crm-nt-priority" class="crm-select">
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="crm-form-group">
+          <label>Ticket Subject *</label>
+          <input type="text" id="crm-nt-subject" required class="crm-input" placeholder="e.g. Receipt printer cutter jams during rush shift">
+        </div>
+
+        <div class="crm-form-group">
+          <label>Detailed Issue Description *</label>
+          <textarea id="crm-nt-description" required rows="3" class="crm-input" placeholder="Provide step-by-step observations, hardware terminal station, error messages..."></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; border-top: 1px solid var(--card-border); padding-top: 14px;">
+          <button type="button" onclick="closeCrmCreateTicketModal()" class="action-btn">Cancel</button>
+          <button type="submit" class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary);">Open Ticket</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. CRM TICKET DETAIL / INSPECT MODAL -->
+  <div id="crm-modal-ticket-detail" class="crm-modal-backdrop">
+    <div class="crm-modal-box" style="max-width: 620px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span id="crm-td-num" style="font-size: 1.15rem; font-weight: 800; color: var(--primary); font-family: monospace;">#TCK-001</span>
+          <span id="crm-td-status" class="badge-pill badge-open">OPEN</span>
+        </div>
+        <button onclick="closeCrmTicketDetailModal()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div>
+          <h3 id="crm-td-subject" style="font-size: 1.1rem; font-weight: 800; color: #fff; margin-bottom: 6px;">Ticket Subject</h3>
+          <div style="display: flex; gap: 8px; align-items: center; font-size: 0.75rem; color: var(--text-muted); flex-wrap: wrap;">
+            <span id="crm-td-store" style="color: #94a3b8; font-weight: 700;">Store Name</span>
+            <span>•</span>
+            <span id="crm-td-email">merchant@store.com</span>
+            <span>•</span>
+            <span id="crm-td-category" style="text-transform: uppercase;">CATEGORY</span>
+            <span>•</span>
+            <span id="crm-td-priority" class="badge-pill badge-medium">MEDIUM</span>
+          </div>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 6px;">Issue Description</span>
+          <p id="crm-td-desc" style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; margin: 0; white-space: pre-wrap;">Details...</p>
+        </div>
+
+        <div style="background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.2); border-radius: 12px; padding: 14px;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: #60a5fa; text-transform: uppercase; display: block; margin-bottom: 6px;">Telemetry &amp; Environment Diagnostics</span>
+          <div id="crm-td-telemetry" style="font-size: 0.8rem; color: #94a3b8; font-family: monospace;">Platform: Windows • Version: v2.4.1 • Health: SQLite OK</div>
+        </div>
+
+        <div id="crm-td-resolution-box" style="display: none; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); border-radius: 12px; padding: 14px;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--accent); text-transform: uppercase; display: block; margin-bottom: 6px;">Resolution Notes</span>
+          <p id="crm-td-resolution" style="font-size: 0.82rem; color: #e2e8f0; margin: 0;">Notes...</p>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--card-border); padding-top: 14px; margin-top: 8px; flex-wrap: wrap; gap: 10px;">
+          <button id="crm-td-toggle-status-btn" class="action-btn" style="color: var(--accent); border-color: rgba(16,185,129,0.4);" onclick="toggleCrmCurrentTicketStatus()">
+            Resolve / Close Ticket
+          </button>
+          <div style="display: flex; gap: 8px;">
+            <button class="action-btn" style="background: rgba(59,130,246,0.15); color: #60a5fa; border-color: var(--primary);" onclick="jumpToFullSupportDesk()">
+              Open in Live Support Desk ↗
+            </button>
+            <button class="action-btn" onclick="closeCrmTicketDetailModal()">Dismiss</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </body>
