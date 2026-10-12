@@ -126,10 +126,12 @@
     .brand-logo {
       width: 36px;
       height: 36px;
-      border-radius: 10px;
       object-fit: contain;
       flex-shrink: 0;
-      background: rgba(255, 255, 255, 0.06);
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      display: block;
     }
     .brand-name {
       font-size: 15px;
@@ -155,6 +157,9 @@
       width: 58px;
       height: 58px;
       margin: 0 auto;
+      background: transparent;
+      border: none;
+      box-shadow: none;
     }
 
     /* Header Action Pills */
@@ -393,6 +398,36 @@
       margin-bottom: 4px;
     }
 
+    /* Live Support Chat Bubbles */
+    .chat-bubble {
+      max-width: 82%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+    .chat-bubble.merchant {
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--primary), #2563eb);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-bubble.agent {
+      align-self: flex-start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: #f1f5f9;
+      border-bottom-left-radius: 4px;
+    }
+    .chat-bubble .bubble-ts {
+      display: block;
+      font-size: 9.5px;
+      opacity: 0.65;
+      margin-top: 4px;
+      text-align: right;
+    }
+
     .error-text {
       color: #f87171;
       font-size: 12.5px;
@@ -416,8 +451,60 @@
 </head>
 <body>
 
-  <!-- ================= SCREEN 1: SIGN IN / TERMINAL ACCESS ================= -->
-  <div class="screen active" id="screen-login">
+  <!-- ================= SCREEN 0: DEDICATED APP INSTALLATION GATEWAY ================= -->
+  <div class="screen" id="screen-gate">
+    <div class="card" style="text-align: center;">
+      <div class="brand brand-login">
+        <img class="brand-logo" src="./image_02e503.png" alt="FlexiTap POS">
+        <div>
+          <div style="font-size: 17px; font-weight: 800; color: #fff;">FlexiTap POS Support</div>
+          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Dedicated Terminal Application</div>
+        </div>
+      </div>
+
+      <div style="width: 58px; height: 58px; border-radius: 16px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: #60a5fa; font-size: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+        📲
+      </div>
+
+      <h1>Install App on Device</h1>
+      <p class="subtitle" style="margin-bottom: 20px;">
+        This support portal is engineered exclusively as an installed standalone POS app. Install it directly onto your terminal register, tablet, or phone to sign in and submit tickets.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+        <button class="btn btn-primary" onclick="triggerPwaInstallPrompt()" id="gateInstallBtn" style="padding: 14px 20px; font-size: 15px;">
+          📲 Install Support App Now
+        </button>
+        <button class="btn btn-secondary" onclick="toggleInstallHelp()" style="font-size: 13px;">
+          ℹ️ How to Install on iOS / Android / Windows
+        </button>
+      </div>
+
+      <!-- Device-Specific Step-by-Step Guide -->
+      <div id="gateInstallGuide" style="display: none; background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 16px; text-align: left; font-size: 12.5px; line-height: 1.6; color: #cbd5e1; margin-bottom: 18px;">
+        <div style="font-weight: 700; color: #60a5fa; margin-bottom: 4px;">📱 On Android POS / Sunmi / Chrome:</div>
+        <div style="margin-bottom: 10px;">Tap <strong>"Install Support App Now"</strong> above, or tap the browser menu (<strong>⋮</strong>) and select <strong>"Install App"</strong> or <strong>"Add to Home screen"</strong>.</div>
+        
+        <div style="font-weight: 700; color: #34d399; margin-bottom: 4px;">🍎 On Apple iPad / iPhone (Safari):</div>
+        <div style="margin-bottom: 10px;">
+          1. Tap the <strong>Share</strong> button (<strong>⎋</strong>) in the Safari toolbar.<br>
+          2. Scroll down and tap <strong>"Add to Home Screen"</strong> (<strong>⊞</strong>).<br>
+          3. Open the FlexiTap Support icon from your home screen.
+        </div>
+
+        <div style="font-weight: 700; color: #c084fc; margin-bottom: 4px;">💻 On Windows Counter Register (Edge / Chrome):</div>
+        <div>Click the <strong>Install</strong> icon in the address bar (or menu ⋮ &rarr; Apps &rarr; Install).</div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 14px; font-size: 12px;">
+        <a href="support.html" style="color: var(--muted); text-decoration: none;">&larr; Return to Web Portal</a>
+        <button onclick="bypassGateForDev()" style="background: none; border: none; color: #60a5fa; cursor: pointer; font-size: 11px; text-decoration: underline;">Preview Mode (Dev)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN 1: SIGN IN / STORE ACCESS ================= -->
+  <div class="screen" id="screen-login">
     <div class="card">
       <div class="brand brand-login">
         <img class="brand-logo" src="./image_02e503.png" alt="FlexiTap POS">
@@ -427,30 +514,20 @@
         </div>
       </div>
       
-      <h1>Merchant Portal Access</h1>
-      <p class="subtitle">Sign in to your store account or continue as terminal guest to submit urgent tickets.</p>
+      <h1>Merchant Account Sign In</h1>
+      <p class="subtitle">Sign in with your verified store credentials to submit tickets and track live technician updates.</p>
 
       <form onsubmit="handleLoginSubmit(event)">
         <div class="field">
-          <label>Store Email or Login ID</label>
-          <input id="loginEmail" type="text" autocomplete="username" placeholder="e.g. manager@centralbakery.com">
+          <label>Store Email or Login ID *</label>
+          <input id="loginEmail" type="text" autocomplete="username" placeholder="e.g. manager@centralbakery.com" required>
         </div>
         <div class="field">
-          <label>Password</label>
-          <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Account Password">
+          <label>Password *</label>
+          <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Account Password" required>
         </div>
-        <button type="submit" class="btn btn-primary" id="loginBtn">Sign In to Store Account</button>
+        <button type="submit" class="btn btn-primary" id="loginBtn" style="margin-top: 16px;">Sign In to Store Account</button>
       </form>
-
-      <div style="display: flex; align-items: center; gap: 12px; margin: 18px 0;">
-        <div style="flex: 1; height: 1px; background: var(--border);"></div>
-        <span style="font-size: 11px; color: var(--muted); text-transform: uppercase;">Or</span>
-        <div style="flex: 1; height: 1px; background: var(--border);"></div>
-      </div>
-
-      <button type="button" class="btn btn-secondary" onclick="loginAsGuest()">
-        ⚡ Quick Access as Terminal Guest
-      </button>
 
       <div id="loginError" class="error-text"></div>
     </div>
@@ -483,7 +560,7 @@
           <strong>3. Live Remote Assistance Consent</strong>
           If you request a live remote assistance session, screen sharing and terminal diagnostics are conducted over secure WebRTC sessions. Please ensure no customer payment card PANs or CVVs are visible during video inspection.
 
-          <strong>4. Continuous Service SLA</strong>
+          <strong>4. Automated Incident Routing &amp; Remediation</strong>
           Support tickets are automatically prioritized and routed to Core Dev Engineering or Customer Support based on incident classification.
         </div>
       </div>
@@ -499,13 +576,13 @@
         <img class="brand-logo" src="./image_02e503.png" alt="FlexiTap POS">
         <div class="brand-name">
           <span id="landingGreeting">Hello, Merchant</span>
-          <span class="brand-sub">FlexiTap Diagnostic Hub</span>
+          <span class="brand-sub">FlexiTap Operations Hub</span>
         </div>
         <button class="logout-btn" onclick="logoutApp()">LOGOUT</button>
       </div>
 
       <h1>Support &amp; Operations</h1>
-      <p class="subtitle">Submit an issue, track live ticket resolution, or inspect recent terminal tickets.</p>
+      <p class="subtitle">Submit an issue, track live ticket resolution, message live support, or inspect recent tickets.</p>
 
       <button class="btn btn-outline" onclick="startNew()" style="margin-bottom: 12px;">
         <div>
@@ -513,6 +590,17 @@
           <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Printer cuts, SQLite sync, app crashes, or billing</div>
         </div>
         <span style="font-size: 1.4rem;">🎫</span>
+      </button>
+
+      <button class="btn btn-outline" onclick="startSupportChat()" style="margin-bottom: 12px; border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.05);">
+        <div>
+          <div style="font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px;">
+            <span>💬 Chat with Support</span>
+            <span style="font-size: 10px; background: rgba(16, 185, 129, 0.18); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); padding: 2px 7px; border-radius: 999px; text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em;">GATED • VERIFIED</span>
+          </div>
+          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Direct live messaging with FlexiTap Technical Operations</div>
+        </div>
+        <span style="font-size: 1.4rem;">💬</span>
       </button>
 
       <button class="btn btn-outline" onclick="startReview()" style="margin-bottom: 12px;">
@@ -542,50 +630,49 @@
       </div>
 
       <h1 id="formTitle">Submit Support Ticket</h1>
-      <p class="subtitle" style="margin-bottom: 16px;">Your ticket will auto-route to Dev Engineering or Customer Support.</p>
+      <p class="subtitle" style="margin-bottom: 16px;">Your ticket auto-routes directly to Core Dev Engineering or Customer Support.</p>
 
       <form id="support-ticket-form" onsubmit="handleTicketFormSubmit(event)">
         <div class="row">
           <div class="field">
-            <label>Store / Business Name *</label>
-            <input id="storeName" placeholder="e.g. Central Bakery" required>
+            <label style="display: flex; justify-content: space-between; align-items: center;">
+              <span>Store / Business Name *</span>
+              <span style="color: var(--green); font-size: 10px; font-weight: 700; text-transform: none;">✓ Verified Store</span>
+            </label>
+            <input id="storeName" placeholder="Store Name" required readonly style="background: rgba(255,255,255,0.03); color: #93c5fd; border-color: rgba(59,130,246,0.3); font-weight: 600;">
           </div>
           <div class="field">
-            <label>Contact Full Name *</label>
-            <input id="fullName" placeholder="e.g. Maria Gonzalez" required>
+            <label style="display: flex; justify-content: space-between; align-items: center;">
+              <span>Contact Full Name *</span>
+              <span style="color: var(--green); font-size: 10px; font-weight: 700; text-transform: none;">✓ Authenticated</span>
+            </label>
+            <input id="fullName" placeholder="Manager Name" required readonly style="background: rgba(255,255,255,0.03); color: #93c5fd; border-color: rgba(59,130,246,0.3); font-weight: 600;">
           </div>
         </div>
 
         <div class="row">
+          <div class="field">
+            <label style="display: flex; justify-content: space-between; align-items: center;">
+              <span>Email Address *</span>
+              <span style="color: var(--green); font-size: 10px; font-weight: 700; text-transform: none;">✓ Verified Account</span>
+            </label>
+            <input id="email" type="email" placeholder="manager@store.com" required readonly style="background: rgba(255,255,255,0.03); color: #93c5fd; border-color: rgba(59,130,246,0.3); font-weight: 600;">
+          </div>
           <div class="field">
             <label>Contact Phone *</label>
             <input id="phone" type="tel" placeholder="e.g. 555-0192" required>
           </div>
-          <div class="field">
-            <label>Email Address</label>
-            <input id="email" type="email" placeholder="manager@store.com">
-          </div>
         </div>
 
-        <div class="row">
-          <div class="field">
-            <label>Issue Category *</label>
-            <select id="category" required onchange="handleCategoryChange()">
-              <option value="payment">💳 Payment &amp; Checkout</option>
-              <option value="printer">🖨️ Printer &amp; Bluetooth Cutter</option>
-              <option value="sync">🔄 SQLite DB &amp; Sync Lock</option>
-              <option value="bug">🐞 App Crash / Exception</option>
-              <option value="general">⚙️ Menus, Back Office &amp; General</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Priority SLA *</label>
-            <select id="priority" required>
-              <option value="urgent">🔴 Urgent (1 Hour SLA - Register Down)</option>
-              <option value="high">🟠 High (4 Hours SLA - Degraded Ops)</option>
-              <option value="normal" selected>🔵 Normal (12 Hours SLA - Standard)</option>
-            </select>
-          </div>
+        <div class="field">
+          <label>Issue Category *</label>
+          <select id="category" required onchange="handleCategoryChange()">
+            <option value="payment">💳 Payment &amp; Checkout</option>
+            <option value="printer">🖨️ Printer &amp; Bluetooth Cutter</option>
+            <option value="sync">🔄 SQLite DB &amp; Sync Lock</option>
+            <option value="bug">🐞 App Crash / Exception</option>
+            <option value="general">⚙️ Menus, Back Office &amp; General</option>
+          </select>
         </div>
 
         <div class="field">
@@ -621,12 +708,7 @@
           </div>
         </div>
 
-        <button type="button" class="btn btn-outline" id="liveDiagBtn" onclick="toggleLiveDiagnosis()" style="height: 48px; font-size: 12.5px; margin-bottom: 14px;">
-          <span>📡 Request Live Diagnostics Call</span>
-          <span id="liveDiagState" style="color: var(--muted); font-size: 11px;">Off</span>
-        </button>
-
-        <button type="submit" class="btn btn-primary" id="submitTicketBtn">
+        <button type="submit" class="btn btn-primary" id="submitTicketBtn" style="margin-top: 8px;">
           🚀 Submit Ticket to Operations
         </button>
       </form>
@@ -667,9 +749,7 @@
         <div id="rd-desc" style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 12px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">Description</div>
 
         <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.76rem; color: var(--muted); margin-bottom: 12px;">
-          <span>Category: <strong id="rd-category" style="color: #fff;">Printer</strong></span>
-          <span>•</span>
-          <span>Priority: <strong id="rd-priority" style="color: #fff;">Urgent</strong></span>
+          <span>Category: <strong id="rd-category" style="color: #fff;">General</strong></span>
           <span>•</span>
           <span>Assigned: <strong id="rd-assignee" style="color: #60a5fa;">Dev Engineering</strong></span>
         </div>
@@ -744,6 +824,40 @@
     </div>
   </div>
 
+  <!-- ================= SCREEN 8: GATED LIVE SUPPORT CHAT ================= -->
+  <div class="screen" id="screen-chat">
+    <div class="card" style="display: flex; flex-direction: column; min-height: 560px; max-height: calc(100dvh - 40px);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-shrink: 0;">
+        <button onclick="goTo('landing')" style="background: none; border: none; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer;">&larr; Back to Hub</button>
+        <span class="badge-pill badge-open" id="chat-status-pill">● Support Desk Online</span>
+      </div>
+
+      <!-- Security / Auth Gate Banner -->
+      <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <div style="font-size: 11.5px; font-weight: 700; color: #10b981; display: flex; align-items: center; gap: 6px;">
+            <span>🛡️ Gated Merchant Session</span>
+          </div>
+          <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">
+            Store: <strong id="chat-store-name" style="color: #fff;">-</strong> &bull; <span id="chat-store-email">-</span>
+          </div>
+        </div>
+        <span style="font-size: 10px; background: rgba(59, 130, 246, 0.15); color: #93c5fd; padding: 3px 8px; border-radius: 6px; font-family: monospace;">E2EE SYNC</span>
+      </div>
+
+      <!-- Chat Messages Container -->
+      <div id="pwa-chat-body" style="flex: 1; overflow-y: auto; background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; min-height: 280px;">
+        <div style="text-align: center; color: var(--muted); font-size: 12px; margin: auto;">Connecting to FlexiTap Support Desk...</div>
+      </div>
+
+      <!-- Message Input Form -->
+      <form id="pwa-chat-form" onsubmit="handleSendSupportMessage(event)" style="display: flex; gap: 8px; flex-shrink: 0;">
+        <input type="text" id="pwaChatInput" placeholder="Type a message to Tech Support..." autocomplete="off" required style="flex: 1; padding: 12px 14px; font-size: 13.5px;" />
+        <button type="submit" id="pwaChatSendBtn" class="btn btn-primary" style="width: auto; padding: 0 18px; margin: 0; font-size: 13.5px; font-weight: 700;">Send</button>
+      </form>
+    </div>
+  </div>
+
   <!-- ================= JAVASCRIPT LOGIC & SUPABASE INTEGRATION ================= -->
   <script>
     // 1. SUPABASE CLIENT INITIALIZATION
@@ -806,7 +920,89 @@
       }
     }
 
-    // 5. AUTHENTICATION & GUEST ACCESS
+    // 5. AUTHENTICATION & INSTALLATION GATEWAY
+    function isRunningStandalone() {
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
+                        || window.navigator.standalone === true 
+                        || document.referrer.includes('android-app://')
+                        || new URLSearchParams(window.location.search).has('standalone')
+                        || new URLSearchParams(window.location.search).has('preview');
+      return isStandalone;
+    }
+
+    async function triggerPwaInstallPrompt() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if (choice && choice.outcome === 'accepted') {
+          deferredPrompt = null;
+          goTo('login');
+          return;
+        }
+      }
+      toggleInstallHelp();
+    }
+
+    function toggleInstallHelp() {
+      const guide = document.getElementById('gateInstallGuide');
+      if (guide) {
+        guide.style.display = guide.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+
+    function bypassGateForDev() {
+      if (currentAuthUser) {
+        goTo('landing');
+      } else {
+        goTo('login');
+      }
+    }
+
+    function acceptDisclaimer() {
+      localStorage.setItem('flexitap_disclaimer_accepted', 'true');
+      goTo('landing');
+    }
+
+    async function populateAuthenticatedMerchantInfo() {
+      if (!currentAuthUser) return;
+      try {
+        if (supabaseClient && currentAuthUser.id) {
+          const { data: profile } = await supabaseClient
+            .from('profiles')
+            .select('store_name, full_name, email, business_category')
+            .eq('id', currentAuthUser.id)
+            .maybeSingle();
+
+          if (profile) {
+            if (profile.store_name) currentAuthUser.storeName = profile.store_name;
+            if (profile.full_name) currentAuthUser.fullName = profile.full_name;
+          }
+
+          if (!currentAuthUser.storeName) {
+            const { data: store } = await supabaseClient
+              .from('stores')
+              .select('name')
+              .eq('owner_id', currentAuthUser.id)
+              .maybeSingle();
+            if (store && store.name) currentAuthUser.storeName = store.name;
+          }
+        }
+      } catch (err) {
+        console.warn('Profile sync note:', err);
+      }
+
+      if (!currentAuthUser.storeName) {
+        const handle = (currentAuthUser.email || 'store').split('@')[0];
+        currentAuthUser.storeName = handle.replace(/[._-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) + ' Store';
+      }
+      if (!currentAuthUser.fullName) {
+        currentAuthUser.fullName = currentAuthUser.displayName || currentAuthUser.email?.split('@')[0] || 'Store Manager';
+      }
+
+      localStorage.setItem('flexitap_pwa_user', JSON.stringify(currentAuthUser));
+      updateGreeting();
+    }
+
     async function handleLoginSubmit(event) {
       event.preventDefault();
       const email = document.getElementById('loginEmail').value.trim();
@@ -816,7 +1012,7 @@
 
       err.innerText = '';
       if (!email || !password) {
-        err.innerText = 'Please enter your email and password.';
+        err.innerText = 'Please enter your store email and password.';
         return;
       }
 
@@ -831,11 +1027,17 @@
         currentAuthUser = {
           email: res.data.user.email,
           displayName: res.data.user.email.split('@')[0],
-          isGuest: false
+          id: res.data.user.id
         };
         localStorage.setItem('flexitap_pwa_user', JSON.stringify(currentAuthUser));
-        updateGreeting();
-        goTo('disclaimer');
+        await populateAuthenticatedMerchantInfo();
+
+        const disclaimerSeen = localStorage.getItem('flexitap_disclaimer_accepted');
+        if (disclaimerSeen) {
+          goTo('landing');
+        } else {
+          goTo('disclaimer');
+        }
       } catch (e) {
         err.innerText = e.message || 'Authentication failed. Please verify credentials.';
       } finally {
@@ -844,20 +1046,13 @@
       }
     }
 
-    function loginAsGuest() {
-      currentAuthUser = {
-        email: 'terminal.guest@store.pos',
-        displayName: 'Terminal Guest',
-        isGuest: true
-      };
-      localStorage.setItem('flexitap_pwa_user', JSON.stringify(currentAuthUser));
-      updateGreeting();
-      goTo('disclaimer');
-    }
-
     function logoutApp() {
       localStorage.removeItem('flexitap_pwa_user');
       currentAuthUser = null;
+      if (chatRealtimeChannel && supabaseClient) {
+        try { supabaseClient.removeChannel(chatRealtimeChannel); } catch (_) {}
+        chatRealtimeChannel = null;
+      }
       if (supabaseClient) supabaseClient.auth.signOut().catch(() => {});
       goTo('login');
     }
@@ -865,7 +1060,25 @@
     function updateGreeting() {
       const g = document.getElementById('landingGreeting');
       if (g) {
-        g.innerText = currentAuthUser ? `Hello, ${currentAuthUser.displayName}` : 'Hello, Merchant';
+        g.innerText = currentAuthUser ? `Hello, ${currentAuthUser.storeName || currentAuthUser.displayName}` : 'Hello, Merchant';
+      }
+    }
+
+    async function checkAppSessionAndMode() {
+      if (!isRunningStandalone()) {
+        goTo('gate');
+        return;
+      }
+      if (currentAuthUser) {
+        await populateAuthenticatedMerchantInfo();
+        const disclaimerSeen = localStorage.getItem('flexitap_disclaimer_accepted');
+        if (disclaimerSeen) {
+          goTo('landing');
+        } else {
+          goTo('disclaimer');
+        }
+      } else {
+        goTo('login');
       }
     }
 
@@ -937,24 +1150,47 @@
       };
     }
 
-    // 8. TICKET SUBMISSION HANDLER
-    function startNew() {
-      goTo('form');
-    }
-
-    function toggleLiveDiagnosis() {
-      isLiveRequested = !isLiveRequested;
-      const stateEl = document.getElementById('liveDiagState');
-      const btn = document.getElementById('liveDiagBtn');
-      if (isLiveRequested) {
-        stateEl.textContent = 'Requested ✓';
-        stateEl.style.color = 'var(--green)';
-        btn.style.borderColor = 'var(--green)';
-      } else {
-        stateEl.textContent = 'Off';
-        stateEl.style.color = 'var(--muted)';
-        btn.style.borderColor = 'rgba(59, 130, 246, 0.35)';
+    // 8. TICKET SUBMISSION HANDLER (AUTHENTICATED & PRE-FILLED)
+    async function startNew() {
+      if (!currentAuthUser) {
+        alert('Authentication required: please log in with your verified store account.');
+        goTo('login');
+        return;
       }
+
+      await populateAuthenticatedMerchantInfo();
+
+      const storeInput = document.getElementById('storeName');
+      const nameInput = document.getElementById('fullName');
+      const emailInput = document.getElementById('email');
+
+      if (storeInput) {
+        storeInput.value = currentAuthUser.storeName || '';
+        storeInput.readOnly = true;
+      }
+      if (nameInput) {
+        nameInput.value = currentAuthUser.fullName || currentAuthUser.displayName || '';
+        nameInput.readOnly = true;
+      }
+      if (emailInput) {
+        emailInput.value = currentAuthUser.email || '';
+        emailInput.readOnly = true;
+      }
+
+      // Clear ticket details fields
+      const phoneInput = document.getElementById('phone');
+      const subjInput = document.getElementById('subject');
+      const descInput = document.getElementById('description');
+      if (phoneInput && !phoneInput.value) phoneInput.value = '';
+      if (subjInput) subjInput.value = '';
+      if (descInput) descInput.value = '';
+
+      const photoLabel = document.getElementById('photoLabel');
+      const videoLabel = document.getElementById('videoLabel');
+      if (photoLabel) photoLabel.innerText = '';
+      if (videoLabel) videoLabel.innerText = '';
+
+      goTo('form');
     }
 
     function updateFileLabel(inputId, labelId) {
@@ -966,18 +1202,13 @@
     }
 
     function handleCategoryChange() {
-      const cat = document.getElementById('category').value;
-      const prio = document.getElementById('priority');
-      if (cat === 'printer' || cat === 'sync' || cat === 'bug') {
-        if (prio.value === 'normal') prio.value = 'high';
-      }
+      // Automatic category handling
     }
 
     // Convert file to base64 safely for telemetry attachment
     function fileToBase64(file) {
       return new Promise((resolve) => {
         if (!file) return resolve(null);
-        // Only inline files up to 3MB
         if (file.size > 3 * 1024 * 1024) {
           return resolve({ name: file.name, size: file.size, type: file.type, note: 'File size exceeded 3MB threshold' });
         }
@@ -990,14 +1221,19 @@
 
     async function handleTicketFormSubmit(event) {
       event.preventDefault();
+      if (!currentAuthUser) {
+        alert('Authentication required: please log in with your store account.');
+        goTo('login');
+        return;
+      }
       if (!checkRateLimit()) return;
 
-      const storeName = document.getElementById('storeName').value.trim();
-      const fullName = document.getElementById('fullName').value.trim();
+      const storeName = document.getElementById('storeName').value.trim() || currentAuthUser.storeName || 'FlexiTap Store';
+      const fullName = document.getElementById('fullName').value.trim() || currentAuthUser.fullName || 'Store Manager';
       const phone = document.getElementById('phone').value.trim();
-      const email = document.getElementById('email').value.trim();
+      const email = document.getElementById('email').value.trim() || currentAuthUser.email;
       const category = document.getElementById('category').value;
-      const priority = document.getElementById('priority').value;
+      const priority = 'normal'; // SLA Priority handled exclusively by Dev Portal Admin
       const subject = document.getElementById('subject').value.trim();
       const description = document.getElementById('description').value.trim();
 
@@ -1019,7 +1255,7 @@
 
       const payload = {
         store_name: storeName,
-        contact_email: email || (currentAuthUser?.email !== 'terminal.guest@store.pos' ? currentAuthUser?.email : ''),
+        contact_email: email,
         contact_phone: phone,
         subject: subject,
         category: category,
@@ -1031,7 +1267,6 @@
           app_version: 'v2.4.1 (FlexiSupport PWA)',
           device_role: 'Merchant POS Terminal',
           sqlite_healthy: true,
-          live_diagnostics_requested: isLiveRequested,
           auto_assigned: autoAssign,
           contact_name: fullName,
           attachments: attachments,
@@ -1077,8 +1312,6 @@
       document.getElementById('support-ticket-form').reset();
       document.getElementById('photoLabel').innerText = '';
       document.getElementById('videoLabel').innerText = '';
-      isLiveRequested = false;
-      document.getElementById('liveDiagState').textContent = 'Off';
 
       // Update success screen
       document.getElementById('caseDisplay').innerText = '#' + ticketNumber;
@@ -1089,6 +1322,177 @@
       btn.disabled = false;
       btn.innerText = '🚀 Submit Ticket to Operations';
       goTo('success');
+    }
+
+    // --- 11. GATED LIVE CHAT WITH SUPPORT ---
+    let activeSupportChatSession = null;
+    let chatRealtimeChannel = null;
+
+    async function startSupportChat() {
+      // Gate 1: Check Standalone PWA Mode
+      if (!isRunningStandalone()) {
+        goTo('gate');
+        return;
+      }
+
+      // Gate 2: Enforce Verified Store Authentication
+      if (!currentAuthUser) {
+        alert('🔒 Access Restricted: Live Chat with Support is gated to verified store accounts. Please log in.');
+        goTo('login');
+        return;
+      }
+
+      await populateAuthenticatedMerchantInfo();
+
+      // Update Gated Session Banner
+      const storeEl = document.getElementById('chat-store-name');
+      const emailEl = document.getElementById('chat-store-email');
+      if (storeEl) storeEl.innerText = currentAuthUser.storeName || 'Merchant Store';
+      if (emailEl) emailEl.innerText = currentAuthUser.email || '';
+
+      goTo('chat');
+      await initPwaSupportChat();
+    }
+
+    async function initPwaSupportChat() {
+      const container = document.getElementById('pwa-chat-body');
+      container.innerHTML = '<div style="text-align: center; color: var(--muted); font-size: 12px; margin: auto;">Connecting to FlexiTap Support Desk...</div>';
+
+      try {
+        if (!supabaseClient) throw new Error('Supabase client offline.');
+
+        // Find or create session in support_sessions
+        const { data: existing } = await supabaseClient
+          .from('support_sessions')
+          .select('*')
+          .eq('merchant_email', currentAuthUser.email)
+          .eq('status', 'open')
+          .order('updated_at', { ascending: false })
+          .limit(1);
+
+        let session = (existing && existing.length > 0) ? existing[0] : null;
+
+        if (!session) {
+          const { data: created, error: createErr } = await supabaseClient
+            .from('support_sessions')
+            .insert([{
+              store_name: currentAuthUser.storeName || 'FlexiTap Store',
+              merchant_email: currentAuthUser.email,
+              merchant_user_id: currentAuthUser.id || null,
+              status: 'open',
+              updated_at: new Date().toISOString()
+            }])
+            .select()
+            .single();
+
+          if (createErr) console.warn('Session create warning:', createErr);
+          session = created;
+        }
+
+        activeSupportChatSession = session;
+
+        // Fetch past messages
+        let msgs = [];
+        if (session && session.id) {
+          const { data: msgList } = await supabaseClient
+            .from('support_messages')
+            .select('*')
+            .eq('session_id', session.id)
+            .order('created_at', { ascending: true });
+          msgs = msgList || [];
+        }
+
+        renderPwaChatMessages(msgs);
+
+        // Realtime Subscription
+        if (chatRealtimeChannel) {
+          try { supabaseClient.removeChannel(chatRealtimeChannel); } catch (_) {}
+          chatRealtimeChannel = null;
+        }
+
+        if (session && session.id) {
+          chatRealtimeChannel = supabaseClient.channel('pwa-chat-' + session.id)
+            .on('postgres_changes', {
+              event: 'INSERT',
+              schema: 'public',
+              table: 'support_messages',
+              filter: `session_id=eq.${session.id}`
+            }, (payload) => {
+              if (payload.new && payload.new.sender_role === 'agent') {
+                appendPwaChatBubble('agent', payload.new.message, payload.new.created_at);
+              }
+            })
+            .subscribe();
+        }
+
+      } catch (err) {
+        console.error('PWA Support Chat init error:', err);
+        container.innerHTML = '<div style="text-align: center; color: #f87171; font-size: 12.5px; margin: auto;">Unable to connect to live support desk. Please verify network connection or submit a ticket.</div>';
+      }
+    }
+
+    function renderPwaChatMessages(msgs) {
+      const container = document.getElementById('pwa-chat-body');
+      if (!msgs || msgs.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; color: var(--muted); font-size: 12px; margin: auto; padding: 24px 12px;">
+            <div style="font-size: 28px; margin-bottom: 8px;">👋</div>
+            <strong style="color: #fff; font-size: 13.5px; display: block; margin-bottom: 4px;">Welcome to Live Support</strong>
+            A dedicated FlexiTap operations specialist will assist you with printer configurations, checkout sync, and merchant questions. Type a message below to start!
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+      msgs.forEach(m => {
+        appendPwaChatBubble(m.sender_role, m.message, m.created_at);
+      });
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function appendPwaChatBubble(role, message, timestamp) {
+      const container = document.getElementById('pwa-chat-body');
+      if (container.querySelector('div[style*="Welcome to Live Support"]')) {
+        container.innerHTML = '';
+      }
+
+      const timeStr = timestamp ? new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+      const div = document.createElement('div');
+      div.className = 'chat-bubble ' + (role === 'merchant' ? 'merchant' : 'agent');
+      div.innerHTML = `
+        <div>${escapeHtml(message)}</div>
+        <span class="bubble-ts">${role === 'merchant' ? 'You' : 'Tech Support'} • ${timeStr}</span>
+      `;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function handleSendSupportMessage(event) {
+      event.preventDefault();
+      const input = document.getElementById('pwaChatInput');
+      const text = input.value.trim();
+      if (!text || !activeSupportChatSession) return;
+
+      input.value = '';
+      appendPwaChatBubble('merchant', text, new Date().toISOString());
+
+      try {
+        if (supabaseClient) {
+          await supabaseClient.from('support_messages').insert([{
+            session_id: activeSupportChatSession.id,
+            sender_id: currentAuthUser?.id || null,
+            sender_role: 'merchant',
+            message: text
+          }]);
+
+          await supabaseClient.from('support_sessions').update({
+            updated_at: new Date().toISOString()
+          }).eq('id', activeSupportChatSession.id);
+        }
+      } catch (err) {
+        console.warn('Failed to dispatch message to Supabase:', err);
+      }
     }
 
     function saveLocalTicket(record) {
@@ -1200,7 +1604,8 @@
       document.getElementById('rd-subject').innerText = liveTicket.subject || 'Ticket Details';
       document.getElementById('rd-desc').innerText = liveTicket.description || 'No description provided.';
       document.getElementById('rd-category').innerText = (liveTicket.category || 'general').toUpperCase();
-      document.getElementById('rd-priority').innerText = (liveTicket.priority || 'normal').toUpperCase();
+      const prioEl = document.getElementById('rd-priority');
+      if (prioEl) prioEl.innerText = (liveTicket.priority || 'normal').toUpperCase();
 
       const assigneeLabel = liveTicket.device_telemetry?.auto_assigned?.staff_name || liveTicket.assigned_to || 'Assigned Specialist';
       document.getElementById('rd-assignee').innerText = assigneeLabel;
@@ -1406,11 +1811,8 @@
       }[c]));
     }
 
-    // Initialize state on boot
-    updateGreeting();
-    if (currentAuthUser) {
-      goTo('landing');
-    }
+    // Initialize state on boot: enforce standalone gateway and session
+    checkAppSessionAndMode();
   </script>
 </body>
 </html>

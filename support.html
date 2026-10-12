@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>FlexiTap POS — Support & App Downloads</title>
   
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./image_02e503.png">
+  <meta name="theme-color" content="#080c14">
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="analytics.js"></script>
   
@@ -193,16 +197,47 @@
     .chat-msg { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; color: #f8fafc; }
 
     @media (max-width: 1023px) {
-      .nav-links { display: none; width: 100%; flex-direction: column; align-items: flex-start; background: rgba(15, 23, 42, 0.98); padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); margin-top: 10px; box-sizing: border-box; }
+      .nav-links { display: none; width: 100%; flex-direction: column; align-items: flex-start; background: rgba(15, 23, 42, 0.98); padding: 18px; border-radius: 14px; border: 1px solid var(--card-border); margin-top: 12px; box-sizing: border-box; }
       .nav-links.mobile-open { display: flex; }
       .mobile-menu-toggle { display: block; }
-      header { padding: 12px 16px; }
-      .ticket-grid { grid-template-columns: 1fr; }
+      header { padding: 12px 0; }
+      header .container { gap: 8px; }
+      .ticket-grid { grid-template-columns: 1fr; gap: 28px; }
     }
     @media (max-width: 768px) {
-      .form-group-row { grid-template-columns: 1fr; }
-      .footer-grid { grid-template-columns: 1fr; }
-      .quick-jump-bar { width: 100%; justify-content: center; }
+      .desktop-only-btn { display: none !important; }
+      .mobile-only-nav-actions { display: flex !important; }
+      .container { padding: 0 16px; }
+      .support-hero { padding: 36px 0 24px; }
+      .section-title { font-size: 26px; }
+      .section-subtitle { font-size: 14.5px; margin-bottom: 24px; }
+      .quick-jump-bar {
+        display: flex;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+        width: 100%;
+        max-width: 100%;
+        padding: 5px;
+        scrollbar-width: none;
+        justify-content: flex-start;
+      }
+      .quick-jump-bar::-webkit-scrollbar { display: none; }
+      .quick-jump-btn { flex-shrink: 0; padding: 7px 13px; font-size: 12px; }
+      .download-grid { grid-template-columns: 1fr; gap: 18px; }
+      .download-card { padding: 22px 18px; border-radius: 16px; }
+      .hardware-banner { padding: 20px 18px; flex-direction: column; align-items: flex-start; gap: 14px; }
+      .ticket-info-card { padding: 24px 18px; border-radius: 16px; }
+      .ticket-form-card { padding: 24px 18px; border-radius: 16px; }
+      .form-group-row { grid-template-columns: 1fr; gap: 12px; }
+      .form-group { margin-bottom: 14px; }
+      .form-group input, .form-group select, .form-group textarea { font-size: 16px !important; padding: 11px 12px; }
+      .remote-callout-card { padding: 18px 16px; flex-direction: column; align-items: stretch; gap: 14px; }
+      .btn-remote-quick { width: 100%; justify-content: center; }
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+      .modal-card { padding: 24px 18px; max-width: calc(100vw - 32px); border-radius: 16px; }
+      #chat-btn { bottom: 16px; right: 16px; width: 48px; height: 48px; font-size: 20px; }
+      #sales-chat-panel { bottom: 74px; right: 12px; left: 12px; width: calc(100vw - 24px); max-height: calc(100dvh - 90px); }
     }
   </style>
 
@@ -416,6 +451,38 @@
 
       window.location.href = 'portal.html';
     }
+
+    // --- PWA INSTALLATION CONTROLLER ---
+    let deferredSupportPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredSupportPrompt = e;
+    });
+
+    async function triggerPwaInstall() {
+      if (deferredSupportPrompt) {
+        deferredSupportPrompt.prompt();
+        const choice = await deferredSupportPrompt.userChoice;
+        if (choice && choice.outcome === 'accepted') {
+          deferredSupportPrompt = null;
+          return;
+        }
+      }
+      openModal('pwa-install-modal');
+    }
+
+    async function executeNativeInstallPrompt() {
+      if (deferredSupportPrompt) {
+        deferredSupportPrompt.prompt();
+        const choice = await deferredSupportPrompt.userChoice;
+        if (choice && choice.outcome === 'accepted') {
+          deferredSupportPrompt = null;
+          closeModal('pwa-install-modal');
+          return;
+        }
+      }
+      window.location.href = 'flexi-app.html';
+    }
   </script>
 </head>
 <body>
@@ -436,14 +503,18 @@
         <a href="about.html" class="nav-link">About Us & FAQ</a>
         <a href="support.html" class="nav-link active">Support & Download</a>
         <a href="dev_portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
+        <div class="mobile-only-nav-actions" style="display: none; flex-direction: column; gap: 10px; width: 100%; padding-top: 12px; border-top: 1px solid var(--card-border); margin-top: 4px;">
+          <a href="pricing.html" class="btn-signup" style="justify-content: center; width: 100%;">Get Started</a>
+          <button class="btn-login" onclick="openModal('login-modal')" style="width: 100%;">Merchant Login</button>
+        </div>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <a href="flexi-app.html" style="background: linear-gradient(135deg, rgba(59,130,246,0.22), rgba(37,99,235,0.35)); border: 1px solid rgba(59,130,246,0.6); color: #93c5fd; padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s;">
-          <span>📱</span> Support PWA App
-        </a>
-        <a href="pricing.html" class="btn-signup">Get Started</a>
-        <button class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button onclick="triggerPwaInstall()" style="background: linear-gradient(135deg, rgba(59,130,246,0.22), rgba(37,99,235,0.35)); border: 1px solid rgba(59,130,246,0.6); color: #93c5fd; padding: 7px 12px; border-radius: 10px; font-weight: 700; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s; font-family: inherit; white-space: nowrap;">
+          <span>📲</span> <span>Install App</span>
+        </button>
+        <a href="pricing.html" class="btn-signup desktop-only-btn">Get Started</a>
+        <button class="btn-login desktop-only-btn" onclick="openModal('login-modal')">Merchant Login</button>
       </div>
     </div>
   </header>
@@ -461,7 +532,7 @@
       </p>
 
       <div class="quick-jump-bar">
-        <a href="flexi-app.html" class="quick-jump-btn" style="color: #60a5fa; background: rgba(59,130,246,0.18); border: 1px solid rgba(59,130,246,0.5);">📱 Launch PWA App</a>
+        <button onclick="triggerPwaInstall()" class="quick-jump-btn" style="color: #60a5fa; background: rgba(59,130,246,0.18); border: 1px solid rgba(59,130,246,0.5); cursor: pointer; font-family: inherit;">📲 Install App</button>
         <a href="#downloads" class="quick-jump-btn active">📦 App Downloads</a>
         <a href="#ticket" class="quick-jump-btn">🎫 Submit a Ticket</a>
         <a href="#remote-assist" class="quick-jump-btn">⚡ Remote Diagnostics</a>
@@ -638,7 +709,7 @@
               <div class="opt-icon">📱</div>
               <div class="opt-content">
                 <strong>Install FlexiTap Support PWA</strong>
-                <span>Need instant camera uploads &amp; live ticket status tracking? <a href="flexi-app.html" style="color: #60a5fa; font-weight: 700;">Launch Support PWA App →</a></span>
+                <span>Need instant camera uploads &amp; live ticket status tracking? <a href="javascript:void(0)" onclick="triggerPwaInstall()" style="color: #60a5fa; font-weight: 700;">Install Support App on Device →</a></span>
               </div>
             </li>
             <li class="support-opt-item">
@@ -845,6 +916,48 @@
         <button type="submit" class="submit-btn" id="login-submit-btn">Log In to Merchant Portal</button>
       </form>
       <div id="login-modal-error" class="error-msg"></div>
+    </div>
+  </div>
+
+  <!-- PWA INSTALLATION MODAL -->
+  <div class="modal-overlay" id="pwa-install-modal">
+    <div class="modal-card" style="max-width: 480px; text-align: left;">
+      <button class="close-btn" onclick="closeModal('pwa-install-modal')">&times;</button>
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+        <img src="image_02e503.png" alt="FlexiTap Logo" style="width: 44px; height: 44px; border-radius: 12px;" />
+        <div>
+          <h3 style="font-size: 19px; font-weight: 800; color: #fff; margin: 0;">Install FlexiTap Support App</h3>
+          <p style="color: var(--text-muted); font-size: 12px; margin: 2px 0 0 0;">Dedicated POS Diagnostics &amp; Ticket Tracking</p>
+        </div>
+      </div>
+
+      <p style="color: #cbd5e1; font-size: 13.5px; line-height: 1.55; margin-bottom: 18px;">
+        Install the support app directly on your tablet, register, or phone for native camera inspection and real-time ticket alerts:
+      </p>
+
+      <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px; margin-bottom: 18px; font-size: 13px; line-height: 1.6;">
+        <div style="font-weight: 700; color: #60a5fa; margin-bottom: 4px;">📱 On Android POS / Sunmi / Chrome:</div>
+        <div style="color: var(--text-muted); margin-bottom: 10px;">Tap <strong>"Install App Now"</strong> below, or tap the browser menu (<strong>⋮</strong>) and select <strong>"Install App"</strong>.</div>
+
+        <div style="font-weight: 700; color: #34d399; margin-bottom: 4px;">🍎 On Apple iPad / iPhone (Safari):</div>
+        <div style="color: var(--text-muted); margin-bottom: 10px;">
+          1. Tap the <strong>Share</strong> button (<strong>⎋</strong>) at the bottom or top of Safari.<br>
+          2. Scroll down and tap <strong>"Add to Home Screen"</strong> (<strong>⊞</strong>).<br>
+          3. Tap <strong>Add</strong> to launch from your home screen.
+        </div>
+
+        <div style="font-weight: 700; color: #c084fc; margin-bottom: 4px;">💻 On Windows Counter Register (Edge / Chrome):</div>
+        <div style="color: var(--text-muted);">Click the <strong>Install</strong> icon in the browser address bar (top right).</div>
+      </div>
+
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="submit-btn" onclick="executeNativeInstallPrompt()" style="flex: 1; padding: 12px 16px; font-size: 14px;">
+          📲 Install App Now
+        </button>
+        <a href="flexi-app.html?standalone=true" target="_blank" style="padding: 12px 16px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid var(--card-border); color: #fff; font-weight: 700; font-size: 13px; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+          Open App ↗
+        </a>
+      </div>
     </div>
   </div>
 
