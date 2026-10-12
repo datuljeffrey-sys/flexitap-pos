@@ -1160,10 +1160,9 @@
             </div>
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
               <span style="font-size: 0.76rem; color: #a78bfa; font-weight: 700;">Simulate Role:</span>
-              <button class="crm-pill-btn active" id="sim-role-super_admin" onclick="simulateRole('super_admin')">👑 Super Admin</button>
-              <button class="crm-pill-btn" id="sim-role-technician" onclick="simulateRole('technician')">🔧 Field Tech</button>
-              <button class="crm-pill-btn" id="sim-role-support" onclick="simulateRole('support')">💬 Support Agent</button>
-              <button class="crm-pill-btn" id="sim-role-devops" onclick="simulateRole('devops')">💻 Senior DevOps</button>
+              <button class="crm-pill-btn active" id="sim-role-admin" onclick="simulateRole('admin')">👑 Admin</button>
+              <button class="crm-pill-btn" id="sim-role-dev" onclick="simulateRole('dev')">💻 Dev</button>
+              <button class="crm-pill-btn" id="sim-role-support" onclick="simulateRole('support')">💬 Customer Support</button>
               <button class="crm-pill-btn" id="sim-role-reset" onclick="simulateRole('reset')" style="border-color: rgba(239, 68, 68, 0.3); color: var(--danger);">Reset Simulation</button>
             </div>
           </div>
@@ -1184,27 +1183,27 @@
           <div class="kpi-row">
             <div class="kpi-card">
               <div class="kpi-title">Active Backend Staff</div>
-              <div class="kpi-val" id="team-kpi-total">5</div>
+              <div class="kpi-val" id="team-kpi-total">4</div>
               <div class="kpi-status" style="color: var(--accent);">
-                <span>●</span> <span id="team-kpi-active-desc">5 Active Accounts</span>
+                <span>●</span> <span id="team-kpi-active-desc">Active Accounts</span>
               </div>
             </div>
             <div class="kpi-card">
-              <div class="kpi-title">Field Technicians</div>
-              <div class="kpi-val" id="team-kpi-techs" style="color: #38bdf8;">2</div>
+              <div class="kpi-title">Core Developers</div>
+              <div class="kpi-val" id="team-kpi-devs" style="color: #38bdf8;">1</div>
               <div class="kpi-status" style="color: #38bdf8;">
-                <span>●</span> Hardware &amp; Store Deployments
+                <span>●</span> Platform &amp; APIs
               </div>
             </div>
             <div class="kpi-card">
-              <div class="kpi-title">Support Desk Specialists</div>
+              <div class="kpi-title">Customer Support</div>
               <div class="kpi-val" id="team-kpi-support" style="color: #34d399;">2</div>
               <div class="kpi-status" style="color: #34d399;">
-                <span>●</span> Live Chat &amp; Ticket Queue
+                <span>●</span> Live Chat &amp; Ticket Desk
               </div>
             </div>
             <div class="kpi-card">
-              <div class="kpi-title">DevOps &amp; Super Admins</div>
+              <div class="kpi-title">System Administrators</div>
               <div class="kpi-val" id="team-kpi-admins" style="color: #a78bfa;">1</div>
               <div class="kpi-status" style="color: #a78bfa;">
                 <span>●</span> Full System Privileges
@@ -1219,10 +1218,9 @@
                 <span class="panel-title">Backend Staff Directory &amp; RBAC Scopes</span>
                 <div id="team-role-filter-group" style="display: flex; gap: 6px; flex-wrap: wrap;">
                   <button class="crm-pill-btn active" onclick="filterStaffRole('all', this)">All Staff</button>
-                  <button class="crm-pill-btn" onclick="filterStaffRole('technician', this)">Field Techs</button>
-                  <button class="crm-pill-btn" onclick="filterStaffRole('support', this)">Support Agents</button>
-                  <button class="crm-pill-btn" onclick="filterStaffRole('devops', this)">DevOps</button>
                   <button class="crm-pill-btn" onclick="filterStaffRole('admin', this)">Admins</button>
+                  <button class="crm-pill-btn" onclick="filterStaffRole('dev', this)">Devs</button>
+                  <button class="crm-pill-btn" onclick="filterStaffRole('support', this)">Customer Support</button>
                 </div>
               </div>
               <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
@@ -1263,11 +1261,14 @@
         <!-- ================= 10. WORKFORCE & SHIFTS HUB (ACCESSIBLE BY EVERYONE) ================= -->
         <div id="view-workforce" class="tab-view">
 
-          <!-- Sub-Navigation Tabs: 1. Timecard & Punch, 2. PTO & Leaves, 3. Weekly Schedule -->
+          <!-- Sub-Navigation Tabs: 1. Timecard & Punch, 2. Timecard Report, 3. PTO & Leaves, 4. Weekly Schedule -->
           <div class="crm-header-card" style="padding-bottom: 0;">
             <div class="crm-tabs-nav" style="margin-bottom: 0;">
               <button class="crm-tab-btn active" id="workforce-subtab-punch" onclick="switchWorkforceSubTab('punch')">
                 <span>⏱️ Workforce Timecard &amp; Punch</span>
+              </button>
+              <button class="crm-tab-btn" id="workforce-subtab-report" onclick="switchWorkforceSubTab('report')">
+                <span>📊 Timecard Report &amp; History</span>
               </button>
               <button class="crm-tab-btn" id="workforce-subtab-pto" onclick="switchWorkforceSubTab('pto')">
                 <span>🏖️ PTO &amp; Leave Requests</span>
@@ -1299,8 +1300,8 @@
                   <button id="btn-punch-break" onclick="handlePunchBreak()" class="action-btn" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); padding: 10px 16px; font-size: 0.85rem;">
                     ☕ Take Break
                   </button>
-                  <button onclick="switchWorkforceSubTab('pto')" class="action-btn" style="padding: 10px 16px; font-size: 0.85rem;">
-                    🏖️ Request PTO
+                  <button onclick="switchWorkforceSubTab('report')" class="action-btn" style="padding: 10px 16px; font-size: 0.85rem;">
+                    📊 View Report
                   </button>
                 </div>
               </div>
@@ -1311,11 +1312,11 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                   <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 10px; border: 1px solid var(--card-border);">
                     <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">CURRENT LOCATION</div>
-                    <div id="punch-location" style="font-size: 0.88rem; font-weight: 700; color: #fff; margin-top: 4px;">Remote Ops HQ</div>
+                    <div id="punch-location" style="font-size: 0.88rem; font-weight: 700; color: #fff; margin-top: 4px;">FlexiTap Operations HQ</div>
                   </div>
                   <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 10px; border: 1px solid var(--card-border);">
                     <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">ACTIVE ASSIGNMENT</div>
-                    <div id="punch-assignment" style="font-size: 0.88rem; font-weight: 700; color: #60a5fa; margin-top: 4px;">Dispatch &amp; On-Call</div>
+                    <div id="punch-assignment" style="font-size: 0.88rem; font-weight: 700; color: #60a5fa; margin-top: 4px;">Live Customer Support Desk</div>
                   </div>
                   <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 10px; border: 1px solid var(--card-border);">
                     <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">WEEKLY HOURS LOGGED</div>
@@ -1333,8 +1334,8 @@
             <div class="panel">
               <div class="panel-header">
                 <div>
-                  <span class="panel-title">Live Staff Attendance &amp; Shift Timesheet</span>
-                  <p style="font-size: 0.78rem; color: var(--text-muted); margin: 4px 0 0 0;">Real-time clock tracking across Field &amp; Support staff</p>
+                  <span class="panel-title" id="workforce-attendance-title">Live Staff Attendance &amp; Shift Timesheet</span>
+                  <p id="workforce-attendance-subtitle" style="font-size: 0.78rem; color: var(--text-muted); margin: 4px 0 0 0;">Real-time clock tracking across Customer Support &amp; Ops staff</p>
                 </div>
                 <button class="action-btn" onclick="renderAttendanceTable()">🔄 Refresh Timesheet</button>
               </div>
@@ -1359,13 +1360,112 @@
             </div>
           </div>
 
-          <!-- SUB-TAB 2: PTO & LEAVE REQUESTS -->
+          <!-- SUB-TAB 2: TIMECARD REPORT & HISTORY -->
+          <div id="workforce-subpanel-report" class="workforce-subpanel" style="display: none;">
+            
+            <!-- Summary KPI Cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 20px;">
+              <div class="panel" style="margin-bottom: 0; background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9)); border: 1px solid var(--card-border);">
+                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">TOTAL HOURS LOGGED</div>
+                <div id="timecard-kpi-total-hours" style="font-size: 1.8rem; font-weight: 900; color: #fff; margin-top: 4px;">0.0 hrs</div>
+                <div style="font-size: 0.74rem; color: #60a5fa; margin-top: 4px;">Regular + Overtime</div>
+              </div>
+              <div class="panel" style="margin-bottom: 0; background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9)); border: 1px solid var(--card-border);">
+                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">REGULAR SHIFT HOURS</div>
+                <div id="timecard-kpi-reg-hours" style="font-size: 1.8rem; font-weight: 900; color: #34d399; margin-top: 4px;">0.0 hrs</div>
+                <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px;">Standard base shifts</div>
+              </div>
+              <div class="panel" style="margin-bottom: 0; background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9)); border: 1px solid var(--card-border);">
+                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">OVERTIME (OT) HOURS</div>
+                <div id="timecard-kpi-ot-hours" style="font-size: 1.8rem; font-weight: 900; color: #fbbf24; margin-top: 4px;">0.0 hrs</div>
+                <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px;">&gt; 8 hrs / extended shift</div>
+              </div>
+              <div class="panel" style="margin-bottom: 0; background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9)); border: 1px solid var(--card-border);">
+                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">ACTIVE PAYROLL PERIOD</div>
+                <div id="timecard-kpi-period" style="font-size: 1.15rem; font-weight: 800; color: #a78bfa; margin-top: 8px;">Oct 01 – Oct 15</div>
+                <div id="timecard-kpi-staff-count" style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px;">Current Timesheet Cycle</div>
+              </div>
+            </div>
+
+            <!-- Report Filter Controls & Actions -->
+            <div class="panel">
+              <div class="panel-header" style="flex-wrap: wrap; gap: 14px;">
+                <div>
+                  <span class="panel-title" id="timecard-report-title">Timecard Report &amp; Timesheet History</span>
+                  <p id="timecard-report-subtitle" style="font-size: 0.78rem; color: var(--text-muted); margin: 4px 0 0 0;">Audited punch history, daily hours, breaks, and payroll verification</p>
+                </div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                  <button class="action-btn" onclick="exportTimecardReportCsv()" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3);">
+                    📥 Export CSV
+                  </button>
+                  <button class="action-btn" onclick="printTimecardReport()" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(59, 130, 246, 0.3);">
+                    🖨️ Print Report
+                  </button>
+                  <button class="action-btn" onclick="renderTimecardReportTable()">
+                    🔄 Refresh
+                  </button>
+                </div>
+              </div>
+
+              <!-- Filter Bar -->
+              <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--card-border);">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">Period:</span>
+                  <select id="timecard-period-select" class="crm-select" onchange="renderTimecardReportTable()" style="padding: 7px 12px; font-size: 0.82rem; min-width: 200px;">
+                    <option value="current">Current Pay Period (Oct 01 - Oct 15, 2026)</option>
+                    <option value="prev">Previous Pay Period (Sep 16 - Sep 30, 2026)</option>
+                    <option value="week">Past 7 Days</option>
+                    <option value="all">All Available Records</option>
+                  </select>
+                </div>
+
+                <div id="timecard-staff-filter-wrap" style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">Employee:</span>
+                  <select id="timecard-staff-select" class="crm-select" onchange="renderTimecardReportTable()" style="padding: 7px 12px; font-size: 0.82rem; min-width: 200px;">
+                    <option value="all">👥 All Staff Members</option>
+                    <!-- Populated dynamically -->
+                  </select>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 180px;">
+                  <input type="text" id="timecard-search-input" placeholder="Search by date, assignment, store..." oninput="renderTimecardReportTable()" style="width: 100%; padding: 7px 12px; font-size: 0.82rem; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; outline: none;" />
+                </div>
+              </div>
+
+              <!-- Report Table -->
+              <div class="table-responsive">
+                <table class="data-table" id="table-timecard-report">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th id="th-timecard-staff">Staff Member</th>
+                      <th>Role</th>
+                      <th>Clock In</th>
+                      <th>Clock Out</th>
+                      <th>Break</th>
+                      <th>Reg Hrs</th>
+                      <th>OT Hrs</th>
+                      <th>Total Hrs</th>
+                      <th>Assignment / Notes</th>
+                      <th>Status / Verification</th>
+                    </tr>
+                  </thead>
+                  <tbody id="timecard-report-tbody">
+                    <!-- Populated dynamically by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- SUB-TAB 3: PTO & LEAVE REQUESTS -->
           <div id="workforce-subpanel-pto" class="workforce-subpanel" style="display: none;">
             <div class="panel">
               <div class="panel-header">
                 <div>
-                  <span class="panel-title">Paid Time Off (PTO) &amp; Leave Management</span>
-                  <p style="font-size: 0.78rem; color: var(--text-muted); margin: 4px 0 0 0;">Submit time-off requests and track manager leave approvals</p>
+                  <span class="panel-title" id="workforce-pto-title">Paid Time Off (PTO) &amp; Leave Management</span>
+                  <p id="workforce-pto-subtitle" style="font-size: 0.78rem; color: var(--text-muted); margin: 4px 0 0 0;">Submit time-off requests and track manager leave approvals</p>
                 </div>
                 <button class="action-btn" onclick="openPtoModal()" style="background: var(--primary); color: #fff; border-color: var(--primary);">
                   + Submit PTO Request
@@ -1393,16 +1493,16 @@
             </div>
           </div>
 
-          <!-- SUB-TAB 3: WEEKLY COVERAGE SCHEDULE -->
+          <!-- SUB-TAB 4: WEEKLY COVERAGE SCHEDULE -->
           <div id="workforce-subpanel-schedule" class="workforce-subpanel" style="display: none;">
             <div class="panel">
               <div class="panel-header">
                 <div>
-                  <span class="panel-title">Weekly Field &amp; Support Shift Roster</span>
-                  <p style="font-size: 0.78rem; color: var(--text-muted); margin: 4px 0 0 0;">Coverage Grid • 24/7 Remote Diagnostics &amp; Field Dispatch</p>
+                  <span class="panel-title" id="workforce-schedule-title">Weekly Staff Coverage &amp; Shift Roster</span>
+                  <p id="workforce-schedule-subtitle" style="font-size: 0.78rem; color: var(--text-muted); margin: 4px 0 0 0;">Coverage Grid • 24/7 Live Support &amp; Platform Coverage</p>
                 </div>
                 <div style="display: flex; gap: 8px;">
-                  <button class="action-btn" onclick="openAddShiftModal()" style="background: var(--primary); color: #fff; border-color: var(--primary);">+ Assign Shift</button>
+                  <button class="action-btn" id="btn-open-add-shift" onclick="openAddShiftModal()" style="background: var(--primary); color: #fff; border-color: var(--primary);">+ Assign Shift</button>
                 </div>
               </div>
 
@@ -1629,24 +1729,21 @@
                                    emailLower.includes('staff');
 
       if (!role && isOfficialStaffEmail) {
-        if (emailLower.includes('tech')) role = 'technician';
-        else if (emailLower.includes('support')) role = 'support';
+        if (emailLower.includes('admin')) role = 'admin';
         else if (emailLower.includes('dev')) role = 'dev';
-        else if (emailLower.includes('admin')) role = 'admin';
-        else if (emailLower.includes('dispatch')) role = 'dispatch';
-        else role = 'technician'; // Default employee to technician role
+        else if (emailLower.includes('support')) role = 'support';
+        else role = 'support'; // Default employee to Customer Support role
       }
 
       const backendRoles = [
         'dev', 'developer', 'admin', 'super_admin', 'devops',
-        'tech', 'technician', 'agent', 'support', 'dispatch',
-        'lead', 'staff', 'employee', 'technician_lead', 'ops'
+        'support', 'agent', 'staff', 'employee', 'ops', 'technician', 'tech'
       ];
 
       const isBackendStaff = backendRoles.includes(role) || isOfficialStaffEmail;
 
       if (isBackendStaff) {
-        if (!role || role === 'employee') role = 'technician';
+        if (!role || role === 'employee' || role === 'technician' || role === 'tech' || role === 'dispatch') role = 'support';
 
         // Auto-provision or update profile in Supabase profiles table
         if (!profile || !profile.role) {
@@ -1674,23 +1771,23 @@
             id: user.id,
             full_name: activeDevProfile.full_name || user.email.split('@')[0],
             email: user.email,
-            department: role === 'technician' ? 'Field Operations & Hardware' : (role === 'support' ? 'Customer Success & Support' : 'Platform & DevOps Engineering'),
-            role_title: role === 'technician' ? 'Field Technician' : (role === 'support' ? 'Support Specialist' : 'Backend Staff'),
+            department: role === 'support' ? 'Customer Success & Support' : 'Platform & Dev Engineering',
+            role_title: role === 'support' ? 'Customer Support Specialist' : (role === 'admin' ? 'System Administrator' : 'Core Developer'),
             role: role,
             status: 'active',
             clock_status: 'clocked_out',
             shift_time: 'Ready for shift',
-            current_assignment: 'General Operations',
+            current_assignment: role === 'support' ? 'Live Support Desk' : 'Platform Operations',
             permissions: {
               clients: true,
               tickets: true,
-              remote: role === 'technician' || role === 'devops' || role === 'admin',
-              support: role === 'support' || role === 'admin',
-              updates: role === 'devops' || role === 'admin',
-              monitoring: role === 'devops' || role === 'admin',
-              errors: role === 'devops' || role === 'admin',
-              analytics: role === 'devops' || role === 'admin',
-              team: role === 'admin' || role === 'super_admin'
+              remote: true,
+              support: true,
+              updates: role === 'dev' || role === 'admin',
+              monitoring: role === 'dev' || role === 'admin',
+              errors: role === 'dev' || role === 'admin',
+              analytics: role === 'dev' || role === 'admin',
+              team: role === 'admin'
             }
           });
           try {
@@ -1702,8 +1799,8 @@
         document.getElementById('dev-app-layout').style.display = 'flex';
         document.getElementById('active-dev-user').innerText = (activeDevProfile && activeDevProfile.full_name) ? `${activeDevProfile.full_name} (${user.email})` : user.email;
 
-        // Auto-navigate: field technicians, support agents, and staff route directly to Workforce & Shifts
-        if (role === 'technician' || role === 'tech' || role === 'support' || role === 'agent' || role === 'employee' || role === 'staff') {
+        // Auto-navigate: customer support agents and staff route directly to Workforce & Shifts
+        if (role === 'support' || role === 'agent' || role === 'employee' || role === 'staff') {
           switchNav('workforce');
         } else {
           loadDevData();
@@ -1711,7 +1808,7 @@
         }
       } else {
         await supabaseClient.auth.signOut();
-        document.getElementById('dev-err').innerText = 'Access Denied: Backend Staff, Technician, or Admin role required.';
+        document.getElementById('dev-err').innerText = 'Access Denied: Admin, Dev, or Customer Support role required.';
         document.getElementById('dev-auth-view').style.display = 'flex';
         document.getElementById('dev-app-layout').style.display = 'none';
       }
@@ -2591,6 +2688,75 @@
       if (modal) modal.classList.remove('open');
     }
 
+    // Auto-assignment for tickets: strictly Dev or Customer Support. Admin excluded.
+    function getAutoAssignedStaff(ticketData = {}) {
+      const defaultPool = [
+        { full_name: 'David Kim', email: 'david.ops@flexitapapp.com', role: 'dev', role_title: 'Senior DevOps & Platform Engineer' },
+        { full_name: 'Marcus Vance', email: 'marcus.support@flexitapapp.com', role: 'support', role_title: 'Customer Support Lead' },
+        { full_name: 'Sarah Jenkins', email: 'sarah.support@flexitapapp.com', role: 'support', role_title: 'Senior Support Desk Specialist' },
+        { full_name: 'Alex Rivera', email: 'employee@flexitapapp.com', role: 'support', role_title: 'Customer Support Specialist' }
+      ];
+
+      let eligibleStaff = [];
+      if (typeof teamStaffMembers !== 'undefined' && Array.isArray(teamStaffMembers) && teamStaffMembers.length > 0) {
+        eligibleStaff = teamStaffMembers.filter(m => {
+          const r = (m.role || '').toLowerCase();
+          // Exclude Admin & Super Admin strictly!
+          if (r === 'admin' || r === 'super_admin' || m.department === 'Executive & Admin') return false;
+          return r === 'dev' || r === 'developer' || r === 'devops' || r === 'support' || r === 'customer_support' || r === 'agent';
+        });
+      }
+
+      if (eligibleStaff.length === 0) {
+        eligibleStaff = defaultPool;
+      }
+
+      const category = (ticketData.category || '').toLowerCase();
+      const text = ((ticketData.subject || '') + ' ' + (ticketData.description || '')).toLowerCase();
+
+      // Technical issues -> Devs. Merchant/billing issues -> Customer Support. Admins excluded.
+      const isTech = ['printer', 'sync', 'bug', 'firmware', 'hardware', 'api', 'crash', 'error'].includes(category) ||
+                     text.includes('printer') || text.includes('bluetooth') || text.includes('cutter') || 
+                     text.includes('sync') || text.includes('freeze') || text.includes('socket') || text.includes('exception');
+
+      let targetPool = [];
+      if (isTech) {
+        targetPool = eligibleStaff.filter(m => {
+          const r = (m.role || '').toLowerCase();
+          return r === 'dev' || r === 'developer' || r === 'devops';
+        });
+        if (targetPool.length === 0) targetPool = eligibleStaff;
+      } else {
+        targetPool = eligibleStaff.filter(m => {
+          const r = (m.role || '').toLowerCase();
+          return r === 'support' || r === 'customer_support' || r === 'agent';
+        });
+        if (targetPool.length === 0) targetPool = eligibleStaff;
+      }
+
+      // Prioritize staff who are currently clocked in if attendance data is available
+      const clockedIn = targetPool.filter(m => m.clock_status === 'clocked_in');
+      const pool = clockedIn.length > 0 ? clockedIn : targetPool;
+
+      let idx = 0;
+      try {
+        const saved = parseInt(localStorage.getItem('flexitap_ticket_assign_idx') || '0', 10);
+        idx = (saved + 1) % pool.length;
+        localStorage.setItem('flexitap_ticket_assign_idx', String(idx));
+      } catch (e) {
+        idx = Math.floor(Math.random() * pool.length);
+      }
+
+      const assigned = pool[idx] || pool[0] || defaultPool[0];
+      return {
+        assigned_to: assigned.email,
+        staff_name: assigned.full_name,
+        role: assigned.role,
+        role_title: assigned.role_title || (assigned.role === 'dev' ? 'Core Developer' : 'Customer Support Specialist'),
+        routing_reason: isTech ? 'Technical / System defect auto-routed to Dev' : 'Merchant issue auto-routed to Customer Support'
+      };
+    }
+
     async function handleCrmCreateTicketSubmit(event) {
       event.preventDefault();
       const acc = crmAccounts.find(function(x) { return x.id === currentCrmAccountId; });
@@ -2602,6 +2768,9 @@
       const priority = document.getElementById('crm-nt-priority').value;
       const contactEmail = document.getElementById('crm-nt-email').value.trim();
 
+      // Auto-assign to Dev or Customer Support (Admin excluded)
+      const autoAssign = getAutoAssignedStaff({ category: category, subject: subject, description: description });
+
       const newTicketPayload = {
         merchant_id: acc.id,
         store_name: acc.store_name,
@@ -2611,11 +2780,13 @@
         subject: subject,
         description: description,
         status: 'open',
+        assigned_to: autoAssign.assigned_to,
         device_telemetry: {
           channel: 'Merchant CRM Portal',
           app_version: 'v2.4.1 (Admin Console)',
           device_role: 'Customer Ticket',
-          sqlite_healthy: true
+          sqlite_healthy: true,
+          auto_assigned: autoAssign
         }
       };
 
@@ -3276,6 +3447,9 @@
       const subject = document.getElementById('nt-subject').value.trim();
       const description = document.getElementById('nt-description').value.trim();
 
+      // Auto-assign to Dev or Customer Support (Admin excluded)
+      const autoAssign = getAutoAssignedStaff({ category: category, subject: subject, description: description });
+
       const newTicketPayload = {
         store_name: storeName,
         contact_email: contactEmail || null,
@@ -3284,10 +3458,12 @@
         subject: subject,
         description: description,
         status: 'open',
+        assigned_to: autoAssign.assigned_to,
         device_telemetry: {
           app_version: 'v2.4.1 (Web Portal)',
           device_role: 'Admin Console',
-          sqlite_healthy: true
+          sqlite_healthy: true,
+          auto_assigned: autoAssign
         }
       };
 
@@ -3474,6 +3650,8 @@
               <span>${(t.category || 'general').toUpperCase()}</span>
               <span>•</span>
               <span>${timeAgo}</span>
+              <span>•</span>
+              <span style="color: #38bdf8; font-weight: 700;">👤 ${escapeHtml(t.assigned_to ? t.assigned_to.split('@')[0] : 'Auto-Assigned')}</span>
             </div>
           </div>
         `;
@@ -3493,6 +3671,9 @@
       const timeStr = new Date(selectedTicket.created_at).toLocaleString();
       const telemetry = selectedTicket.device_telemetry || {};
       const telemetryStr = `${telemetry.app_version || 'v2.4.1'} • ${telemetry.device_role || 'Master POS'} • ${telemetry.sqlite_healthy ? 'SQLite Healthy' : 'Offline'}`;
+      const assignedLabel = selectedTicket.device_telemetry?.auto_assigned?.staff_name
+        ? `${selectedTicket.device_telemetry.auto_assigned.staff_name} (${selectedTicket.device_telemetry.auto_assigned.role === 'dev' ? 'Dev Engineering' : 'Customer Support'})`
+        : (selectedTicket.assigned_to || 'sarah.support@flexitapapp.com');
 
       workspaceEl.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--card-border); flex-wrap: wrap; gap: 12px;">
@@ -3505,6 +3686,7 @@
               Store: <strong style="color: #fff;">${escapeHtml(selectedTicket.store_name)}</strong>
               ${selectedTicket.contact_email ? ` • Email: ${escapeHtml(selectedTicket.contact_email)}` : ''}
               • Created: ${timeStr}
+              • <span style="color: #38bdf8; font-weight: 700;">👤 Assigned: ${escapeHtml(assignedLabel)}</span>
             </div>
           </div>
           <span style="background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 4px 10px; border-radius: 8px; font-size: 0.72rem; color: var(--text-muted);">
@@ -3544,8 +3726,8 @@
             </select>
           </div>
           <div class="ticket-edit-field">
-            <label>Assignee</label>
-            <input type="text" id="t-edit-assignee" value="${escapeHtml(selectedTicket.assigned_to || 'dev@flexitap.io')}" />
+            <label>Assignee (Dev / Support Only — Admin Excluded)</label>
+            <input type="text" id="t-edit-assignee" value="${escapeHtml(selectedTicket.assigned_to || 'sarah.support@flexitapapp.com')}" />
           </div>
         </div>
 
@@ -3939,12 +4121,12 @@
       {
         id: 'pto-1',
         staff_name: 'Marcus Vance',
-        staff_email: 'marcus.tech@flexitapapp.com',
+        staff_email: 'marcus.support@flexitapapp.com',
         type: 'Paid Vacation',
         start_date: '2026-10-24',
         end_date: '2026-10-28',
         duration_days: 4,
-        reason: 'Annual family leave; scheduled store deployments handed to team lead.',
+        reason: 'Annual family leave; customer ticket queue coverage arranged with team.',
         status: 'approved',
         created_at: '2026-10-10'
       },
@@ -3956,7 +4138,19 @@
         start_date: '2026-10-19',
         end_date: '2026-10-20',
         duration_days: 2,
-        reason: 'Personal appointments; live chat queue coverage arranged with dispatch.',
+        reason: 'Personal appointments; live chat queue coverage arranged with support lead.',
+        status: 'pending',
+        created_at: '2026-10-12'
+      },
+      {
+        id: 'pto-3',
+        staff_name: 'Alex Rivera',
+        staff_email: 'employee@flexitapapp.com',
+        type: 'Personal Leave',
+        start_date: '2026-11-02',
+        end_date: '2026-11-03',
+        duration_days: 2,
+        reason: 'Medical appointment and recovery.',
         status: 'pending',
         created_at: '2026-10-12'
       }
@@ -3966,13 +4160,14 @@
       {
         id: 'sch-1',
         staff_name: 'Marcus Vance',
-        role_type: 'tech',
+        staff_email: 'marcus.support@flexitapapp.com',
+        role_type: 'support',
         shifts: {
-          Mon: '08:00 - 16:30 (QSR Store #102)',
-          Tue: '08:00 - 16:30 (Retail Dispatch)',
-          Wed: '08:00 - 16:30 (Hardware QA)',
-          Thu: '08:00 - 16:30 (KDS Setup)',
-          Fri: '08:00 - 16:30 (Field Deployment)',
+          Mon: '08:00 - 16:30 (Support Desk)',
+          Tue: '08:00 - 16:30 (Merchant Queue)',
+          Wed: '08:00 - 16:30 (Customer Chat)',
+          Thu: '08:00 - 16:30 (Terminal Onboarding)',
+          Fri: '08:00 - 16:30 (Support Escalations)',
           Sat: 'Off',
           Sun: 'Off'
         }
@@ -3980,6 +4175,7 @@
       {
         id: 'sch-2',
         staff_name: 'Sarah Jenkins',
+        staff_email: 'sarah.support@flexitapapp.com',
         role_type: 'support',
         shifts: {
           Mon: '09:00 - 17:30 (Live Chat Lead)',
@@ -3994,7 +4190,8 @@
       {
         id: 'sch-3',
         staff_name: 'David Kim',
-        role_type: 'devops',
+        staff_email: 'david.ops@flexitapapp.com',
+        role_type: 'dev',
         shifts: {
           Mon: '10:00 - 18:30 (OTA Storage Releases)',
           Tue: '10:00 - 18:30 (Supabase Sync)',
@@ -4007,38 +4204,145 @@
       },
       {
         id: 'sch-4',
-        staff_name: 'Carlos Mendoza',
-        role_type: 'tech',
+        staff_name: 'Alex Rivera',
+        staff_email: 'employee@flexitapapp.com',
+        role_type: 'support',
         shifts: {
-          Mon: '12:00 - 20:30 (Evening Tech Support)',
-          Tue: '12:00 - 20:30 (Sunmi Terminal Installs)',
-          Wed: 'Off',
-          Thu: '12:00 - 20:30 (Emergency Dispatches)',
-          Fri: '12:00 - 20:30 (Evening Field Dispatch)',
-          Sat: '10:00 - 18:00 (Weekend Coverage)',
+          Mon: '08:30 - 17:00 (Customer Support Queue)',
+          Tue: '08:30 - 17:00 (Merchant Help Desk)',
+          Wed: '08:30 - 17:00 (Live Chat Assistance)',
+          Thu: '08:30 - 17:00 (Terminal Support)',
+          Fri: '08:30 - 17:00 (Customer Follow-up)',
+          Sat: 'Off',
           Sun: 'Off'
         }
       }
     ];
+
+    let timecardReportLogs = [
+      {
+        id: 'tc-1',
+        staff_name: 'Marcus Vance',
+        staff_email: 'marcus.support@flexitapapp.com',
+        role: 'support',
+        date: '2026-10-12',
+        date_formatted: 'Mon, Oct 12',
+        clock_in: '08:00 AM',
+        clock_out: '16:30 PM',
+        break_minutes: 30,
+        regular_hours: 8.0,
+        overtime_hours: 0.0,
+        total_hours: 8.0,
+        assignment: 'Customer Support Desk (Live Chat & Tickets)',
+        status: 'verified'
+      },
+      {
+        id: 'tc-2',
+        staff_name: 'Marcus Vance',
+        staff_email: 'marcus.support@flexitapapp.com',
+        role: 'support',
+        date: '2026-10-11',
+        date_formatted: 'Sun, Oct 11',
+        clock_in: '08:00 AM',
+        clock_out: '18:15 PM',
+        break_minutes: 45,
+        regular_hours: 8.0,
+        overtime_hours: 1.5,
+        total_hours: 9.5,
+        assignment: 'Weekend Merchant Escalations & Support',
+        status: 'approved'
+      },
+      {
+        id: 'tc-3',
+        staff_name: 'Sarah Jenkins',
+        staff_email: 'sarah.support@flexitapapp.com',
+        role: 'support',
+        date: '2026-10-12',
+        date_formatted: 'Mon, Oct 12',
+        clock_in: '09:00 AM',
+        clock_out: '17:30 PM',
+        break_minutes: 30,
+        regular_hours: 8.0,
+        overtime_hours: 0.0,
+        total_hours: 8.0,
+        assignment: 'Live Chat Queue & Merchant Assistance',
+        status: 'verified'
+      },
+      {
+        id: 'tc-4',
+        staff_name: 'David Kim',
+        staff_email: 'david.ops@flexitapapp.com',
+        role: 'dev',
+        date: '2026-10-12',
+        date_formatted: 'Mon, Oct 12',
+        clock_in: '10:00 AM',
+        clock_out: '19:00 PM',
+        break_minutes: 30,
+        regular_hours: 8.0,
+        overtime_hours: 0.5,
+        total_hours: 8.5,
+        assignment: 'OTA Firmware Releases & Fleet Monitoring',
+        status: 'approved'
+      },
+      {
+        id: 'tc-5',
+        staff_name: 'Alex Rivera',
+        staff_email: 'employee@flexitapapp.com',
+        role: 'support',
+        date: '2026-10-12',
+        date_formatted: 'Mon, Oct 12',
+        clock_in: '08:30 AM',
+        clock_out: '17:00 PM',
+        break_minutes: 30,
+        regular_hours: 8.0,
+        overtime_hours: 0.0,
+        total_hours: 8.0,
+        assignment: 'Merchant Onboarding & Support Queue',
+        status: 'verified'
+      },
+      {
+        id: 'tc-6',
+        staff_name: 'Alex Rivera',
+        staff_email: 'employee@flexitapapp.com',
+        role: 'support',
+        date: '2026-10-09',
+        date_formatted: 'Fri, Oct 09',
+        clock_in: '08:30 AM',
+        clock_out: '18:15 PM',
+        break_minutes: 30,
+        regular_hours: 8.0,
+        overtime_hours: 1.25,
+        total_hours: 9.25,
+        assignment: 'Support Queue Overtime & Merchant Assistance',
+        status: 'approved'
+      }
+    ];
+
+    try {
+      const savedTc = localStorage.getItem('flexitap_timecard_report_logs');
+      if (savedTc) {
+        timecardReportLogs = JSON.parse(savedTc);
+      }
+    } catch (e) {}
 
     function getDefaultSeedStaff() {
       return [
         {
           id: 'staff-seed-1',
           full_name: 'Marcus Vance',
-          email: 'marcus.tech@flexitapapp.com',
-          department: 'Field Operations & Hardware',
-          role_title: 'Lead Field Technician',
-          role: 'technician',
+          email: 'marcus.support@flexitapapp.com',
+          department: 'Customer Success & Support',
+          role_title: 'Customer Support Lead',
+          role: 'support',
           status: 'active',
           clock_status: 'clocked_in',
-          shift_time: '08:15 AM (3h 45m)',
-          current_assignment: 'Field Hardware Deployment',
+          shift_time: '08:00 AM (4h 15m)',
+          current_assignment: 'Live Customer Support Queue',
           permissions: {
             clients: true,
             tickets: true,
             remote: true,
-            support: false,
+            support: true,
             updates: false,
             monitoring: false,
             errors: false,
@@ -4060,7 +4364,7 @@
           permissions: {
             clients: true,
             tickets: true,
-            remote: false,
+            remote: true,
             support: true,
             updates: false,
             monitoring: false,
@@ -4072,14 +4376,14 @@
         {
           id: 'staff-seed-3',
           full_name: 'David Kim',
-          email: 'david.devops@flexitapapp.com',
-          department: 'Platform & DevOps Engineering',
-          role_title: 'Senior DevOps & Fleet Engineer',
-          role: 'devops',
+          email: 'david.ops@flexitapapp.com',
+          department: 'Platform & Dev Engineering',
+          role_title: 'Senior DevOps & Platform Engineer',
+          role: 'dev',
           status: 'active',
           clock_status: 'clocked_out',
           shift_time: 'Yesterday: 8.5 hrs',
-          current_assignment: 'OTA Releases & ADB Fleet',
+          current_assignment: 'OTA Releases & API Health',
           permissions: {
             clients: true,
             tickets: true,
@@ -4094,20 +4398,20 @@
         },
         {
           id: 'staff-seed-4',
-          full_name: 'Carlos Mendoza',
-          email: 'carlos.dispatch@flexitapapp.com',
-          department: 'Operations & Dispatch',
-          role_title: 'Field Dispatch Lead',
-          role: 'dispatch',
+          full_name: 'Alex Rivera',
+          email: 'employee@flexitapapp.com',
+          department: 'Customer Success & Support',
+          role_title: 'Customer Support Specialist',
+          role: 'support',
           status: 'active',
-          clock_status: 'clocked_in',
-          shift_time: '07:30 AM (4h 30m)',
-          current_assignment: 'Dispatch & On-Call Queue',
+          clock_status: 'clocked_out',
+          shift_time: 'Ready for shift',
+          current_assignment: 'Merchant Support Desk',
           permissions: {
             clients: true,
             tickets: true,
             remote: true,
-            support: false,
+            support: true,
             updates: false,
             monitoring: false,
             errors: false,
@@ -4127,10 +4431,10 @@
       }
 
       // Update simulator buttons UI
-      ['super_admin', 'technician', 'support', 'devops', 'reset'].forEach(function(r) {
+      ['admin', 'dev', 'support', 'reset'].forEach(function(r) {
         const btn = document.getElementById('sim-role-' + r);
         if (btn) {
-          if ((currentSimulatedRole === null && r === 'super_admin') || (currentSimulatedRole === r)) {
+          if ((currentSimulatedRole === null && r === 'admin') || (currentSimulatedRole === r)) {
             btn.classList.add('active');
           } else {
             btn.classList.remove('active');
@@ -4145,7 +4449,7 @@
           footerTag.textContent = '● Simulated: ' + getEffectiveRoleLabel();
           footerTag.style.color = '#38bdf8';
         } else {
-          footerTag.textContent = '● Super Admin / Dev (Full Access)';
+          footerTag.textContent = '● Admin / Dev (Full Access)';
           footerTag.style.color = '';
         }
       }
@@ -4163,6 +4467,13 @@
           switchNav('workforce');
         }
       }
+
+      // Re-render workforce views immediately
+      if (typeof renderAttendanceTable === 'function') renderAttendanceTable();
+      if (typeof renderTimecardReportTable === 'function') renderTimecardReportTable();
+      if (typeof renderPtoTable === 'function') renderPtoTable();
+      if (typeof renderScheduleTable === 'function') renderScheduleTable();
+      if (typeof updatePtoBadge === 'function') updatePtoBadge();
     }
 
     function getEffectiveRole() {
@@ -4171,34 +4482,43 @@
       return actualRole;
     }
 
+    function isUserAdmin() {
+      const r = getEffectiveRole();
+      return r === 'super_admin' || r === 'admin' || r === 'dev' || r === 'developer' || r === 'devops';
+    }
+
+    function getEffectiveUserEmail() {
+      if (currentSimulatedRole === 'support' && (!activeDevUser || activeDevUser.email.includes('dev') || activeDevUser.email.includes('admin'))) {
+        return 'sarah.support@flexitapapp.com';
+      }
+      return (activeDevUser && activeDevUser.email) ? activeDevUser.email.toLowerCase() : 'employee@flexitapapp.com';
+    }
+
+    function getEffectiveUserDisplayName() {
+      const email = getEffectiveUserEmail();
+      const staff = teamStaffMembers.find(m => m.email && m.email.toLowerCase() === email);
+      if (staff && staff.full_name) return staff.full_name;
+      if (activeDevProfile && activeDevProfile.full_name) return activeDevProfile.full_name;
+      return email.split('@')[0];
+    }
+
     function getEffectiveRoleLabel() {
       const r = getEffectiveRole();
-      if (r === 'super_admin' || r === 'admin' || r === 'dev' || r === 'developer') return 'Super Admin / DevOps';
-      if (r === 'technician' || r === 'tech') return 'Field Technician';
-      if (r === 'support' || r === 'agent') return 'Support Desk Specialist';
-      if (r === 'devops') return 'Senior DevOps Engineer';
-      if (r === 'dispatch' || r === 'lead') return 'Dispatch Lead';
+      if (r === 'super_admin' || r === 'admin') return 'Super Admin';
+      if (r === 'dev' || r === 'developer' || r === 'devops') return 'Core Developer';
+      if (r === 'support' || r === 'agent' || r === 'customer_support' || r === 'technician' || r === 'tech') return 'Customer Support';
       return 'Staff Member';
     }
 
     function isTabAllowedForRole(tabKey) {
       const r = getEffectiveRole();
-      if (r === 'super_admin' || r === 'admin' || r === 'dev' || r === 'developer') return true;
+      if (r === 'super_admin' || r === 'admin' || r === 'dev' || r === 'developer' || r === 'devops') return true;
 
       // Workforce is open to all staff members without restriction
       if (tabKey === 'workforce') return true;
 
-      if (r === 'technician' || r === 'tech') {
-        return ['clients', 'tickets', 'remote', 'workforce'].includes(tabKey);
-      }
-      if (r === 'support' || r === 'agent') {
-        return ['clients', 'support', 'tickets', 'workforce'].includes(tabKey);
-      }
-      if (r === 'devops') {
-        return ['clients', 'updates', 'tickets', 'remote', 'monitoring', 'errors', 'analytics', 'workforce'].includes(tabKey);
-      }
-      if (r === 'dispatch' || r === 'lead') {
-        return ['clients', 'tickets', 'remote', 'workforce'].includes(tabKey);
+      if (r === 'support' || r === 'agent' || r === 'customer_support' || r === 'technician' || r === 'tech') {
+        return ['clients', 'support', 'tickets', 'remote', 'workforce'].includes(tabKey);
       }
       return false;
     }
@@ -4291,20 +4611,20 @@
     function updateTeamKpis() {
       const total = teamStaffMembers.length;
       const active = teamStaffMembers.filter(m => m.status === 'active').length;
-      const techs = teamStaffMembers.filter(m => m.role === 'technician' || m.role === 'tech' || m.role === 'dispatch').length;
-      const support = teamStaffMembers.filter(m => m.role === 'support' || m.role === 'agent').length;
-      const admins = teamStaffMembers.filter(m => m.role === 'admin' || m.role === 'super_admin' || m.role === 'dev' || m.role === 'devops').length;
+      const devs = teamStaffMembers.filter(m => m.role === 'dev' || m.role === 'developer' || m.role === 'devops').length;
+      const support = teamStaffMembers.filter(m => m.role === 'support' || m.role === 'agent' || m.role === 'customer_support' || m.role === 'technician' || m.role === 'tech').length;
+      const admins = teamStaffMembers.filter(m => m.role === 'admin' || m.role === 'super_admin').length;
 
       const totalEl = document.getElementById('team-kpi-total');
       const activeDescEl = document.getElementById('team-kpi-active-desc');
-      const techsEl = document.getElementById('team-kpi-techs');
+      const devsEl = document.getElementById('team-kpi-devs');
       const supportEl = document.getElementById('team-kpi-support');
       const adminsEl = document.getElementById('team-kpi-admins');
       const badgeEl = document.getElementById('team-count-badge');
 
       if (totalEl) totalEl.textContent = total;
       if (activeDescEl) activeDescEl.textContent = `${active} Active Accounts (${total - active} Suspended)`;
-      if (techsEl) techsEl.textContent = techs;
+      if (devsEl) devsEl.textContent = devs;
       if (supportEl) supportEl.textContent = support;
       if (adminsEl) adminsEl.textContent = admins;
       if (badgeEl) badgeEl.textContent = `${active} Staff`;
@@ -4319,10 +4639,9 @@
       if (teamRoleFilter !== 'all') {
         filtered = filtered.filter(m => {
           const r = (m.role || '').toLowerCase();
-          if (teamRoleFilter === 'technician') return r === 'technician' || r === 'tech' || r === 'dispatch';
-          if (teamRoleFilter === 'support') return r === 'support' || r === 'agent';
-          if (teamRoleFilter === 'devops') return r === 'devops';
-          if (teamRoleFilter === 'admin') return r === 'admin' || r === 'super_admin' || r === 'dev';
+          if (teamRoleFilter === 'admin') return r === 'admin' || r === 'super_admin';
+          if (teamRoleFilter === 'dev') return r === 'dev' || r === 'developer' || r === 'devops';
+          if (teamRoleFilter === 'support') return r === 'support' || r === 'agent' || r === 'customer_support' || r === 'technician' || r === 'tech';
           return r === teamRoleFilter;
         });
       }
@@ -4401,12 +4720,9 @@
 
     function getStaffRoleBadgeHtml(role) {
       const r = (role || '').toLowerCase();
-      if (r === 'super_admin' || r === 'admin') return `<span class="badge-pill badge-role-admin">👑 Super Admin</span>`;
-      if (r === 'dev' || r === 'developer') return `<span class="badge-pill badge-role-admin">💻 Lead Developer</span>`;
-      if (r === 'devops') return `<span class="badge-pill badge-role-devops">💻 DevOps Engineer</span>`;
-      if (r === 'technician' || r === 'tech') return `<span class="badge-pill badge-role-tech">🔧 Field Technician</span>`;
-      if (r === 'support' || r === 'agent') return `<span class="badge-pill badge-role-support">💬 Support Agent</span>`;
-      if (r === 'dispatch' || r === 'lead') return `<span class="badge-pill badge-role-dispatch">📋 Dispatch Lead</span>`;
+      if (r === 'super_admin' || r === 'admin') return `<span class="badge-pill badge-role-admin">👑 Admin</span>`;
+      if (r === 'dev' || r === 'developer' || r === 'devops') return `<span class="badge-pill badge-role-devops">💻 Dev</span>`;
+      if (r === 'support' || r === 'agent' || r === 'customer_support' || r === 'technician' || r === 'tech' || r === 'dispatch') return `<span class="badge-pill badge-role-support">💬 Customer Support</span>`;
       return `<span class="badge-pill badge-closed">${role || 'Staff'}</span>`;
     }
 
@@ -4434,10 +4750,10 @@
       document.getElementById('add-staff-name').value = '';
       document.getElementById('add-staff-email').value = '';
       document.getElementById('add-staff-title').value = '';
-      document.getElementById('add-staff-role').value = 'technician';
-      document.getElementById('add-staff-dept').value = 'Field Operations & Hardware';
+      document.getElementById('add-staff-role').value = 'support';
+      document.getElementById('add-staff-dept').value = 'Customer Success & Support';
       generateRandomStaffPassword();
-      onRolePresetChange('technician');
+      onRolePresetChange('support');
       document.getElementById('crm-modal-staff-add').classList.add('open');
     }
 
@@ -4457,30 +4773,28 @@
 
     function onRolePresetChange(role) {
       const isSuper = role === 'admin';
-      const isTech = role === 'technician';
+      const isDev = role === 'dev';
       const isSupport = role === 'support';
-      const isDevops = role === 'devops';
-      const isDispatch = role === 'dispatch';
 
       document.getElementById('perm-clients').checked = true;
       document.getElementById('perm-tickets').checked = true;
-      document.getElementById('perm-support').checked = isSupport || isSuper;
-      document.getElementById('perm-remote').checked = isTech || isDevops || isDispatch || isSuper;
-      document.getElementById('perm-updates').checked = isDevops || isSuper;
-      document.getElementById('perm-monitoring').checked = isDevops || isSuper;
-      document.getElementById('perm-errors').checked = isDevops || isSuper;
-      document.getElementById('perm-analytics').checked = isDevops || isSuper;
+      document.getElementById('perm-support').checked = true;
+      document.getElementById('perm-remote').checked = true;
+      document.getElementById('perm-updates').checked = isDev || isSuper;
+      document.getElementById('perm-monitoring').checked = isDev || isSuper;
+      document.getElementById('perm-errors').checked = isDev || isSuper;
+      document.getElementById('perm-analytics').checked = isDev || isSuper;
       document.getElementById('perm-team').checked = isSuper;
 
-      if (isTech && !document.getElementById('add-staff-title').value) {
-        document.getElementById('add-staff-title').value = 'Field Technician';
-        document.getElementById('add-staff-dept').value = 'Field Operations & Hardware';
-      } else if (isSupport && !document.getElementById('add-staff-title').value) {
-        document.getElementById('add-staff-title').value = 'Live Support Desk Specialist';
+      if (isSupport && !document.getElementById('add-staff-title').value) {
+        document.getElementById('add-staff-title').value = 'Customer Support Specialist';
         document.getElementById('add-staff-dept').value = 'Customer Success & Support';
-      } else if (isDevops && !document.getElementById('add-staff-title').value) {
-        document.getElementById('add-staff-title').value = 'DevOps & Storage Releases Specialist';
-        document.getElementById('add-staff-dept').value = 'Platform & DevOps Engineering';
+      } else if (isDev && !document.getElementById('add-staff-title').value) {
+        document.getElementById('add-staff-title').value = 'Core Platform & Dev Engineer';
+        document.getElementById('add-staff-dept').value = 'Platform & Dev Engineering';
+      } else if (isSuper && !document.getElementById('add-staff-title').value) {
+        document.getElementById('add-staff-title').value = 'System Administrator';
+        document.getElementById('add-staff-dept').value = 'Executive & Admin';
       }
     }
 
@@ -4591,17 +4905,17 @@
       document.getElementById('edit-staff-id').value = member.id;
       document.getElementById('edit-staff-name').value = member.full_name || '';
       document.getElementById('edit-staff-email').value = member.email || '';
-      document.getElementById('edit-staff-dept').value = member.department || 'Field Operations & Hardware';
+      document.getElementById('edit-staff-dept').value = member.department || 'Customer Success & Support';
       document.getElementById('edit-staff-title').value = member.role_title || '';
-      document.getElementById('edit-staff-role').value = member.role || 'technician';
+      document.getElementById('edit-staff-role').value = (member.role === 'admin' || member.role === 'dev') ? member.role : 'support';
       document.getElementById('edit-staff-status').value = member.status || 'active';
 
       const perms = member.permissions || {};
       const isSuper = member.role === 'admin' || member.role === 'super_admin' || member.role === 'dev';
       document.getElementById('edit-perm-clients').checked = perms.clients ?? true;
       document.getElementById('edit-perm-tickets').checked = perms.tickets ?? true;
-      document.getElementById('edit-perm-support').checked = perms.support ?? isSuper;
-      document.getElementById('edit-perm-remote').checked = perms.remote ?? isSuper;
+      document.getElementById('edit-perm-support').checked = perms.support ?? true;
+      document.getElementById('edit-perm-remote').checked = perms.remote ?? true;
       document.getElementById('edit-perm-updates').checked = perms.updates ?? isSuper;
       document.getElementById('edit-perm-monitoring').checked = perms.monitoring ?? isSuper;
       document.getElementById('edit-perm-errors').checked = perms.errors ?? isSuper;
@@ -4617,19 +4931,17 @@
 
     function onEditRolePresetChange(role) {
       const isSuper = role === 'admin';
-      const isTech = role === 'technician';
+      const isDev = role === 'dev';
       const isSupport = role === 'support';
-      const isDevops = role === 'devops';
-      const isDispatch = role === 'dispatch';
 
       document.getElementById('edit-perm-clients').checked = true;
       document.getElementById('edit-perm-tickets').checked = true;
-      document.getElementById('edit-perm-support').checked = isSupport || isSuper;
-      document.getElementById('edit-perm-remote').checked = isTech || isDevops || isDispatch || isSuper;
-      document.getElementById('edit-perm-updates').checked = isDevops || isSuper;
-      document.getElementById('edit-perm-monitoring').checked = isDevops || isSuper;
-      document.getElementById('edit-perm-errors').checked = isDevops || isSuper;
-      document.getElementById('edit-perm-analytics').checked = isDevops || isSuper;
+      document.getElementById('edit-perm-support').checked = true;
+      document.getElementById('edit-perm-remote').checked = true;
+      document.getElementById('edit-perm-updates').checked = isDev || isSuper;
+      document.getElementById('edit-perm-monitoring').checked = isDev || isSuper;
+      document.getElementById('edit-perm-errors').checked = isDev || isSuper;
+      document.getElementById('edit-perm-analytics').checked = isDev || isSuper;
       document.getElementById('edit-perm-team').checked = isSuper;
     }
 
@@ -4815,19 +5127,53 @@ Role: ${lastProvisionedCreds.role}`;
         workforcePunchState.isClockedIn = false;
         workforcePunchState.onBreak = false;
         clearInterval(workforcePunchTimer);
-        const addedHours = (workforcePunchState.elapsedSeconds / 3600);
-        workforcePunchState.todayHours = (workforcePunchState.todayHours || 0) + addedHours;
+        const addedHours = +((workforcePunchState.elapsedSeconds || 0) / 3600).toFixed(2);
+        workforcePunchState.todayHours = +((workforcePunchState.todayHours || 0) + addedHours).toFixed(2);
+
+        // Record completed shift entry into timecardReportLogs
+        const now = new Date();
+        const rawHrs = addedHours > 0 ? addedHours : 0.05;
+        const regHrs = Math.min(8.0, rawHrs);
+        const otHrs = +(Math.max(0, rawHrs - 8.0)).toFixed(2);
+        const effEmail = getEffectiveUserEmail();
+        const effName = getEffectiveUserDisplayName();
+        const effRole = getEffectiveRole();
+
+        const newReportEntry = {
+          id: 'tc-' + Date.now(),
+          staff_name: effName,
+          staff_email: effEmail,
+          role: effRole,
+          date: now.toISOString().split('T')[0],
+          date_formatted: now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+          clock_in: workforcePunchState.clockInFormatted || '08:30 AM',
+          clock_out: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          break_minutes: workforcePunchState.breakMinutes || (workforcePunchState.onBreak ? 15 : 0),
+          regular_hours: regHrs,
+          overtime_hours: otHrs,
+          total_hours: rawHrs,
+          assignment: 'Live Customer Support Desk & Merchant Queue',
+          status: 'pending' // awaiting manager verification
+        };
+
+        timecardReportLogs.unshift(newReportEntry);
+        localStorage.setItem('flexitap_timecard_report_logs', JSON.stringify(timecardReportLogs));
         workforcePunchState.elapsedSeconds = 0;
       } else {
+        const now = new Date();
         workforcePunchState.isClockedIn = true;
-        workforcePunchState.clockInTime = new Date().toISOString();
+        workforcePunchState.clockInTime = now.toISOString();
+        workforcePunchState.clockInFormatted = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         workforcePunchState.onBreak = false;
+        workforcePunchState.elapsedSeconds = 0;
+        workforcePunchState.breakMinutes = 0;
         startPunchTimer();
       }
 
       localStorage.setItem('flexitap_punch_state', JSON.stringify(workforcePunchState));
       updatePunchWidgetUI();
       renderAttendanceTable();
+      renderTimecardReportTable();
     }
 
     function handlePunchBreak() {
@@ -4836,6 +5182,9 @@ Role: ${lastProvisionedCreds.role}`;
         return;
       }
       workforcePunchState.onBreak = !workforcePunchState.onBreak;
+      if (workforcePunchState.onBreak) {
+        workforcePunchState.breakMinutes = (workforcePunchState.breakMinutes || 0) + 15;
+      }
       localStorage.setItem('flexitap_punch_state', JSON.stringify(workforcePunchState));
       updatePunchWidgetUI();
     }
@@ -4865,10 +5214,39 @@ Role: ${lastProvisionedCreds.role}`;
       const tbody = document.getElementById('workforce-attendance-tbody');
       if (!tbody) return;
 
-      tbody.innerHTML = teamStaffMembers.map(m => {
-        const isSelf = activeDevUser && m.email && activeDevUser.email && (m.email.toLowerCase() === activeDevUser.email.toLowerCase());
+      const isAdmin = isUserAdmin();
+      const effEmail = getEffectiveUserEmail().toLowerCase();
+
+      // Update titles based on role
+      const titleEl = document.getElementById('workforce-attendance-title');
+      const subtitleEl = document.getElementById('workforce-attendance-subtitle');
+      if (titleEl) {
+        titleEl.textContent = isAdmin ? 'Live Staff Attendance & Shift Timesheet (All Staff)' : 'My Shift Timecard & Punch Status';
+      }
+      if (subtitleEl) {
+        subtitleEl.textContent = isAdmin ? 'Real-time clock tracking across Customer Support & Ops staff' : 'Your personal clock tracking, active shift duration, and telemetry';
+      }
+
+      let staffList = isAdmin 
+        ? teamStaffMembers 
+        : teamStaffMembers.filter(m => (m.email || '').toLowerCase() === effEmail);
+
+      if (staffList.length === 0) {
+        staffList = [{
+          full_name: getEffectiveUserDisplayName(),
+          email: effEmail,
+          role: getEffectiveRole(),
+          current_assignment: 'Live Customer Support Desk',
+          clock_status: workforcePunchState.isClockedIn ? 'clocked_in' : 'clocked_out'
+        }];
+      }
+
+      tbody.innerHTML = staffList.map(m => {
+        const isSelf = (m.email || '').toLowerCase() === effEmail;
         const isClocked = isSelf ? workforcePunchState.isClockedIn : (m.clock_status === 'clocked_in');
-        const elapsed = isSelf ? formatElapsedSeconds(workforcePunchState.elapsedSeconds) : (m.shift_time || '03:45:00');
+        const elapsed = isSelf 
+          ? (workforcePunchState.isClockedIn ? formatElapsedSeconds(workforcePunchState.elapsedSeconds) : '-') 
+          : (m.shift_time || '03:45:00');
         const statusBadge = isClocked 
           ? `<span class="badge-pill badge-resolved">🟢 ON CLOCK</span>`
           : `<span class="badge-pill badge-closed">⚪ OFF CLOCK</span>`;
@@ -4876,58 +5254,275 @@ Role: ${lastProvisionedCreds.role}`;
         return `
           <tr>
             <td>
-              <div style="font-weight: 700; color: #fff;">${m.full_name} ${isSelf ? '<span style="font-size: 0.7rem; color: #60a5fa;">(You)</span>' : ''}</div>
-              <div style="font-size: 0.72rem; color: var(--text-muted);">${m.email}</div>
+              <div style="font-weight: 700; color: #fff;">${escapeHtml(m.full_name)} ${isSelf ? '<span style="font-size: 0.7rem; color: #60a5fa;">(You)</span>' : ''}</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(m.email)}</div>
             </td>
             <td>${getStaffRoleBadgeHtml(m.role)}</td>
-            <td style="font-family: monospace; color: #cbd5e1; font-size: 0.8rem;">${isClocked ? 'Today 08:30 AM' : 'None'}</td>
+            <td style="font-family: monospace; color: #cbd5e1; font-size: 0.8rem;">${isClocked ? (isSelf ? (workforcePunchState.clockInFormatted || 'Today 08:30 AM') : 'Today 08:30 AM') : 'None'}</td>
             <td style="font-family: monospace; color: #38bdf8; font-weight: 700;">${isClocked ? elapsed : '-'}</td>
-            <td style="font-size: 0.82rem; color: #cbd5e1;">${m.current_assignment || m.department}</td>
+            <td style="font-size: 0.82rem; color: #cbd5e1;">${escapeHtml(m.current_assignment || m.department || 'Customer Support Desk')}</td>
             <td>${statusBadge}</td>
             <td>
-              <button class="action-btn" onclick="alert('Viewing shift GPS & telemetry log for ${m.full_name}...')">View Shift Log</button>
+              <button class="action-btn" onclick="alert('${isSelf ? 'Viewing your live shift telemetry and GPS stamp' : `Viewing shift telemetry for ${escapeHtml(m.full_name)}`}')">
+                ${isSelf ? 'My Telemetry' : 'View Shift Log'}
+              </button>
             </td>
           </tr>
         `;
       }).join('');
     }
 
-    // PTO Requests
+    // SUB-TAB 2: TIMECARD REPORT & HISTORY
+    function renderTimecardReportTable() {
+      const tbody = document.getElementById('timecard-report-tbody');
+      if (!tbody) return;
+
+      const isAdmin = isUserAdmin();
+      const effEmail = getEffectiveUserEmail().toLowerCase();
+
+      // Update titles
+      const titleEl = document.getElementById('timecard-report-title');
+      const subtitleEl = document.getElementById('timecard-report-subtitle');
+      if (titleEl) {
+        titleEl.textContent = isAdmin ? 'Staff Timecard Report & Timesheet History (All Staff)' : 'My Timecard Report & Timesheet History';
+      }
+      if (subtitleEl) {
+        subtitleEl.textContent = isAdmin ? 'Audited punch history, daily hours, breaks, and manager payroll verification' : 'Your personal punch history, verified hours, breaks, and pay period breakdown';
+      }
+
+      // Staff filter dropdown visibility & options
+      const staffWrap = document.getElementById('timecard-staff-filter-wrap');
+      const staffSelect = document.getElementById('timecard-staff-select');
+      if (staffWrap) {
+        staffWrap.style.display = isAdmin ? 'flex' : 'none';
+      }
+      if (isAdmin && staffSelect) {
+        const currentVal = staffSelect.value || 'all';
+        const optionsHtml = `<option value="all">👥 All Staff Members</option>` + 
+          teamStaffMembers.map(m => `<option value="${m.email}">${escapeHtml(m.full_name)} (${m.role_title || m.role})</option>`).join('');
+        staffSelect.innerHTML = optionsHtml;
+        staffSelect.value = currentVal;
+      }
+
+      const period = document.getElementById('timecard-period-select')?.value || 'current';
+      const staffFilter = isAdmin ? (staffSelect?.value || 'all') : effEmail;
+      const search = (document.getElementById('timecard-search-input')?.value || '').toLowerCase().trim();
+
+      // Filter logs
+      const filtered = timecardReportLogs.filter(r => {
+        // Staff filter
+        if (!isAdmin) {
+          if ((r.staff_email || '').toLowerCase() !== effEmail) return false;
+        } else if (staffFilter !== 'all') {
+          if ((r.staff_email || '').toLowerCase() !== staffFilter.toLowerCase()) return false;
+        }
+
+        // Period filter
+        if (period === 'current') {
+          // Current Pay Period: Oct 01 - Oct 15, 2026
+          if (r.date && (r.date < '2026-10-01' || r.date > '2026-10-15')) return false;
+        } else if (period === 'prev') {
+          // Previous Pay Period: Sep 16 - Sep 30, 2026
+          if (r.date && (r.date < '2026-09-16' || r.date > '2026-09-30')) return false;
+        } else if (period === 'week') {
+          if (r.date && r.date < '2026-10-05') return false;
+        }
+
+        // Search filter
+        if (search) {
+          const matchStaff = (r.staff_name || '').toLowerCase().includes(search);
+          const matchAssign = (r.assignment || '').toLowerCase().includes(search);
+          const matchDate = (r.date || '').toLowerCase().includes(search) || (r.date_formatted || '').toLowerCase().includes(search);
+          if (!matchStaff && !matchAssign && !matchDate) return false;
+        }
+
+        return true;
+      });
+
+      // Calculate KPIs on filtered records
+      const totalHrs = filtered.reduce((acc, r) => acc + (parseFloat(r.total_hours) || 0), 0);
+      const regHrs = filtered.reduce((acc, r) => acc + (parseFloat(r.regular_hours) || 0), 0);
+      const otHrs = filtered.reduce((acc, r) => acc + (parseFloat(r.overtime_hours) || 0), 0);
+
+      const kpiTotalEl = document.getElementById('timecard-kpi-total-hours');
+      const kpiRegEl = document.getElementById('timecard-kpi-reg-hours');
+      const kpiOtEl = document.getElementById('timecard-kpi-ot-hours');
+      const kpiPeriodEl = document.getElementById('timecard-kpi-period');
+      const kpiStaffCountEl = document.getElementById('timecard-kpi-staff-count');
+
+      if (kpiTotalEl) kpiTotalEl.textContent = totalHrs.toFixed(1) + ' hrs';
+      if (kpiRegEl) kpiRegEl.textContent = regHrs.toFixed(1) + ' hrs';
+      if (kpiOtEl) kpiOtEl.textContent = otHrs.toFixed(1) + ' hrs';
+      if (kpiPeriodEl) {
+        kpiPeriodEl.textContent = period === 'prev' ? 'Sep 16 – Sep 30' : (period === 'week' ? 'Past 7 Days' : 'Oct 01 – Oct 15');
+      }
+      if (kpiStaffCountEl) {
+        kpiStaffCountEl.textContent = `${filtered.length} Recorded Shifts`;
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; color: var(--text-muted); padding: 24px;">No timesheet logs found matching the selected period and filters.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(r => {
+        const isSelf = (r.staff_email || '').toLowerCase() === effEmail;
+        const statusBadge = r.status === 'verified'
+          ? `<span class="badge-pill badge-resolved">✅ VERIFIED</span>`
+          : (r.status === 'approved' 
+              ? `<span class="badge-pill badge-resolved" style="background: rgba(59,130,246,0.2); color: #60a5fa;">👍 APPROVED</span>`
+              : `<span class="badge-pill badge-in_progress">⏳ PENDING</span>`);
+
+        const actionCell = (isAdmin && r.status === 'pending')
+          ? `<button class="action-btn" onclick="approveTimecardRow('${r.id}')" style="color: #34d399; border-color: rgba(16,185,129,0.4); padding: 3px 10px; font-size: 0.74rem;">✅ Approve</button>`
+          : `<span style="font-size: 0.74rem; color: var(--text-muted);">${r.status === 'verified' ? 'Audited' : 'Logged'}</span>`;
+
+        return `
+          <tr>
+            <td style="font-weight: 700; color: #fff; font-size: 0.82rem;">${escapeHtml(r.date_formatted || r.date)}</td>
+            <td>
+              <div style="font-weight: 700; color: #fff;">${escapeHtml(r.staff_name)} ${isSelf ? '<span style="font-size: 0.7rem; color: #60a5fa;">(You)</span>' : ''}</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(r.staff_email)}</div>
+            </td>
+            <td>${getStaffRoleBadgeHtml(r.role)}</td>
+            <td style="font-family: monospace; font-size: 0.8rem; color: #cbd5e1;">${escapeHtml(r.clock_in)}</td>
+            <td style="font-family: monospace; font-size: 0.8rem; color: #cbd5e1;">${escapeHtml(r.clock_out)}</td>
+            <td style="font-size: 0.8rem; color: #94a3b8;">${r.break_minutes || 0}m</td>
+            <td style="font-family: monospace; font-weight: 700; color: #34d399;">${(parseFloat(r.regular_hours) || 0).toFixed(1)}h</td>
+            <td style="font-family: monospace; font-weight: 700; color: ${r.overtime_hours > 0 ? '#fbbf24' : 'var(--text-muted)'};">${(parseFloat(r.overtime_hours) || 0).toFixed(1)}h</td>
+            <td style="font-family: monospace; font-weight: 800; color: #38bdf8;">${(parseFloat(r.total_hours) || 0).toFixed(1)}h</td>
+            <td style="font-size: 0.8rem; color: #cbd5e1; max-width: 220px;">${escapeHtml(r.assignment || 'Support Desk')}</td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                ${statusBadge}
+                ${actionCell}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function approveTimecardRow(id) {
+      const target = timecardReportLogs.find(l => l.id === id);
+      if (target) {
+        target.status = 'verified';
+        localStorage.setItem('flexitap_timecard_report_logs', JSON.stringify(timecardReportLogs));
+        renderTimecardReportTable();
+      }
+    }
+
+    function exportTimecardReportCsv() {
+      const isAdmin = isUserAdmin();
+      const effEmail = getEffectiveUserEmail().toLowerCase();
+      const staffFilter = isAdmin ? (document.getElementById('timecard-staff-select')?.value || 'all') : effEmail;
+      const period = document.getElementById('timecard-period-select')?.value || 'current';
+
+      const filtered = timecardReportLogs.filter(r => {
+        if (!isAdmin) {
+          if ((r.staff_email || '').toLowerCase() !== effEmail) return false;
+        } else if (staffFilter !== 'all') {
+          if ((r.staff_email || '').toLowerCase() !== staffFilter.toLowerCase()) return false;
+        }
+        if (period === 'current' && r.date && (r.date < '2026-10-01' || r.date > '2026-10-15')) return false;
+        if (period === 'prev' && r.date && (r.date < '2026-09-16' || r.date > '2026-09-30')) return false;
+        if (period === 'week' && r.date && r.date < '2026-10-05') return false;
+        return true;
+      });
+
+      let csv = 'Date,Staff Name,Email,Role,Clock In,Clock Out,Break (Min),Regular Hours,Overtime Hours,Total Hours,Assignment,Status\n';
+      filtered.forEach(r => {
+        csv += `"${r.date || ''}","${r.staff_name || ''}","${r.staff_email || ''}","${r.role || ''}","${r.clock_in || ''}","${r.clock_out || ''}",${r.break_minutes || 0},${r.regular_hours || 0},${r.overtime_hours || 0},${r.total_hours || 0},"${(r.assignment || '').replace(/"/g, '""')}","${r.status || ''}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `flexitap_timecard_report_${period}_${Date.now()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function printTimecardReport() {
+      window.print();
+    }
+
+    // SUB-TAB 3: PTO REQUESTS
     function renderPtoTable() {
       const tbody = document.getElementById('pto-requests-tbody');
       if (!tbody) return;
 
-      tbody.innerHTML = ptoRequests.map(r => {
+      const isAdmin = isUserAdmin();
+      const effEmail = getEffectiveUserEmail().toLowerCase();
+
+      // Titles
+      const titleEl = document.getElementById('workforce-pto-title');
+      const subtitleEl = document.getElementById('workforce-pto-subtitle');
+      if (titleEl) {
+        titleEl.textContent = isAdmin ? 'Paid Time Off (PTO) & Leave Management (All Staff)' : 'My Paid Time Off (PTO) & Leave Requests';
+      }
+      if (subtitleEl) {
+        subtitleEl.textContent = isAdmin ? 'Review staff time-off requests and manage leave approvals' : 'Your submitted time-off requests, balances, and manager approval status';
+      }
+
+      const records = isAdmin 
+        ? ptoRequests 
+        : ptoRequests.filter(r => (r.staff_email || '').toLowerCase() === effEmail);
+
+      if (records.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 24px;">No PTO requests on file.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = records.map(r => {
+        const isSelf = (r.staff_email || '').toLowerCase() === effEmail;
         const statusBadge = r.status === 'approved' 
           ? `<span class="badge-pill badge-resolved">APPROVED</span>`
           : (r.status === 'denied' ? `<span class="badge-pill badge-urgent">DENIED</span>` : `<span class="badge-pill badge-in_progress">PENDING REVIEW</span>`);
 
+        const actionCell = (isAdmin && r.status === 'pending')
+          ? `
+            <div style="display: flex; gap: 6px;">
+              <button class="action-btn" onclick="updatePtoStatus('${r.id}', 'approved')" style="color: #34d399; border-color: rgba(16,185,129,0.4);">✅ Approve</button>
+              <button class="action-btn" onclick="updatePtoStatus('${r.id}', 'denied')" style="color: #f87171; border-color: rgba(239,68,68,0.4);">❌ Deny</button>
+            </div>
+          `
+          : `<span style="font-size: 0.74rem; color: var(--text-muted);">${r.status === 'pending' ? '⏳ Pending Review' : 'Decision Recorded'}</span>`;
+
         return `
           <tr>
             <td>
-              <div style="font-weight: 700; color: #fff;">${r.staff_name}</div>
-              <div style="font-size: 0.72rem; color: var(--text-muted);">${r.staff_email}</div>
+              <div style="font-weight: 700; color: #fff;">${escapeHtml(r.staff_name)} ${isSelf ? '<span style="font-size: 0.7rem; color: #60a5fa;">(You)</span>' : ''}</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(r.staff_email)}</div>
             </td>
-            <td><strong style="color: #60a5fa;">${r.type}</strong></td>
-            <td style="font-family: monospace; font-size: 0.8rem; color: #cbd5e1;">${r.start_date} to ${r.end_date}</td>
+            <td><strong style="color: #60a5fa;">${escapeHtml(r.type)}</strong></td>
+            <td style="font-family: monospace; font-size: 0.8rem; color: #cbd5e1;">${escapeHtml(r.start_date)} to ${escapeHtml(r.end_date)}</td>
             <td>${r.duration_days} Days</td>
-            <td style="max-width: 250px; font-size: 0.82rem; color: #cbd5e1;">${r.reason}</td>
+            <td style="max-width: 250px; font-size: 0.82rem; color: #cbd5e1;">${escapeHtml(r.reason)}</td>
             <td>${statusBadge}</td>
-            <td>
-              ${r.status === 'pending' ? `
-                <div style="display: flex; gap: 6px;">
-                  <button class="action-btn" onclick="updatePtoStatus('${r.id}', 'approved')" style="color: #34d399; border-color: rgba(16,185,129,0.4);">✅ Approve</button>
-                  <button class="action-btn" onclick="updatePtoStatus('${r.id}', 'denied')" style="color: #f87171; border-color: rgba(239,68,68,0.4);">❌ Deny</button>
-                </div>
-              ` : `<span style="font-size: 0.74rem; color: var(--text-muted);">Decision Recorded</span>`}
-            </td>
+            <td>${actionCell}</td>
           </tr>
         `;
       }).join('');
     }
 
     function openPtoModal() {
-      populateStaffSelectors();
+      const isAdmin = isUserAdmin();
+      const effEmail = getEffectiveUserEmail();
+      const ptoSelect = document.getElementById('pto-staff-select');
+
+      if (ptoSelect) {
+        if (!isAdmin) {
+          ptoSelect.innerHTML = `<option value="${effEmail}">${getEffectiveUserDisplayName()} (${getEffectiveRoleLabel()})</option>`;
+          ptoSelect.disabled = true;
+        } else {
+          ptoSelect.disabled = false;
+          populateStaffSelectors();
+        }
+      }
+
       document.getElementById('pto-start-date').value = new Date().toISOString().split('T')[0];
       document.getElementById('pto-end-date').value = new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0];
       document.getElementById('pto-reason').value = '';
@@ -4940,7 +5535,9 @@ Role: ${lastProvisionedCreds.role}`;
 
     function handleCreatePtoSubmit(e) {
       e.preventDefault();
-      const staffEmail = document.getElementById('pto-staff-select').value;
+      const isAdmin = isUserAdmin();
+      const effEmail = getEffectiveUserEmail();
+      const staffEmail = isAdmin ? document.getElementById('pto-staff-select').value : effEmail;
       const staffMember = teamStaffMembers.find(m => m.email === staffEmail);
       const leaveType = document.getElementById('pto-type').value;
       const startDate = document.getElementById('pto-start-date').value;
@@ -4949,7 +5546,7 @@ Role: ${lastProvisionedCreds.role}`;
 
       const newPto = {
         id: 'pto-' + Date.now(),
-        staff_name: staffMember ? staffMember.full_name : 'Staff Member',
+        staff_name: staffMember ? staffMember.full_name : getEffectiveUserDisplayName(),
         staff_email: staffEmail,
         type: leaveType,
         start_date: startDate,
@@ -4961,8 +5558,10 @@ Role: ${lastProvisionedCreds.role}`;
       };
 
       ptoRequests.unshift(newPto);
+      localStorage.setItem('flexitap_pto_requests', JSON.stringify(ptoRequests));
       closePtoModal();
       renderPtoTable();
+      updatePtoBadge();
       alert('PTO request successfully submitted!');
     }
 
@@ -4970,30 +5569,75 @@ Role: ${lastProvisionedCreds.role}`;
       const p = ptoRequests.find(item => item.id === id);
       if (p) {
         p.status = newStatus;
+        localStorage.setItem('flexitap_pto_requests', JSON.stringify(ptoRequests));
         renderPtoTable();
+        updatePtoBadge();
       }
     }
 
-    // Weekly Schedule
+    // SUB-TAB 4: WEEKLY SCHEDULE
     function renderScheduleTable() {
       const tbody = document.getElementById('schedule-roster-tbody');
       if (!tbody) return;
 
-      tbody.innerHTML = weeklyScheduleRoster.map(s => {
-        const shiftClass = s.role_type === 'tech' ? 'schedule-shift-tech' : (s.role_type === 'support' ? 'schedule-shift-support' : 'schedule-shift-devops');
+      const isAdmin = isUserAdmin();
+      const effEmail = getEffectiveUserEmail().toLowerCase();
+      const effName = getEffectiveUserDisplayName().toLowerCase();
+
+      // Titles
+      const titleEl = document.getElementById('workforce-schedule-title');
+      const subtitleEl = document.getElementById('workforce-schedule-subtitle');
+      if (titleEl) {
+        titleEl.textContent = isAdmin ? 'Weekly Staff Coverage & Shift Schedule (All Staff)' : 'My Weekly Coverage & Shift Schedule';
+      }
+      if (subtitleEl) {
+        subtitleEl.textContent = isAdmin ? 'Customer Support & Dev coverage matrix and shift planning' : 'Your upcoming shifts, assigned hours, and support rotation';
+      }
+
+      // Assign Shift button visibility
+      const btnAddShift = document.getElementById('btn-open-add-shift');
+      if (btnAddShift) {
+        btnAddShift.style.display = isAdmin ? 'inline-block' : 'none';
+      }
+
+      let rosterList = isAdmin
+        ? weeklyScheduleRoster
+        : weeklyScheduleRoster.filter(s => (s.staff_name || '').toLowerCase() === effName || (s.staff_email || '').toLowerCase() === effEmail);
+
+      if (rosterList.length === 0) {
+        // Fallback default schedule row for current user
+        rosterList = [{
+          id: 'sch-self',
+          staff_name: getEffectiveUserDisplayName(),
+          role_type: getEffectiveRole(),
+          shifts: {
+            Mon: '08:30 - 17:00 (Customer Support)',
+            Tue: '08:30 - 17:00 (Customer Support)',
+            Wed: '08:30 - 17:00 (Customer Support)',
+            Thu: '08:30 - 17:00 (Customer Support)',
+            Fri: '08:30 - 17:00 (Customer Support)',
+            Sat: 'Off',
+            Sun: 'Off'
+          }
+        }];
+      }
+
+      tbody.innerHTML = rosterList.map(s => {
+        const isDevRole = s.role_type === 'dev' || s.role_type === 'developer' || s.role_type === 'devops';
+        const shiftClass = isDevRole ? 'schedule-shift-devops' : 'schedule-shift-support';
         
         function renderDay(text) {
           if (!text || text === 'Off') {
             return `<span class="schedule-badge schedule-shift-off">Off</span>`;
           }
-          return `<span class="schedule-badge ${shiftClass}">${text}</span>`;
+          return `<span class="schedule-badge ${shiftClass}">${escapeHtml(text)}</span>`;
         }
 
         return `
           <tr>
             <td>
-              <div style="font-weight: 800; color: #fff;">${s.staff_name}</div>
-              <div style="font-size: 0.72rem; color: var(--text-muted);">${s.role_type.toUpperCase()}</div>
+              <div style="font-weight: 800; color: #fff;">${escapeHtml(s.staff_name)}</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">${(s.role_type || 'SUPPORT').toUpperCase()}</div>
             </td>
             <td>${renderDay(s.shifts.Mon)}</td>
             <td>${renderDay(s.shifts.Tue)}</td>
@@ -5044,10 +5688,10 @@ Role: ${lastProvisionedCreds.role}`;
       const ptoSelect = document.getElementById('pto-staff-select');
       const shiftSelect = document.getElementById('shift-staff-select');
       if (ptoSelect) {
-        ptoSelect.innerHTML = teamStaffMembers.map(m => `<option value="${m.email}">${m.full_name} (${m.role_title || m.role})</option>`).join('');
+        ptoSelect.innerHTML = teamStaffMembers.map(m => `<option value="${m.email}">${escapeHtml(m.full_name)} (${m.role_title || m.role})</option>`).join('');
       }
       if (shiftSelect) {
-        shiftSelect.innerHTML = teamStaffMembers.map(m => `<option value="${m.email}">${m.full_name} (${m.role_title || m.role})</option>`).join('');
+        shiftSelect.innerHTML = teamStaffMembers.map(m => `<option value="${m.email}">${escapeHtml(m.full_name)} (${m.role_title || m.role})</option>`).join('');
       }
     }
 
@@ -5055,7 +5699,7 @@ Role: ${lastProvisionedCreds.role}`;
 
     function switchWorkforceSubTab(tab) {
       activeWorkforceSubTab = tab;
-      ['punch', 'pto', 'schedule'].forEach(t => {
+      ['punch', 'report', 'pto', 'schedule'].forEach(t => {
         const btn = document.getElementById('workforce-subtab-' + t);
         const panel = document.getElementById('workforce-subpanel-' + t);
         if (btn) btn.classList.toggle('active', t === tab);
@@ -5065,6 +5709,7 @@ Role: ${lastProvisionedCreds.role}`;
         initWorkforcePunch();
         renderAttendanceTable();
       }
+      if (tab === 'report') renderTimecardReportTable();
       if (tab === 'pto') renderPtoTable();
       if (tab === 'schedule') renderScheduleTable();
     }
@@ -5075,13 +5720,19 @@ Role: ${lastProvisionedCreds.role}`;
       }
       initWorkforcePunch();
       renderAttendanceTable();
+      renderTimecardReportTable();
       renderPtoTable();
       renderScheduleTable();
       updatePtoBadge();
     }
 
     function updatePtoBadge() {
-      const pendingCount = ptoRequests.filter(r => r.status === 'pending').length;
+      const isAdmin = isUserAdmin();
+      const effEmail = getEffectiveUserEmail().toLowerCase();
+      const pendingCount = isAdmin
+        ? ptoRequests.filter(r => r.status === 'pending').length
+        : ptoRequests.filter(r => r.status === 'pending' && (r.staff_email || '').toLowerCase() === effEmail).length;
+
       const badge = document.getElementById('workforce-pto-badge');
       if (badge) {
         badge.textContent = pendingCount;
@@ -5410,27 +6061,23 @@ Role: ${lastProvisionedCreds.role}`;
           <div class="crm-form-group">
             <label>Department *</label>
             <select id="add-staff-dept" class="crm-select" required>
-              <option value="Field Operations & Hardware">Field Operations &amp; Hardware</option>
               <option value="Customer Success & Support">Customer Success &amp; Support</option>
-              <option value="Platform & DevOps Engineering">Platform &amp; DevOps Engineering</option>
-              <option value="Operations & Dispatch">Operations &amp; Dispatch</option>
+              <option value="Platform & Dev Engineering">Platform &amp; Dev Engineering</option>
               <option value="Executive & Admin">Executive &amp; Admin</option>
             </select>
           </div>
           <div class="crm-form-group">
             <label>Custom Job Title</label>
-            <input type="text" id="add-staff-title" class="crm-input" placeholder="e.g. Senior Field Technician" />
+            <input type="text" id="add-staff-title" class="crm-input" placeholder="e.g. Customer Support Specialist" />
           </div>
         </div>
 
         <div class="crm-form-group" style="margin-bottom: 16px;">
           <label>Primary Role Preset *</label>
           <select id="add-staff-role" class="crm-select" onchange="onRolePresetChange(this.value)" required>
-            <option value="technician">🔧 Field Technician (CRM, Tickets, Remote Diagnostics)</option>
-            <option value="support">💬 Support Agent (CRM, Live Support Desk, Tickets)</option>
-            <option value="devops">💻 DevOps Engineer (Releases, Telemetry, Monitoring, Errors)</option>
-            <option value="dispatch">📋 Dispatch Lead (CRM, Tickets, Remote, Scheduling)</option>
-            <option value="admin">👑 Super Admin (Full Privileges &amp; Team Management)</option>
+            <option value="support">💬 Customer Support (CRM, Live Support Desk, Tickets, Workforce)</option>
+            <option value="dev">💻 Dev (Platform Engineering, Releases, Monitoring, APIs)</option>
+            <option value="admin">👑 Admin (Full Privileges &amp; Team Management)</option>
           </select>
         </div>
 
@@ -5520,10 +6167,8 @@ Role: ${lastProvisionedCreds.role}`;
           <div class="crm-form-group">
             <label>Department</label>
             <select id="edit-staff-dept" class="crm-select">
-              <option value="Field Operations & Hardware">Field Operations &amp; Hardware</option>
               <option value="Customer Success & Support">Customer Success &amp; Support</option>
-              <option value="Platform & DevOps Engineering">Platform &amp; DevOps Engineering</option>
-              <option value="Operations & Dispatch">Operations &amp; Dispatch</option>
+              <option value="Platform & Dev Engineering">Platform &amp; Dev Engineering</option>
               <option value="Executive & Admin">Executive &amp; Admin</option>
             </select>
           </div>
@@ -5537,11 +6182,9 @@ Role: ${lastProvisionedCreds.role}`;
           <div class="crm-form-group">
             <label>Primary Role</label>
             <select id="edit-staff-role" class="crm-select" onchange="onEditRolePresetChange(this.value)">
-              <option value="technician">🔧 Field Technician</option>
-              <option value="support">💬 Support Agent</option>
-              <option value="devops">💻 DevOps Engineer</option>
-              <option value="dispatch">📋 Dispatch Lead</option>
-              <option value="admin">👑 Super Admin</option>
+              <option value="support">💬 Customer Support</option>
+              <option value="dev">💻 Dev</option>
+              <option value="admin">👑 Admin</option>
             </select>
           </div>
           <div class="crm-form-group">
@@ -5733,9 +6376,9 @@ Role: ${lastProvisionedCreds.role}`;
         <div class="crm-form-group" style="margin-bottom: 20px;">
           <label>Shift Assignment Type *</label>
           <select id="shift-type" class="crm-select" required>
-            <option value="tech">🔧 On-Site Field Hardware Deployment</option>
-            <option value="support">💬 Live Support Desk Queue</option>
-            <option value="devops">💻 DevOps &amp; Remote ADB Dispatch</option>
+            <option value="support">💬 Customer Support Desk &amp; Live Chat</option>
+            <option value="dev">💻 Dev &amp; Platform Engineering</option>
+            <option value="admin">👑 Admin &amp; System Operations</option>
           </select>
         </div>
 

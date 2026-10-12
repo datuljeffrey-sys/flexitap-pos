@@ -216,6 +216,50 @@
       supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     });
 
+    // --- AUTO-ASSIGNMENT ENGINE (DEV & CUSTOMER SUPPORT ONLY - ADMIN EXCLUDED) ---
+    function getAutoAssignedStaff(ticketData = {}) {
+      const defaultPool = [
+        { full_name: 'David Kim', email: 'david.ops@flexitapapp.com', role: 'dev', role_title: 'Senior DevOps & Platform Engineer' },
+        { full_name: 'Marcus Vance', email: 'marcus.support@flexitapapp.com', role: 'support', role_title: 'Customer Support Lead' },
+        { full_name: 'Sarah Jenkins', email: 'sarah.support@flexitapapp.com', role: 'support', role_title: 'Senior Support Desk Specialist' },
+        { full_name: 'Alex Rivera', email: 'employee@flexitapapp.com', role: 'support', role_title: 'Customer Support Specialist' }
+      ];
+
+      const category = (ticketData.category || '').toLowerCase();
+      const text = ((ticketData.subject || '') + ' ' + (ticketData.description || '')).toLowerCase();
+
+      // Technical issues -> Devs. Merchant/billing issues -> Customer Support. Admin strictly excluded.
+      const isTech = ['printer', 'sync', 'bug', 'firmware', 'hardware', 'api', 'crash', 'error'].includes(category) ||
+                     text.includes('printer') || text.includes('bluetooth') || text.includes('cutter') || 
+                     text.includes('sync') || text.includes('freeze') || text.includes('socket') || text.includes('exception');
+
+      let targetPool = [];
+      if (isTech) {
+        targetPool = defaultPool.filter(m => m.role === 'dev');
+      } else {
+        targetPool = defaultPool.filter(m => m.role === 'support');
+      }
+      if (targetPool.length === 0) targetPool = defaultPool;
+
+      let idx = 0;
+      try {
+        const saved = parseInt(localStorage.getItem('flexitap_ticket_assign_idx') || '0', 10);
+        idx = (saved + 1) % targetPool.length;
+        localStorage.setItem('flexitap_ticket_assign_idx', String(idx));
+      } catch (e) {
+        idx = Math.floor(Math.random() * targetPool.length);
+      }
+
+      const assigned = targetPool[idx] || targetPool[0];
+      return {
+        assigned_to: assigned.email,
+        staff_name: assigned.full_name,
+        role: assigned.role,
+        role_title: assigned.role_title,
+        routing_reason: isTech ? 'Technical defect auto-routed to Dev Engineering' : 'Customer request auto-routed to Customer Support'
+      };
+    }
+
     // --- SUBMIT SUPPORT TICKET DIRECT TO BACKEND ---
     async function submitSupportTicket(event) {
       event.preventDefault();
@@ -243,6 +287,9 @@
       btn.disabled = true;
       btn.innerHTML = '<span>⏳ Submitting Ticket...</span>';
 
+      // Auto-assign to Dev or Customer Support (Admin excluded)
+      const autoAssign = getAutoAssignedStaff({ category: category, subject: subject, description: description });
+
       const payload = {
         store_name: storeName,
         contact_email: contactEmail,
@@ -251,6 +298,7 @@
         subject: subject,
         description: description,
         status: 'open',
+        assigned_to: autoAssign.assigned_to,
         device_telemetry: {
           app_version: 'Web Support v2.4.1',
           device_role: 'Customer Ticket',
@@ -260,7 +308,8 @@
           platform: navigator.platform,
           language: navigator.language,
           screen_resolution: `${window.screen.width}x${window.screen.height}`,
-          submitted_at: new Date().toISOString()
+          submitted_at: new Date().toISOString(),
+          auto_assigned: autoAssign
         }
       };
 
@@ -286,6 +335,10 @@
 
         document.getElementById('ticket-ref-display').innerText = 'Ticket Reference: ' + ticketRef;
         document.getElementById('ticket-confirmed-email').innerText = contactEmail;
+        const assignedEl = document.getElementById('ticket-assigned-display');
+        if (assignedEl) {
+          assignedEl.innerText = `${autoAssign.staff_name} (${autoAssign.role === 'dev' ? 'Core Dev' : 'Customer Support Specialist'})`;
+        }
 
         formEl.style.display = 'none';
         successBox.style.display = 'block';
@@ -396,7 +449,7 @@
   <main class="container">
     <section class="support-hero">
       <div class="hero-badge">
-        <span class="hero-dot"></span> Official Releases & Dedicated Technician Support
+        <span class="hero-dot"></span> Official Releases & Dedicated Customer Support
       </div>
       
       <h1 class="section-title">Support & App Downloads</h1>
@@ -669,7 +722,7 @@
             <h4 class="ticket-success-title">Support Ticket Received!</h4>
             <div id="ticket-ref-display" class="ticket-success-ref">Ticket Reference: #REC-000</div>
             <p class="ticket-success-desc">
-              Your inquiry has been inserted directly into our dev operations dispatch. A technician has been notified and a confirmation was dispatched to <strong id="ticket-confirmed-email" style="color: #60a5fa;">your email</strong>.
+              Your inquiry has been received and auto-assigned to <strong id="ticket-assigned-display" style="color: #38bdf8;">Customer Support Specialist</strong>. A confirmation has been dispatched to <strong id="ticket-confirmed-email" style="color: #60a5fa;">your email</strong>.
             </p>
             <button type="button" class="btn-reset-ticket" onclick="resetTicketForm()">
               + Submit Another Ticket
@@ -685,10 +738,10 @@
         <div class="remote-callout-text">
           <h4>
             <span>⚡</span>
-            Need Instant Hands-on Technician Access?
+            Need Instant Hands-on Remote Support?
           </h4>
           <p>
-            During a live phone support call, our technicians can securely inspect your register screen via our ad-hoc session gateway.
+            During a live phone support call, our support team can securely inspect your register screen via our ad-hoc session gateway.
           </p>
         </div>
         <div>
