@@ -284,6 +284,11 @@
               <span>⚠️ Errors</span>
             </button>
           </li>
+          <li>
+            <button class="nav-btn" onclick="switchNav('analytics', this)">
+              <span>📈 Traffic &amp; Downloads</span>
+            </button>
+          </li>
         </ul>
       </div>
 
@@ -548,6 +553,127 @@
           </div>
         </div>
 
+        <!-- ================= 7. TRAFFIC & DOWNLOAD ANALYTICS VIEW ================= -->
+        <div id="view-analytics" class="tab-view">
+          <!-- Toolbar & Filter -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">Timeframe:</span>
+              <button class="action-btn active" id="btn-filter-all" onclick="filterAnalyticsTimeframe(0, this)">All Time</button>
+              <button class="action-btn" id="btn-filter-30" onclick="filterAnalyticsTimeframe(30, this)">Last 30 Days</button>
+              <button class="action-btn" id="btn-filter-7" onclick="filterAnalyticsTimeframe(7, this)">Last 7 Days</button>
+              <button class="action-btn" id="btn-filter-1" onclick="filterAnalyticsTimeframe(1, this)">Today</button>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="action-btn" onclick="fetchSiteAnalytics()">🔄 Refresh Data</button>
+              <button class="action-btn" onclick="exportAnalyticsCSV()">📥 Export CSV</button>
+            </div>
+          </div>
+
+          <!-- KPI Cards Row -->
+          <div class="kpi-row" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+            <div class="kpi-card">
+              <div class="kpi-title">Total Pageviews</div>
+              <div class="kpi-val" style="color: var(--primary);" id="an-kpi-pageviews">...</div>
+              <div class="kpi-status" style="color: #60a5fa;" id="an-kpi-sessions">● Loading...</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Windows Clicks</div>
+              <div class="kpi-val" style="color: #0078d7;" id="an-kpi-win">...</div>
+              <div class="kpi-status" style="color: #93c5fd;">● Desktop POS Edition</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Google Play Clicks</div>
+              <div class="kpi-val" style="color: #10b981;" id="an-kpi-android">...</div>
+              <div class="kpi-status" style="color: #34d399;">● Android &amp; Sunmi</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">App Store Clicks</div>
+              <div class="kpi-val" style="color: #f8fafc;" id="an-kpi-ios">...</div>
+              <div class="kpi-status" style="color: #cbd5e1;">● iPadOS &amp; iOS</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Leads &amp; Tickets</div>
+              <div class="kpi-val" style="color: var(--warning);" id="an-kpi-leads">...</div>
+              <div class="kpi-status" style="color: #fde68a;">● Inquiries &amp; Support</div>
+            </div>
+          </div>
+
+          <!-- Platform Demand Comparison Panel -->
+          <div class="panel" style="margin-bottom: 24px;">
+            <div class="panel-header">
+              <div class="panel-title">Operating System &amp; Hardware Interest Share</div>
+              <span style="font-size: 12px; color: var(--text-muted);">Relative download intent ratio</span>
+            </div>
+            <div style="padding: 20px;">
+              <div style="margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 6px;">
+                  <span style="color: #93c5fd;">💻 Windows POS Edition</span>
+                  <span id="an-share-win-text">0% (0 clicks)</span>
+                </div>
+                <div style="width: 100%; height: 10px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
+                  <div id="an-bar-win" style="height: 100%; width: 0%; background: #0078d7; transition: width 0.4s ease;"></div>
+                </div>
+              </div>
+
+              <div style="margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 6px;">
+                  <span style="color: #6ee7b7;">🤖 Android &amp; Sunmi POS</span>
+                  <span id="an-share-android-text">0% (0 clicks)</span>
+                </div>
+                <div style="width: 100%; height: 10px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
+                  <div id="an-bar-android" style="height: 100%; width: 0%; background: #10b981; transition: width 0.4s ease;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 6px;">
+                  <span style="color: #f8fafc;">🍏 iPadOS &amp; iOS Edition</span>
+                  <span id="an-share-ios-text">0% (0 clicks)</span>
+                </div>
+                <div style="width: 100%; height: 10px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
+                  <div id="an-bar-ios" style="height: 100%; width: 0%; background: #94a3b8; transition: width 0.4s ease;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notice banner if table pending -->
+          <div id="analytics-migration-notice" style="display: none; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
+            <div style="font-weight: 800; color: #fbbf24; margin-bottom: 4px;">⚡ Database Table Setup Required</div>
+            <div style="color: #fde68a; font-size: 13px; line-height: 1.5;">
+              To store and view native analytics events in Supabase, execute the migration script <code>supabase_analytics_migration.sql</code> in your Supabase SQL Editor.
+            </div>
+          </div>
+
+          <!-- Real-time Clickstream Table -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Real-Time Event Stream (Last 200 Interactions)</div>
+              <div style="font-size: 12px; color: var(--text-muted);" id="an-table-count">Showing 0 events</div>
+            </div>
+            <div style="overflow-x: auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Time (UTC)</th>
+                    <th>Event</th>
+                    <th>Platform</th>
+                    <th>Page Path</th>
+                    <th>Referrer</th>
+                    <th>Session ID</th>
+                  </tr>
+                </thead>
+                <tbody id="analytics-tbody">
+                  <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">Loading event stream...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- Create Ticket Modal -->
@@ -624,7 +750,8 @@
       tickets: { title: 'Support Tickets & Issue Resolution', subtitle: 'Create tickets, log internal dev notes, update statuses, and resolve merchant issues.' },
       remote: { title: 'Remote Access & Diagnostics', subtitle: 'Send real-time ADB commands, clear caches, and inspect remote device state.' },
       monitoring: { title: 'Telemetry & Sockets Monitoring', subtitle: 'Live Supabase real-time channels, API latencies, and sync performance.' },
-      errors: { title: 'Exception Log & Sync Repairs', subtitle: 'Diagnose SQLite/Supabase conflicts, schema mismatches, and failed upserts.' }
+      errors: { title: 'Exception Log & Sync Repairs', subtitle: 'Diagnose SQLite/Supabase conflicts, schema mismatches, and failed upserts.' },
+      analytics: { title: 'Traffic & Platform Demand Analytics', subtitle: 'Real-time site visits, conversion funnels, and download button clicks across Windows, Android, and iOS.' }
     };
 
     function switchNav(key, element) {
@@ -640,6 +767,7 @@
 
       if (key === 'support') loadSupportDeskSessions();
       if (key === 'tickets') fetchTickets();
+      if (key === 'analytics') fetchSiteAnalytics();
       if (key === 'updates') {
         fetchStorageFiles();
         startStoragePoller();
@@ -1681,6 +1809,173 @@
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+    }
+
+    // --- SITE & DOWNLOAD ANALYTICS (HYBRID SUPABASE + GA4) ---
+    let rawAnalyticsEvents = [];
+    let currentAnalyticsFilterDays = 0;
+
+    async function fetchSiteAnalytics() {
+      const noticeBox = document.getElementById('analytics-migration-notice');
+      const tbody = document.getElementById('analytics-tbody');
+      
+      try {
+        let query = supabaseClient
+          .from('site_analytics')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(200);
+
+        if (currentAnalyticsFilterDays > 0) {
+          const since = new Date(Date.now() - currentAnalyticsFilterDays * 24 * 60 * 60 * 1000).toISOString();
+          query = query.gte('created_at', since);
+        }
+
+        const res = await query;
+
+        if (res.error) {
+          console.warn('[Analytics] Supabase query notice:', res.error);
+          if (res.error.code === 'PGRST205' || (res.error.message && res.error.message.includes('site_analytics'))) {
+            if (noticeBox) noticeBox.style.display = 'block';
+          }
+          if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">' +
+              '⚠️ Table <code>site_analytics</code> pending in Supabase. Please run <code>supabase_analytics_migration.sql</code> in your SQL Editor.' +
+              '</td></tr>';
+          }
+          updateAnalyticsKPIs([]);
+          return;
+        }
+
+        if (noticeBox) noticeBox.style.display = 'none';
+        rawAnalyticsEvents = res.data || [];
+        updateAnalyticsKPIs(rawAnalyticsEvents);
+        renderAnalyticsTable(rawAnalyticsEvents);
+
+      } catch (err) {
+        console.error('[Analytics] Error:', err);
+      }
+    }
+
+    function filterAnalyticsTimeframe(days, btn) {
+      currentAnalyticsFilterDays = days;
+      ['btn-filter-all', 'btn-filter-30', 'btn-filter-7', 'btn-filter-1'].forEach(function(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+      });
+      if (btn) btn.classList.add('active');
+      fetchSiteAnalytics();
+    }
+
+    function updateAnalyticsKPIs(events) {
+      let pageviews = 0;
+      let winClicks = 0;
+      let androidClicks = 0;
+      let iosClicks = 0;
+      let leads = 0;
+      const sessions = new Set();
+
+      events.forEach(function(ev) {
+        if (ev.session_id) sessions.add(ev.session_id);
+        const name = (ev.event_name || '').toLowerCase();
+        const type = (ev.event_type || '').toLowerCase();
+
+        if (type === 'pageview' || name === 'pageview') {
+          pageviews++;
+        } else if (name.includes('windows') || (name.includes('download') && (ev.platform === 'windows'))) {
+          winClicks++;
+        } else if (name.includes('android') || name.includes('playstore') || (name.includes('download') && (ev.platform === 'android'))) {
+          androidClicks++;
+        } else if (name.includes('ios') || name.includes('appstore') || (name.includes('download') && (ev.platform === 'ios'))) {
+          iosClicks++;
+        } else if (type === 'lead' || name.includes('ticket') || name.includes('demo')) {
+          leads++;
+        }
+      });
+
+      document.getElementById('an-kpi-pageviews').innerText = pageviews.toLocaleString();
+      document.getElementById('an-kpi-sessions').innerText = '● ' + sessions.size.toLocaleString() + ' Unique Sessions';
+      document.getElementById('an-kpi-win').innerText = winClicks.toLocaleString();
+      document.getElementById('an-kpi-android').innerText = androidClicks.toLocaleString();
+      document.getElementById('an-kpi-ios').innerText = iosClicks.toLocaleString();
+      document.getElementById('an-kpi-leads').innerText = leads.toLocaleString();
+
+      const totalDownloads = winClicks + androidClicks + iosClicks;
+      const winPct = totalDownloads > 0 ? Math.round((winClicks / totalDownloads) * 100) : 0;
+      const androidPct = totalDownloads > 0 ? Math.round((androidClicks / totalDownloads) * 100) : 0;
+      const iosPct = totalDownloads > 0 ? Math.round((iosClicks / totalDownloads) * 100) : 0;
+
+      document.getElementById('an-bar-win').style.width = winPct + '%';
+      document.getElementById('an-share-win-text').innerText = winPct + '% (' + winClicks + ' clicks)';
+
+      document.getElementById('an-bar-android').style.width = androidPct + '%';
+      document.getElementById('an-share-android-text').innerText = androidPct + '% (' + androidClicks + ' clicks)';
+
+      document.getElementById('an-bar-ios').style.width = iosPct + '%';
+      document.getElementById('an-share-ios-text').innerText = iosPct + '% (' + iosClicks + ' clicks)';
+    }
+
+    function renderAnalyticsTable(events) {
+      const tbody = document.getElementById('analytics-tbody');
+      const countEl = document.getElementById('an-table-count');
+      if (countEl) countEl.innerText = 'Showing ' + events.length + ' events';
+
+      if (!events || events.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">No events recorded yet. Browse the site to generate events.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = events.map(function(ev) {
+        const time = ev.created_at ? new Date(ev.created_at).toLocaleString() : 'N/A';
+        const eventBadge = (ev.event_type === 'download_click')
+          ? '<span style="color: #60a5fa; font-weight: 700;">📦 ' + escapeHtml(ev.event_name || 'download') + '</span>'
+          : (ev.event_type === 'pageview')
+          ? '<span style="color: #34d399; font-weight: 600;">👁️ ' + escapeHtml(ev.event_name) + '</span>'
+          : '<span style="color: #cbd5e1;">⚡ ' + escapeHtml(ev.event_name) + '</span>';
+
+        const platformBadge = '<span style="text-transform: uppercase; font-size: 11px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.06);">' + escapeHtml(ev.platform || 'unknown') + '</span>';
+        const page = '<code>' + escapeHtml(ev.page_path || '/') + '</code>';
+        const ref = ev.referrer ? '<span style="font-size: 11px; color: var(--text-muted);">' + escapeHtml(ev.referrer) + '</span>' : '<span style="color: #475569;">Direct</span>';
+        const sid = '<span style="font-family: monospace; font-size: 11px; color: var(--text-muted);">' + escapeHtml(ev.session_id ? ev.session_id.substring(0, 16) : '—') + '</span>';
+
+        return '<tr>' +
+          '<td style="white-space: nowrap; font-size: 12px;">' + time + '</td>' +
+          '<td>' + eventBadge + '</td>' +
+          '<td>' + platformBadge + '</td>' +
+          '<td>' + page + '</td>' +
+          '<td>' + ref + '</td>' +
+          '<td>' + sid + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function exportAnalyticsCSV() {
+      if (!rawAnalyticsEvents || rawAnalyticsEvents.length === 0) {
+        alert('No analytics events loaded to export.');
+        return;
+      }
+      const headers = ['id', 'created_at', 'event_type', 'event_name', 'platform', 'page_path', 'referrer', 'session_id'];
+      const rows = rawAnalyticsEvents.map(function(ev) {
+        return [
+          ev.id || '',
+          ev.created_at || '',
+          ev.event_type || '',
+          ev.event_name || '',
+          ev.platform || '',
+          ev.page_path || '',
+          (ev.referrer || '').replace(/,/g, ';'),
+          ev.session_id || ''
+        ];
+      });
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', 'flexitap_analytics_' + new Date().toISOString().substring(0, 10) + '.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     window.addEventListener('DOMContentLoaded', checkDevSession);

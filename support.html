@@ -6,6 +6,7 @@
   <title>FlexiTap POS — Support & App Downloads</title>
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="analytics.js"></script>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -289,6 +290,15 @@
         formEl.style.display = 'none';
         successBox.style.display = 'block';
 
+        if (window.FlexiAnalytics) {
+          FlexiAnalytics.track('ticket_submitted', {
+            event_type: 'lead',
+            category: category,
+            priority: priority,
+            ticket_ref: ticketRef
+          });
+        }
+
       } catch (err) {
         console.error('Ticket network exception:', err);
         errorDiv.innerText = 'Network error submitting ticket. Please check connection or email support@flexitapapp.com.';
@@ -437,7 +447,7 @@
           </div>
 
           <div>
-            <div class="btn-download-placeholder" style="background: rgba(0, 120, 215, 0.18); border: 1px solid rgba(0, 120, 215, 0.4); color: #93c5fd;">
+            <div class="btn-download-placeholder" data-analytics="download-windows" data-platform="windows" data-label="Windows POS Edition" style="background: rgba(0, 120, 215, 0.18); border: 1px solid rgba(0, 120, 215, 0.4); color: #93c5fd; cursor: pointer;">
               <!-- Windows download icon -->
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M0 3.449L9.75 2.1v9.451H0V3.449zm10.75-1.5L24 0v11.551h-13.25V1.949zM0 12.551h9.75V22l-9.75-1.35V12.551zm10.75 0H24V24l-13.25-1.95V12.551z"/>
@@ -477,7 +487,7 @@
           </div>
 
           <div>
-            <div class="btn-download-placeholder" style="background: rgba(16, 185, 129, 0.16); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7;">
+            <div class="btn-download-placeholder" data-analytics="download-android" data-platform="android" data-label="Google Play Store" style="background: rgba(16, 185, 129, 0.16); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; cursor: pointer;">
               <!-- Google Play Icon -->
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M3.609 1.814L13.793 12 3.61 22.186c-.301-.318-.485-.75-.485-1.229V3.043c0-.479.184-.911.484-1.229zm11.306 11.307l2.42 2.42-11.89 6.842 9.47-9.262zm0-2.242L5.445 1.617l11.89 6.842-2.42 2.42zm1.536 1.536l3.815-2.194c.833-.479.833-1.258 0-1.737L16.451 10.29l-2.115 2.125 2.115 2.126v-.126z"/>
@@ -517,7 +527,7 @@
           </div>
 
           <div>
-            <div class="btn-download-placeholder" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.25); color: #f8fafc;">
+            <div class="btn-download-placeholder" data-analytics="download-ios" data-platform="ios" data-label="Apple App Store" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.25); color: #f8fafc; cursor: pointer;">
               <!-- Apple Store Icon -->
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.01c.67-.82 1.13-1.96 1.01-3.1-.97.04-2.15.65-2.85 1.47-.62.72-1.16 1.88-1.02 2.99 1.08.08 2.19-.54 2.86-1.36z"/>
