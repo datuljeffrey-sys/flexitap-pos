@@ -421,6 +421,20 @@
     </div>
   </div>
 
+  <!-- ATTACHMENT LIGHTBOX MODAL -->
+  <div id="dev-image-lightbox-modal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.88); z-index: 9999; justify-content: center; align-items: center; padding: 24px; backdrop-filter: blur(8px);" onclick="if(event.target === this) closeDevImageLightbox();">
+    <div style="position: relative; max-width: 90vw; max-height: 90vh; display: flex; flex-direction: column; align-items: center; background: rgba(15, 23, 42, 0.95); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
+      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 12px; gap: 12px;">
+        <span id="dev-lightbox-caption" style="font-size: 0.85rem; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Diagnostic Photo</span>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <a id="dev-lightbox-open-link" href="#" target="_blank" style="font-size: 0.78rem; color: #38bdf8; text-decoration: none; font-weight: 700;">⬇️ Download / Full Screen</a>
+          <button type="button" onclick="closeDevImageLightbox()" style="background: none; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer; line-height: 1; padding: 0 4px;">&times;</button>
+        </div>
+      </div>
+      <img id="dev-lightbox-img" src="" alt="Enlarged Attachment" style="max-width: 85vw; max-height: 75vh; object-fit: contain; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);" />
+    </div>
+  </div>
+
   <!-- 2. DEV DASHBOARD LAYOUT -->
   <div id="dev-app-layout">
     <aside>
@@ -3806,6 +3820,30 @@
 
       document.getElementById('crm-td-desc').innerText = t.description || 'No detailed description provided.';
 
+      const attBox = document.getElementById('crm-td-attachments-box');
+      const attContent = document.getElementById('crm-td-attachments-content');
+      const rawAtt = t.device_telemetry?.attachments || t.attachments || [];
+      const attList = Array.isArray(rawAtt) ? rawAtt : (rawAtt ? [rawAtt] : []);
+      if (attBox && attContent) {
+        if (attList.length > 0) {
+          attBox.style.display = 'block';
+          attContent.innerHTML = attList.map((att, idx) => {
+            const name = escapeHtml(att.name || `Attachment ${idx + 1}`);
+            const dataUri = att.data || att.url || att.src || '';
+            if (!dataUri) return '';
+            const isVideo = (att.type && att.type.includes('video')) || name.match(/\.(mp4|mov|webm|avi|m4v)$/i);
+            if (isVideo) {
+              return `<div style="max-width: 260px;"><video src="${dataUri}" controls style="max-width: 100%; max-height: 160px; border-radius: 6px;"></video></div>`;
+            } else {
+              return `<div style="max-width: 220px;"><a href="${dataUri}" target="_blank"><img src="${dataUri}" alt="${name}" style="max-width: 100%; max-height: 160px; border-radius: 6px; object-fit: contain; border: 1px solid rgba(255,255,255,0.1);" /></a></div>`;
+            }
+          }).filter(Boolean).join('');
+        } else {
+          attBox.style.display = 'none';
+          attContent.innerHTML = '';
+        }
+      }
+
       const telem = t.device_telemetry || {};
       const telemParts = [];
       if (telem.platform) telemParts.push('Platform: ' + telem.platform);
@@ -5037,6 +5075,9 @@
 
         const tierBadge = getTierBadgeHtml(getTicketTier(t));
         const assigneeName = t.device_telemetry?.auto_assigned?.staff_name || (t.assigned_to ? t.assigned_to.split('@')[0] : 'Auto-Assigned');
+        const rawAtt = t.device_telemetry?.attachments || t.attachments;
+        const hasAttachments = Array.isArray(rawAtt) ? rawAtt.length > 0 : !!rawAtt;
+        const attBadge = hasAttachments ? `<span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); padding: 2px 6px; border-radius: 6px; font-size: 0.68rem; font-weight: 700;">📎 Photo</span>` : '';
 
         html += `
           <div class="ticket-card ${isActive}" onclick="selectTicket('${t.id}')">
@@ -5044,6 +5085,7 @@
               <span class="ticket-number">${numLabel}</span>
               ${statusBadge}
               ${tierBadge}
+              ${attBadge}
             </div>
             <div class="ticket-store">${escapeHtml(t.store_name)}</div>
             <div class="ticket-subject">${escapeHtml(t.subject)}</div>
@@ -5062,6 +5104,92 @@
         `;
       });
       listEl.innerHTML = html;
+    }
+
+    function renderTicketAttachmentsHtml(ticket) {
+      if (!ticket) return '';
+      const rawAttachments = ticket.device_telemetry?.attachments || ticket.attachments || [];
+      const list = Array.isArray(rawAttachments) ? rawAttachments : (rawAttachments ? [rawAttachments] : []);
+      if (!list || list.length === 0) return '';
+
+      const itemsHtml = list.map((att, idx) => {
+        if (!att) return '';
+        const name = escapeHtml(att.name || `Attachment ${idx + 1}`);
+        const dataUri = att.data || att.url || att.src || '';
+        if (!dataUri) return '';
+        const isVideo = (att.type && att.type.includes('video')) || name.match(/\.(mp4|mov|webm|avi|m4v)$/i);
+
+        if (isVideo) {
+          return `
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 10px; padding: 10px; max-width: 380px; flex: 1 1 280px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 0.72rem; color: var(--text-muted);">
+                <span style="font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px;">🎥 ${name}</span>
+                <a href="${dataUri}" download="${name}" style="color: #38bdf8; text-decoration: none; font-weight: 600;">Download</a>
+              </div>
+              <video src="${dataUri}" controls style="width: 100%; max-height: 220px; border-radius: 6px; background: #000; display: block;"></video>
+            </div>
+          `;
+        } else {
+          return `
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 10px; padding: 10px; max-width: 320px; flex: 1 1 240px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 0.72rem; color: var(--text-muted);">
+                <span style="font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px;">📷 ${name}</span>
+                <div style="display: flex; gap: 8px;">
+                  <button type="button" onclick="openDevImageLightbox('${ticket.id}', ${idx})" style="background: none; border: none; color: #38bdf8; font-size: 0.72rem; cursor: pointer; padding: 0; font-weight: 600;">🔍 Zoom</button>
+                  <a href="${dataUri}" download="${name}" style="color: #38bdf8; text-decoration: none; font-weight: 600;">Download</a>
+                </div>
+              </div>
+              <div onclick="openDevImageLightbox('${ticket.id}', ${idx})" style="cursor: pointer; overflow: hidden; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; min-height: 120px; max-height: 220px;">
+                <img src="${dataUri}" alt="${name}" style="max-width: 100%; max-height: 220px; object-fit: contain; display: block; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'" />
+              </div>
+            </div>
+          `;
+        }
+      }).filter(Boolean).join('');
+
+      if (!itemsHtml) return '';
+
+      return `
+        <div style="margin-bottom: 16px;">
+          <div style="font-size: 0.75rem; color: #38bdf8; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+            <span>📎</span> Attached Diagnostic Photos &amp; Screen Media (${list.length}):
+          </div>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            ${itemsHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    function openDevImageLightbox(ticketId, index) {
+      const ticket = cachedTickets.find(t => t.id === ticketId) || selectedTicket;
+      if (!ticket) return;
+      const rawAttachments = ticket.device_telemetry?.attachments || ticket.attachments || [];
+      const list = Array.isArray(rawAttachments) ? rawAttachments : (rawAttachments ? [rawAttachments] : []);
+      const att = list[index];
+      if (!att || !att.data) return;
+
+      const modal = document.getElementById('dev-image-lightbox-modal');
+      const img = document.getElementById('dev-lightbox-img');
+      const caption = document.getElementById('dev-lightbox-caption');
+      const link = document.getElementById('dev-lightbox-open-link');
+
+      if (modal && img) {
+        img.src = att.data;
+        if (caption) caption.textContent = `${att.name || 'Diagnostic Photo'} (Ticket #${ticket.ticket_number || 'TICK'})`;
+        if (link) {
+          link.href = att.data;
+          link.download = att.name || 'ticket-attachment.jpg';
+        }
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeDevImageLightbox() {
+      const modal = document.getElementById('dev-image-lightbox-modal');
+      if (modal) modal.style.display = 'none';
+      const img = document.getElementById('dev-lightbox-img');
+      if (img) img.src = '';
     }
 
     async function selectTicket(ticketId, fetchNotes = true) {
@@ -5222,6 +5350,8 @@
             ${escapeHtml(selectedTicket.description)}
           </div>
         </div>
+
+        ${renderTicketAttachmentsHtml(selectedTicket)}
 
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
           <button class="action-btn" onclick="discussTicketInTeamChat('${selectedTicket.id}')" style="color: #60a5fa; border-color: rgba(59, 130, 246, 0.35);">
@@ -9147,6 +9277,11 @@ Role: ${lastProvisionedCreds.role}`;
         <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px;">
           <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 6px;">Issue Description</span>
           <p id="crm-td-desc" style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; margin: 0; white-space: pre-wrap;">Details...</p>
+        </div>
+
+        <div id="crm-td-attachments-box" style="display: none; background: rgba(0,0,0,0.25); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: #38bdf8; text-transform: uppercase; display: block; margin-bottom: 8px;">Attached Diagnostic Media</span>
+          <div id="crm-td-attachments-content" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
         </div>
 
         <div style="background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.2); border-radius: 12px; padding: 14px;">

@@ -846,6 +846,7 @@
 
         <div id="rd-subject" style="font-size: 0.98rem; font-weight: 700; color: #fff; margin-bottom: 6px;">Subject</div>
         <div id="rd-desc" style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 12px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">Description</div>
+        <div id="rd-attachments" style="display: none; margin-bottom: 12px;"></div>
 
         <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.76rem; color: var(--muted); margin-bottom: 12px;">
           <span>Category: <strong id="rd-category" style="color: #fff;">General</strong></span>
@@ -2062,6 +2063,35 @@
       document.getElementById('rd-store').innerText = liveTicket.store_name || liveTicket.storeName || 'Store';
       document.getElementById('rd-subject').innerText = liveTicket.subject || 'Ticket Details';
       document.getElementById('rd-desc').innerText = liveTicket.description || 'No description provided.';
+
+      // Render attachments if present
+      const attBox = document.getElementById('rd-attachments');
+      if (attBox) {
+        const rawAtt = liveTicket.device_telemetry?.attachments || liveTicket.attachments || [];
+        const attList = Array.isArray(rawAtt) ? rawAtt : (rawAtt ? [rawAtt] : []);
+        if (attList.length > 0) {
+          attBox.style.display = 'block';
+          attBox.innerHTML = `
+            <div style="font-size: 0.72rem; color: #38bdf8; font-weight: 700; margin-bottom: 6px;">📎 Attached Diagnostic Media:</div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              ${attList.map((att, idx) => {
+                const dataUri = att.data || att.url || '';
+                if (!dataUri) return '';
+                const isVideo = (att.type && att.type.includes('video')) || (att.name && att.name.match(/\.(mp4|mov|webm)$/i));
+                if (isVideo) {
+                  return `<video src="${dataUri}" controls style="max-width: 100%; max-height: 160px; border-radius: 8px;"></video>`;
+                } else {
+                  return `<a href="${dataUri}" target="_blank" style="display: block; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);"><img src="${dataUri}" alt="${escapeHtml(att.name || 'Photo')}" style="max-height: 120px; max-width: 100%; object-fit: contain; display: block;" /></a>`;
+                }
+              }).join('')}
+            </div>
+          `;
+        } else {
+          attBox.style.display = 'none';
+          attBox.innerHTML = '';
+        }
+      }
+
       document.getElementById('rd-category').innerText = (liveTicket.category || 'general').toUpperCase();
       const prioEl = document.getElementById('rd-priority');
       if (prioEl) prioEl.innerText = (liveTicket.priority || 'normal').toUpperCase();
