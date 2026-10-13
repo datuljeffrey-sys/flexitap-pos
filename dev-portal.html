@@ -3609,12 +3609,11 @@
       if (modal) modal.classList.remove('open');
     }
 
-    // Auto-assignment for tickets: strictly Dev or Customer Support. Admin excluded.
+    // Auto-assignment for tickets: EVERY newly submitted ticket MUST first be assigned to Customer Support (Admin & Dev excluded on intake)
     function getAutoAssignedStaff(ticketData = {}) {
-      const defaultPool = [
-        { full_name: 'David Kim', email: 'david.ops@flexitapapp.com', role: 'dev', role_title: 'Senior DevOps & Platform Engineer' },
-        { full_name: 'Marcus Vance', email: 'marcus.support@flexitapapp.com', role: 'support', role_title: 'Customer Support Lead' },
+      const defaultSupportPool = [
         { full_name: 'Sarah Jenkins', email: 'sarah.support@flexitapapp.com', role: 'support', role_title: 'Senior Support Desk Specialist' },
+        { full_name: 'Marcus Vance', email: 'marcus.support@flexitapapp.com', role: 'support', role_title: 'Customer Support Lead' },
         { full_name: 'Alex Rivera', email: 'employee@flexitapapp.com', role: 'support', role_title: 'Customer Support Specialist' }
       ];
 
@@ -3622,41 +3621,19 @@
       if (typeof teamStaffMembers !== 'undefined' && Array.isArray(teamStaffMembers) && teamStaffMembers.length > 0) {
         eligibleStaff = teamStaffMembers.filter(m => {
           const r = (m.role || '').toLowerCase();
-          // Exclude Admin & Super Admin strictly!
+          // Exclude Admin & Super Admin strictly! Devs are also excluded on initial ticket intake.
           if (r === 'admin' || r === 'super_admin' || m.department === 'Executive & Admin') return false;
-          return r === 'dev' || r === 'developer' || r === 'devops' || r === 'support' || r === 'customer_support' || r === 'agent';
+          return r === 'support' || r === 'customer_support' || r === 'agent';
         });
       }
 
       if (eligibleStaff.length === 0) {
-        eligibleStaff = defaultPool;
+        eligibleStaff = defaultSupportPool;
       }
 
-      const category = (ticketData.category || '').toLowerCase();
-      const tier = ticketData.tier;
-      // Technical issues / Tier 3 -> Devs. Merchant/billing issues / Tier 1 -> Customer Support. Admins excluded.
-      const isTech = tier === 'tier_3' || (tier !== 'tier_1' && (['printer', 'sync', 'bug', 'firmware', 'hardware', 'api', 'crash', 'error'].includes(category) ||
-                     text.includes('printer') || text.includes('bluetooth') || text.includes('cutter') || 
-                     text.includes('sync') || text.includes('freeze') || text.includes('socket') || text.includes('exception')));
-
-      let targetPool = [];
-      if (isTech) {
-        targetPool = eligibleStaff.filter(m => {
-          const r = (m.role || '').toLowerCase();
-          return r === 'dev' || r === 'developer' || r === 'devops';
-        });
-        if (targetPool.length === 0) targetPool = eligibleStaff;
-      } else {
-        targetPool = eligibleStaff.filter(m => {
-          const r = (m.role || '').toLowerCase();
-          return r === 'support' || r === 'customer_support' || r === 'agent';
-        });
-        if (targetPool.length === 0) targetPool = eligibleStaff;
-      }
-
-      // Prioritize staff who are currently clocked in if attendance data is available
-      const clockedIn = targetPool.filter(m => m.clock_status === 'clocked_in');
-      const pool = clockedIn.length > 0 ? clockedIn : targetPool;
+      // Prioritize support staff who are currently clocked in if attendance data is available
+      const clockedIn = eligibleStaff.filter(m => m.clock_status === 'clocked_in');
+      const pool = clockedIn.length > 0 ? clockedIn : eligibleStaff;
 
       let idx = 0;
       try {
@@ -3667,14 +3644,33 @@
         idx = Math.floor(Math.random() * pool.length);
       }
 
-      const assigned = pool[idx] || pool[0] || defaultPool[0];
+      const assigned = pool[idx] || pool[0] || defaultSupportPool[0];
       return {
         assigned_to: assigned.email,
         staff_name: assigned.full_name,
-        role: assigned.role,
-        role_title: assigned.role_title || (assigned.role === 'dev' ? 'Core Developer' : 'Customer Support Specialist'),
-        routing_reason: isTech ? 'Technical / System defect auto-routed to Dev' : 'Merchant issue auto-routed to Customer Support'
+        role: 'support',
+        role_title: assigned.role_title || 'Customer Support Specialist',
+        routing_reason: 'Mandatory intake assignment to Customer Support Desk'
       };
+    }
+
+    function getAutoAssignedDev() {
+      let devs = [];
+      if (typeof teamStaffMembers !== 'undefined' && Array.isArray(teamStaffMembers)) {
+        devs = teamStaffMembers.filter(m => {
+          const r = (m.role || '').toLowerCase();
+          return r === 'dev' || r === 'developer' || r === 'devops';
+        });
+      }
+      if (devs.length === 0) {
+        devs = [
+          { full_name: 'David Kim', email: 'david.ops@flexitapapp.com', role: 'dev', role_title: 'Senior DevOps & Platform Engineer' },
+          { full_name: 'Maya Lin', email: 'maya.dev@flexitapapp.com', role: 'dev', role_title: 'Lead POS Kernel & Android Engineer' }
+        ];
+      }
+      const clockedIn = devs.filter(d => d.clock_status === 'clocked_in');
+      const pool = clockedIn.length > 0 ? clockedIn : devs;
+      return pool[0] || devs[0];
     }
 
     async function handleCrmCreateTicketSubmit(event) {
@@ -4677,14 +4673,14 @@
               category: 'sync',
               priority: 'high',
               status: 'open',
-              assigned_to: 'david.ops@flexitapapp.com',
+              assigned_to: 'sarah.support@flexitapapp.com',
               description: 'Database lock encountered during end-of-day z-report sync when batch-posting 140 offline cash receipts.',
               device_telemetry: {
                 app_version: 'v2.4.1 (Build 184)',
                 device_role: 'Master Register',
                 sqlite_healthy: false,
                 unsynced_invoices: 12,
-                auto_assigned: { staff_name: 'David Kim', role: 'dev', email: 'david.ops@flexitapapp.com' }
+                auto_assigned: { staff_name: 'Sarah Jenkins', role: 'support', email: 'sarah.support@flexitapapp.com' }
               },
               created_at: new Date(Date.now() - 45 * 60 * 1000).toISOString()
             },
@@ -4770,30 +4766,28 @@
     function isDevTicket(t) {
       if (!t) return false;
       if (isEscalatedTicket(t)) return true;
-      const cat = (t.category || '').toLowerCase();
-      if (['printer', 'sync', 'bug', 'firmware', 'hardware', 'api', 'crash', 'error'].includes(cat)) return true;
-      if (t.device_telemetry?.auto_assigned?.role === 'dev') return true;
-      const assignee = (t.assigned_to || '').toLowerCase();
-      if (assignee.includes('dev') || assignee.includes('ops') || assignee.includes('david') || assignee.includes('alex.dev') || assignee.includes('maya')) return true;
+      if (t.tier === 'tier_3' || t.device_telemetry?.tier === 'tier_3') return true;
       return false;
     }
 
     function isSupportTicket(t) {
       if (!t) return false;
-      if (isEscalatedTicket(t)) return false;
-      if (isDevTicket(t)) return false;
-      return true;
+      return !isDevTicket(t);
     }
 
-    // Support Tier helpers
+    // Support Tier helpers:
+    // Tier 1: Merchant Ops (Customer Support)
+    // Tier 2: Tech Support & Peripherals Desk (Customer Support)
+    // Tier 3: Core Dev Engineering (Dev Engineering - upon escalation only)
     function getTicketTier(t) {
       if (!t) return 'tier_1';
-      if (t.tier) return t.tier;
-      if (t.device_telemetry?.tier) return t.device_telemetry.tier;
-      if (isEscalatedTicket(t) || t.escalated_to === 'dev' || t.category === 'sync' || t.category === 'bug') {
+      if (isEscalatedTicket(t) || t.escalated_to === 'dev' || t.tier === 'tier_3' || t.device_telemetry?.tier === 'tier_3') {
         return 'tier_3';
       }
-      if (t.category === 'printer' || t.category === 'payment') {
+      if (t.tier === 'tier_2' || t.device_telemetry?.tier === 'tier_2') {
+        return 'tier_2';
+      }
+      if (t.category === 'printer' || t.category === 'payment' || t.category === 'hardware' || t.category === 'sync') {
         return 'tier_2';
       }
       return 'tier_1';
@@ -5103,6 +5097,21 @@
       const isEsc = isEscalatedTicket(selectedTicket);
       const isDev = isDevTicket(selectedTicket);
       const currentTier = getTicketTier(selectedTicket);
+
+      // Ensure non-escalated tickets are assigned to Customer Support Desk
+      if (!isEsc && currentTier !== 'tier_3') {
+        const assignedLower = (selectedTicket.assigned_to || '').toLowerCase();
+        if (assignedLower.includes('david') || assignedLower.includes('dev') || assignedLower.includes('maya')) {
+          selectedTicket.assigned_to = 'sarah.support@flexitapapp.com';
+          if (!selectedTicket.device_telemetry) selectedTicket.device_telemetry = {};
+          selectedTicket.device_telemetry.auto_assigned = {
+            staff_name: 'Sarah Jenkins',
+            email: 'sarah.support@flexitapapp.com',
+            role: 'support'
+          };
+        }
+      }
+
       const tierBadge = getTierBadgeHtml(currentTier);
       const numLabel = selectedTicket.ticket_number ? '#' + selectedTicket.ticket_number : '#NEW';
       const timeStr = new Date(selectedTicket.created_at).toLocaleString();
@@ -5219,7 +5228,7 @@
           <button class="action-btn" onclick="discussTicketInTeamChat('${selectedTicket.id}')" style="color: #60a5fa; border-color: rgba(59, 130, 246, 0.35);">
             💬 Discuss in Team Chat
           </button>
-          ${isEsc
+          ${(isEsc || isDev)
             ? `<button class="action-btn" onclick="handbackTicketToSupport('${selectedTicket.id}')" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(59, 130, 246, 0.4); font-weight: 700;">
                  ↩️ Hand Back to Support
                </button>`
@@ -5550,10 +5559,10 @@
       let devEmail = assignDevVal;
       let devName = 'Core Dev Engineering';
       if (assignDevVal === 'auto') {
-        const autoStaff = typeof getAutoAssignedStaff === 'function' ? getAutoAssignedStaff({ category: 'bug', subject: reasonCat, description: troubleshootingNotes }) : null;
-        if (autoStaff) {
-          devEmail = autoStaff.email;
-          devName = autoStaff.staff_name;
+        const autoDev = typeof getAutoAssignedDev === 'function' ? getAutoAssignedDev() : null;
+        if (autoDev) {
+          devEmail = autoDev.email;
+          devName = autoDev.full_name;
         } else {
           devEmail = 'david.ops@flexitapapp.com';
           devName = 'David Kim';
@@ -5570,6 +5579,7 @@
 
       t.status = 'escalated';
       t.priority = elevatedPrio;
+      t.tier = 'tier_3';
       t.is_escalated = true;
       t.escalated_to = 'dev';
       t.escalated_by = effUser;
@@ -5644,6 +5654,7 @@ Support Diagnostics: ${troubleshootingNotes}`;
 
       t.status = 'in_progress';
       t.is_escalated = false;
+      t.tier = (t.category === 'printer' || t.category === 'hardware' || t.category === 'payment') ? 'tier_2' : 'tier_1';
       t.assigned_to = supportStaff.email;
       if (t.device_telemetry) {
         t.device_telemetry.is_escalated = false;
