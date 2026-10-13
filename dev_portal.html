@@ -1006,33 +1006,32 @@
         <!-- ================= 3.5 TICKETS CRM VIEW ================= -->
         <div id="view-tickets" class="tab-view">
           <div class="kpi-row" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-            <div class="kpi-card">
-              <div class="kpi-card" onclick="switchTicketQueue('all')" style="cursor: pointer;" title="View all active tickets">
-                <div class="kpi-title">Open Tickets Queue</div>
-                <div class="kpi-val" style="color: var(--primary);" id="kpi-tickets-open">0</div>
-                <div class="kpi-status" style="color: var(--accent);">● Requiring Action</div>
-              </div>
-              <div class="kpi-card" onclick="switchTicketQueue('support')" style="cursor: pointer;" title="View Customer Support queue">
-                <div class="kpi-title">Customer Support Desk</div>
-                <div class="kpi-val" style="color: #60a5fa;" id="kpi-tickets-support">0</div>
-                <div class="kpi-status" style="color: var(--text-muted);">Tier 1 &amp; 2 Merchant Ops</div>
-              </div>
-              <div class="kpi-card" onclick="switchTicketQueue('dev')" style="cursor: pointer;" title="View Dev Engineering queue">
-                <div class="kpi-title">Core Dev Engineering</div>
-                <div class="kpi-val" style="color: #c084fc;" id="kpi-tickets-dev">0</div>
-                <div class="kpi-status" style="color: var(--text-muted);">Tier 3 Bugs &amp; Sync</div>
-              </div>
-              <div class="kpi-card" onclick="switchTicketQueue('escalated')" style="cursor: pointer;" title="View Escalated to Dev queue">
-                <div class="kpi-title">Escalated to Dev</div>
-                <div class="kpi-val" style="color: #f87171;" id="kpi-tickets-escalated">0</div>
-                <div class="kpi-status" style="color: #f87171;">⚡ Urgent Handoff</div>
-              </div>
-              <div class="kpi-card" onclick="switchTicketQueue('resolved')" style="cursor: pointer;" title="View resolved &amp; closed tickets">
-                <div class="kpi-title">Resolved &amp; Closed</div>
-                <div class="kpi-val" style="color: var(--accent);" id="kpi-tickets-resolved">0</div>
-                <div class="kpi-status" style="color: var(--accent);">✓ Verified Fixed (View)</div>
-              </div>
+            <div class="kpi-card" onclick="switchTicketQueue('all')" style="cursor: pointer;" title="View all active tickets">
+              <div class="kpi-title">Open Tickets Queue</div>
+              <div class="kpi-val" style="color: var(--primary);" id="kpi-tickets-open">0</div>
+              <div class="kpi-status" style="color: var(--accent);">● Requiring Action</div>
             </div>
+            <div class="kpi-card" onclick="switchTicketQueue('support')" style="cursor: pointer;" title="View Customer Support queue">
+              <div class="kpi-title">Customer Support Desk</div>
+              <div class="kpi-val" style="color: #60a5fa;" id="kpi-tickets-support">0</div>
+              <div class="kpi-status" style="color: var(--text-muted);">Tier 1 &amp; 2 Merchant Ops</div>
+            </div>
+            <div class="kpi-card" onclick="switchTicketQueue('dev')" style="cursor: pointer;" title="View Dev Engineering queue">
+              <div class="kpi-title">Core Dev Engineering</div>
+              <div class="kpi-val" style="color: #c084fc;" id="kpi-tickets-dev">0</div>
+              <div class="kpi-status" style="color: var(--text-muted);">Tier 3 Bugs &amp; Sync</div>
+            </div>
+            <div class="kpi-card" onclick="switchTicketQueue('escalated')" style="cursor: pointer;" title="View Escalated to Dev queue">
+              <div class="kpi-title">Escalated to Dev</div>
+              <div class="kpi-val" style="color: #f87171;" id="kpi-tickets-escalated">0</div>
+              <div class="kpi-status" style="color: #f87171;">⚡ Urgent Handoff</div>
+            </div>
+            <div class="kpi-card" onclick="switchTicketQueue('resolved')" style="cursor: pointer;" title="View resolved &amp; closed tickets">
+              <div class="kpi-title">Resolved &amp; Closed</div>
+              <div class="kpi-val" style="color: var(--accent);" id="kpi-tickets-resolved">0</div>
+              <div class="kpi-status" style="color: var(--accent);">✓ Verified Fixed (View)</div>
+            </div>
+          </div>
 
             <div class="panel" style="margin-bottom: 0;">
               
@@ -1070,12 +1069,12 @@
                   <input type="text" id="ticket-search" onkeyup="filterTickets()" placeholder="Search tickets, stores, or issues..." style="padding: 8px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 240px;">
                   <select id="ticket-filter-status" onchange="filterTickets()" style="background: var(--bg); border: 1px solid var(--card-border); color: #fff; padding: 7px 12px; border-radius: 8px; font-size: 0.85rem;">
                     <option value="active" selected>Active Tickets (Excl. Resolved)</option>
+                    <option value="all">All Active Statuses</option>
                     <option value="open">Open Only</option>
                     <option value="in_progress">In Progress</option>
                     <option value="escalated">⚡ Escalated to Dev</option>
                     <option value="resolved">Resolved</option>
                     <option value="closed">Closed</option>
-                    <option value="all">All Statuses (Incl. Resolved)</option>
                   </select>
                 <select id="ticket-filter-priority" onchange="filterTickets()" style="background: var(--bg); border: 1px solid var(--card-border); color: #fff; padding: 7px 12px; border-radius: 8px; font-size: 0.85rem;">
                   <option value="all">All Priorities</option>
@@ -4719,9 +4718,11 @@
       updateTicketKPIs();
       renderTicketsList();
       const currentFiltered = typeof getFilteredTickets === 'function' ? getFilteredTickets() : cachedTickets;
-      if (!selectedTicket && currentFiltered.length > 0) {
-        selectTicket(currentFiltered[0].id);
-      } else if (!selectedTicket && currentFiltered.length === 0) {
+      if (currentFiltered.length > 0) {
+        if (!selectedTicket || selectedTicket.status === 'resolved' || selectedTicket.status === 'closed' || !currentFiltered.some(t => t.id === selectedTicket.id)) {
+          selectTicket(currentFiltered[0].id);
+        }
+      } else {
         clearTicketWorkspace();
       }
 
@@ -4742,8 +4743,12 @@
               const idx = cachedTickets.findIndex(t => t.id === payload.new.id);
               if (idx !== -1) cachedTickets[idx] = payload.new;
               if (selectedTicket && selectedTicket.id === payload.new.id) {
-                selectedTicket = payload.new;
-                selectTicket(payload.new.id, false);
+                if (payload.new.status === 'resolved' || payload.new.status === 'closed') {
+                  clearTicketWorkspace(payload.new.ticket_number || payload.new.id);
+                } else {
+                  selectedTicket = payload.new;
+                  selectTicket(payload.new.id, false);
+                }
               }
             } else if (payload.eventType === 'DELETE') {
               cachedTickets = cachedTickets.filter(t => t.id !== payload.old.id);
@@ -4862,9 +4867,11 @@
       }
       renderTicketsList();
       const currentFiltered = getFilteredTickets();
-      if (currentFiltered.length > 0 && (!selectedTicket || !currentFiltered.some(t => t.id === selectedTicket.id))) {
-        selectTicket(currentFiltered[0].id);
-      } else if (currentFiltered.length === 0) {
+      if (currentFiltered.length > 0) {
+        if (!selectedTicket || ((selectedTicket.status === 'resolved' || selectedTicket.status === 'closed') && queue !== 'resolved') || !currentFiltered.some(t => t.id === selectedTicket.id)) {
+          selectTicket(currentFiltered[0].id);
+        }
+      } else {
         clearTicketWorkspace();
       }
     }
@@ -4958,28 +4965,31 @@
       const tierFilter = document.getElementById('ticket-filter-tier')?.value || 'all';
 
       return baseList.filter(t => {
+        const isDone = (t.status === 'resolved' || t.status === 'closed');
+
         // Queue filter
         if (activeTicketQueue === 'resolved') {
-          if (t.status !== 'resolved' && t.status !== 'closed') return false;
+          if (!isDone) return false;
         } else {
-          // If in an active queue (all, support, dev, escalated):
-          // Always exclude resolved and closed unless statusFilter explicitly asks for 'resolved', 'closed', or 'all'
-          if (statusFilter !== 'resolved' && statusFilter !== 'closed' && statusFilter !== 'all') {
-            if (t.status === 'resolved' || t.status === 'closed') return false;
+          // In active queues (all active, support, dev, escalated):
+          // Always hide resolved and closed tickets unless statusFilter explicitly asks for resolved or closed
+          if (statusFilter === 'resolved') {
+            if (t.status !== 'resolved') return false;
+          } else if (statusFilter === 'closed') {
+            if (t.status !== 'closed') return false;
+          } else {
+            // For ALL other status filters ('active', 'all', 'open', 'in_progress', 'escalated'):
+            // Resolved and closed tickets are STRICTLY EXCLUDED from active queues!
+            if (isDone) return false;
           }
+
           if (activeTicketQueue === 'support' && !isSupportTicket(t)) return false;
           if (activeTicketQueue === 'dev' && !isDevTicket(t)) return false;
           if (activeTicketQueue === 'escalated' && !isEscalatedTicket(t)) return false;
         }
 
-        // Status filter
-        if (statusFilter === 'active') {
-          if (t.status === 'resolved' || t.status === 'closed') return false;
-        } else if (statusFilter === 'resolved') {
-          if (t.status !== 'resolved') return false;
-        } else if (statusFilter === 'closed') {
-          if (t.status !== 'closed') return false;
-        } else if (statusFilter !== 'all') {
+        // Specific status filter (open, in_progress, escalated)
+        if (statusFilter !== 'all' && statusFilter !== 'active' && statusFilter !== 'resolved' && statusFilter !== 'closed') {
           if (t.status !== statusFilter) return false;
         }
 
