@@ -489,12 +489,12 @@
         <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin: 0;">Two-Step Verification (OTP)</h2>
       </div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
-        A 6-digit security code has been sent to <strong id="subpage-otp-display-email" style="color: #fff;">your email</strong>. Enter the code below to complete sign-in.
+        A security verification code has been sent to <strong id="subpage-otp-display-email" style="color: #fff;">your email</strong>. Enter the code below to complete sign-in.
       </p>
       
       <form onsubmit="handleSubpageVerifyOtp(event)">
-        <label>6-Digit Security Code</label>
-        <input type="text" id="subpage-otp-code" required placeholder="123456" maxlength="6" inputmode="numeric" style="text-align: center; font-size: 22px; letter-spacing: 6px; font-weight: 800; width: 100%; padding: 12px; margin-bottom: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #fff; outline: none;" />
+        <label>Security Verification Code (OTP)</label>
+        <input type="text" id="subpage-otp-code" required placeholder="12345678" maxlength="10" inputmode="numeric" style="text-align: center; font-size: 20px; letter-spacing: 4px; font-weight: 800; width: 100%; padding: 12px; margin-bottom: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #fff; outline: none;" />
         <button type="submit" class="submit-btn" id="subpage-otp-verify-btn">Verify &amp; Enter Portal</button>
       </form>
 
@@ -800,7 +800,7 @@
         if (error) throw error;
         if (msg) {
           msg.style.color = '#34d399';
-          msg.innerText = '✓ New 6-digit verification code sent to your email!';
+          msg.innerText = '✓ New verification code sent to your email!';
         }
       } catch (err) {
         if (msg) {

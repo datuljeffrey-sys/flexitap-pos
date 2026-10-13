@@ -230,12 +230,12 @@
         <h3 style="font-size: 18px; font-weight: 800; color: #0f172a;">Two-Step Verification (OTP)</h3>
       </div>
       <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
-        A 6-digit verification code has been dispatched to <strong id="p-otp-display-email" style="color: #0f172a;">your store email</strong>. Enter the code below to access your Back Office.
+        A security verification code has been dispatched to <strong id="p-otp-display-email" style="color: #0f172a;">your store email</strong>. Enter the code below to access your Back Office.
       </p>
       
       <form onsubmit="handleMerchantVerifyOtp(event)">
-        <label>6-Digit Security Code</label>
-        <input type="text" id="p-otp-code" required placeholder="123456" maxlength="6" inputmode="numeric" style="text-align: center; font-size: 22px; letter-spacing: 6px; font-weight: 800; width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #cbd5e1; border-radius: 8px;" />
+        <label>Security Verification Code (OTP)</label>
+        <input type="text" id="p-otp-code" required placeholder="12345678" maxlength="10" inputmode="numeric" style="text-align: center; font-size: 20px; letter-spacing: 4px; font-weight: 800; width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #cbd5e1; border-radius: 8px;" />
         <button type="submit" class="btn-submit" id="p-otp-verify-btn">Verify &amp; Enter Back Office</button>
       </form>
 
@@ -3257,7 +3257,7 @@
         if (error) throw error;
         if (msg) {
           msg.style.color = '#059669';
-          msg.innerText = '✓ New 6-digit verification code sent to your email!';
+          msg.innerText = '✓ New verification code sent to your email!';
         }
       } catch (err) {
         if (msg) {
