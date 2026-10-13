@@ -1007,71 +1007,76 @@
         <div id="view-tickets" class="tab-view">
           <div class="kpi-row" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
             <div class="kpi-card">
-              <div class="kpi-title">Open Tickets Queue</div>
-              <div class="kpi-val" style="color: var(--primary);" id="kpi-tickets-open">0</div>
-              <div class="kpi-status" style="color: var(--accent);">● Requiring Action</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-title">Customer Support Desk</div>
-              <div class="kpi-val" style="color: #60a5fa;" id="kpi-tickets-support">0</div>
-              <div class="kpi-status" style="color: var(--text-muted);">Tier 1 &amp; 2 Merchant Ops</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-title">Core Dev Engineering</div>
-              <div class="kpi-val" style="color: #c084fc;" id="kpi-tickets-dev">0</div>
-              <div class="kpi-status" style="color: var(--text-muted);">Tier 3 Bugs &amp; Sync</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-title">Escalated to Dev</div>
-              <div class="kpi-val" style="color: #f87171;" id="kpi-tickets-escalated">0</div>
-              <div class="kpi-status" style="color: #f87171;">⚡ Urgent Handoff</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-title">Resolved &amp; Closed</div>
-              <div class="kpi-val" style="color: var(--accent);" id="kpi-tickets-resolved">0</div>
-              <div class="kpi-status" style="color: var(--accent);">✓ Verified Fixed</div>
-            </div>
-          </div>
-
-          <div class="panel" style="margin-bottom: 0;">
-            
-            <!-- Tier / Department Queue Switcher Tabs -->
-            <div class="crm-tabs-nav" style="margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 8px;">
-              <button class="crm-tab-btn active" id="t-queue-tab-all" onclick="switchTicketQueue('all')">
-                <span>👥</span> All Tickets <span class="nav-badge" id="t-badge-count-all" style="margin-left: 6px;">0</span>
-              </button>
-              <button class="crm-tab-btn" id="t-queue-tab-support" onclick="switchTicketQueue('support')">
-                <span>💬</span> Customer Support Queue <span class="nav-badge" id="t-badge-count-support" style="margin-left: 6px; background: rgba(59,130,246,0.2); color: #60a5fa;">0</span>
-              </button>
-              <button class="crm-tab-btn" id="t-queue-tab-dev" onclick="switchTicketQueue('dev')">
-                <span>💻</span> Dev Engineering Queue <span class="nav-badge" id="t-badge-count-dev" style="margin-left: 6px; background: rgba(139,92,246,0.2); color: #c084fc;">0</span>
-              </button>
-              <button class="crm-tab-btn" id="t-queue-tab-escalated" onclick="switchTicketQueue('escalated')">
-                <span>⚡</span> Escalated to Dev <span class="nav-badge" id="t-badge-count-escalated" style="margin-left: 6px; background: rgba(239,68,68,0.25); color: #f87171;">0</span>
-              </button>
-            </div>
-
-            <!-- Scope Visibility Notice -->
-            <div id="ticket-scope-banner" style="display: none; align-items: center; justify-content: space-between; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.8rem;">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span id="ticket-scope-icon" style="font-size: 1.1rem;">🔒</span>
-                <span id="ticket-scope-text" style="color: #cbd5e1;"></span>
+              <div class="kpi-card" onclick="switchTicketQueue('all')" style="cursor: pointer;" title="View all active tickets">
+                <div class="kpi-title">Open Tickets Queue</div>
+                <div class="kpi-val" style="color: var(--primary);" id="kpi-tickets-open">0</div>
+                <div class="kpi-status" style="color: var(--accent);">● Requiring Action</div>
               </div>
-              <span id="ticket-scope-pill" style="font-size: 0.72rem; padding: 3px 8px; border-radius: 9999px; font-weight: 700;"></span>
+              <div class="kpi-card" onclick="switchTicketQueue('support')" style="cursor: pointer;" title="View Customer Support queue">
+                <div class="kpi-title">Customer Support Desk</div>
+                <div class="kpi-val" style="color: #60a5fa;" id="kpi-tickets-support">0</div>
+                <div class="kpi-status" style="color: var(--text-muted);">Tier 1 &amp; 2 Merchant Ops</div>
+              </div>
+              <div class="kpi-card" onclick="switchTicketQueue('dev')" style="cursor: pointer;" title="View Dev Engineering queue">
+                <div class="kpi-title">Core Dev Engineering</div>
+                <div class="kpi-val" style="color: #c084fc;" id="kpi-tickets-dev">0</div>
+                <div class="kpi-status" style="color: var(--text-muted);">Tier 3 Bugs &amp; Sync</div>
+              </div>
+              <div class="kpi-card" onclick="switchTicketQueue('escalated')" style="cursor: pointer;" title="View Escalated to Dev queue">
+                <div class="kpi-title">Escalated to Dev</div>
+                <div class="kpi-val" style="color: #f87171;" id="kpi-tickets-escalated">0</div>
+                <div class="kpi-status" style="color: #f87171;">⚡ Urgent Handoff</div>
+              </div>
+              <div class="kpi-card" onclick="switchTicketQueue('resolved')" style="cursor: pointer;" title="View resolved &amp; closed tickets">
+                <div class="kpi-title">Resolved &amp; Closed</div>
+                <div class="kpi-val" style="color: var(--accent);" id="kpi-tickets-resolved">0</div>
+                <div class="kpi-status" style="color: var(--accent);">✓ Verified Fixed (View)</div>
+              </div>
             </div>
 
-            <div class="panel-header">
-              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                <button class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary); padding: 8px 16px;" onclick="openCreateTicketModal()">+ New Ticket</button>
-                <input type="text" id="ticket-search" onkeyup="filterTickets()" placeholder="Search tickets, stores, or issues..." style="padding: 8px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 240px;">
-                <select id="ticket-filter-status" onchange="filterTickets()" style="background: var(--bg); border: 1px solid var(--card-border); color: #fff; padding: 7px 12px; border-radius: 8px; font-size: 0.85rem;">
-                  <option value="all">All Statuses</option>
-                  <option value="open">Open Only</option>
-                  <option value="in_progress">In Progress</option>
-                  <option value="escalated">⚡ Escalated to Dev</option>
-                  <option value="resolved">Resolved</option>
-                  <option value="closed">Closed</option>
-                </select>
+            <div class="panel" style="margin-bottom: 0;">
+              
+              <!-- Tier / Department Queue Switcher Tabs -->
+              <div class="crm-tabs-nav" style="margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 8px;">
+                <button class="crm-tab-btn active" id="t-queue-tab-all" onclick="switchTicketQueue('all')">
+                  <span>👥</span> All Active <span class="nav-badge" id="t-badge-count-all" style="margin-left: 6px;">0</span>
+                </button>
+                <button class="crm-tab-btn" id="t-queue-tab-support" onclick="switchTicketQueue('support')">
+                  <span>💬</span> Customer Support Queue <span class="nav-badge" id="t-badge-count-support" style="margin-left: 6px; background: rgba(59,130,246,0.2); color: #60a5fa;">0</span>
+                </button>
+                <button class="crm-tab-btn" id="t-queue-tab-dev" onclick="switchTicketQueue('dev')">
+                  <span>💻</span> Dev Engineering Queue <span class="nav-badge" id="t-badge-count-dev" style="margin-left: 6px; background: rgba(139,92,246,0.2); color: #c084fc;">0</span>
+                </button>
+                <button class="crm-tab-btn" id="t-queue-tab-escalated" onclick="switchTicketQueue('escalated')">
+                  <span>⚡</span> Escalated to Dev <span class="nav-badge" id="t-badge-count-escalated" style="margin-left: 6px; background: rgba(239,68,68,0.25); color: #f87171;">0</span>
+                </button>
+                <button class="crm-tab-btn" id="t-queue-tab-resolved" onclick="switchTicketQueue('resolved')">
+                  <span>✅</span> Resolved Archive <span class="nav-badge" id="t-badge-count-resolved" style="margin-left: 6px; background: rgba(16,185,129,0.2); color: #34d399;">0</span>
+                </button>
+              </div>
+
+              <!-- Scope Visibility Notice -->
+              <div id="ticket-scope-banner" style="display: none; align-items: center; justify-content: space-between; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.8rem;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span id="ticket-scope-icon" style="font-size: 1.1rem;">🔒</span>
+                  <span id="ticket-scope-text" style="color: #cbd5e1;"></span>
+                </div>
+                <span id="ticket-scope-pill" style="font-size: 0.72rem; padding: 3px 8px; border-radius: 9999px; font-weight: 700;"></span>
+              </div>
+
+              <div class="panel-header">
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                  <button class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary); padding: 8px 16px;" onclick="openCreateTicketModal()">+ New Ticket</button>
+                  <input type="text" id="ticket-search" onkeyup="filterTickets()" placeholder="Search tickets, stores, or issues..." style="padding: 8px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 240px;">
+                  <select id="ticket-filter-status" onchange="filterTickets()" style="background: var(--bg); border: 1px solid var(--card-border); color: #fff; padding: 7px 12px; border-radius: 8px; font-size: 0.85rem;">
+                    <option value="active" selected>Active Tickets (Excl. Resolved)</option>
+                    <option value="open">Open Only</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="escalated">⚡ Escalated to Dev</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="closed">Closed</option>
+                    <option value="all">All Statuses (Incl. Resolved)</option>
+                  </select>
                 <select id="ticket-filter-priority" onchange="filterTickets()" style="background: var(--bg); border: 1px solid var(--card-border); color: #fff; padding: 7px 12px; border-radius: 8px; font-size: 0.85rem;">
                   <option value="all">All Priorities</option>
                   <option value="urgent">Urgent</option>
@@ -2239,7 +2244,7 @@
         } else {
           activeTicketQueue = 'all';
         }
-        ['all', 'support', 'dev', 'escalated'].forEach(q => {
+        ['all', 'support', 'dev', 'escalated', 'resolved'].forEach(q => {
           const btn = document.getElementById('t-queue-tab-' + q);
           if (btn) btn.classList.toggle('active', q === activeTicketQueue);
         });
@@ -4716,8 +4721,8 @@
       const currentFiltered = typeof getFilteredTickets === 'function' ? getFilteredTickets() : cachedTickets;
       if (!selectedTicket && currentFiltered.length > 0) {
         selectTicket(currentFiltered[0].id);
-      } else if (!selectedTicket && cachedTickets.length > 0) {
-        selectTicket(cachedTickets[0].id);
+      } else if (!selectedTicket && currentFiltered.length === 0) {
+        clearTicketWorkspace();
       }
 
       if (!ticketsChannelSubscribed) {
@@ -4841,14 +4846,26 @@
 
     function switchTicketQueue(queue) {
       activeTicketQueue = queue;
-      ['all', 'support', 'dev', 'escalated'].forEach(q => {
+      ['all', 'support', 'dev', 'escalated', 'resolved'].forEach(q => {
         const btn = document.getElementById('t-queue-tab-' + q);
         if (btn) btn.classList.toggle('active', q === queue);
       });
+      const statusSel = document.getElementById('ticket-filter-status');
+      if (queue === 'resolved') {
+        if (statusSel && (statusSel.value === 'active' || statusSel.value === 'open' || statusSel.value === 'in_progress' || statusSel.value === 'escalated')) {
+          statusSel.value = 'resolved';
+        }
+      } else {
+        if (statusSel && statusSel.value === 'resolved') {
+          statusSel.value = 'active';
+        }
+      }
       renderTicketsList();
       const currentFiltered = getFilteredTickets();
       if (currentFiltered.length > 0 && (!selectedTicket || !currentFiltered.some(t => t.id === selectedTicket.id))) {
         selectTicket(currentFiltered[0].id);
+      } else if (currentFiltered.length === 0) {
+        clearTicketWorkspace();
       }
     }
 
@@ -4875,10 +4892,12 @@
       const bSup = document.getElementById('t-badge-count-support');
       const bDev = document.getElementById('t-badge-count-dev');
       const bEsc = document.getElementById('t-badge-count-escalated');
-      if (bAll) bAll.textContent = scopedList.filter(t => t.status !== 'closed').length;
+      const bRes = document.getElementById('t-badge-count-resolved');
+      if (bAll) bAll.textContent = scopedList.filter(t => t.status !== 'closed' && t.status !== 'resolved').length;
       if (bSup) bSup.textContent = supportCount;
       if (bDev) bDev.textContent = devCount;
       if (bEsc) bEsc.textContent = escalatedCount;
+      if (bRes) bRes.textContent = resolvedCount;
 
       const badge = document.getElementById('open-tickets-badge');
       if (badge) {
@@ -4934,18 +4953,37 @@
     function getFilteredTickets() {
       const baseList = getScopedTickets();
       const search = (document.getElementById('ticket-search')?.value || '').toLowerCase().trim();
-      const statusFilter = document.getElementById('ticket-filter-status')?.value || 'all';
+      const statusFilter = document.getElementById('ticket-filter-status')?.value || 'active';
       const priorityFilter = document.getElementById('ticket-filter-priority')?.value || 'all';
       const tierFilter = document.getElementById('ticket-filter-tier')?.value || 'all';
 
       return baseList.filter(t => {
         // Queue filter
-        if (activeTicketQueue === 'support' && !isSupportTicket(t)) return false;
-        if (activeTicketQueue === 'dev' && !isDevTicket(t)) return false;
-        if (activeTicketQueue === 'escalated' && !isEscalatedTicket(t)) return false;
+        if (activeTicketQueue === 'resolved') {
+          if (t.status !== 'resolved' && t.status !== 'closed') return false;
+        } else {
+          // If in an active queue (all, support, dev, escalated):
+          // Always exclude resolved and closed unless statusFilter explicitly asks for 'resolved', 'closed', or 'all'
+          if (statusFilter !== 'resolved' && statusFilter !== 'closed' && statusFilter !== 'all') {
+            if (t.status === 'resolved' || t.status === 'closed') return false;
+          }
+          if (activeTicketQueue === 'support' && !isSupportTicket(t)) return false;
+          if (activeTicketQueue === 'dev' && !isDevTicket(t)) return false;
+          if (activeTicketQueue === 'escalated' && !isEscalatedTicket(t)) return false;
+        }
 
-        // Status & Priority
-        if (statusFilter !== 'all' && t.status !== statusFilter) return false;
+        // Status filter
+        if (statusFilter === 'active') {
+          if (t.status === 'resolved' || t.status === 'closed') return false;
+        } else if (statusFilter === 'resolved') {
+          if (t.status !== 'resolved') return false;
+        } else if (statusFilter === 'closed') {
+          if (t.status !== 'closed') return false;
+        } else if (statusFilter !== 'all') {
+          if (t.status !== statusFilter) return false;
+        }
+
+        // Priority filter
         if (priorityFilter !== 'all' && t.priority !== priorityFilter) return false;
 
         // Tier filter
@@ -4972,7 +5010,7 @@
       const filtered = getFilteredTickets();
 
       if (filtered.length === 0) {
-        const queueLabel = activeTicketQueue === 'all' ? 'the tickets queue' : activeTicketQueue + ' queue';
+        const queueLabel = activeTicketQueue === 'all' ? 'the active tickets queue' : (activeTicketQueue === 'resolved' ? 'the resolved archive' : activeTicketQueue + ' queue');
         listEl.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 13px; margin: auto; padding: 28px;">No tickets found in ${queueLabel}.</div>`;
         return;
       }
@@ -5421,10 +5459,18 @@
       if (!num) return;
       const target = cachedTickets.find(t => String(t.ticket_number) === String(num) || String(t.id).includes(String(num)));
       if (target) {
-        activeTicketQueue = 'all';
-        ['all', 'support', 'dev', 'escalated'].forEach(q => {
+        if (target.status === 'resolved' || target.status === 'closed') {
+          activeTicketQueue = 'resolved';
+          const statusSel = document.getElementById('ticket-filter-status');
+          if (statusSel) statusSel.value = 'resolved';
+        } else {
+          activeTicketQueue = 'all';
+          const statusSel = document.getElementById('ticket-filter-status');
+          if (statusSel) statusSel.value = 'active';
+        }
+        ['all', 'support', 'dev', 'escalated', 'resolved'].forEach(q => {
           const btn = document.getElementById('t-queue-tab-' + q);
-          if (btn) btn.classList.toggle('active', q === 'all');
+          if (btn) btn.classList.toggle('active', q === activeTicketQueue);
         });
         const searchInput = document.getElementById('ticket-search');
         if (searchInput) searchInput.value = '';
