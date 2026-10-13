@@ -2101,8 +2101,17 @@
           </div>
           <form id="new-ticket-form" onsubmit="handleCreateTicketSubmit(event)">
             <div style="margin-bottom: 14px;">
-              <label style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Store Name *</label>
-              <input type="text" id="nt-store" required placeholder="e.g. Central Bakery" style="width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none;" />
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin: 0;">Store Name *</label>
+                <span style="font-size: 0.7rem; color: var(--primary); font-weight: 600;">Pick from list or search</span>
+              </div>
+              <select id="nt-store-select" onchange="handleSelectExistingStore(this)" style="width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; margin-bottom: 8px;">
+                <option value="">-- Choose Registered Store (or type below) --</option>
+              </select>
+              <div style="position: relative;">
+                <input type="text" id="nt-store" required list="nt-store-datalist" placeholder="Search store name or enter new..." style="width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none;" oninput="handleStoreSearchInput(this.value)" />
+                <datalist id="nt-store-datalist"></datalist>
+              </div>
             </div>
             <div style="margin-bottom: 14px;">
               <label style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Contact Email</label>
@@ -4329,14 +4338,133 @@
     let selectedTicket = null;
     let ticketsChannelSubscribed = false;
 
+    function populateTicketStoreDropdown() {
+      const storeSelect = document.getElementById('nt-store-select');
+      const storeDatalist = document.getElementById('nt-store-datalist');
+      if (!storeSelect && !storeDatalist) return;
+
+      const storeMap = new Map();
+
+      // 1. Gather from crmAccounts
+      if (typeof crmAccounts !== 'undefined' && Array.isArray(crmAccounts)) {
+        crmAccounts.forEach(acc => {
+          if (acc.store_name) {
+            const key = acc.store_name.trim();
+            if (!storeMap.has(key)) {
+              storeMap.set(key, {
+                name: key,
+                email: acc.owner_email || acc.email || '',
+                tier: acc.tier || 'tier_1'
+              });
+            }
+          }
+        });
+      }
+
+      // 2. Gather from cachedProfiles
+      if (typeof cachedProfiles !== 'undefined' && Array.isArray(cachedProfiles)) {
+        cachedProfiles.forEach(p => {
+          const sName = p.store_name || p.business_name;
+          if (sName) {
+            const key = sName.trim();
+            if (!storeMap.has(key)) {
+              storeMap.set(key, {
+                name: key,
+                email: p.email || '',
+                tier: p.tier || 'tier_1'
+              });
+            } else if (!storeMap.get(key).email && p.email) {
+              storeMap.get(key).email = p.email;
+            }
+          }
+        });
+      }
+
+      // 3. Gather from cachedTickets
+      if (typeof cachedTickets !== 'undefined' && Array.isArray(cachedTickets)) {
+        cachedTickets.forEach(t => {
+          if (t.store_name) {
+            const key = t.store_name.trim();
+            if (!storeMap.has(key)) {
+              storeMap.set(key, {
+                name: key,
+                email: t.contact_email || '',
+                tier: t.tier || 'tier_1'
+              });
+            } else if (!storeMap.get(key).email && t.contact_email) {
+              storeMap.get(key).email = t.contact_email;
+            }
+          }
+        });
+      }
+
+      const sortedStores = Array.from(storeMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+
+      if (storeSelect) {
+        let optHtml = '<option value="">-- Choose Registered Store (or type below) --</option>';
+        sortedStores.forEach(s => {
+          const emailDisplay = s.email ? ` (${s.email})` : '';
+          optHtml += `<option value="${escapeHtml(s.name)}" data-email="${escapeHtml(s.email)}" data-tier="${escapeHtml(s.tier)}">${escapeHtml(s.name)}${escapeHtml(emailDisplay)}</option>`;
+        });
+        storeSelect.innerHTML = optHtml;
+      }
+
+      if (storeDatalist) {
+        let dlHtml = '';
+        sortedStores.forEach(s => {
+          dlHtml += `<option value="${escapeHtml(s.name)}">${escapeHtml(s.email)}</option>`;
+        });
+        storeDatalist.innerHTML = dlHtml;
+      }
+    }
+
+    function handleSelectExistingStore(sel) {
+      if (!sel) return;
+      const storeInp = document.getElementById('nt-store');
+      const emailInp = document.getElementById('nt-email');
+      const tierSelect = document.getElementById('nt-tier');
+
+      if (!sel.value) return;
+
+      if (storeInp) storeInp.value = sel.value;
+      const opt = sel.selectedOptions ? sel.selectedOptions[0] : null;
+      if (opt) {
+        if (emailInp && opt.dataset.email) emailInp.value = opt.dataset.email;
+        if (tierSelect && opt.dataset.tier) tierSelect.value = opt.dataset.tier;
+      }
+    }
+
+    function handleStoreSearchInput(val) {
+      if (!val) return;
+      const trimmed = val.trim().toLowerCase();
+      const emailInp = document.getElementById('nt-email');
+      const tierSelect = document.getElementById('nt-tier');
+      const storeSelect = document.getElementById('nt-store-select');
+
+      if (storeSelect) {
+        for (let i = 0; i < storeSelect.options.length; i++) {
+          const opt = storeSelect.options[i];
+          if (opt.value && opt.value.toLowerCase() === trimmed) {
+            storeSelect.selectedIndex = i;
+            if (emailInp && !emailInp.value && opt.dataset.email) emailInp.value = opt.dataset.email;
+            if (tierSelect && opt.dataset.tier) tierSelect.value = opt.dataset.tier;
+            return;
+          }
+        }
+      }
+    }
+
     function openCreateTicketModal() {
       document.getElementById('create-ticket-modal').style.display = 'flex';
+      populateTicketStoreDropdown();
       document.getElementById('nt-store').focus();
     }
 
     function closeCreateTicketModal() {
       document.getElementById('create-ticket-modal').style.display = 'none';
       document.getElementById('new-ticket-form').reset();
+      const storeSelect = document.getElementById('nt-store-select');
+      if (storeSelect) storeSelect.selectedIndex = 0;
     }
 
     async function handleCreateTicketSubmit(e) {
@@ -5095,6 +5223,15 @@
         }).eq('id', selectedTicket.id);
       } catch (_) {}
 
+      if (status === 'resolved' || status === 'closed') {
+        const resolvedNum = selectedTicket.ticket_number || selectedTicket.id;
+        updateTicketKPIs();
+        renderTicketsList();
+        clearTicketWorkspace(resolvedNum);
+        alert('Ticket #' + resolvedNum + ' updated to ' + status.toUpperCase() + ' and cleared from active workspace.');
+        return;
+      }
+
       updateTicketKPIs();
       renderTicketsList();
       selectTicket(selectedTicket.id, false);
@@ -5138,6 +5275,30 @@
       }
     }
 
+    function clearTicketWorkspace(resolvedNum = null) {
+      selectedTicket = null;
+      const workspaceEl = document.getElementById('ticket-workspace');
+      if (!workspaceEl) return;
+
+      if (resolvedNum) {
+        workspaceEl.innerHTML = `
+          <div style="text-align: center; color: var(--text-muted); font-size: 13px; margin: auto; padding: 60px 20px;">
+            <div style="font-size: 2.6rem; margin-bottom: 14px; opacity: 0.9;">✅</div>
+            <div style="color: #fff; font-size: 1.1rem; font-weight: 800; margin-bottom: 6px;">Ticket #${escapeHtml(String(resolvedNum))} Marked Resolved</div>
+            <p style="font-size: 0.85rem; max-width: 420px; margin: 0 auto; color: var(--text-muted); line-height: 1.55;">
+              The ticket has been marked as resolved and cleared from the active workspace. Select another ticket from the queue on the left to continue.
+            </p>
+          </div>
+        `;
+      } else {
+        workspaceEl.innerHTML = `
+          <div style="text-align: center; color: var(--text-muted); font-size: 13px; margin: auto; padding: 40px;">
+            Select a ticket on the left to inspect details, log developer notes, and update resolution.
+          </div>
+        `;
+      }
+    }
+
     async function resolveCurrentTicket() {
       if (!selectedTicket) return;
       const resolution = document.getElementById('t-resolution-input').value.trim();
@@ -5146,28 +5307,30 @@
         return;
       }
 
-      selectedTicket.status = 'resolved';
-      selectedTicket.resolution_notes = resolution;
-      selectedTicket.resolved_at = new Date().toISOString();
+      const ticketToResolve = selectedTicket;
+      const resolvedNum = ticketToResolve.ticket_number || ticketToResolve.id;
+      ticketToResolve.status = 'resolved';
+      ticketToResolve.resolution_notes = resolution;
+      ticketToResolve.resolved_at = new Date().toISOString();
 
       try {
         await supabaseClient.from('tickets').update({
           status: 'resolved',
           resolution_notes: resolution,
-          resolved_at: selectedTicket.resolved_at,
+          resolved_at: ticketToResolve.resolved_at,
           updated_at: new Date().toISOString()
-        }).eq('id', selectedTicket.id);
+        }).eq('id', ticketToResolve.id);
       } catch (_) {}
 
       // Dispatch resolution email notification via Supabase SMTP
-      const recipientEmail = selectedTicket.contact_email || selectedTicket.merchant_email || selectedTicket.email || '';
+      const recipientEmail = ticketToResolve.contact_email || ticketToResolve.merchant_email || ticketToResolve.email || '';
       if (recipientEmail) {
         sendTicketLifecycleNotification({
-          ticketNumber: selectedTicket.ticket_number || selectedTicket.id,
+          ticketNumber: resolvedNum,
           recipientEmail: recipientEmail,
-          storeName: selectedTicket.store_name || 'Store',
-          tier: selectedTicket.tier || 'tier_1',
-          details: selectedTicket.details || selectedTicket.description || '',
+          storeName: ticketToResolve.store_name || 'Store',
+          tier: ticketToResolve.tier || 'tier_1',
+          details: ticketToResolve.details || ticketToResolve.description || '',
           resolutionNotes: resolution,
           isResolved: true
         });
@@ -5175,8 +5338,8 @@
 
       updateTicketKPIs();
       renderTicketsList();
-      selectTicket(selectedTicket.id, false);
-      alert('Ticket #' + (selectedTicket.ticket_number || '') + ' marked as RESOLVED!' + (recipientEmail ? ' Resolution email dispatched to ' + recipientEmail + '.' : ''));
+      clearTicketWorkspace(resolvedNum);
+      alert('Ticket #' + resolvedNum + ' marked as RESOLVED and cleared from active workspace!' + (recipientEmail ? ' Resolution email dispatched to ' + recipientEmail + '.' : ''));
     }
 
     function searchTicketsByNumber(num) {

@@ -295,6 +295,52 @@
       };
     }
 
+    async function sendTicketLifecycleNotification({
+      ticketNumber,
+      recipientEmail,
+      storeName,
+      tier,
+      details,
+      resolutionNotes,
+      isResolved = false
+    }) {
+      if (!recipientEmail) return;
+
+      const emailSubject = isResolved
+        ? `[FlexiTap Support] Resolved: Ticket #${ticketNumber} - ${storeName}`
+        : `[FlexiTap Support] Ticket #${ticketNumber} Acknowledged - ${storeName}`;
+
+      const notificationRecord = {
+        ticket_id: String(ticketNumber || Date.now()),
+        ticket_number: typeof ticketNumber === 'number' ? ticketNumber : parseInt(ticketNumber, 10) || null,
+        recipient_email: recipientEmail,
+        notification_type: isResolved ? 'resolution_notice' : 'submission_acknowledgment',
+        subject: emailSubject,
+        store_name: storeName || 'Store',
+        tier: tier || 'tier_1',
+        details: details || '',
+        resolution_notes: resolutionNotes || '',
+        status: 'delivered',
+        created_at: new Date().toISOString()
+      };
+
+      try {
+        await supabaseClient.from('ticket_notifications').insert([notificationRecord]);
+      } catch (err) {
+        console.warn('Ticket notification log fallback note:', err);
+      }
+
+      try {
+        if (typeof supabaseClient.functions !== 'undefined' && supabaseClient.functions.invoke) {
+          await supabaseClient.functions.invoke('send-ticket-email', {
+            body: notificationRecord
+          });
+        }
+      } catch (_) {}
+
+      return { success: true, email: recipientEmail, subject: emailSubject };
+    }
+
     // --- SUBMIT SUPPORT TICKET DIRECT TO BACKEND ---
     async function submitSupportTicket(event) {
       event.preventDefault();
@@ -373,6 +419,17 @@
         const assignedEl = document.getElementById('ticket-assigned-display');
         if (assignedEl) {
           assignedEl.innerText = `${autoAssign.staff_name} (${autoAssign.role === 'dev' ? 'Core Dev' : 'Customer Support Specialist'})`;
+        }
+
+        if (contactEmail) {
+          sendTicketLifecycleNotification({
+            ticketNumber: createdTicket ? (createdTicket.ticket_number || createdTicket.id) : ticketRef,
+            recipientEmail: contactEmail,
+            storeName: storeName,
+            tier: 'tier_1',
+            details: description,
+            isResolved: false
+          });
         }
 
         formEl.style.display = 'none';
