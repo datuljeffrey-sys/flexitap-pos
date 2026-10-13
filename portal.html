@@ -202,16 +202,6 @@
         <button type="submit" class="btn-submit" id="p-btn">Sign In to Reports</button>
       </form>
 
-      <div style="display: flex; align-items: center; gap: 10px; margin: 16px 0 14px;">
-        <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
-        <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px;">OR</span>
-        <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
-      </div>
-
-      <button type="button" onclick="openMerchantOtpModal()" class="btn-submit" style="background: #f8fafc; color: #0f172a; border: 1px solid #cbd5e1; font-weight: 700;">
-        ✉️ Sign In with Email Code (OTP)
-      </button>
-
       <p id="p-err" style="color: #dc2626; font-size: 13px; margin-top: 14px; text-align: center; font-weight: 600;"></p>
     </div>
   </div>
@@ -231,32 +221,29 @@
     </div>
   </div>
 
-  <!-- EMAIL OTP / PASSWORDLESS LOGIN MODAL (MERCHANT) -->
+  <!-- MERCHANT TWO-STEP VERIFICATION (OTP) MODAL -->
   <div id="p-otp-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); z-index: 2500; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(4px);">
     <div class="login-box" style="position: relative; max-width: 400px; text-align: left;">
       <button onclick="closeMerchantOtpModal()" type="button" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; cursor: pointer; color: #64748b;">&times;</button>
-      <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">One-Time Code (OTP) Sign In</h3>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Sign in securely without a password using a single-use verification code sent to your email.</p>
+      <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span style="font-size: 20px;">🔒</span>
+        <h3 style="font-size: 18px; font-weight: 800; color: #0f172a;">Two-Step Verification (OTP)</h3>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+        A 6-digit verification code has been dispatched to <strong id="p-otp-display-email" style="color: #0f172a;">your store email</strong>. Enter the code below to access your Back Office.
+      </p>
       
-      <div id="p-otp-step1">
-        <form onsubmit="handleMerchantSendOtp(event)">
-          <label>Merchant Email</label>
-          <input type="email" id="p-otp-email" required placeholder="owner@store.com" />
-          <button type="submit" class="btn-submit" id="p-otp-send-btn">Send Verification Code</button>
-        </form>
+      <form onsubmit="handleMerchantVerifyOtp(event)">
+        <label>6-Digit Security Code</label>
+        <input type="text" id="p-otp-code" required placeholder="123456" maxlength="6" inputmode="numeric" style="text-align: center; font-size: 22px; letter-spacing: 6px; font-weight: 800; width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #cbd5e1; border-radius: 8px;" />
+        <button type="submit" class="btn-submit" id="p-otp-verify-btn">Verify &amp; Enter Back Office</button>
+      </form>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+        <button type="button" onclick="handleMerchantResendOtp()" style="background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 600; cursor: pointer;">Resend Code</button>
+        <button type="button" onclick="closeMerchantOtpModal()" style="background: none; border: none; color: var(--text-muted); font-size: 12px; cursor: pointer;">Back to Login</button>
       </div>
 
-      <div id="p-otp-step2" style="display: none;">
-        <p style="font-size: 12.5px; color: #047857; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 8px 12px; border-radius: 8px; margin-bottom: 14px;">
-          ✓ Code sent! Check your inbox for the 6-digit verification code.
-        </p>
-        <form onsubmit="handleMerchantVerifyOtp(event)">
-          <label>6-Digit Verification Code</label>
-          <input type="text" id="p-otp-code" required placeholder="123456" maxlength="8" style="text-align: center; font-size: 18px; letter-spacing: 4px; font-weight: 700;" />
-          <button type="submit" class="btn-submit" id="p-otp-verify-btn">Verify &amp; Sign In</button>
-        </form>
-        <button type="button" onclick="resetMerchantOtpStep()" style="background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 10px; width: 100%; text-align: center;">Change Email</button>
-      </div>
       <p id="p-otp-msg" style="font-size: 13px; margin-top: 12px; text-align: center; font-weight: 600;"></p>
     </div>
   </div>
@@ -2937,7 +2924,9 @@
       }, 3000);
     }
 
-        // Portal Form Submit Handler
+        let pendingMerchantUser = null;
+
+    // Portal Form Submit Handler
     const portalForm = document.getElementById('portal-form');
     if (portalForm) {
       portalForm.addEventListener('submit', async (e) => {
@@ -2947,7 +2936,7 @@
         const btn = document.getElementById('p-btn');
         const err = document.getElementById('p-err');
 
-        btn.innerText = 'Signing In...';
+        btn.innerText = 'Verifying credentials...';
         btn.disabled = true;
         err.innerText = '';
 
@@ -2957,10 +2946,21 @@
             err.innerText = error.message;
             btn.innerText = 'Sign In to Reports';
             btn.disabled = false;
-          } else {
-            btn.innerText = 'Signed In!';
-            await loadApp(data.user);
+            return;
           }
+
+          pendingMerchantUser = data.user;
+          btn.innerText = 'Sending 2FA security code...';
+
+          const { error: otpErr } = await supabaseClient.auth.signInWithOtp({
+            email,
+            options: { shouldCreateUser: false }
+          });
+          if (otpErr) throw otpErr;
+
+          btn.innerText = 'Sign In to Reports';
+          btn.disabled = false;
+          openMerchantOtpModal(email);
         } catch (ex) {
           err.innerText = ex.message || 'Login failed. Please try again.';
           btn.innerText = 'Sign In to Reports';
@@ -3149,15 +3149,18 @@
       }
     }
 
-    function openMerchantOtpModal() {
-      const emailInp = document.getElementById('p-email');
-      const otpInp = document.getElementById('p-otp-email');
-      if (emailInp && otpInp) otpInp.value = emailInp.value.trim();
-      resetMerchantOtpStep();
+    function openMerchantOtpModal(email) {
+      const emailToUse = email || (document.getElementById('p-email')?.value || '').trim();
+      const displayEl = document.getElementById('p-otp-display-email');
+      if (displayEl) displayEl.innerText = emailToUse;
+      const codeInp = document.getElementById('p-otp-code');
+      if (codeInp) codeInp.value = '';
+      const msg = document.getElementById('p-otp-msg');
+      if (msg) msg.innerText = '';
       const modal = document.getElementById('p-otp-modal');
       if (modal) {
         modal.style.display = 'flex';
-        if (otpInp) otpInp.focus();
+        if (codeInp) setTimeout(() => codeInp.focus(), 100);
       }
     }
 
@@ -3166,44 +3169,32 @@
       if (modal) modal.style.display = 'none';
     }
 
-    function resetMerchantOtpStep() {
-      const s1 = document.getElementById('p-otp-step1');
-      const s2 = document.getElementById('p-otp-step2');
-      const msg = document.getElementById('p-otp-msg');
-      if (s1) s1.style.display = 'block';
-      if (s2) s2.style.display = 'none';
-      if (msg) msg.innerText = '';
-    }
-
-    async function handleMerchantSendOtp(e) {
-      e.preventDefault();
-      const email = document.getElementById('p-otp-email').value.trim();
-      const btn = document.getElementById('p-otp-send-btn');
+    async function handleMerchantResendOtp() {
+      const email = (document.getElementById('p-email')?.value || '').trim();
       const msg = document.getElementById('p-otp-msg');
       if (!email) return;
 
-      btn.disabled = true;
-      btn.innerText = 'Sending code...';
-      msg.innerText = '';
-
       try {
-        const { error } = await supabaseClient.auth.signInWithOtp({ email });
+        const { error } = await supabaseClient.auth.signInWithOtp({
+          email,
+          options: { shouldCreateUser: false }
+        });
         if (error) throw error;
-        document.getElementById('p-otp-step1').style.display = 'none';
-        document.getElementById('p-otp-step2').style.display = 'block';
-        const codeInp = document.getElementById('p-otp-code');
-        if (codeInp) codeInp.focus();
+        if (msg) {
+          msg.style.color = '#059669';
+          msg.innerText = '✓ New 6-digit verification code sent to your email!';
+        }
       } catch (err) {
-        msg.style.color = '#dc2626';
-        msg.innerText = err.message || 'Failed to send verification code.';
-        btn.disabled = false;
-        btn.innerText = 'Send Verification Code';
+        if (msg) {
+          msg.style.color = '#dc2626';
+          msg.innerText = err.message || 'Failed to resend code.';
+        }
       }
     }
 
     async function handleMerchantVerifyOtp(e) {
       e.preventDefault();
-      const email = document.getElementById('p-otp-email').value.trim();
+      const email = (document.getElementById('p-email')?.value || '').trim();
       const token = document.getElementById('p-otp-code').value.trim();
       const btn = document.getElementById('p-otp-verify-btn');
       const msg = document.getElementById('p-otp-msg');
@@ -3221,12 +3212,12 @@
         });
         if (error) throw error;
         closeMerchantOtpModal();
-        await loadApp(data.user);
+        await loadApp(data.user || pendingMerchantUser);
       } catch (err) {
         msg.style.color = '#dc2626';
         msg.innerText = err.message || 'Invalid or expired code. Please try again.';
         btn.disabled = false;
-        btn.innerText = 'Verify & Sign In';
+        btn.innerText = 'Verify & Enter Back Office';
       }
     }
 

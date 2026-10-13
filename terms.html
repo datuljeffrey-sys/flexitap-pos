@@ -131,6 +131,8 @@
       supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     });
 
+    let pendingSubpageAuthEmail = '';
+
     // --- AUTH LOGIN SUBMIT ---
     async function handleStoreLogin(event) {
       event.preventDefault();
@@ -142,15 +144,190 @@
       errorDiv.innerText = '';
       btnText.innerText = 'Verifying credentials...';
 
-      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      
-      if (error) {
-        errorDiv.innerText = error.message;
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+
+        pendingSubpageAuthEmail = email;
+        btnText.innerText = 'Sending 2FA code...';
+
+        const { error: otpErr } = await supabaseClient.auth.signInWithOtp({
+          email,
+          options: { shouldCreateUser: false }
+        });
+        if (otpErr) throw otpErr;
+
+        closeModal('login-modal');
+        openSubpageOtpModal(email);
+      } catch (err) {
+        errorDiv.innerText = err.message || 'Login failed. Please check your credentials.';
+      } finally {
         btnText.innerText = 'Log In';
+      }
+    }
+
+    function openSubpageOtpModal(email) {
+      const emailToUse = email || pendingSubpageAuthEmail;
+      const displayEl = document.getElementById('subpage-otp-display-email');
+      if (displayEl) displayEl.innerText = emailToUse;
+      const codeInp = document.getElementById('subpage-otp-code');
+      if (codeInp) codeInp.value = '';
+      const msg = document.getElementById('subpage-otp-msg');
+      if (msg) msg.innerText = '';
+      const modal = document.getElementById('subpage-otp-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+        if (codeInp) setTimeout(() => codeInp.focus(), 100);
+      }
+    }
+
+    function closeSubpageOtpModal() {
+      const modal = document.getElementById('subpage-otp-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    async function handleSubpageResendOtp() {
+      const email = pendingSubpageAuthEmail || document.getElementById('login-email')?.value.trim();
+      const msg = document.getElementById('subpage-otp-msg');
+      if (!email) return;
+
+      try {
+        const { error } = await supabaseClient.auth.signInWithOtp({
+          email,
+          options: { shouldCreateUser: false }
+        });
+        if (error) throw error;
+        if (msg) {
+          msg.style.color = '#34d399';
+          msg.innerText = '✓ New 6-digit verification code sent to your email!';
+        }
+      } catch (err) {
+        if (msg) {
+          msg.style.color = '#f87171';
+          msg.innerText = err.message || 'Failed to resend code.';
+        }
+      }
+    }
+
+    async function handleSubpageVerifyOtp(event) {
+      event.preventDefault();
+      const email = pendingSubpageAuthEmail || document.getElementById('login-email')?.value.trim();
+      const token = document.getElementById('subpage-otp-code')?.value.trim();
+      const btn = document.getElementById('subpage-otp-verify-btn');
+      const msg = document.getElementById('subpage-otp-msg');
+
+      if (!email || !token) return;
+      if (btn) { btn.disabled = true; btn.innerText = 'Verifying code...'; }
+      if (msg) msg.innerText = '';
+
+      try {
+        const { data, error } = await supabaseClient.auth.verifyOtp({
+          email,
+          token,
+          type: 'email'
+        });
+        if (error) throw error;
+        closeSubpageOtpModal();
+        window.location.href = 'portal.html';
+      } catch (err) {
+        if (msg) {
+          msg.style.color = '#f87171';
+          msg.innerText = err.message || 'Invalid or expired verification code.';
+        }
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerText = 'Verify & Enter Portal'; }
+      }
+    }
+
+    function openSubpageForgotModal() {
+      closeModal('login-modal');
+      const emailInp = document.getElementById('login-email');
+      const forgotInp = document.getElementById('subpage-forgot-email');
+      if (emailInp && forgotInp) forgotInp.value = emailInp.value.trim();
+      const msg = document.getElementById('subpage-forgot-msg');
+      if (msg) msg.innerText = '';
+      const modal = document.getElementById('subpage-forgot-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeSubpageForgotModal() {
+      const modal = document.getElementById('subpage-forgot-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    async function handleSubpageForgotSubmit(event) {
+      event.preventDefault();
+      const email = document.getElementById('subpage-forgot-email')?.value.trim();
+      const btn = document.getElementById('subpage-forgot-btn');
+      const msg = document.getElementById('subpage-forgot-msg');
+      if (!email) return;
+
+      if (btn) { btn.disabled = true; btn.innerText = 'Sending link...'; }
+      if (msg) msg.innerText = '';
+
+      try {
+        const redirectUrl = window.location.href.split('#')[0];
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: redirectUrl });
+        if (error) throw error;
+        if (msg) {
+          msg.style.color = '#34d399';
+          msg.innerText = '✓ Recovery link sent! Please check your email inbox and spam folder.';
+        }
+        if (btn) btn.innerText = 'Link Sent';
+      } catch (err) {
+        if (msg) {
+          msg.style.color = '#f87171';
+          msg.innerText = err.message || 'Failed to send recovery email.';
+        }
+        if (btn) { btn.disabled = false; btn.innerText = 'Send Recovery Link'; }
+      }
+    }
+
+    async function handleSubpageUpdatePassword(event) {
+      event.preventDefault();
+      const pw1 = document.getElementById('subpage-new-password')?.value;
+      const pw2 = document.getElementById('subpage-confirm-password')?.value;
+      const btn = document.getElementById('subpage-new-pw-btn');
+      const msg = document.getElementById('subpage-new-pw-msg');
+
+      if (pw1 !== pw2) {
+        if (msg) { msg.style.color = '#f87171'; msg.innerText = 'Passwords do not match.'; }
         return;
       }
+      if (btn) { btn.disabled = true; btn.innerText = 'Saving password...'; }
+      if (msg) msg.innerText = '';
 
-      window.location.href = 'portal.html';
+      try {
+        const { error } = await supabaseClient.auth.updateUser({ password: pw1 });
+        if (error) throw error;
+        if (msg) {
+          msg.style.color = '#34d399';
+          msg.innerText = '✓ Password updated successfully! Redirecting to Back Office...';
+        }
+        setTimeout(() => {
+          window.location.href = 'portal.html';
+        }, 1200);
+      } catch (err) {
+        if (msg) {
+          msg.style.color = '#f87171';
+          msg.innerText = err.message || 'Failed to update password.';
+        }
+        if (btn) { btn.disabled = false; btn.innerText = 'Save New Password & Sign In'; }
+      }
+    }
+
+    if (window.location.hash && window.location.hash.includes('type=recovery')) {
+      const modal = document.getElementById('subpage-new-pw-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    if (typeof supabaseClient !== 'undefined' && supabaseClient.auth) {
+      supabaseClient.auth.onAuthStateChange((event) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          const modal = document.getElementById('subpage-new-pw-modal');
+          if (modal) modal.style.display = 'flex';
+        }
+      });
     }
   </script>
 </head>
@@ -371,15 +548,21 @@
   <div class="modal-overlay" id="login-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
-      <h2>Merchant Login</h2>
-      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Log in with your FlexiTap account credentials.</p>
-      
+      <div class="modal-header-logo">
+        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 36px; height: 36px;" />
+        <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Merchant Login</h2>
+      </div>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Log in with your FlexiTap account credentials.</p>
+
       <form id="portal-login-form" onsubmit="handleStoreLogin(event)">
-        <label>Email</label>
-        <input type="email" id="login-email" required placeholder="owner@cafe.com">
-        
-        <label>Password</label>
-        <input type="password" id="login-password" required placeholder="••••••••">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" required placeholder="owner@cafe.com" />
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label for="login-password" style="margin-bottom: 0;">Password</label>
+          <a href="javascript:void(0)" onclick="openSubpageForgotModal()" style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 600;">Forgot password?</a>
+        </div>
+        <input type="password" id="login-password" required placeholder="••••••••" />
 
         <button type="submit" class="submit-btn" id="login-btn-text">Log In</button>
       </form>
@@ -387,10 +570,87 @@
     </div>
   </div>
 
+  <!-- SUBPAGE TWO-STEP VERIFICATION (OTP) MODAL -->
+  <div class="modal-overlay" id="subpage-otp-modal">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeSubpageOtpModal()">&times;</button>
+      <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+        <span style="font-size: 22px;">🔒</span>
+        <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin: 0;">Two-Step Verification (OTP)</h2>
+      </div>
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+        A 6-digit security code has been sent to <strong id="subpage-otp-display-email" style="color: #fff;">your email</strong>. Enter the code below to complete sign-in.
+      </p>
+      
+      <form onsubmit="handleSubpageVerifyOtp(event)">
+        <label>6-Digit Security Code</label>
+        <input type="text" id="subpage-otp-code" required placeholder="123456" maxlength="6" inputmode="numeric" style="text-align: center; font-size: 22px; letter-spacing: 6px; font-weight: 800; width: 100%; padding: 12px; margin-bottom: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #fff; outline: none;" />
+        <button type="submit" class="submit-btn" id="subpage-otp-verify-btn">Verify &amp; Enter Portal</button>
+      </form>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+        <button type="button" onclick="handleSubpageResendOtp()" style="background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 600; cursor: pointer;">Resend Code</button>
+        <button type="button" onclick="closeSubpageOtpModal()" style="background: none; border: none; color: var(--text-muted); font-size: 12px; cursor: pointer;">Back to Login</button>
+      </div>
+
+      <div id="subpage-otp-msg" class="error-msg"></div>
+    </div>
+  </div>
+
+  <!-- SUBPAGE FORGOT PASSWORD MODAL -->
+  <div class="modal-overlay" id="subpage-forgot-modal">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeSubpageForgotModal()">&times;</button>
+      <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Reset Merchant Password</h2>
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Enter your store account email and we'll send you a secure recovery link via Supabase SMTP.</p>
+      <form onsubmit="handleSubpageForgotSubmit(event)">
+        <label>Merchant Email</label>
+        <input type="email" id="subpage-forgot-email" required placeholder="owner@store.com" style="width: 100%; padding: 12px; margin-bottom: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #fff; outline: none;" />
+        <button type="submit" class="submit-btn" id="subpage-forgot-btn">Send Recovery Link</button>
+      </form>
+      <div id="subpage-forgot-msg" class="error-msg"></div>
+    </div>
+  </div>
+
+  <!-- SUBPAGE RECOVERY / SET NEW PASSWORD MODAL -->
+  <div class="modal-overlay" id="subpage-new-pw-modal">
+    <div class="modal-card">
+      <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Set New Password</h2>
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Your recovery session is verified. Enter a new password for your merchant account.</p>
+      <form onsubmit="handleSubpageUpdatePassword(event)">
+        <label>New Password</label>
+        <input type="password" id="subpage-new-password" required placeholder="••••••••" minlength="6" style="width: 100%; padding: 12px; margin-bottom: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #fff; outline: none;" />
+        <label>Confirm New Password</label>
+        <input type="password" id="subpage-confirm-password" required placeholder="••••••••" minlength="6" style="width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #fff; outline: none;" />
+        <button type="submit" class="submit-btn" id="subpage-new-pw-btn">Save New Password &amp; Sign In</button>
+      </form>
+      <div id="subpage-new-pw-msg" class="error-msg"></div>
+    </div>
+  </div>
+
   <script>
-    function toggleMobileMenu() { document.getElementById('navLinksContainer').classList.toggle('mobile-open'); }
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    // --- MOBILE MENU TOGGLE ---
+    function toggleMobileMenu() {
+      const nav = document.getElementById('navLinksContainer');
+      nav.classList.toggle('mobile-open');
+    }
+
+    // --- MODAL CONTROLS ---
+    function openModal(id) {
+      const el = document.getElementById(id || 'login-modal');
+      if (el) el.style.display = 'flex';
+    }
+    
+    function closeModal(id) {
+      const el = document.getElementById(id || 'login-modal');
+      if (el) el.style.display = 'none';
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach((overlay) => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.style.display = 'none';
+      });
+    });
   </script>
 </body>
 </html>

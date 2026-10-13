@@ -359,16 +359,6 @@
         <button type="submit" class="dev-btn-submit" id="dev-btn-text">Authenticate</button>
       </form>
 
-      <div style="display: flex; align-items: center; gap: 10px; margin: 16px 0 14px;">
-        <div style="flex: 1; height: 1px; background: var(--card-border);"></div>
-        <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px;">OR</span>
-        <div style="flex: 1; height: 1px; background: var(--card-border);"></div>
-      </div>
-
-      <button type="button" onclick="openDevOtpModal()" class="dev-btn-submit" style="background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid var(--card-border); font-weight: 700; box-shadow: none;">
-        ✉️ Authenticate via Staff OTP / 2FA
-      </button>
-
       <p id="dev-err" style="color: #ef4444; font-size: 13px; margin-top: 14px; text-align: center;"></p>
     </div>
   </div>
@@ -388,32 +378,29 @@
     </div>
   </div>
 
-  <!-- EMAIL OTP / PASSWORDLESS LOGIN MODAL (DEV & STAFF) -->
+  <!-- STAFF TWO-STEP VERIFICATION (OTP) MODAL -->
   <div id="dev-otp-modal" style="display: none; position: fixed; inset: 0; background: rgba(9, 13, 22, 0.85); z-index: 2500; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(6px);">
     <div class="dev-login-box" style="position: relative; max-width: 420px; text-align: left;">
       <button onclick="closeDevOtpModal()" type="button" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);">&times;</button>
-      <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 6px;">Staff One-Time Code (OTP)</h3>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Authenticate securely into Staff Ops using a single-use verification token sent to your email.</p>
+      <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span style="font-size: 20px;">🔒</span>
+        <h3 style="font-size: 18px; font-weight: 800; color: #fff;">Two-Step Verification (OTP)</h3>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+        A 6-digit security code has been sent to <strong id="dev-otp-display-email" style="color: #fff;">your staff email</strong>. Enter the code below to complete authentication.
+      </p>
       
-      <div id="dev-otp-step1">
-        <form onsubmit="handleDevSendOtp(event)">
-          <label>Staff Email Address</label>
-          <input type="email" id="dev-otp-email" required placeholder="employee@flexitapapp.com" style="width: 100%; padding: 12px; margin-bottom: 20px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: white; outline: none;" />
-          <button type="submit" class="dev-btn-submit" id="dev-otp-send-btn">Send Verification Code</button>
-        </form>
+      <form onsubmit="handleDevVerifyOtp(event)">
+        <label>6-Digit Security Code</label>
+        <input type="text" id="dev-otp-code" required placeholder="123456" maxlength="6" inputmode="numeric" style="text-align: center; font-size: 22px; letter-spacing: 6px; font-weight: 800; width: 100%; padding: 12px; margin-bottom: 16px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: white; outline: none;" />
+        <button type="submit" class="dev-btn-submit" id="dev-otp-verify-btn">Verify &amp; Enter Portal</button>
+      </form>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+        <button type="button" onclick="handleDevResendOtp()" style="background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 600; cursor: pointer;">Resend Code</button>
+        <button type="button" onclick="closeDevOtpModal()" style="background: none; border: none; color: var(--text-muted); font-size: 12px; cursor: pointer;">Back to Login</button>
       </div>
 
-      <div id="dev-otp-step2" style="display: none;">
-        <p style="font-size: 12.5px; color: #34d399; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px 12px; border-radius: 8px; margin-bottom: 14px;">
-          ✓ Secure code sent! Please check your staff inbox.
-        </p>
-        <form onsubmit="handleDevVerifyOtp(event)">
-          <label>6-Digit Security Token</label>
-          <input type="text" id="dev-otp-code" required placeholder="123456" maxlength="8" style="text-align: center; font-size: 18px; letter-spacing: 4px; font-weight: 700; width: 100%; padding: 12px; margin-bottom: 20px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: white; outline: none;" />
-          <button type="submit" class="dev-btn-submit" id="dev-otp-verify-btn">Verify &amp; Enter Portal</button>
-        </form>
-        <button type="button" onclick="resetDevOtpStep()" style="background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 10px; width: 100%; text-align: center;">Change Email</button>
-      </div>
       <p id="dev-otp-msg" style="font-size: 13px; margin-top: 12px; text-align: center; font-weight: 600;"></p>
     </div>
   </div>
@@ -2429,6 +2416,8 @@
       }
     }
 
+    let pendingDevUser = null;
+
     document.getElementById('dev-login-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       const email = document.getElementById('dev-email').value.trim();
@@ -2440,12 +2429,27 @@
       btnText.innerText = 'Verifying credentials...';
 
       const res = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
-      btnText.innerText = 'Authenticate';
 
       if (res.error) {
+        btnText.innerText = 'Authenticate';
         err.innerText = res.error.message;
-      } else {
-        verifyDevRole(res.data.user);
+        return;
+      }
+
+      pendingDevUser = res.data.user;
+      btnText.innerText = 'Sending 2FA security code...';
+
+      try {
+        const otpRes = await supabaseClient.auth.signInWithOtp({
+          email: email,
+          options: { shouldCreateUser: false }
+        });
+        if (otpRes.error) throw otpRes.error;
+        btnText.innerText = 'Authenticate';
+        openDevOtpModal(email);
+      } catch (otpErr) {
+        btnText.innerText = 'Authenticate';
+        err.innerText = otpErr.message || 'Failed to dispatch security verification code.';
       }
     });
 
@@ -2551,15 +2555,18 @@
       }
     }
 
-    function openDevOtpModal() {
-      const emailInp = document.getElementById('dev-email');
-      const otpInp = document.getElementById('dev-otp-email');
-      if (emailInp && otpInp) otpInp.value = emailInp.value.trim();
-      resetDevOtpStep();
+    function openDevOtpModal(email) {
+      const emailToUse = email || (document.getElementById('dev-email')?.value || '').trim();
+      const displayEl = document.getElementById('dev-otp-display-email');
+      if (displayEl) displayEl.innerText = emailToUse;
+      const codeInp = document.getElementById('dev-otp-code');
+      if (codeInp) codeInp.value = '';
+      const msg = document.getElementById('dev-otp-msg');
+      if (msg) msg.innerText = '';
       const modal = document.getElementById('dev-otp-modal');
       if (modal) {
         modal.style.display = 'flex';
-        if (otpInp) otpInp.focus();
+        if (codeInp) setTimeout(() => codeInp.focus(), 100);
       }
     }
 
@@ -2568,44 +2575,32 @@
       if (modal) modal.style.display = 'none';
     }
 
-    function resetDevOtpStep() {
-      const s1 = document.getElementById('dev-otp-step1');
-      const s2 = document.getElementById('dev-otp-step2');
-      const msg = document.getElementById('dev-otp-msg');
-      if (s1) s1.style.display = 'block';
-      if (s2) s2.style.display = 'none';
-      if (msg) msg.innerText = '';
-    }
-
-    async function handleDevSendOtp(e) {
-      e.preventDefault();
-      const email = document.getElementById('dev-otp-email').value.trim();
-      const btn = document.getElementById('dev-otp-send-btn');
+    async function handleDevResendOtp() {
+      const email = (document.getElementById('dev-email')?.value || '').trim();
       const msg = document.getElementById('dev-otp-msg');
       if (!email) return;
 
-      btn.disabled = true;
-      btn.innerText = 'Sending code...';
-      msg.innerText = '';
-
       try {
-        const { error } = await supabaseClient.auth.signInWithOtp({ email });
+        const { error } = await supabaseClient.auth.signInWithOtp({
+          email: email,
+          options: { shouldCreateUser: false }
+        });
         if (error) throw error;
-        document.getElementById('dev-otp-step1').style.display = 'none';
-        document.getElementById('dev-otp-step2').style.display = 'block';
-        const codeInp = document.getElementById('dev-otp-code');
-        if (codeInp) codeInp.focus();
+        if (msg) {
+          msg.style.color = '#34d399';
+          msg.innerText = '✓ New 6-digit verification code sent to your email!';
+        }
       } catch (err) {
-        msg.style.color = '#ef4444';
-        msg.innerText = err.message || 'Failed to send verification code.';
-        btn.disabled = false;
-        btn.innerText = 'Send Verification Code';
+        if (msg) {
+          msg.style.color = '#ef4444';
+          msg.innerText = err.message || 'Failed to resend code.';
+        }
       }
     }
 
     async function handleDevVerifyOtp(e) {
       e.preventDefault();
-      const email = document.getElementById('dev-otp-email').value.trim();
+      const email = (document.getElementById('dev-email')?.value || '').trim();
       const token = document.getElementById('dev-otp-code').value.trim();
       const btn = document.getElementById('dev-otp-verify-btn');
       const msg = document.getElementById('dev-otp-msg');
@@ -2623,7 +2618,7 @@
         });
         if (error) throw error;
         closeDevOtpModal();
-        verifyDevRole(data.user);
+        verifyDevRole(data.user || pendingDevUser);
       } catch (err) {
         msg.style.color = '#ef4444';
         msg.innerText = err.message || 'Invalid or expired code. Please try again.';
