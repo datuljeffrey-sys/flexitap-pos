@@ -660,7 +660,7 @@
           If you request a live remote assistance session, screen sharing and terminal diagnostics are conducted over secure WebRTC sessions. Please ensure no customer payment card PANs or CVVs are visible during video inspection.
 
           <strong>4. Automated Incident Routing &amp; Remediation</strong>
-          Support tickets are automatically prioritized and routed to Core Dev Engineering or Customer Support based on incident classification.
+          Support tickets are automatically logged and assigned to Customer Support Desk specialists for immediate assistance and triage.
         </div>
       </div>
 
@@ -729,7 +729,7 @@
       </div>
 
       <h1 id="formTitle">Submit Support Ticket</h1>
-      <p class="subtitle" style="margin-bottom: 16px;">Your ticket auto-routes directly to Core Dev Engineering or Customer Support.</p>
+      <p class="subtitle" style="margin-bottom: 16px;">Your ticket auto-routes directly to our Customer Support Desk for triage and dedicated assistance.</p>
 
       <form id="support-ticket-form" onsubmit="handleTicketFormSubmit(event)">
         <div class="row">
@@ -1315,11 +1315,27 @@
       }
     }
 
+    async function syncLatestTicketNumber() {
+      try {
+        if (supabaseClient) {
+          const { data, error } = await supabaseClient
+            .from('tickets')
+            .select('ticket_number')
+            .order('ticket_number', { ascending: false })
+            .limit(1);
+          if (!error && data && data.length > 0 && data[0].ticket_number) {
+            localStorage.setItem('flexitap_last_ticket_number', String(data[0].ticket_number));
+          }
+        }
+      } catch (_) {}
+    }
+
     async function checkAppSessionAndMode() {
       if (!isRunningStandalone()) {
         goTo('gate');
         return;
       }
+      syncLatestTicketNumber();
       if (currentAuthUser) {
         await populateAuthenticatedMerchantInfo();
         const disclaimerSeen = localStorage.getItem('flexitap_disclaimer_accepted');
@@ -1397,6 +1413,7 @@
       }
 
       await populateAuthenticatedMerchantInfo();
+      syncLatestTicketNumber();
 
       const storeInput = document.getElementById('storeName');
       const nameInput = document.getElementById('fullName');
@@ -1475,7 +1492,7 @@
         ? `[FlexiTap Support] Resolved: Ticket #${ticketNumber} - ${storeName}`
         : `[FlexiTap Support] Ticket #${ticketNumber} Acknowledged - ${storeName}`;
 
-      const tierLabel = tier === 'tier_3' ? 'Tier 3 (Core Dev Engineering)' : (tier === 'tier_2' ? 'Tier 2 (Technical Support)' : 'Tier 1 (Merchant Operations)');
+      const tierLabel = tier === 'tier_3' ? 'Tier 3 (Core Dev Engineering)' : (tier === 'tier_2' ? 'Tier 2 (Customer Support Lead)' : 'Tier 1 (Customer Support Desk)');
 
       const brandedHtml = isResolved
         ? `
@@ -1514,7 +1531,7 @@
             <div style="padding: 28px 24px;">
               <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
                 <div style="color: #1e40af; font-size: 14px; font-weight: 700;">🎫 Ticket Received &amp; Logged</div>
-                <div style="color: #2563eb; font-size: 13px; margin-top: 2px;">Your ticket <strong>#${ticketNumber}</strong> has been dispatched to our engineering queue.</div>
+                <div style="color: #2563eb; font-size: 13px; margin-top: 2px;">Your ticket <strong>#${ticketNumber}</strong> has been received and routed to our Customer Support Desk.</div>
               </div>
               <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">
                 <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${storeName}</td></tr>
@@ -1525,7 +1542,7 @@
                 <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Issue Description:</div>
                 <div style="color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${details || 'No detailed description provided.'}</div>
               </div>
-              <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px;">Our operations and core engineering team are reviewing your inquiry. You will receive an email update as soon as progress is made or when the ticket is resolved.</p>
+              <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px;">Our Customer Support Desk is reviewing your inquiry. You will receive an email update as soon as progress is made or when the ticket is resolved.</p>
             </div>
             <div style="background: #f1f5f9; padding: 16px 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
               &copy; 2026 FlexiTap POS • www.flexitapapp.com • Support Desk
@@ -1613,44 +1630,67 @@
 
       const autoAssign = getAutoAssignedStaff({ category, subject, description });
 
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{8}-[0-9a-f]{12}$/i;
+      const merchantId = (currentAuthUser && currentAuthUser.id && uuidRegex.test(currentAuthUser.id)) ? currentAuthUser.id : null;
+
+      const formattedDesc = description
+        ? `${description}\n\n[Contact: ${fullName}${phone ? ' | Tel: ' + phone : ''}]`
+        : `[Contact: ${fullName}${phone ? ' | Tel: ' + phone : ''}]`;
+
       const payload = {
+        merchant_id: merchantId,
         store_name: storeName,
         contact_email: email,
-        contact_phone: phone,
         subject: subject,
         category: category,
         priority: priority,
-        tier: (category === 'printer' || category === 'payment' || category === 'hardware' || category === 'sync' || category === 'bug') ? 'tier_2' : 'tier_1',
         status: 'open',
-        description: `${description}\n\n[Contact: ${fullName} | Tel: ${phone}]`,
+        description: formattedDesc,
         assigned_to: autoAssign.assigned_to,
         device_telemetry: {
           app_version: 'v2.4.1 (FlexiSupport PWA)',
           device_role: 'Merchant POS Terminal',
           sqlite_healthy: true,
-          tier: (category === 'printer' || category === 'payment' || category === 'hardware' || category === 'sync' || category === 'bug') ? 'tier_2' : 'tier_1',
-          auto_assigned: autoAssign,
+          channel: 'FlexiSupport PWA',
           contact_name: fullName,
+          contact_phone: phone,
+          tier: 'tier_1',
+          auto_assigned: autoAssign,
           attachments: attachments,
           user_agent: navigator.userAgent,
           submitted_at: new Date().toISOString()
         }
       };
 
-      let ticketNumber = Math.floor(100 + Math.random() * 900);
-      let ticketId = 'tck_' + Date.now();
+      let ticketNumber = null;
+      let ticketId = null;
 
       try {
         if (supabaseClient) {
           const res = await supabaseClient.from('tickets').insert([payload]).select();
+          if (res.error) {
+            console.error('Supabase ticket insert error:', res.error);
+            throw res.error;
+          }
           if (res.data && res.data.length > 0) {
             const saved = res.data[0];
-            ticketNumber = saved.ticket_number || ticketNumber;
-            ticketId = saved.id || ticketId;
+            ticketNumber = saved.ticket_number;
+            ticketId = saved.id;
+            localStorage.setItem('flexitap_last_ticket_number', String(ticketNumber));
           }
         }
       } catch (err) {
         console.warn('Direct Supabase insert fallback:', err);
+      }
+
+      // Offline / network fallback if Supabase was unavailable
+      if (!ticketNumber) {
+        const lastKnown = parseInt(localStorage.getItem('flexitap_last_ticket_number') || '11', 10);
+        ticketNumber = lastKnown + 1;
+        localStorage.setItem('flexitap_last_ticket_number', String(ticketNumber));
+      }
+      if (!ticketId) {
+        ticketId = 'tck_local_' + Date.now();
       }
 
       recordSubmissionRate();
@@ -1676,7 +1716,7 @@
           ticketNumber: ticketNumber,
           recipientEmail: email,
           storeName: storeName,
-          tier: (category === 'sync' || category === 'bug') ? 'tier_3' : (category === 'printer' || category === 'payment') ? 'tier_2' : 'tier_1',
+          tier: 'tier_1',
           details: description,
           isResolved: false
         });
@@ -1890,16 +1930,59 @@
       }
     }
 
-    // 9. TICKET REVIEW & REAL-TIME TRACKING ENGINE
-    function startReview() {
-      populateReviewDropdown();
-      goTo('review');
+    async function getCombinedTickets() {
+      const localList = getLocalTickets();
+      if (!supabaseClient || !currentAuthUser) return localList;
+      try {
+        let query = supabaseClient.from('tickets').select('*').order('created_at', { ascending: false }).limit(20);
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{8}-[0-9a-f]{12}$/i;
+        if (currentAuthUser.id && uuidRegex.test(currentAuthUser.id)) {
+          query = query.or(`merchant_id.eq.${currentAuthUser.id},contact_email.eq.${currentAuthUser.email || ''},store_name.eq.${currentAuthUser.storeName || ''}`);
+        } else if (currentAuthUser.email) {
+          query = query.or(`contact_email.eq.${currentAuthUser.email},store_name.eq.${currentAuthUser.storeName || ''}`);
+        }
+        const { data, error } = await query;
+        if (!error && data && data.length > 0) {
+          const dbTickets = data.map(t => ({
+            id: t.id,
+            ticketNumber: t.ticket_number,
+            subject: t.subject,
+            category: t.category,
+            priority: t.priority,
+            storeName: t.store_name,
+            status: t.status,
+            assignedTo: t.device_telemetry?.auto_assigned?.staff_name || t.assigned_to,
+            assignedRole: t.device_telemetry?.auto_assigned?.role || 'support',
+            createdAt: t.created_at ? new Date(t.created_at).toLocaleString() : ''
+          }));
+          const seen = new Set();
+          const combined = [];
+          for (const item of [...localList, ...dbTickets]) {
+            const key = String(item.ticketNumber || item.id);
+            if (!seen.has(key)) {
+              seen.add(key);
+              combined.push(item);
+            }
+          }
+          return combined;
+        }
+      } catch (err) {
+        console.warn('Error fetching combined tickets:', err);
+      }
+      return localList;
     }
 
-    function populateReviewDropdown() {
+    // 9. TICKET REVIEW & REAL-TIME TRACKING ENGINE
+    async function startReview() {
+      goTo('review');
+      await populateReviewDropdown();
+    }
+
+    async function populateReviewDropdown() {
       const select = document.getElementById('reviewTicketSelect');
-      const tickets = getLocalTickets();
+      if (!select) return;
       select.innerHTML = '<option value="">Select Recent Ticket...</option>';
+      const tickets = await getCombinedTickets();
 
       if (tickets.length > 0) {
         tickets.forEach(t => {
@@ -1922,7 +2005,7 @@
       const raw = document.getElementById('reviewManualNum').value.trim();
       const num = raw.replace(/[^0-9]/g, '');
       if (!num) {
-        alert('Please enter a ticket number (e.g. 104).');
+        alert('Please enter a ticket number (e.g. 11).');
         return;
       }
       openReviewForTicket(num);
@@ -2148,13 +2231,15 @@
     }
 
     // 10. RECENT SUBMISSIONS SCREEN
-    function showRecent() {
+    async function showRecent() {
+      goTo('recent');
       const container = document.getElementById('recentListContainer');
-      const list = getLocalTickets();
+      if (!container) return;
+      container.innerHTML = '<p class="subtitle" style="text-align: center; padding: 24px 0;">Loading tickets from Operations Desk...</p>';
+      const list = await getCombinedTickets();
 
       if (!list || list.length === 0) {
-        container.innerHTML = '<p class="subtitle" style="text-align: center; padding: 24px 0;">No tickets submitted from this browser/terminal yet.</p>';
-        goTo('recent');
+        container.innerHTML = '<p class="subtitle" style="text-align: center; padding: 24px 0;">No tickets submitted from this store yet.</p>';
         return;
       }
 
@@ -2171,8 +2256,6 @@
           </div>
         </div>
       `).join('');
-
-      goTo('recent');
     }
 
     // Safe HTML Escaping
