@@ -1221,13 +1221,15 @@
     }
 
     // --- TICKET LIFECYCLE EMAIL NOTIFICATIONS (SUPABASE SMTP / DB LOG) ---
+    const GOOGLE_TICKET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzJu1CEi1qhT-k7Qc_tisMN7vXbbCuGymgiMMk_K6PGIMnrUHkIrYEuQFMCviZfaYvoQw/exec';
+
     async function sendTicketLifecycleNotification({
       ticketNumber,
       recipientEmail,
       storeName,
-      tier,
-      details,
-      resolutionNotes,
+      tier = 'tier_1',
+      details = '',
+      resolutionNotes = '',
       isResolved = false
     }) {
       if (!recipientEmail) return;
@@ -1236,33 +1238,104 @@
         ? `[FlexiTap Support] Resolved: Ticket #${ticketNumber} - ${storeName}`
         : `[FlexiTap Support] Ticket #${ticketNumber} Acknowledged - ${storeName}`;
 
-      const notificationRecord = {
-        ticket_id: String(ticketNumber || Date.now()),
-        ticket_number: typeof ticketNumber === 'number' ? ticketNumber : parseInt(ticketNumber, 10) || null,
+      const tierLabel = tier === 'tier_3' ? 'Tier 3 (Core Dev Engineering)' : (tier === 'tier_2' ? 'Tier 2 (Technical Support)' : 'Tier 1 (Merchant Operations)');
+
+      const brandedHtml = isResolved
+        ? `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+            <div style="background: #0f172a; padding: 24px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">FlexiTap POS Support</h1>
+              <p style="color: #94a3b8; margin: 4px 0 0; font-size: 13px;">Official Operations &amp; Engineering Desk</p>
+            </div>
+            <div style="padding: 28px 24px;">
+              <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
+                <div style="color: #065f46; font-size: 14px; font-weight: 700;">✅ Issue Marked as Resolved</div>
+                <div style="color: #047857; font-size: 13px; margin-top: 2px;">Ticket <strong>#${ticketNumber}</strong> has been completed and verified.</div>
+              </div>
+              <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">
+                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${storeName}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Ticket Reference:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 700;">#${ticketNumber}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Support Tier:</td><td style="padding: 6px 0; color: #0f172a;">${tierLabel}</td></tr>
+              </table>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Resolution Details &amp; Engineer Notes:</div>
+                <div style="color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${resolutionNotes || 'All diagnostic inspections passed and terminal sync is restored.'}</div>
+              </div>
+              <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px;">If you have any further questions or require additional adjustments, simply reply directly to this email.</p>
+            </div>
+            <div style="background: #f1f5f9; padding: 16px 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
+              &copy; 2026 FlexiTap POS • www.flexitapapp.com • Support Desk
+            </div>
+          </div>
+        `
+        : `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+            <div style="background: #0f172a; padding: 24px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">FlexiTap POS Support</h1>
+              <p style="color: #94a3b8; margin: 4px 0 0; font-size: 13px;">Official Operations &amp; Engineering Desk</p>
+            </div>
+            <div style="padding: 28px 24px;">
+              <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
+                <div style="color: #1e40af; font-size: 14px; font-weight: 700;">🎫 Ticket Received &amp; Logged</div>
+                <div style="color: #2563eb; font-size: 13px; margin-top: 2px;">Your ticket <strong>#${ticketNumber}</strong> has been dispatched to our engineering queue.</div>
+              </div>
+              <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">
+                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${storeName}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Ticket Reference:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 700;">#${ticketNumber}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Support Tier:</td><td style="padding: 6px 0; color: #0f172a;">${tierLabel}</td></tr>
+              </table>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Issue Description:</div>
+                <div style="color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${details || 'No detailed description provided.'}</div>
+              </div>
+              <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px;">Our operations and core engineering team are reviewing your inquiry. You will receive an email update as soon as progress is made or when the ticket is resolved.</p>
+            </div>
+            <div style="background: #f1f5f9; padding: 16px 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
+              &copy; 2026 FlexiTap POS • www.flexitapapp.com • Support Desk
+            </div>
+          </div>
+        `;
+
+      const payload = {
         recipient_email: recipientEmail,
-        notification_type: isResolved ? 'resolution_notice' : 'submission_acknowledgment',
         subject: emailSubject,
         store_name: storeName || 'Store',
-        tier: tier || 'tier_1',
-        details: details || '',
-        resolution_notes: resolutionNotes || '',
-        status: 'delivered',
-        created_at: new Date().toISOString()
+        ticket_number: ticketNumber,
+        tier: tier,
+        details: details,
+        resolution_notes: resolutionNotes,
+        html: brandedHtml
       };
 
+      // 1. Dispatch via Google Workspace Webhook
       try {
-        if (supabaseClient) {
-          await supabaseClient.from('ticket_notifications').insert([notificationRecord]);
-        }
+        fetch(GOOGLE_TICKET_WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        }).catch(e => console.warn('Webhook background dispatch note:', e));
       } catch (err) {
-        console.warn('Ticket notification log fallback note:', err);
+        console.warn('Webhook dispatch exception:', err);
       }
 
+      // 2. Also log to Supabase ticket_notifications if table exists
       try {
-        if (supabaseClient && typeof supabaseClient.functions !== 'undefined' && supabaseClient.functions.invoke) {
-          await supabaseClient.functions.invoke('send-ticket-email', {
-            body: notificationRecord
-          });
+        const notificationRecord = {
+          ticket_id: String(ticketNumber || Date.now()),
+          ticket_number: typeof ticketNumber === 'number' ? ticketNumber : parseInt(ticketNumber, 10) || null,
+          recipient_email: recipientEmail,
+          notification_type: isResolved ? 'resolution_notice' : 'submission_acknowledgment',
+          subject: emailSubject,
+          store_name: storeName || 'Store',
+          tier: tier || 'tier_1',
+          details: details || '',
+          resolution_notes: resolutionNotes || '',
+          status: 'delivered',
+          created_at: new Date().toISOString()
+        };
+        if (typeof supabaseClient !== 'undefined' && supabaseClient.from) {
+          supabaseClient.from('ticket_notifications').insert([notificationRecord]).catch(() => {});
         }
       } catch (_) {}
 
