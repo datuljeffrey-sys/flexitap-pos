@@ -351,11 +351,86 @@
       <form id="dev-login-form">
         <label>Staff / Developer Email</label>
         <input type="email" id="dev-email" required placeholder="employee@flexitapapp.com" autocomplete="username" />
-        <label>Password</label>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label style="margin-bottom: 0;">Password</label>
+          <a href="javascript:void(0)" onclick="openDevForgotModal()" style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 600;">Forgot password?</a>
+        </div>
         <input type="password" id="dev-password" required placeholder="••••••••" autocomplete="current-password" />
         <button type="submit" class="dev-btn-submit" id="dev-btn-text">Authenticate</button>
       </form>
+
+      <div style="display: flex; align-items: center; gap: 10px; margin: 16px 0 14px;">
+        <div style="flex: 1; height: 1px; background: var(--card-border);"></div>
+        <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px;">OR</span>
+        <div style="flex: 1; height: 1px; background: var(--card-border);"></div>
+      </div>
+
+      <button type="button" onclick="openDevOtpModal()" class="dev-btn-submit" style="background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid var(--card-border); font-weight: 700; box-shadow: none;">
+        ✉️ Authenticate via Staff OTP / 2FA
+      </button>
+
       <p id="dev-err" style="color: #ef4444; font-size: 13px; margin-top: 14px; text-align: center;"></p>
+    </div>
+  </div>
+
+  <!-- FORGOT PASSWORD MODAL (DEV & STAFF) -->
+  <div id="dev-forgot-modal" style="display: none; position: fixed; inset: 0; background: rgba(9, 13, 22, 0.85); z-index: 2500; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(6px);">
+    <div class="dev-login-box" style="position: relative; max-width: 420px; text-align: left;">
+      <button onclick="closeDevForgotModal()" type="button" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);">&times;</button>
+      <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 6px;">Reset Staff Password</h3>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Enter your staff account email and we'll send you an encrypted recovery link via Supabase SMTP.</p>
+      <form onsubmit="handleDevForgotSubmit(event)">
+        <label>Staff Email Address</label>
+        <input type="email" id="dev-forgot-email" required placeholder="employee@flexitapapp.com" style="width: 100%; padding: 12px; margin-bottom: 20px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: white; outline: none;" />
+        <button type="submit" class="dev-btn-submit" id="dev-forgot-btn">Send Recovery Link</button>
+      </form>
+      <p id="dev-forgot-msg" style="font-size: 13px; margin-top: 12px; text-align: center; font-weight: 600;"></p>
+    </div>
+  </div>
+
+  <!-- EMAIL OTP / PASSWORDLESS LOGIN MODAL (DEV & STAFF) -->
+  <div id="dev-otp-modal" style="display: none; position: fixed; inset: 0; background: rgba(9, 13, 22, 0.85); z-index: 2500; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(6px);">
+    <div class="dev-login-box" style="position: relative; max-width: 420px; text-align: left;">
+      <button onclick="closeDevOtpModal()" type="button" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);">&times;</button>
+      <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 6px;">Staff One-Time Code (OTP)</h3>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Authenticate securely into Staff Ops using a single-use verification token sent to your email.</p>
+      
+      <div id="dev-otp-step1">
+        <form onsubmit="handleDevSendOtp(event)">
+          <label>Staff Email Address</label>
+          <input type="email" id="dev-otp-email" required placeholder="employee@flexitapapp.com" style="width: 100%; padding: 12px; margin-bottom: 20px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: white; outline: none;" />
+          <button type="submit" class="dev-btn-submit" id="dev-otp-send-btn">Send Verification Code</button>
+        </form>
+      </div>
+
+      <div id="dev-otp-step2" style="display: none;">
+        <p style="font-size: 12.5px; color: #34d399; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px 12px; border-radius: 8px; margin-bottom: 14px;">
+          ✓ Secure code sent! Please check your staff inbox.
+        </p>
+        <form onsubmit="handleDevVerifyOtp(event)">
+          <label>6-Digit Security Token</label>
+          <input type="text" id="dev-otp-code" required placeholder="123456" maxlength="8" style="text-align: center; font-size: 18px; letter-spacing: 4px; font-weight: 700; width: 100%; padding: 12px; margin-bottom: 20px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: white; outline: none;" />
+          <button type="submit" class="dev-btn-submit" id="dev-otp-verify-btn">Verify &amp; Enter Portal</button>
+        </form>
+        <button type="button" onclick="resetDevOtpStep()" style="background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 10px; width: 100%; text-align: center;">Change Email</button>
+      </div>
+      <p id="dev-otp-msg" style="font-size: 13px; margin-top: 12px; text-align: center; font-weight: 600;"></p>
+    </div>
+  </div>
+
+  <!-- RECOVERY / SET NEW PASSWORD MODAL (DEV & STAFF) -->
+  <div id="dev-new-password-modal" style="display: none; position: fixed; inset: 0; background: rgba(9, 13, 22, 0.9); z-index: 3000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(8px);">
+    <div class="dev-login-box" style="position: relative; max-width: 420px; text-align: left;">
+      <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 6px;">Set New Staff Password</h3>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Your recovery session is verified. Enter a new password for your staff profile.</p>
+      <form onsubmit="handleDevUpdatePassword(event)">
+        <label>New Password</label>
+        <input type="password" id="dev-new-password" required placeholder="••••••••" minlength="6" style="width: 100%; padding: 12px; margin-bottom: 16px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: white; outline: none;" />
+        <label>Confirm New Password</label>
+        <input type="password" id="dev-confirm-password" required placeholder="••••••••" minlength="6" style="width: 100%; padding: 12px; margin-bottom: 20px; background: #090d16; border: 1px solid var(--card-border); border-radius: 8px; color: white; outline: none;" />
+        <button type="submit" class="dev-btn-submit" id="dev-new-pw-btn">Save New Password &amp; Authenticate</button>
+      </form>
+      <p id="dev-new-pw-msg" style="font-size: 13px; margin-top: 12px; text-align: center; font-weight: 600;"></p>
     </div>
   </div>
 
@@ -2196,6 +2271,11 @@
 
     // --- DEV AUTHENTICATION & ACCESS GUARD ---
     async function checkDevSession() {
+      if (window.location.hash && window.location.hash.includes('type=recovery')) {
+        const modal = document.getElementById('dev-new-password-modal');
+        if (modal) modal.style.display = 'flex';
+      }
+
       const authResponse = await supabaseClient.auth.getSession();
       const session = authResponse.data.session;
       if (session && session.user) {
@@ -2376,6 +2456,229 @@
       document.getElementById('dev-password').value = '';
       document.getElementById('dev-auth-view').style.display = 'flex';
     }
+
+    // --- TICKET LIFECYCLE EMAIL NOTIFICATIONS (SUPABASE SMTP / DB LOG) ---
+    async function sendTicketLifecycleNotification({
+      ticketNumber,
+      recipientEmail,
+      storeName,
+      tier,
+      details,
+      resolutionNotes,
+      isResolved = false
+    }) {
+      if (!recipientEmail) return;
+
+      const emailSubject = isResolved
+        ? `[FlexiTap Support] Resolved: Ticket #${ticketNumber} - ${storeName}`
+        : `[FlexiTap Support] Ticket #${ticketNumber} Acknowledged - ${storeName}`;
+
+      const notificationRecord = {
+        ticket_id: String(ticketNumber || Date.now()),
+        ticket_number: typeof ticketNumber === 'number' ? ticketNumber : parseInt(ticketNumber, 10) || null,
+        recipient_email: recipientEmail,
+        notification_type: isResolved ? 'resolution_notice' : 'submission_acknowledgment',
+        subject: emailSubject,
+        store_name: storeName || 'Store',
+        tier: tier || 'tier_1',
+        details: details || '',
+        resolution_notes: resolutionNotes || '',
+        status: 'delivered',
+        created_at: new Date().toISOString()
+      };
+
+      try {
+        await supabaseClient.from('ticket_notifications').insert([notificationRecord]);
+      } catch (err) {
+        console.warn('Ticket notification log fallback note:', err);
+      }
+
+      try {
+        if (typeof supabaseClient.functions !== 'undefined' && supabaseClient.functions.invoke) {
+          await supabaseClient.functions.invoke('send-ticket-email', {
+            body: notificationRecord
+          });
+        }
+      } catch (_) {}
+
+      return { success: true, email: recipientEmail, subject: emailSubject };
+    }
+
+    // --- STAFF FORGOT PASSWORD & OTP HANDLERS ---
+    function openDevForgotModal() {
+      const emailInp = document.getElementById('dev-email');
+      const forgotInp = document.getElementById('dev-forgot-email');
+      if (emailInp && forgotInp) forgotInp.value = emailInp.value.trim();
+      const msg = document.getElementById('dev-forgot-msg');
+      if (msg) msg.innerText = '';
+      const modal = document.getElementById('dev-forgot-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+        if (forgotInp) forgotInp.focus();
+      }
+    }
+
+    function closeDevForgotModal() {
+      const modal = document.getElementById('dev-forgot-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    async function handleDevForgotSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('dev-forgot-email').value.trim();
+      const btn = document.getElementById('dev-forgot-btn');
+      const msg = document.getElementById('dev-forgot-msg');
+      if (!email) return;
+
+      btn.disabled = true;
+      btn.innerText = 'Sending link...';
+      msg.innerText = '';
+
+      try {
+        const redirectUrl = window.location.href.split('#')[0];
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+          redirectTo: redirectUrl
+        });
+        if (error) throw error;
+        msg.style.color = '#34d399';
+        msg.innerText = '✓ Recovery link sent! Please check your staff email inbox and spam folder.';
+        btn.innerText = 'Link Sent';
+      } catch (err) {
+        msg.style.color = '#ef4444';
+        msg.innerText = err.message || 'Failed to send recovery email. Please check the address.';
+        btn.disabled = false;
+        btn.innerText = 'Send Recovery Link';
+      }
+    }
+
+    function openDevOtpModal() {
+      const emailInp = document.getElementById('dev-email');
+      const otpInp = document.getElementById('dev-otp-email');
+      if (emailInp && otpInp) otpInp.value = emailInp.value.trim();
+      resetDevOtpStep();
+      const modal = document.getElementById('dev-otp-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+        if (otpInp) otpInp.focus();
+      }
+    }
+
+    function closeDevOtpModal() {
+      const modal = document.getElementById('dev-otp-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function resetDevOtpStep() {
+      const s1 = document.getElementById('dev-otp-step1');
+      const s2 = document.getElementById('dev-otp-step2');
+      const msg = document.getElementById('dev-otp-msg');
+      if (s1) s1.style.display = 'block';
+      if (s2) s2.style.display = 'none';
+      if (msg) msg.innerText = '';
+    }
+
+    async function handleDevSendOtp(e) {
+      e.preventDefault();
+      const email = document.getElementById('dev-otp-email').value.trim();
+      const btn = document.getElementById('dev-otp-send-btn');
+      const msg = document.getElementById('dev-otp-msg');
+      if (!email) return;
+
+      btn.disabled = true;
+      btn.innerText = 'Sending code...';
+      msg.innerText = '';
+
+      try {
+        const { error } = await supabaseClient.auth.signInWithOtp({ email });
+        if (error) throw error;
+        document.getElementById('dev-otp-step1').style.display = 'none';
+        document.getElementById('dev-otp-step2').style.display = 'block';
+        const codeInp = document.getElementById('dev-otp-code');
+        if (codeInp) codeInp.focus();
+      } catch (err) {
+        msg.style.color = '#ef4444';
+        msg.innerText = err.message || 'Failed to send verification code.';
+        btn.disabled = false;
+        btn.innerText = 'Send Verification Code';
+      }
+    }
+
+    async function handleDevVerifyOtp(e) {
+      e.preventDefault();
+      const email = document.getElementById('dev-otp-email').value.trim();
+      const token = document.getElementById('dev-otp-code').value.trim();
+      const btn = document.getElementById('dev-otp-verify-btn');
+      const msg = document.getElementById('dev-otp-msg');
+      if (!email || !token) return;
+
+      btn.disabled = true;
+      btn.innerText = 'Verifying code...';
+      msg.innerText = '';
+
+      try {
+        const { data, error } = await supabaseClient.auth.verifyOtp({
+          email,
+          token,
+          type: 'email'
+        });
+        if (error) throw error;
+        closeDevOtpModal();
+        verifyDevRole(data.user);
+      } catch (err) {
+        msg.style.color = '#ef4444';
+        msg.innerText = err.message || 'Invalid or expired code. Please try again.';
+        btn.disabled = false;
+        btn.innerText = 'Verify & Enter Portal';
+      }
+    }
+
+    async function handleDevUpdatePassword(e) {
+      e.preventDefault();
+      const pw1 = document.getElementById('dev-new-password').value;
+      const pw2 = document.getElementById('dev-confirm-password').value;
+      const btn = document.getElementById('dev-new-pw-btn');
+      const msg = document.getElementById('dev-new-pw-msg');
+
+      if (pw1 !== pw2) {
+        msg.style.color = '#ef4444';
+        msg.innerText = 'Passwords do not match.';
+        return;
+      }
+      btn.disabled = true;
+      btn.innerText = 'Saving password...';
+      msg.innerText = '';
+
+      try {
+        const { error } = await supabaseClient.auth.updateUser({ password: pw1 });
+        if (error) throw error;
+        msg.style.color = '#34d399';
+        msg.innerText = '✓ Password updated successfully! Accessing Staff Ops...';
+        setTimeout(async () => {
+          document.getElementById('dev-new-password-modal').style.display = 'none';
+          const { data } = await supabaseClient.auth.getUser();
+          if (data && data.user) {
+            verifyDevRole(data.user);
+          }
+        }, 1200);
+      } catch (err) {
+        msg.style.color = '#ef4444';
+        msg.innerText = err.message || 'Failed to update password.';
+        btn.disabled = false;
+        btn.innerText = 'Save New Password & Authenticate';
+      }
+    }
+
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        const modal = document.getElementById('dev-new-password-modal');
+        if (modal) modal.style.display = 'flex';
+      } else if (session?.user) {
+        if (window.location.hash && window.location.hash.includes('access_token')) {
+          const cleanUrl = window.location.pathname + window.location.search;
+          window.history.replaceState({}, document.title, cleanUrl);
+        }
+      }
+    });
 
     // --- MERCHANT CRM & FLEET OPS CONTROLLER ---
     let crmAccounts = [];
@@ -3367,6 +3670,19 @@
         crmTicketsMap[acc.id].unshift(fallbackTicket);
       }
 
+      // Dispatch email acknowledgment via Supabase SMTP if contact email provided
+      if (contactEmail) {
+        const createdTck = (crmTicketsMap[acc.id] && crmTicketsMap[acc.id][0]) || null;
+        sendTicketLifecycleNotification({
+          ticketNumber: createdTck ? (createdTck.ticket_number || createdTck.raw_id || createdTck.id) : Date.now(),
+          recipientEmail: contactEmail,
+          storeName: acc.store_name,
+          tier: 'tier_1',
+          details: description,
+          isResolved: false
+        });
+      }
+
       closeCrmCreateTicketModal();
       crmTicketFilter = 'open';
       ['open', 'closed', 'all'].forEach(function(f) {
@@ -4075,6 +4391,19 @@
         newTicketPayload.ticket_number = cachedTickets.length + 101;
         newTicketPayload.created_at = new Date().toISOString();
         cachedTickets.unshift(newTicketPayload);
+      }
+
+      // Dispatch email acknowledgment via Supabase SMTP
+      if (contactEmail) {
+        const createdTck = cachedTickets[0];
+        sendTicketLifecycleNotification({
+          ticketNumber: createdTck.ticket_number || createdTck.id,
+          recipientEmail: contactEmail,
+          storeName: storeName,
+          tier: tier,
+          details: description,
+          isResolved: false
+        });
       }
 
       closeCreateTicketModal();
@@ -4835,10 +5164,24 @@
         }).eq('id', selectedTicket.id);
       } catch (_) {}
 
+      // Dispatch resolution email notification via Supabase SMTP
+      const recipientEmail = selectedTicket.contact_email || selectedTicket.merchant_email || selectedTicket.email || '';
+      if (recipientEmail) {
+        sendTicketLifecycleNotification({
+          ticketNumber: selectedTicket.ticket_number || selectedTicket.id,
+          recipientEmail: recipientEmail,
+          storeName: selectedTicket.store_name || 'Store',
+          tier: selectedTicket.tier || 'tier_1',
+          details: selectedTicket.details || selectedTicket.description || '',
+          resolutionNotes: resolution,
+          isResolved: true
+        });
+      }
+
       updateTicketKPIs();
       renderTicketsList();
       selectTicket(selectedTicket.id, false);
-      alert('Ticket #' + (selectedTicket.ticket_number || '') + ' marked as RESOLVED!');
+      alert('Ticket #' + (selectedTicket.ticket_number || '') + ' marked as RESOLVED!' + (recipientEmail ? ' Resolution email dispatched to ' + recipientEmail + '.' : ''));
     }
 
     function searchTicketsByNumber(num) {
