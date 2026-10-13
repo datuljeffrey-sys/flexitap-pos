@@ -62,8 +62,16 @@
     /* --- SIDEBAR --- */
     aside {
       width: var(--sidebar-width); background-color: var(--sidebar-bg); border-right: 1px solid var(--card-border);
-      display: flex; flex-direction: column; justify-content: space-between; padding: 24px 16px; flex-shrink: 0;
+      display: flex; flex-direction: column; justify-content: space-between; padding: 20px 14px; flex-shrink: 0;
+      height: 100vh; max-height: 100vh; box-sizing: border-box; overflow: hidden; position: sticky; top: 0;
     }
+    .sidebar-scrollable-content {
+      flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding-right: 4px;
+      scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    }
+    .sidebar-scrollable-content::-webkit-scrollbar { width: 5px; }
+    .sidebar-scrollable-content::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.18); border-radius: 9999px; }
+    .sidebar-scrollable-content::-webkit-scrollbar-track { background: transparent; }
     .brand-box { display: flex; align-items: center; gap: 12px; padding: 0 8px 24px; border-bottom: 1px solid var(--card-border); }
     .brand-title { font-size: 1.15rem; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
     .brand-title span { color: var(--primary); font-size: 0.8rem; display: block; font-weight: 700; text-transform: uppercase; }
@@ -208,15 +216,16 @@
     .badge-medium { background: rgba(147, 51, 234, 0.2); color: #c084fc; border: 1px solid rgba(147, 51, 234, 0.4); }
     .badge-low { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.4); }
 
-    .tickets-workspace-col { background: #030712; border: 1px solid var(--card-border); border-radius: 16px; display: flex; flex-direction: column; overflow-y: auto; padding: 24px; max-height: 720px; }
+    .tickets-workspace-col { background: #030712; border: 1px solid var(--card-border); border-radius: 16px; display: flex; flex-direction: column; overflow-y: auto; padding: 24px; min-height: 640px; max-height: none; }
     .ticket-section-title { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .ticket-edit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
     .ticket-edit-field label { display: block; font-size: 0.72rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; }
     .ticket-edit-field select, .ticket-edit-field input { width: 100%; padding: 8px 10px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.82rem; outline: none; }
     
-    .notes-timeline { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px; max-height: 220px; overflow-y: auto; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
-    .note-bubble { background: rgba(255, 255, 255, 0.04); border-left: 3px solid var(--primary); padding: 10px 12px; border-radius: 8px; font-size: 0.82rem; line-height: 1.4; color: var(--text); }
-    .note-author { font-size: 0.72rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .notes-timeline { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px; min-height: 320px; max-height: 580px; overflow-y: auto; margin-bottom: 14px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: thin; transition: all 0.3s ease; }
+    .notes-timeline.expanded { min-height: 540px; max-height: 920px; }
+    .note-bubble { background: rgba(255, 255, 255, 0.04); border-left: 3px solid var(--primary); padding: 12px 14px; border-radius: 10px; font-size: 0.84rem; line-height: 1.5; color: var(--text); }
+    .note-author { font-size: 0.74rem; color: var(--text-muted); font-weight: 700; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
 
     /* Merchant CRM Styles */
     .crm-header-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(8px); }
@@ -353,7 +362,7 @@
   <!-- 2. DEV DASHBOARD LAYOUT -->
   <div id="dev-app-layout">
     <aside>
-      <div>
+      <div class="sidebar-scrollable-content">
         <div class="brand-box">
           <img class="brand-logo-img" src="image_02e503.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/datuljeffrey-sys/flexitap/main/image_02e503.png'; this.onerror=null;" />
           <div class="brand-title">
@@ -916,7 +925,10 @@
                   <div style="font-weight: 800; color: #fff; font-size: 14px;" id="desk-selected-store">Select a merchant chat</div>
                   <div style="font-size: 11px; color: var(--text-muted);" id="desk-selected-email">—</div>
                 </div>
-                <button class="action-btn" onclick="alert('Session marked resolved.')">Mark Resolved</button>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <button class="action-btn" id="desk-btn-clear" onclick="clearCurrentChatHistory()" style="background: rgba(239, 68, 68, 0.12); color: #f87171; border-color: rgba(239, 68, 68, 0.35); font-size: 0.78rem;">🗑️ Clear Chat</button>
+                  <button class="action-btn" id="desk-btn-resolve" onclick="markSessionResolvedAndClear()" style="background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700; font-size: 0.78rem;">✓ Mark Resolved &amp; Clear</button>
+                </div>
               </div>
               <div class="chat-console-body" id="desk-chat-body">
                 <div style="text-align: center; color: var(--text-muted); font-size: 13px; margin: auto;">Select an active merchant on the left to start live support.</div>
@@ -977,6 +989,15 @@
               </button>
             </div>
 
+            <!-- Scope Visibility Notice -->
+            <div id="ticket-scope-banner" style="display: none; align-items: center; justify-content: space-between; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.8rem;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span id="ticket-scope-icon" style="font-size: 1.1rem;">🔒</span>
+                <span id="ticket-scope-text" style="color: #cbd5e1;"></span>
+              </div>
+              <span id="ticket-scope-pill" style="font-size: 0.72rem; padding: 3px 8px; border-radius: 9999px; font-weight: 700;"></span>
+            </div>
+
             <div class="panel-header">
               <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                 <button class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary); padding: 8px 16px;" onclick="openCreateTicketModal()">+ New Ticket</button>
@@ -995,6 +1016,12 @@
                   <option value="high">High</option>
                   <option value="medium">Medium</option>
                   <option value="low">Low</option>
+                </select>
+                <select id="ticket-filter-tier" onchange="filterTickets()" style="background: var(--bg); border: 1px solid var(--card-border); color: #fff; padding: 7px 12px; border-radius: 8px; font-size: 0.85rem;">
+                  <option value="all">All Support Tiers</option>
+                  <option value="tier_1">🟢 Tier 1 — Merchant Ops</option>
+                  <option value="tier_2">🔵 Tier 2 — Tech Support &amp; Peripherals</option>
+                  <option value="tier_3">🟣 Tier 3 — Core Dev Engineering</option>
                 </select>
               </div>
               <button class="action-btn" onclick="fetchTickets()">Refresh</button>
@@ -2019,7 +2046,15 @@
               <label style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Contact Email</label>
               <input type="email" id="nt-email" placeholder="merchant@store.com" style="width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none;" />
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+              <div>
+                <label style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Tier Level</label>
+                <select id="nt-tier" style="width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none;">
+                  <option value="tier_1">🟢 Tier 1 — Merchant Ops</option>
+                  <option value="tier_2">🔵 Tier 2 — Tech Support &amp; Peripherals</option>
+                  <option value="tier_3">🟣 Tier 3 — Core Dev Engineering</option>
+                </select>
+              </div>
               <div>
                 <label style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Category</label>
                 <select id="nt-category" style="width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none;">
@@ -3212,12 +3247,11 @@
       }
 
       const category = (ticketData.category || '').toLowerCase();
-      const text = ((ticketData.subject || '') + ' ' + (ticketData.description || '')).toLowerCase();
-
-      // Technical issues -> Devs. Merchant/billing issues -> Customer Support. Admins excluded.
-      const isTech = ['printer', 'sync', 'bug', 'firmware', 'hardware', 'api', 'crash', 'error'].includes(category) ||
+      const tier = ticketData.tier;
+      // Technical issues / Tier 3 -> Devs. Merchant/billing issues / Tier 1 -> Customer Support. Admins excluded.
+      const isTech = tier === 'tier_3' || (tier !== 'tier_1' && (['printer', 'sync', 'bug', 'firmware', 'hardware', 'api', 'crash', 'error'].includes(category) ||
                      text.includes('printer') || text.includes('bluetooth') || text.includes('cutter') || 
-                     text.includes('sync') || text.includes('freeze') || text.includes('socket') || text.includes('exception');
+                     text.includes('sync') || text.includes('freeze') || text.includes('socket') || text.includes('exception')));
 
       let targetPool = [];
       if (isTech) {
@@ -3732,6 +3766,62 @@
       }]);
     }
 
+    function clearChatConsoleUI(msg = 'Chat session history has been cleared.') {
+      const body = document.getElementById('desk-chat-body');
+      if (body) {
+        body.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 13px; margin: auto; padding: 24px;">${escapeHtml(msg)}</div>`;
+      }
+    }
+
+    async function clearCurrentChatHistory() {
+      if (!selectedSession || !selectedSession.id) {
+        alert('Please select an active merchant chat session first.');
+        return;
+      }
+      if (!confirm(`Are you sure you want to clear chat history for ${selectedSession.storeName || 'this merchant'}?`)) {
+        return;
+      }
+      try {
+        await supabaseClient.from('support_messages').delete().eq('session_id', selectedSession.id);
+      } catch (err) {
+        console.warn('Error clearing support messages in Supabase:', err);
+      }
+      clearChatConsoleUI('Chat history cleared. Send a new message to resume.');
+    }
+
+    async function markSessionResolvedAndClear() {
+      if (!selectedSession || !selectedSession.id) {
+        alert('Please select an active merchant chat session first.');
+        return;
+      }
+      const sId = selectedSession.id;
+      const sStore = selectedSession.storeName || 'Merchant';
+      try {
+        await supabaseClient.from('support_sessions').update({
+          status: 'resolved',
+          updated_at: new Date().toISOString()
+        }).eq('id', sId);
+
+        await supabaseClient.from('support_messages').delete().eq('session_id', sId);
+      } catch (err) {
+        console.warn('Error resolving/clearing session in Supabase:', err);
+      }
+
+      clearChatConsoleUI(`Support session with ${sStore} marked resolved.`);
+      selectedSession = null;
+      const storeEl = document.getElementById('desk-selected-store');
+      const emailEl = document.getElementById('desk-selected-email');
+      const inputEl = document.getElementById('desk-input');
+      const sendEl = document.getElementById('desk-send-btn');
+      if (storeEl) storeEl.innerText = 'Select a merchant chat';
+      if (emailEl) emailEl.innerText = '—';
+      if (inputEl) inputEl.disabled = true;
+      if (sendEl) sendEl.disabled = true;
+
+      loadSupportDeskSessions();
+      alert(`Chat session with ${sStore} has been marked resolved and cleared.`);
+    }
+
     function openChatForStore(storeId, storeName) {
       switchNav('support', document.querySelectorAll('.nav-btn')[2]);
     }
@@ -3942,19 +4032,21 @@
       e.preventDefault();
       const storeName = document.getElementById('nt-store').value.trim();
       const contactEmail = document.getElementById('nt-email').value.trim();
+      const tier = document.getElementById('nt-tier')?.value || 'tier_1';
       const category = document.getElementById('nt-category').value;
       const priority = document.getElementById('nt-priority').value;
       const subject = document.getElementById('nt-subject').value.trim();
       const description = document.getElementById('nt-description').value.trim();
 
       // Auto-assign to Dev or Customer Support (Admin excluded)
-      const autoAssign = getAutoAssignedStaff({ category: category, subject: subject, description: description });
+      const autoAssign = getAutoAssignedStaff({ category: category, subject: subject, description: description, tier: tier });
 
       const newTicketPayload = {
         store_name: storeName,
         contact_email: contactEmail || null,
         category: category,
         priority: priority,
+        tier: tier,
         subject: subject,
         description: description,
         status: 'open',
@@ -3963,6 +4055,7 @@
           app_version: 'v2.4.1 (Web Portal)',
           device_role: 'Admin Console',
           sqlite_healthy: true,
+          tier: tier,
           auto_assigned: autoAssign
         }
       };
@@ -4155,6 +4248,70 @@
       return true;
     }
 
+    // Support Tier helpers
+    function getTicketTier(t) {
+      if (!t) return 'tier_1';
+      if (t.tier) return t.tier;
+      if (t.device_telemetry?.tier) return t.device_telemetry.tier;
+      if (isEscalatedTicket(t) || t.escalated_to === 'dev' || t.category === 'sync' || t.category === 'bug') {
+        return 'tier_3';
+      }
+      if (t.category === 'printer' || t.category === 'payment') {
+        return 'tier_2';
+      }
+      return 'tier_1';
+    }
+
+    function getTierBadgeHtml(tier) {
+      if (tier === 'tier_3') {
+        return '<span style="background: rgba(168, 85, 247, 0.16); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); padding: 2px 7px; border-radius: 9999px; font-size: 0.68rem; font-weight: 700;">🟣 Tier 3 Core Dev</span>';
+      }
+      if (tier === 'tier_2') {
+        return '<span style="background: rgba(56, 189, 248, 0.16); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); padding: 2px 7px; border-radius: 9999px; font-size: 0.68rem; font-weight: 700;">🔵 Tier 2 Tech Desk</span>';
+      }
+      return '<span style="background: rgba(52, 211, 153, 0.16); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.4); padding: 2px 7px; border-radius: 9999px; font-size: 0.68rem; font-weight: 700;">🟢 Tier 1 Ops</span>';
+    }
+
+    function toggleExpandNotesTimeline() {
+      const box = document.getElementById('ticket-notes-box');
+      const btn = document.getElementById('btn-expand-notes');
+      if (!box) return;
+      const isExpanded = box.classList.toggle('expanded');
+      if (btn) {
+        btn.textContent = isExpanded ? 'Collapse Window' : '↕ Expand Window';
+      }
+    }
+
+    // Role-based visibility check: dev can only see their ticket, customer support same thing, admin can see all
+    function isTicketAssignedToUser(t, effEmail, effName, effRole) {
+      if (!t) return false;
+      const email = (effEmail || '').toLowerCase().trim();
+      const name = (effName || '').toLowerCase().trim();
+      const assigned = (t.assigned_to || '').toLowerCase().trim();
+      const autoEmail = (t.device_telemetry?.auto_assigned?.email || '').toLowerCase().trim();
+      const autoName = (t.device_telemetry?.auto_assigned?.staff_name || '').toLowerCase().trim();
+
+      if (email && assigned && (assigned === email || assigned.includes(email) || email.includes(assigned))) return true;
+      if (email && autoEmail && (autoEmail === email || autoEmail.includes(email) || email.includes(autoEmail))) return true;
+      if (name && autoName && (autoName === name || autoName.includes(name) || name.includes(autoName))) return true;
+
+      if (email && assigned) {
+        const u = email.split('@')[0];
+        if (u && (assigned === u || assigned.includes(u))) return true;
+      }
+      return false;
+    }
+
+    function getScopedTickets() {
+      const r = getEffectiveRole();
+      if (r === 'super_admin' || r === 'admin') {
+        return cachedTickets;
+      }
+      const effEmail = getEffectiveUserEmail().toLowerCase();
+      const effName = getEffectiveUserDisplayName().toLowerCase();
+      return cachedTickets.filter(t => isTicketAssignedToUser(t, effEmail, effName, r));
+    }
+
     function switchTicketQueue(queue) {
       activeTicketQueue = queue;
       ['all', 'support', 'dev', 'escalated'].forEach(q => {
@@ -4169,11 +4326,12 @@
     }
 
     function updateTicketKPIs() {
-      const openCount = cachedTickets.filter(t => t.status === 'open' || t.status === 'escalated').length;
-      const supportCount = cachedTickets.filter(t => isSupportTicket(t) && t.status !== 'resolved' && t.status !== 'closed').length;
-      const devCount = cachedTickets.filter(t => isDevTicket(t) && t.status !== 'resolved' && t.status !== 'closed').length;
-      const escalatedCount = cachedTickets.filter(t => isEscalatedTicket(t) && t.status !== 'resolved' && t.status !== 'closed').length;
-      const resolvedCount = cachedTickets.filter(t => t.status === 'resolved' || t.status === 'closed').length;
+      const scopedList = getScopedTickets();
+      const openCount = scopedList.filter(t => t.status === 'open' || t.status === 'escalated').length;
+      const supportCount = scopedList.filter(t => isSupportTicket(t) && t.status !== 'resolved' && t.status !== 'closed').length;
+      const devCount = scopedList.filter(t => isDevTicket(t) && t.status !== 'resolved' && t.status !== 'closed').length;
+      const escalatedCount = scopedList.filter(t => isEscalatedTicket(t) && t.status !== 'resolved' && t.status !== 'closed').length;
+      const resolvedCount = scopedList.filter(t => t.status === 'resolved' || t.status === 'closed').length;
 
       const openEl = document.getElementById('kpi-tickets-open');
       const supEl = document.getElementById('kpi-tickets-support');
@@ -4190,7 +4348,7 @@
       const bSup = document.getElementById('t-badge-count-support');
       const bDev = document.getElementById('t-badge-count-dev');
       const bEsc = document.getElementById('t-badge-count-escalated');
-      if (bAll) bAll.textContent = cachedTickets.filter(t => t.status !== 'closed').length;
+      if (bAll) bAll.textContent = scopedList.filter(t => t.status !== 'closed').length;
       if (bSup) bSup.textContent = supportCount;
       if (bDev) bDev.textContent = devCount;
       if (bEsc) bEsc.textContent = escalatedCount;
@@ -4200,6 +4358,46 @@
         badge.textContent = openCount;
         badge.style.display = openCount > 0 ? 'inline-block' : 'none';
       }
+
+      // Update Scope indicator banner
+      const banner = document.getElementById('ticket-scope-banner');
+      const text = document.getElementById('ticket-scope-text');
+      const icon = document.getElementById('ticket-scope-icon');
+      const pill = document.getElementById('ticket-scope-pill');
+      if (banner && text) {
+        banner.style.display = 'flex';
+        const role = getEffectiveRole();
+        const effEmail = getEffectiveUserEmail();
+        const effName = getEffectiveUserDisplayName();
+        if (role === 'super_admin' || role === 'admin') {
+          if (icon) icon.textContent = '👑';
+          text.innerHTML = `<strong>Admin All-Access:</strong> Viewing all <strong>${cachedTickets.length}</strong> system tickets across Dev Engineering and Customer Support.`;
+          if (pill) {
+            pill.textContent = 'Full Visibility';
+            pill.style.background = 'rgba(168, 85, 247, 0.2)';
+            pill.style.color = '#c084fc';
+            pill.style.border = '1px solid rgba(168, 85, 247, 0.4)';
+          }
+        } else if (role === 'dev' || role === 'developer' || role === 'devops') {
+          if (icon) icon.textContent = '💻';
+          text.innerHTML = `<strong>Dev Scoped View:</strong> Viewing only tickets assigned to your engineering desk (<strong>${escapeHtml(effName)}</strong> &lt;${escapeHtml(effEmail)}&gt;). Other tickets are restricted.`;
+          if (pill) {
+            pill.textContent = 'Dev Assigned Only';
+            pill.style.background = 'rgba(147, 51, 234, 0.2)';
+            pill.style.color = '#c084fc';
+            pill.style.border = '1px solid rgba(147, 51, 234, 0.4)';
+          }
+        } else {
+          if (icon) icon.textContent = '🎧';
+          text.innerHTML = `<strong>Customer Support Scoped View:</strong> Viewing only tickets assigned to your support desk (<strong>${escapeHtml(effName)}</strong> &lt;${escapeHtml(effEmail)}&gt;). Other tickets are restricted.`;
+          if (pill) {
+            pill.textContent = 'Support Assigned Only';
+            pill.style.background = 'rgba(52, 211, 153, 0.2)';
+            pill.style.color = '#34d399';
+            pill.style.border = '1px solid rgba(52, 211, 153, 0.4)';
+          }
+        }
+      }
     }
 
     function filterTickets() {
@@ -4207,11 +4405,13 @@
     }
 
     function getFilteredTickets() {
+      const baseList = getScopedTickets();
       const search = (document.getElementById('ticket-search')?.value || '').toLowerCase().trim();
       const statusFilter = document.getElementById('ticket-filter-status')?.value || 'all';
       const priorityFilter = document.getElementById('ticket-filter-priority')?.value || 'all';
+      const tierFilter = document.getElementById('ticket-filter-tier')?.value || 'all';
 
-      return cachedTickets.filter(t => {
+      return baseList.filter(t => {
         // Queue filter
         if (activeTicketQueue === 'support' && !isSupportTicket(t)) return false;
         if (activeTicketQueue === 'dev' && !isDevTicket(t)) return false;
@@ -4220,6 +4420,12 @@
         // Status & Priority
         if (statusFilter !== 'all' && t.status !== statusFilter) return false;
         if (priorityFilter !== 'all' && t.priority !== priorityFilter) return false;
+
+        // Tier filter
+        if (tierFilter !== 'all') {
+          const tTier = getTicketTier(t);
+          if (tTier !== tierFilter) return false;
+        }
 
         // Text search
         if (search) {
@@ -4261,6 +4467,7 @@
               ? `<span style="color: #c084fc; font-weight: 700; font-size: 0.68rem;">💻 Dev Engineering</span>`
               : `<span style="color: #60a5fa; font-weight: 700; font-size: 0.68rem;">💬 Customer Support</span>`);
 
+        const tierBadge = getTierBadgeHtml(getTicketTier(t));
         const assigneeName = t.device_telemetry?.auto_assigned?.staff_name || (t.assigned_to ? t.assigned_to.split('@')[0] : 'Auto-Assigned');
 
         html += `
@@ -4268,6 +4475,7 @@
             <div class="ticket-header">
               <span class="ticket-number">${numLabel}</span>
               ${statusBadge}
+              ${tierBadge}
             </div>
             <div class="ticket-store">${escapeHtml(t.store_name)}</div>
             <div class="ticket-subject">${escapeHtml(t.subject)}</div>
@@ -4292,12 +4500,35 @@
       selectedTicket = cachedTickets.find(t => t.id === ticketId);
       if (!selectedTicket) return;
 
-      renderTicketsList();
       const workspaceEl = document.getElementById('ticket-workspace');
       if (!workspaceEl) return;
 
+      // Access control: dev can only see their ticket, customer support same thing, admin can see all
+      if (!isUserAdmin()) {
+        const effEmail = getEffectiveUserEmail().toLowerCase();
+        const effName = getEffectiveUserDisplayName().toLowerCase();
+        const effRole = getEffectiveRole();
+        if (!isTicketAssignedToUser(selectedTicket, effEmail, effName, effRole)) {
+          renderTicketsList();
+          workspaceEl.innerHTML = `
+            <div style="margin: auto; text-align: center; padding: 60px 20px; color: var(--text-muted);">
+              <div style="font-size: 2.8rem; margin-bottom: 14px;">🔒</div>
+              <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 8px;">Access Restricted</h3>
+              <p style="font-size: 0.85rem; max-width: 420px; margin: 0 auto; line-height: 1.5; color: #94a3b8;">
+                Under role-based security rules, <strong>${getEffectiveRoleLabel()}</strong> staff can only access tickets assigned directly to their account.
+              </p>
+            </div>
+          `;
+          return;
+        }
+      }
+
+      renderTicketsList();
+
       const isEsc = isEscalatedTicket(selectedTicket);
       const isDev = isDevTicket(selectedTicket);
+      const currentTier = getTicketTier(selectedTicket);
+      const tierBadge = getTierBadgeHtml(currentTier);
       const numLabel = selectedTicket.ticket_number ? '#' + selectedTicket.ticket_number : '#NEW';
       const timeStr = new Date(selectedTicket.created_at).toLocaleString();
       const telemetry = selectedTicket.device_telemetry || {};
@@ -4338,10 +4569,11 @@
 
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--card-border); flex-wrap: wrap; gap: 12px;">
           <div>
-            <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
               <span style="font-size: 1.25rem; font-weight: 800; color: var(--primary);">${numLabel}</span>
               <span style="font-size: 1.2rem; font-weight: 800; color: #fff;">${escapeHtml(selectedTicket.subject)}</span>
               ${deptIndicator}
+              ${tierBadge}
             </div>
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
               Store: <strong style="color: #fff;">${escapeHtml(selectedTicket.store_name)}</strong>
@@ -4358,6 +4590,14 @@
         <!-- 1. TICKET DETAILS & INLINE UPDATE -->
         <div class="ticket-section-title"><span>⚙️</span> 1. Ticket Details &amp; Quick Update</div>
         <div class="ticket-edit-grid">
+          <div class="ticket-edit-field">
+            <label>Support Tier</label>
+            <select id="t-edit-tier">
+              <option value="tier_1" ${currentTier === 'tier_1' ? 'selected' : ''}>🟢 Tier 1 — Merchant Ops</option>
+              <option value="tier_2" ${currentTier === 'tier_2' ? 'selected' : ''}>🔵 Tier 2 — Tech Support &amp; Peripherals</option>
+              <option value="tier_3" ${currentTier === 'tier_3' ? 'selected' : ''}>🟣 Tier 3 — Core Dev Engineering</option>
+            </select>
+          </div>
           <div class="ticket-edit-field">
             <label>Status</label>
             <select id="t-edit-status">
@@ -4416,13 +4656,22 @@
         </div>
 
         <!-- 2. INTERNAL DEV & SUPPORT NOTES & AUDIT TRAIL -->
-        <div class="ticket-section-title"><span>💬</span> 2. Internal Engineering &amp; Support Notes</div>
+        <div class="ticket-section-title" style="justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span>💬</span> 2. Internal Engineering &amp; Support Notes
+          </div>
+          <button type="button" class="action-btn" id="btn-expand-notes" onclick="toggleExpandNotesTimeline()" style="padding: 4px 10px; font-size: 0.72rem; color: #a78bfa; border-color: rgba(167, 139, 250, 0.35);">
+            ↕ Expand Window
+          </button>
+        </div>
         <div class="notes-timeline" id="ticket-notes-box">
           <div style="text-align: center; color: var(--text-muted); font-size: 12px; margin: auto;">Loading notes...</div>
         </div>
-        <form onsubmit="addTicketNote(event)" style="display: flex; gap: 10px; margin-bottom: 24px;">
-          <input type="text" id="t-note-input" placeholder="Type internal diagnostic note, investigation log, or handoff note..." style="flex: 1; padding: 10px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.82rem; outline: none;" />
-          <button type="submit" class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary);">Post Note</button>
+        <form onsubmit="addTicketNote(event)" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;">
+          <textarea id="t-note-input" rows="3" placeholder="Type internal diagnostic note, investigation log, or handoff note (multiline supported)..." style="width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.82rem; outline: none; resize: vertical; min-height: 70px;"></textarea>
+          <div style="display: flex; justify-content: flex-end;">
+            <button type="submit" class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary); padding: 8px 18px;">Post Note</button>
+          </div>
         </form>
 
         <!-- 3. RESOLUTION WORKFLOW -->
@@ -4495,11 +4744,16 @@
       const priority = document.getElementById('t-edit-priority').value;
       const category = document.getElementById('t-edit-category').value;
       const assignee = document.getElementById('t-edit-assignee').value.trim();
+      const tierEl = document.getElementById('t-edit-tier');
+      const tier = tierEl ? tierEl.value : getTicketTier(selectedTicket);
 
       selectedTicket.status = status;
       selectedTicket.priority = priority;
       selectedTicket.category = category;
       selectedTicket.assigned_to = assignee;
+      selectedTicket.tier = tier;
+      if (!selectedTicket.device_telemetry) selectedTicket.device_telemetry = {};
+      selectedTicket.device_telemetry.tier = tier;
 
       if (status === 'escalated') {
         selectedTicket.is_escalated = true;
@@ -4512,6 +4766,7 @@
           priority: priority,
           category: category,
           assigned_to: assignee,
+          device_telemetry: selectedTicket.device_telemetry,
           updated_at: new Date().toISOString()
         }).eq('id', selectedTicket.id);
       } catch (_) {}
@@ -5429,6 +5684,30 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
       if (typeof renderPtoTable === 'function') renderPtoTable();
       if (typeof renderScheduleTable === 'function') renderScheduleTable();
       if (typeof updatePtoBadge === 'function') updatePtoBadge();
+
+      // Re-evaluate and re-render Tickets according to active role scope
+      if (typeof updateTicketKPIs === 'function') updateTicketKPIs();
+      if (typeof renderTicketsList === 'function') renderTicketsList();
+      const scopedVisible = typeof getFilteredTickets === 'function' ? getFilteredTickets() : [];
+      if (scopedVisible.length > 0) {
+        if (!selectedTicket || !scopedVisible.some(t => t.id === selectedTicket.id)) {
+          selectTicket(scopedVisible[0].id);
+        }
+      } else {
+        selectedTicket = null;
+        const workspaceEl = document.getElementById('ticket-workspace');
+        if (workspaceEl) {
+          workspaceEl.innerHTML = `
+            <div style="margin: auto; text-align: center; padding: 48px 20px; color: var(--text-muted);">
+              <div style="font-size: 2.2rem; margin-bottom: 12px;">📭</div>
+              <h3 style="color: #fff; font-size: 1.05rem; margin-bottom: 6px;">No Tickets in Queue</h3>
+              <p style="font-size: 0.82rem; max-width: 380px; margin: 0 auto; color: #94a3b8;">
+                No tickets currently assigned to your <strong>${getEffectiveRoleLabel()}</strong> desk.
+              </p>
+            </div>
+          `;
+        }
+      }
     }
 
     function getEffectiveRole() {
@@ -5439,21 +5718,33 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
 
     function isUserAdmin() {
       const r = getEffectiveRole();
-      return r === 'super_admin' || r === 'admin' || r === 'dev' || r === 'developer' || r === 'devops';
+      return r === 'super_admin' || r === 'admin';
     }
 
     function getEffectiveUserEmail() {
-      if (currentSimulatedRole === 'support' && (!activeDevUser || activeDevUser.email.includes('dev') || activeDevUser.email.includes('admin'))) {
-        return 'sarah.support@flexitapapp.com';
+      if (currentSimulatedRole === 'support') {
+        if (!activeDevUser || activeDevUser.email.includes('dev') || activeDevUser.email.includes('admin')) {
+          return 'sarah.support@flexitapapp.com';
+        }
       }
-      return (activeDevUser && activeDevUser.email) ? activeDevUser.email.toLowerCase() : 'employee@flexitapapp.com';
+      if (currentSimulatedRole === 'dev') {
+        if (!activeDevUser || !activeDevUser.email.includes('dev')) {
+          return 'david.ops@flexitapapp.com';
+        }
+      }
+      return (activeDevUser && activeDevUser.email) ? activeDevUser.email.toLowerCase() : 'admin@flexitapapp.com';
     }
 
     function getEffectiveUserDisplayName() {
-      const email = getEffectiveUserEmail();
-      const staff = teamStaffMembers.find(m => m.email && m.email.toLowerCase() === email);
-      if (staff && staff.full_name) return staff.full_name;
+      const email = getEffectiveUserEmail().toLowerCase();
+      if (typeof teamStaffMembers !== 'undefined' && Array.isArray(teamStaffMembers)) {
+        const staff = teamStaffMembers.find(m => m.email && m.email.toLowerCase() === email);
+        if (staff && staff.full_name) return staff.full_name;
+      }
       if (activeDevProfile && activeDevProfile.full_name) return activeDevProfile.full_name;
+      if (email.includes('david')) return 'David Kim';
+      if (email.includes('sarah')) return 'Sarah Jenkins';
+      if (email.includes('marcus')) return 'Marcus Vance';
       return email.split('@')[0];
     }
 
