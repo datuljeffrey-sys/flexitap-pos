@@ -523,13 +523,112 @@
           <input id="loginEmail" type="text" autocomplete="username" placeholder="e.g. manager@centralbakery.com" required>
         </div>
         <div class="field">
-          <label>Password *</label>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label style="margin-bottom: 0;">Password *</label>
+            <a href="javascript:void(0)" onclick="openPwaForgotScreen()" style="font-size: 11.5px; color: var(--primary); text-decoration: none; font-weight: 600;">Forgot password?</a>
+          </div>
           <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Account Password" required>
         </div>
         <button type="submit" class="btn btn-primary" id="loginBtn" style="margin-top: 16px;">Sign In to Store Account</button>
       </form>
 
       <div id="loginError" class="error-text"></div>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN: TWO-STEP OTP VERIFICATION ================= -->
+  <div class="screen" id="screen-otp">
+    <div class="card">
+      <div class="brand brand-login">
+        <img class="brand-logo" src="./image_02e503.png" alt="FlexiTap POS">
+        <div>
+          <div style="font-size: 17px; font-weight: 800; color: #fff;">FlexiTap POS Support</div>
+          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Two-Step Verification (OTP)</div>
+        </div>
+      </div>
+      
+      <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span style="font-size: 22px;">🔒</span>
+        <h1 style="font-size: 19px; font-weight: 800; margin: 0;">Security Verification Code</h1>
+      </div>
+      <p class="subtitle">
+        A security verification code has been dispatched to <strong id="pwaOtpDisplayEmail" style="color: #fff;">your store email</strong>. Enter the code below to complete sign-in.
+      </p>
+
+      <form onsubmit="handlePwaVerifyOtp(event)">
+        <div class="field">
+          <label>Security Verification Code (OTP) *</label>
+          <input id="pwaOtpCode" type="text" inputmode="numeric" placeholder="12345678" maxlength="10" required style="text-align: center; font-size: 20px; letter-spacing: 4px; font-weight: 800;">
+        </div>
+        <button type="submit" class="btn btn-primary" id="pwaOtpVerifyBtn" style="margin-top: 16px;">Verify &amp; Enter App</button>
+      </form>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px;">
+        <button type="button" onclick="handlePwaResendOtp()" style="background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 600; cursor: pointer;">Resend Code</button>
+        <button type="button" onclick="goTo('login')" style="background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer;">Back to Login</button>
+      </div>
+
+      <div id="pwaOtpMsg" class="error-text" style="margin-top: 12px;"></div>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN: FORGOT PASSWORD ================= -->
+  <div class="screen" id="screen-forgot">
+    <div class="card">
+      <div class="brand brand-login">
+        <img class="brand-logo" src="./image_02e503.png" alt="FlexiTap POS">
+        <div>
+          <div style="font-size: 17px; font-weight: 800; color: #fff;">FlexiTap POS Support</div>
+          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Password Recovery</div>
+        </div>
+      </div>
+      
+      <h1>Reset Store Password</h1>
+      <p class="subtitle">Enter your store account email and we'll send a secure password recovery link via Supabase SMTP.</p>
+
+      <form onsubmit="handlePwaForgotSubmit(event)">
+        <div class="field">
+          <label>Store Email *</label>
+          <input id="pwaForgotEmail" type="email" placeholder="manager@centralbakery.com" required>
+        </div>
+        <button type="submit" class="btn btn-primary" id="pwaForgotBtn" style="margin-top: 16px;">Send Recovery Link</button>
+      </form>
+
+      <div style="text-align: center; margin-top: 16px;">
+        <button type="button" onclick="goTo('login')" style="background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer;">Back to Login</button>
+      </div>
+
+      <div id="pwaForgotMsg" class="error-text" style="margin-top: 12px;"></div>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN: SET NEW PASSWORD ================= -->
+  <div class="screen" id="screen-reset-pw">
+    <div class="card">
+      <div class="brand brand-login">
+        <img class="brand-logo" src="./image_02e503.png" alt="FlexiTap POS">
+        <div>
+          <div style="font-size: 17px; font-weight: 800; color: #fff;">FlexiTap POS Support</div>
+          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Set New Password</div>
+        </div>
+      </div>
+      
+      <h1>Create New Password</h1>
+      <p class="subtitle">Your recovery session is verified. Enter a new password for your store account.</p>
+
+      <form onsubmit="handlePwaUpdatePassword(event)">
+        <div class="field">
+          <label>New Password *</label>
+          <input id="pwaNewPassword" type="password" minlength="6" placeholder="••••••••" required>
+        </div>
+        <div class="field">
+          <label>Confirm New Password *</label>
+          <input id="pwaConfirmPassword" type="password" minlength="6" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary" id="pwaResetBtn" style="margin-top: 16px;">Save New Password</button>
+      </form>
+
+      <div id="pwaResetMsg" class="error-text" style="margin-top: 12px;"></div>
     </div>
   </div>
 
@@ -1004,6 +1103,9 @@
       updateGreeting();
     }
 
+    let pendingPwaAuthEmail = '';
+    let pendingPwaUserObj = null;
+
     async function handleLoginSubmit(event) {
       event.preventDefault();
       const email = document.getElementById('loginEmail').value.trim();
@@ -1025,10 +1127,56 @@
         const res = await supabaseClient.auth.signInWithPassword({ email, password });
         if (res.error) throw res.error;
 
-        currentAuthUser = {
+        pendingPwaAuthEmail = email;
+        pendingPwaUserObj = {
           email: res.data.user.email,
           displayName: res.data.user.email.split('@')[0],
           id: res.data.user.id
+        };
+
+        btn.innerText = 'Dispatching OTP code...';
+        const { error: otpErr } = await supabaseClient.auth.signInWithOtp({
+          email: email,
+          options: { shouldCreateUser: false }
+        });
+        if (otpErr) throw otpErr;
+
+        document.getElementById('pwaOtpDisplayEmail').innerText = email;
+        document.getElementById('pwaOtpCode').value = '';
+        document.getElementById('pwaOtpMsg').innerText = '';
+        goTo('otp');
+      } catch (e) {
+        err.innerText = e.message || 'Authentication failed. Please verify credentials.';
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Sign In to Store Account';
+      }
+    }
+
+    async function handlePwaVerifyOtp(event) {
+      event.preventDefault();
+      const email = pendingPwaAuthEmail || document.getElementById('loginEmail')?.value.trim();
+      const token = document.getElementById('pwaOtpCode').value.trim();
+      const btn = document.getElementById('pwaOtpVerifyBtn');
+      const msg = document.getElementById('pwaOtpMsg');
+
+      if (!email || !token) return;
+      btn.disabled = true;
+      btn.innerText = 'Verifying code...';
+      msg.innerText = '';
+
+      try {
+        const { data, error } = await supabaseClient.auth.verifyOtp({
+          email,
+          token,
+          type: 'email'
+        });
+        if (error) throw error;
+
+        currentAuthUser = pendingPwaUserObj || {
+          email: email,
+          displayName: email.split('@')[0],
+          id: data.user?.id
         };
         localStorage.setItem('flexitap_pwa_user', JSON.stringify(currentAuthUser));
         await populateAuthenticatedMerchantInfo();
@@ -1039,12 +1187,114 @@
         } else {
           goTo('disclaimer');
         }
-      } catch (e) {
-        err.innerText = e.message || 'Authentication failed. Please verify credentials.';
+      } catch (err) {
+        msg.style.color = '#ef4444';
+        msg.innerText = err.message || 'Invalid or expired verification code.';
       } finally {
         btn.disabled = false;
-        btn.innerText = 'Sign In to Store Account';
+        btn.innerText = 'Verify & Enter App';
       }
+    }
+
+    async function handlePwaResendOtp() {
+      const email = pendingPwaAuthEmail || document.getElementById('loginEmail')?.value.trim();
+      const msg = document.getElementById('pwaOtpMsg');
+      if (!email) return;
+
+      try {
+        const { error } = await supabaseClient.auth.signInWithOtp({
+          email,
+          options: { shouldCreateUser: false }
+        });
+        if (error) throw error;
+        if (msg) {
+          msg.style.color = '#10b981';
+          msg.innerText = '✓ New verification code sent to your email!';
+        }
+      } catch (err) {
+        if (msg) {
+          msg.style.color = '#ef4444';
+          msg.innerText = err.message || 'Failed to resend code.';
+        }
+      }
+    }
+
+    function openPwaForgotScreen() {
+      const loginEmail = document.getElementById('loginEmail')?.value.trim();
+      const forgotInput = document.getElementById('pwaForgotEmail');
+      if (forgotInput && loginEmail) forgotInput.value = loginEmail;
+      const msg = document.getElementById('pwaForgotMsg');
+      if (msg) msg.innerText = '';
+      goTo('forgot');
+    }
+
+    async function handlePwaForgotSubmit(event) {
+      event.preventDefault();
+      const email = document.getElementById('pwaForgotEmail')?.value.trim();
+      const btn = document.getElementById('pwaForgotBtn');
+      const msg = document.getElementById('pwaForgotMsg');
+      if (!email) return;
+
+      btn.disabled = true;
+      btn.innerText = 'Sending link...';
+      msg.innerText = '';
+
+      try {
+        const redirectUrl = window.location.href.split('#')[0];
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: redirectUrl });
+        if (error) throw error;
+        msg.style.color = '#10b981';
+        msg.innerText = '✓ Recovery link sent! Please check your email inbox and spam folder.';
+        btn.innerText = 'Link Sent';
+      } catch (err) {
+        msg.style.color = '#ef4444';
+        msg.innerText = err.message || 'Failed to send recovery email.';
+        btn.disabled = false;
+        btn.innerText = 'Send Recovery Link';
+      }
+    }
+
+    async function handlePwaUpdatePassword(event) {
+      event.preventDefault();
+      const p1 = document.getElementById('pwaNewPassword')?.value;
+      const p2 = document.getElementById('pwaConfirmPassword')?.value;
+      const btn = document.getElementById('pwaResetBtn');
+      const msg = document.getElementById('pwaResetMsg');
+
+      if (p1 !== p2) {
+        msg.style.color = '#ef4444';
+        msg.innerText = 'Passwords do not match.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = 'Saving password...';
+      msg.innerText = '';
+
+      try {
+        const { error } = await supabaseClient.auth.updateUser({ password: p1 });
+        if (error) throw error;
+        msg.style.color = '#10b981';
+        msg.innerText = '✓ Password updated! Please sign in with your new password.';
+        setTimeout(() => goTo('login'), 1500);
+      } catch (err) {
+        msg.style.color = '#ef4444';
+        msg.innerText = err.message || 'Failed to update password.';
+        btn.disabled = false;
+        btn.innerText = 'Save New Password';
+      }
+    }
+
+    if (window.location.hash && window.location.hash.includes('type=recovery')) {
+      goTo('reset-pw');
+    }
+
+    if (typeof supabaseClient !== 'undefined' && supabaseClient.auth) {
+      supabaseClient.auth.onAuthStateChange((event) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          goTo('reset-pw');
+        }
+      });
     }
 
     function logoutApp() {
