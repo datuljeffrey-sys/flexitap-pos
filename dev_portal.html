@@ -194,16 +194,117 @@
     .log-success { color: #34d399; }
     .log-warn { color: #fbbf24; }
 
-    /* Tickets CRM Workspace */
-    .tickets-workspace-grid { display: grid; grid-template-columns: 360px 1fr; gap: 20px; min-height: 600px; }
-    .tickets-queue-col { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; overflow-y: auto; max-height: 720px; display: flex; flex-direction: column; }
-    .ticket-card { padding: 14px 16px; border-bottom: 1px solid var(--card-border); cursor: pointer; transition: 0.2s; }
-    .ticket-card:hover, .ticket-card.active { background: rgba(59, 130, 246, 0.12); border-left: 4px solid var(--primary); }
-    .ticket-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .ticket-number { font-weight: 800; font-size: 0.85rem; color: var(--primary); }
-    .ticket-store { font-weight: 700; font-size: 0.92rem; color: #fff; margin-bottom: 4px; }
-    .ticket-subject { font-size: 0.82rem; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
-    .ticket-meta { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; color: var(--text-muted); flex-wrap: wrap; }
+    /* Tickets CRM Workspace — Responsive & Screen-Adaptive */
+    .tickets-workspace-grid {
+      display: grid;
+      grid-template-columns: clamp(340px, 30vw, 500px) 1fr;
+      gap: 20px;
+      height: calc(100vh - 240px);
+      min-height: 620px;
+      transition: grid-template-columns 0.25s ease;
+    }
+    .tickets-workspace-grid.queue-expanded {
+      grid-template-columns: clamp(440px, 42vw, 680px) 1fr;
+    }
+    .tickets-queue-col {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow-y: auto;
+      height: 100%;
+      max-height: 100%;
+      display: flex;
+      flex-direction: column;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    }
+    .tickets-queue-col::-webkit-scrollbar {
+      width: 6px;
+    }
+    .tickets-queue-col::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .tickets-queue-col::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+    .tickets-queue-col::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+    .ticket-card {
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--card-border);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .ticket-card:hover, .ticket-card.active {
+      background: rgba(59, 130, 246, 0.12);
+      border-left: 4px solid var(--primary);
+    }
+    .ticket-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .ticket-number {
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: var(--primary);
+    }
+    .ticket-store {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #fff;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+    .ticket-subject {
+      font-size: 0.82rem;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+    .ticket-meta-tags {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .ticket-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+    .ticket-tag-assignee {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+      font-weight: 700;
+    }
+    .ticket-tag-dept {
+      font-weight: 700;
+    }
+    .ticket-tag-category {
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .ticket-tag-time {
+      font-variant-numeric: tabular-nums;
+    }
     
     .badge-pill { padding: 2px 8px; border-radius: 10px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; }
     .badge-open { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
@@ -216,7 +317,29 @@
     .badge-medium { background: rgba(147, 51, 234, 0.2); color: #c084fc; border: 1px solid rgba(147, 51, 234, 0.4); }
     .badge-low { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.4); }
 
-    .tickets-workspace-col { background: #030712; border: 1px solid var(--card-border); border-radius: 16px; display: flex; flex-direction: column; overflow-y: auto; padding: 24px; min-height: 640px; max-height: none; }
+    .tickets-workspace-col {
+      background: #030712;
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 24px;
+      height: 100%;
+      max-height: 100%;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    }
+    .tickets-workspace-col::-webkit-scrollbar {
+      width: 6px;
+    }
+    .tickets-workspace-col::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .tickets-workspace-col::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
     .ticket-section-title { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .ticket-edit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
     .ticket-edit-field label { display: block; font-size: 0.72rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; }
@@ -271,6 +394,13 @@
     }
 
     /* --- RESPONSIVE MEDIA QUERIES (Mobile, Tablet, Desktop) --- */
+    @media (max-width: 1200px) {
+      .tickets-workspace-grid {
+        grid-template-columns: clamp(320px, 32vw, 420px) 1fr;
+        gap: 14px;
+      }
+    }
+
     @media (max-width: 1024px) {
       aside {
         position: fixed; top: 0; bottom: 0; left: 0; z-index: 1050;
@@ -283,8 +413,9 @@
       header { padding: 14px 20px; }
       .content-body { padding: 20px 20px; }
       .support-desk-grid { grid-template-columns: 1fr; height: auto; }
-      .tickets-workspace-grid { grid-template-columns: 1fr; min-height: auto; }
-      .tickets-queue-col { max-height: 420px; }
+      .tickets-workspace-grid { grid-template-columns: 1fr; height: auto; min-height: auto; }
+      .tickets-queue-col { max-height: 480px; height: auto; }
+      .tickets-workspace-col { height: auto; max-height: none; min-height: 520px; }
     }
 
     @media (max-width: 768px) {
@@ -1104,7 +1235,10 @@
                   <option value="tier_3">🟣 Tier 3 — Core Dev Engineering</option>
                 </select>
               </div>
-              <button class="action-btn" onclick="fetchTickets()">Refresh</button>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <button type="button" class="action-btn" id="btn-toggle-queue-width" onclick="toggleTicketQueueWidth()" title="Toggle wide/adaptive queue view" style="padding: 7px 12px; font-size: 0.8rem; border-color: var(--card-border);">↔ Adapt Width</button>
+                <button class="action-btn" onclick="fetchTickets()">Refresh</button>
+              </div>
             </div>
 
             <div class="tickets-workspace-grid">
@@ -2139,9 +2273,8 @@
               <div>
                 <label style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Tier Level</label>
                 <select id="nt-tier" style="width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none;">
-                  <option value="tier_1">🟢 Tier 1 — Merchant Ops</option>
+                  <option value="tier_1" selected>🟢 Tier 1 — Merchant Ops</option>
                   <option value="tier_2">🔵 Tier 2 — Tech Support &amp; Peripherals</option>
-                  <option value="tier_3">🟣 Tier 3 — Core Dev Engineering</option>
                 </select>
               </div>
               <div>
@@ -3625,66 +3758,22 @@
 
     // Auto-assignment for tickets: EVERY newly submitted ticket MUST first be assigned to Customer Support (Admin & Dev excluded on intake)
     function getAutoAssignedStaff(ticketData = {}) {
-      const defaultSupportPool = [
-        { full_name: 'Sarah Jenkins', email: 'sarah.support@flexitapapp.com', role: 'support', role_title: 'Senior Support Desk Specialist' },
-        { full_name: 'Marcus Vance', email: 'marcus.support@flexitapapp.com', role: 'support', role_title: 'Customer Support Lead' },
-        { full_name: 'Alex Rivera', email: 'employee@flexitapapp.com', role: 'support', role_title: 'Customer Support Specialist' }
-      ];
-
-      let eligibleStaff = [];
-      if (typeof teamStaffMembers !== 'undefined' && Array.isArray(teamStaffMembers) && teamStaffMembers.length > 0) {
-        eligibleStaff = teamStaffMembers.filter(m => {
-          const r = (m.role || '').toLowerCase();
-          // Exclude Admin & Super Admin strictly! Devs are also excluded on initial ticket intake.
-          if (r === 'admin' || r === 'super_admin' || m.department === 'Executive & Admin') return false;
-          return r === 'support' || r === 'customer_support' || r === 'agent';
-        });
-      }
-
-      if (eligibleStaff.length === 0) {
-        eligibleStaff = defaultSupportPool;
-      }
-
-      // Prioritize support staff who are currently clocked in if attendance data is available
-      const clockedIn = eligibleStaff.filter(m => m.clock_status === 'clocked_in');
-      const pool = clockedIn.length > 0 ? clockedIn : eligibleStaff;
-
-      let idx = 0;
-      try {
-        const saved = parseInt(localStorage.getItem('flexitap_ticket_assign_idx') || '0', 10);
-        idx = (saved + 1) % pool.length;
-        localStorage.setItem('flexitap_ticket_assign_idx', String(idx));
-      } catch (e) {
-        idx = Math.floor(Math.random() * pool.length);
-      }
-
-      const assigned = pool[idx] || pool[0] || defaultSupportPool[0];
       return {
-        assigned_to: assigned.email,
-        staff_name: assigned.full_name,
+        assigned_to: 'support@flexitapapp.com',
+        staff_name: 'Customer Support Desk',
         role: 'support',
-        role_title: assigned.role_title || 'Customer Support Specialist',
+        role_title: 'Customer Support Desk',
         routing_reason: 'Mandatory intake assignment to Customer Support Desk'
       };
     }
 
     function getAutoAssignedDev() {
-      let devs = [];
-      if (typeof teamStaffMembers !== 'undefined' && Array.isArray(teamStaffMembers)) {
-        devs = teamStaffMembers.filter(m => {
-          const r = (m.role || '').toLowerCase();
-          return r === 'dev' || r === 'developer' || r === 'devops';
-        });
-      }
-      if (devs.length === 0) {
-        devs = [
-          { full_name: 'David Kim', email: 'david.ops@flexitapapp.com', role: 'dev', role_title: 'Senior DevOps & Platform Engineer' },
-          { full_name: 'Maya Lin', email: 'maya.dev@flexitapapp.com', role: 'dev', role_title: 'Lead POS Kernel & Android Engineer' }
-        ];
-      }
-      const clockedIn = devs.filter(d => d.clock_status === 'clocked_in');
-      const pool = clockedIn.length > 0 ? clockedIn : devs;
-      return pool[0] || devs[0];
+      return {
+        full_name: 'Qsr (Dev Engineering)',
+        email: 'qsr@flexitapapp.com',
+        role: 'dev',
+        role_title: 'Platform & DevOps Engineer'
+      };
     }
 
     async function handleCrmCreateTicketSubmit(event) {
@@ -3710,12 +3799,14 @@
         subject: subject,
         description: description,
         status: 'open',
+        tier: 'tier_1',
         assigned_to: autoAssign.assigned_to,
         device_telemetry: {
           channel: 'Merchant CRM Portal',
           app_version: 'v2.4.1 (Admin Console)',
           device_role: 'Customer Ticket',
           sqlite_healthy: true,
+          tier: 'tier_1',
           auto_assigned: autoAssign
         }
       };
@@ -4601,6 +4692,7 @@
         subject: subject,
         description: description,
         status: 'open',
+        tier: tier || 'tier_1',
         assigned_to: autoAssign.assigned_to,
         device_telemetry: {
           app_version: 'v2.4.1 (Web Portal)',
@@ -4662,21 +4754,23 @@
               subject: 'Sunmi Bluetooth printer cuts off receipts',
               category: 'printer',
               priority: 'urgent',
+              tier: 'tier_3',
               status: 'escalated',
               is_escalated: true,
               escalated_to: 'dev',
-              escalated_by: 'sarah.support@flexitapapp.com',
+              escalated_by: 'support@flexitapapp.com',
               escalation_reason: 'Thermal Printer Driver / Bluetooth Socket Crash',
-              assigned_to: 'david.ops@flexitapapp.com',
+              assigned_to: 'qsr@flexitapapp.com',
               description: 'During morning breakfast rush, the thermal cutter delays by 5 seconds and drops Bluetooth socket pairing.',
               device_telemetry: {
                 app_version: 'v2.4.1 (Build 184)',
                 device_role: 'Master Register',
                 sqlite_healthy: true,
+                tier: 'tier_3',
                 unsynced_invoices: 0,
                 is_escalated: true,
                 escalation_reason: 'Thermal Printer Driver / Bluetooth Socket Crash',
-                auto_assigned: { staff_name: 'David Kim', role: 'dev', email: 'david.ops@flexitapapp.com' }
+                auto_assigned: { staff_name: 'Qsr (Dev Engineering)', role: 'dev', email: 'qsr@flexitapapp.com' }
               },
               created_at: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
               escalated_at: new Date(Date.now() - 10 * 60 * 1000).toISOString()
@@ -4689,15 +4783,17 @@
               subject: 'Split-bill payment verification error',
               category: 'payment',
               priority: 'high',
+              tier: 'tier_1',
               status: 'in_progress',
-              assigned_to: 'sarah.support@flexitapapp.com',
+              assigned_to: 'support@flexitapapp.com',
               description: 'Splitting an invoice 3 ways with cash and card resulted in a balance mismatch alert.',
               device_telemetry: {
                 app_version: 'v2.4.1 (Build 184)',
                 device_role: 'Satellite Register',
                 sqlite_healthy: true,
+                tier: 'tier_1',
                 unsynced_invoices: 0,
-                auto_assigned: { staff_name: 'Sarah Jenkins', role: 'support', email: 'sarah.support@flexitapapp.com' }
+                auto_assigned: { staff_name: 'Customer Support Desk', role: 'support', email: 'support@flexitapapp.com' }
               },
               created_at: new Date(Date.now() - 120 * 60 * 1000).toISOString()
             },
@@ -4709,15 +4805,17 @@
               subject: 'SQLite WAL mode checkpoint contention during nightly sync',
               category: 'sync',
               priority: 'high',
+              tier: 'tier_1',
               status: 'open',
-              assigned_to: 'sarah.support@flexitapapp.com',
+              assigned_to: 'support@flexitapapp.com',
               description: 'Database lock encountered during end-of-day z-report sync when batch-posting 140 offline cash receipts.',
               device_telemetry: {
                 app_version: 'v2.4.1 (Build 184)',
                 device_role: 'Master Register',
                 sqlite_healthy: false,
+                tier: 'tier_1',
                 unsynced_invoices: 12,
-                auto_assigned: { staff_name: 'Sarah Jenkins', role: 'support', email: 'sarah.support@flexitapapp.com' }
+                auto_assigned: { staff_name: 'Customer Support Desk', role: 'support', email: 'support@flexitapapp.com' }
               },
               created_at: new Date(Date.now() - 45 * 60 * 1000).toISOString()
             },
@@ -4729,15 +4827,17 @@
               subject: 'Configured morning shift serving period',
               category: 'general',
               priority: 'low',
+              tier: 'tier_1',
               status: 'resolved',
-              assigned_to: 'marcus.support@flexitapapp.com',
+              assigned_to: 'support@flexitapapp.com',
               description: 'Needed assistance setting 5 AM to 11 AM Breakfast serving period for dynamic menuboard.',
               resolution_notes: 'Walked merchant through Back Office > Menus > Serving Periods. Verified on kitchen tablet.',
               device_telemetry: {
                 app_version: 'v2.4.0 (Build 180)',
                 device_role: 'Master Register',
                 sqlite_healthy: true,
-                auto_assigned: { staff_name: 'Marcus Vance', role: 'support', email: 'marcus.support@flexitapapp.com' }
+                tier: 'tier_1',
+                auto_assigned: { staff_name: 'Customer Support Desk', role: 'support', email: 'support@flexitapapp.com' }
               },
               created_at: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
               resolved_at: new Date(Date.now() - 20 * 3600 * 1000).toISOString()
@@ -4812,6 +4912,24 @@
       return !isDevTicket(t);
     }
 
+    function formatStaffAssignee(assignedTo) {
+      if (!assignedTo) return 'Customer Support Desk';
+      const lower = assignedTo.toLowerCase().trim();
+      if (lower.includes('support@flexitapapp.com') || lower.includes('sarah') || lower.includes('marcus') || lower.includes('alex') || lower === 'support') {
+        return 'Customer Support Desk';
+      }
+      if (lower.includes('qsr@flexitapapp.com') || lower.includes('dev') || lower.includes('david') || lower.includes('maya')) {
+        return 'Qsr (Dev Engineering)';
+      }
+      if (lower.includes('info@flexitapapp.com') || lower.includes('admin')) {
+        return 'Admin';
+      }
+      if (lower.includes('@')) {
+        return lower;
+      }
+      return assignedTo;
+    }
+
     // Support Tier helpers:
     // Tier 1: Merchant Ops (Customer Support)
     // Tier 2: Tech Support & Peripherals Desk (Customer Support)
@@ -4822,9 +4940,6 @@
         return 'tier_3';
       }
       if (t.tier === 'tier_2' || t.device_telemetry?.tier === 'tier_2') {
-        return 'tier_2';
-      }
-      if (t.category === 'printer' || t.category === 'payment' || t.category === 'hardware' || t.category === 'sync') {
         return 'tier_2';
       }
       return 'tier_1';
@@ -4838,6 +4953,28 @@
         return '<span style="background: rgba(56, 189, 248, 0.16); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); padding: 2px 7px; border-radius: 9999px; font-size: 0.68rem; font-weight: 700;">🔵 Tier 2 Tech Desk</span>';
       }
       return '<span style="background: rgba(52, 211, 153, 0.16); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.4); padding: 2px 7px; border-radius: 9999px; font-size: 0.68rem; font-weight: 700;">🟢 Tier 1 Ops</span>';
+    }
+
+    function toggleTicketQueueWidth() {
+      const grid = document.querySelector('.tickets-workspace-grid');
+      if (!grid) return;
+      const isExpanded = grid.classList.toggle('queue-expanded');
+      const btn = document.getElementById('btn-toggle-queue-width');
+      if (btn) btn.textContent = isExpanded ? '↔ Standard Width' : '↔ Adapt Width';
+      try {
+        localStorage.setItem('flexitap_ticket_queue_wide', isExpanded ? 'true' : 'false');
+      } catch (_) {}
+    }
+
+    function initTicketQueueWidth() {
+      try {
+        if (localStorage.getItem('flexitap_ticket_queue_wide') === 'true') {
+          const grid = document.querySelector('.tickets-workspace-grid');
+          if (grid) grid.classList.add('queue-expanded');
+          const btn = document.getElementById('btn-toggle-queue-width');
+          if (btn) btn.textContent = '↔ Standard Width';
+        }
+      } catch (_) {}
     }
 
     function toggleExpandNotesTimeline() {
@@ -5048,6 +5185,7 @@
     function renderTicketsList() {
       const listEl = document.getElementById('tickets-queue-list');
       if (!listEl) return;
+      initTicketQueueWidth();
       const filtered = getFilteredTickets();
 
       if (filtered.length === 0) {
@@ -5068,13 +5206,13 @@
           : `<span class="badge-pill badge-${t.status}">${t.status.replace('_', ' ')}</span>`;
 
         const deptBadge = isEsc
-          ? `<span style="color: #f87171; font-weight: 700; font-size: 0.68rem;">⚡ Tier 3 Dev</span>`
+          ? `<span style="color: #f87171; font-weight: 700;">⚡ Tier 3 Dev</span>`
           : (isDevTicket(t)
-              ? `<span style="color: #c084fc; font-weight: 700; font-size: 0.68rem;">💻 Dev Engineering</span>`
-              : `<span style="color: #60a5fa; font-weight: 700; font-size: 0.68rem;">💬 Customer Support</span>`);
+              ? `<span style="color: #c084fc; font-weight: 700;">💻 Dev Engineering</span>`
+              : `<span style="color: #60a5fa; font-weight: 700;">💬 Customer Support</span>`);
 
         const tierBadge = getTierBadgeHtml(getTicketTier(t));
-        const assigneeName = t.device_telemetry?.auto_assigned?.staff_name || (t.assigned_to ? t.assigned_to.split('@')[0] : 'Auto-Assigned');
+        const assigneeDisplay = formatStaffAssignee(t.assigned_to || t.device_telemetry?.auto_assigned?.email || t.device_telemetry?.auto_assigned?.staff_name);
         const rawAtt = t.device_telemetry?.attachments || t.attachments;
         const hasAttachments = Array.isArray(rawAtt) ? rawAtt.length > 0 : !!rawAtt;
         const attBadge = hasAttachments ? `<span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); padding: 2px 6px; border-radius: 6px; font-size: 0.68rem; font-weight: 700;">📎 Photo</span>` : '';
@@ -5082,23 +5220,23 @@
         html += `
           <div class="ticket-card ${isActive}" onclick="selectTicket('${t.id}')">
             <div class="ticket-header">
-              <span class="ticket-number">${numLabel}</span>
-              ${statusBadge}
-              ${tierBadge}
-              ${attBadge}
+              <div style="display: flex; align-items: center; gap: 7px; flex-wrap: wrap;">
+                <span class="ticket-number">${numLabel}</span>
+                ${statusBadge}
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                ${tierBadge}
+                ${attBadge}
+              </div>
             </div>
             <div class="ticket-store">${escapeHtml(t.store_name)}</div>
             <div class="ticket-subject">${escapeHtml(t.subject)}</div>
-            <div class="ticket-meta" style="flex-wrap: wrap; gap: 6px;">
+            <div class="ticket-meta-tags">
               <span class="badge-pill badge-${t.priority}">${t.priority}</span>
-              <span>•</span>
-              ${deptBadge}
-              <span>•</span>
-              <span>${(t.category || 'general').toUpperCase()}</span>
-              <span>•</span>
-              <span>${timeAgo}</span>
-              <span>•</span>
-              <span style="color: #38bdf8; font-weight: 700;">👤 ${escapeHtml(assigneeName)}</span>
+              <span class="ticket-tag ticket-tag-dept">${deptBadge}</span>
+              <span class="ticket-tag ticket-tag-category">${(t.category || 'general').toUpperCase()}</span>
+              <span class="ticket-tag ticket-tag-time">🕒 ${timeAgo}</span>
+              <span class="ticket-tag ticket-tag-assignee">👤 ${escapeHtml(assigneeDisplay)}</span>
             </div>
           </div>
         `;
@@ -5225,18 +5363,9 @@
       const isDev = isDevTicket(selectedTicket);
       const currentTier = getTicketTier(selectedTicket);
 
-      // Ensure non-escalated tickets are assigned to Customer Support Desk
-      if (!isEsc && currentTier !== 'tier_3') {
-        const assignedLower = (selectedTicket.assigned_to || '').toLowerCase();
-        if (assignedLower.includes('david') || assignedLower.includes('dev') || assignedLower.includes('maya')) {
-          selectedTicket.assigned_to = 'sarah.support@flexitapapp.com';
-          if (!selectedTicket.device_telemetry) selectedTicket.device_telemetry = {};
-          selectedTicket.device_telemetry.auto_assigned = {
-            staff_name: 'Sarah Jenkins',
-            email: 'sarah.support@flexitapapp.com',
-            role: 'support'
-          };
-        }
+      // Default unassigned tickets to Customer Support Desk
+      if (!selectedTicket.assigned_to) {
+        selectedTicket.assigned_to = 'support@flexitapapp.com';
       }
 
       const tierBadge = getTierBadgeHtml(currentTier);
@@ -5244,9 +5373,12 @@
       const timeStr = new Date(selectedTicket.created_at).toLocaleString();
       const telemetry = selectedTicket.device_telemetry || {};
       const telemetryStr = `${telemetry.app_version || 'v2.4.1'} • ${telemetry.device_role || 'Master POS'} • ${telemetry.sqlite_healthy ? 'SQLite Healthy' : 'Offline'}`;
-      const assignedLabel = selectedTicket.device_telemetry?.auto_assigned?.staff_name
-        ? `${selectedTicket.device_telemetry.auto_assigned.staff_name} (${selectedTicket.device_telemetry.auto_assigned.role === 'dev' ? 'Dev Engineering' : 'Customer Support'})`
-        : (selectedTicket.assigned_to || 'sarah.support@flexitapapp.com');
+      const assignedLabel = formatStaffAssignee(selectedTicket.assigned_to || selectedTicket.device_telemetry?.auto_assigned?.email || selectedTicket.device_telemetry?.auto_assigned?.staff_name);
+
+      const rawAssigned = (selectedTicket.assigned_to || '').toLowerCase();
+      const isDevAssigned = isEsc || rawAssigned.includes('qsr') || rawAssigned.includes('dev') || rawAssigned.includes('david');
+      const isAdminAssigned = rawAssigned.includes('info') || rawAssigned.includes('admin');
+      const isSupportAssigned = !isDevAssigned && !isAdminAssigned;
 
       const escalationBannerHtml = isEsc ? `
         <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.16) 0%, rgba(185, 28, 28, 0.1) 100%); border: 1px solid rgba(239, 68, 68, 0.45); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
@@ -5303,11 +5435,19 @@
         <div class="ticket-edit-grid">
           <div class="ticket-edit-field">
             <label>Support Tier</label>
-            <select id="t-edit-tier">
-              <option value="tier_1" ${currentTier === 'tier_1' ? 'selected' : ''}>🟢 Tier 1 — Merchant Ops</option>
-              <option value="tier_2" ${currentTier === 'tier_2' ? 'selected' : ''}>🔵 Tier 2 — Tech Support &amp; Peripherals</option>
-              <option value="tier_3" ${currentTier === 'tier_3' ? 'selected' : ''}>🟣 Tier 3 — Core Dev Engineering</option>
-            </select>
+            ${(isEsc || currentTier === 'tier_3') ? `
+              <div style="padding: 8px 10px; background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 8px; font-size: 0.82rem; font-weight: 700; color: #c084fc; display: flex; align-items: center; justify-content: space-between;">
+                <span>🟣 Tier 3 Core Dev</span>
+                <span style="font-size: 0.68rem; color: #e9d5ff; font-weight: normal;">(Escalated)</span>
+              </div>
+              <input type="hidden" id="t-edit-tier" value="tier_3" />
+            ` : `
+              <select id="t-edit-tier">
+                <option value="tier_1" ${currentTier === 'tier_1' ? 'selected' : ''}>🟢 Tier 1 — Merchant Ops</option>
+                <option value="tier_2" ${currentTier === 'tier_2' ? 'selected' : ''}>🔵 Tier 2 — Tech Support &amp; Peripherals</option>
+                <option value="tier_3" disabled>🟣 Tier 3 — Core Dev (Requires Escalation)</option>
+              </select>
+            `}
           </div>
           <div class="ticket-edit-field">
             <label>Status</label>
@@ -5339,8 +5479,12 @@
             </select>
           </div>
           <div class="ticket-edit-field">
-            <label>Assignee (Dev / Support Only — Admin Excluded)</label>
-            <input type="text" id="t-edit-assignee" value="${escapeHtml(selectedTicket.assigned_to || 'sarah.support@flexitapapp.com')}" />
+            <label>Assignee</label>
+            <select id="t-edit-assignee">
+              <option value="support@flexitapapp.com" ${isSupportAssigned ? 'selected' : ''}>💬 Customer Support Desk</option>
+              <option value="qsr@flexitapapp.com" ${isDevAssigned ? 'selected' : ''}>💻 Qsr (Dev Engineering)</option>
+              <option value="info@flexitapapp.com" ${isAdminAssigned ? 'selected' : ''}>👑 Admin</option>
+            </select>
           </div>
         </div>
 
@@ -5418,7 +5562,7 @@
 
       renderNotesList([
         {
-          author_email: selectedTicket.assigned_to || 'dev@flexitap.io',
+          author_email: selectedTicket.assigned_to || 'support@flexitapapp.com',
           note: 'Ticket opened and assigned. Initial diagnostics inspection in progress.',
           created_at: selectedTicket.created_at
         }
@@ -5467,9 +5611,15 @@
       selectedTicket.tier = tier;
       if (!selectedTicket.device_telemetry) selectedTicket.device_telemetry = {};
       selectedTicket.device_telemetry.tier = tier;
+      selectedTicket.device_telemetry.auto_assigned = {
+        staff_name: formatStaffAssignee(assignee),
+        email: assignee,
+        role: assignee.includes('qsr') ? 'dev' : (assignee.includes('info') ? 'admin' : 'support')
+      };
 
       if (status === 'escalated') {
         selectedTicket.is_escalated = true;
+        selectedTicket.tier = 'tier_3';
         if (!selectedTicket.escalated_to) selectedTicket.escalated_to = 'dev';
       }
 
@@ -5479,6 +5629,7 @@
           priority: priority,
           category: category,
           assigned_to: assignee,
+          tier: selectedTicket.tier,
           device_telemetry: selectedTicket.device_telemetry,
           updated_at: new Date().toISOString()
         }).eq('id', selectedTicket.id);
@@ -5644,18 +5795,13 @@
       const devSelect = document.getElementById('esc-assign-dev');
       if (devSelect) {
         let devOptions = '<option value="auto">🤖 Auto-Assign Next Available Clocked-In Dev</option>';
+        devOptions += '<option value="qsr@flexitapapp.com" selected>Qsr (Dev Engineering) &lt;qsr@flexitapapp.com&gt;</option>';
         let devs = [];
         if (typeof teamStaffMembers !== 'undefined' && Array.isArray(teamStaffMembers)) {
           devs = teamStaffMembers.filter(m => {
             const r = (m.role || '').toLowerCase();
-            return r === 'dev' || r === 'developer' || r === 'devops';
+            return (r === 'dev' || r === 'developer' || r === 'devops') && m.email !== 'qsr@flexitapapp.com';
           });
-        }
-        if (devs.length === 0) {
-          devs = [
-            { full_name: 'David Kim', email: 'david.ops@flexitapapp.com', role_title: 'Senior DevOps & Platform Engineer' },
-            { full_name: 'Maya Lin', email: 'maya.dev@flexitapapp.com', role_title: 'Lead POS Kernel & Android Engineer' }
-          ];
         }
         devs.forEach(d => {
           devOptions += `<option value="${escapeHtml(d.email)}">${escapeHtml(d.full_name)} (${escapeHtml(d.role_title || 'Dev')})</option>`;
@@ -5686,16 +5832,10 @@
       const troubleshootingNotes = document.getElementById('esc-troubleshooting-notes').value.trim();
 
       let devEmail = assignDevVal;
-      let devName = 'Core Dev Engineering';
-      if (assignDevVal === 'auto') {
-        const autoDev = typeof getAutoAssignedDev === 'function' ? getAutoAssignedDev() : null;
-        if (autoDev) {
-          devEmail = autoDev.email;
-          devName = autoDev.full_name;
-        } else {
-          devEmail = 'david.ops@flexitapapp.com';
-          devName = 'David Kim';
-        }
+      let devName = 'Qsr (Dev Engineering)';
+      if (assignDevVal === 'auto' || !assignDevVal || assignDevVal.includes('david') || assignDevVal.includes('maya')) {
+        devEmail = 'qsr@flexitapapp.com';
+        devName = 'Qsr (Dev Engineering)';
       } else {
         if (typeof teamStaffMembers !== 'undefined' && Array.isArray(teamStaffMembers)) {
           const match = teamStaffMembers.find(m => m.email && m.email.toLowerCase() === assignDevVal.toLowerCase());
@@ -5716,6 +5856,7 @@
       t.escalation_reason = reasonCat;
       t.assigned_to = devEmail;
       if (!t.device_telemetry) t.device_telemetry = {};
+      t.device_telemetry.tier = 'tier_3';
       t.device_telemetry.is_escalated = true;
       t.device_telemetry.escalation_reason = reasonCat;
       t.device_telemetry.auto_assigned = {
@@ -5744,6 +5885,7 @@ Support Diagnostics: ${troubleshootingNotes}`;
           status: 'escalated',
           priority: elevatedPrio,
           assigned_to: devEmail,
+          tier: 'tier_3',
           device_telemetry: t.device_telemetry,
           updated_at: nowIso
         }).eq('id', t.id);
@@ -5769,30 +5911,24 @@ Support Diagnostics: ${troubleshootingNotes}`;
 
       if (handbackNotes === null) return; // user cancelled prompt
 
-      const effUser = typeof getEffectiveUserEmail === 'function' ? getEffectiveUserEmail() : 'david.ops@flexitapapp.com';
+      const effUser = typeof getEffectiveUserEmail === 'function' ? getEffectiveUserEmail() : 'qsr@flexitapapp.com';
       const nowIso = new Date().toISOString();
 
-      let supportStaff = { staff_name: 'Sarah Jenkins', email: 'sarah.support@flexitapapp.com' };
-      if (typeof teamStaffMembers !== 'undefined' && Array.isArray(teamStaffMembers)) {
-        const sup = teamStaffMembers.find(m => {
-          const r = (m.role || '').toLowerCase();
-          return r === 'support' || r === 'customer_support' || r === 'agent';
-        });
-        if (sup) supportStaff = { staff_name: sup.full_name, email: sup.email };
-      }
+      const supportStaff = { staff_name: 'Customer Support Desk', email: 'support@flexitapapp.com' };
 
       t.status = 'in_progress';
       t.is_escalated = false;
-      t.tier = (t.category === 'printer' || t.category === 'hardware' || t.category === 'payment') ? 'tier_2' : 'tier_1';
+      t.escalated_to = null;
+      t.tier = 'tier_1';
       t.assigned_to = supportStaff.email;
-      if (t.device_telemetry) {
-        t.device_telemetry.is_escalated = false;
-        t.device_telemetry.auto_assigned = {
-          staff_name: supportStaff.staff_name,
-          email: supportStaff.email,
-          role: 'support'
-        };
-      }
+      if (!t.device_telemetry) t.device_telemetry = {};
+      t.device_telemetry.tier = 'tier_1';
+      t.device_telemetry.is_escalated = false;
+      t.device_telemetry.auto_assigned = {
+        staff_name: supportStaff.staff_name,
+        email: supportStaff.email,
+        role: 'support'
+      };
 
       const noteText = `↩️ HANDED BACK TO CUSTOMER SUPPORT DESK:
 Dev Resolution Notes: ${handbackNotes}
@@ -5810,6 +5946,7 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
         await supabaseClient.from('tickets').update({
           status: 'in_progress',
           assigned_to: supportStaff.email,
+          tier: 'tier_1',
           device_telemetry: t.device_telemetry,
           updated_at: nowIso
         }).eq('id', t.id);
@@ -5820,7 +5957,7 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
       updateTicketKPIs();
       switchTicketQueue('support');
       selectTicket(t.id);
-      alert(`Ticket #${t.ticket_number || ''} handed back to Customer Support (${supportStaff.staff_name}) with resolution notes.`);
+      alert(`Ticket #${t.ticket_number || ''} handed back to Customer Support Desk with resolution notes.`);
     }
 
     async function addTicketNoteDirect(ticketId, noteText) {
@@ -6096,37 +6233,25 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
     let ptoRequests = [
       {
         id: 'pto-1',
-        staff_name: 'Marcus Vance',
-        staff_email: 'marcus.support@flexitapapp.com',
+        staff_name: 'Customer Support Desk',
+        staff_email: 'support@flexitapapp.com',
         type: 'Paid Vacation',
         start_date: '2026-10-24',
         end_date: '2026-10-28',
         duration_days: 4,
-        reason: 'Annual family leave; customer ticket queue coverage arranged with team.',
+        reason: 'Operational queue coverage arranged with team.',
         status: 'approved',
         created_at: '2026-10-10'
       },
       {
         id: 'pto-2',
-        staff_name: 'Sarah Jenkins',
-        staff_email: 'sarah.support@flexitapapp.com',
+        staff_name: 'Customer Support Desk',
+        staff_email: 'support@flexitapapp.com',
         type: 'Personal Leave',
         start_date: '2026-10-19',
         end_date: '2026-10-20',
         duration_days: 2,
-        reason: 'Personal appointments; live chat queue coverage arranged with support lead.',
-        status: 'pending',
-        created_at: '2026-10-12'
-      },
-      {
-        id: 'pto-3',
-        staff_name: 'Alex Rivera',
-        staff_email: 'employee@flexitapapp.com',
-        type: 'Personal Leave',
-        start_date: '2026-11-02',
-        end_date: '2026-11-03',
-        duration_days: 2,
-        reason: 'Medical appointment and recovery.',
+        reason: 'Queue coverage arranged with support desk lead.',
         status: 'pending',
         created_at: '2026-10-12'
       }
@@ -6135,8 +6260,8 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
     let weeklyScheduleRoster = [
       {
         id: 'sch-1',
-        staff_name: 'Marcus Vance',
-        staff_email: 'marcus.support@flexitapapp.com',
+        staff_name: 'Customer Support Desk',
+        staff_email: 'support@flexitapapp.com',
         role_type: 'support',
         shifts: {
           Mon: '08:00 - 16:30 (Support Desk)',
@@ -6150,46 +6275,31 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
       },
       {
         id: 'sch-2',
-        staff_name: 'Sarah Jenkins',
-        staff_email: 'sarah.support@flexitapapp.com',
-        role_type: 'support',
-        shifts: {
-          Mon: '09:00 - 17:30 (Live Chat Lead)',
-          Tue: '09:00 - 17:30 (Ticket Queue)',
-          Wed: '09:00 - 17:30 (Live Chat Lead)',
-          Thu: '09:00 - 17:30 (Merchant Onboarding)',
-          Fri: '09:00 - 17:30 (Live Chat Lead)',
-          Sat: 'On-Call 24h',
-          Sun: 'Off'
-        }
-      },
-      {
-        id: 'sch-3',
-        staff_name: 'David Kim',
-        staff_email: 'david.ops@flexitapapp.com',
+        staff_name: 'Qsr (Dev Engineering)',
+        staff_email: 'qsr@flexitapapp.com',
         role_type: 'dev',
         shifts: {
-          Mon: '10:00 - 18:30 (OTA Storage Releases)',
+          Mon: '10:00 - 18:30 (OTA Releases)',
           Tue: '10:00 - 18:30 (Supabase Sync)',
-          Wed: '10:00 - 18:30 (Remote ADB Fleet)',
-          Thu: '10:00 - 18:30 (OTA Storage Releases)',
+          Wed: '10:00 - 18:30 (Remote Fleet)',
+          Thu: '10:00 - 18:30 (OTA Releases)',
           Fri: '10:00 - 18:30 (Platform Security)',
           Sat: 'On-Call 24h',
           Sun: 'On-Call 24h'
         }
       },
       {
-        id: 'sch-4',
-        staff_name: 'Alex Rivera',
-        staff_email: 'employee@flexitapapp.com',
-        role_type: 'support',
+        id: 'sch-3',
+        staff_name: 'Admin',
+        staff_email: 'info@flexitapapp.com',
+        role_type: 'admin',
         shifts: {
-          Mon: '08:30 - 17:00 (Customer Support Queue)',
-          Tue: '08:30 - 17:00 (Merchant Help Desk)',
-          Wed: '08:30 - 17:00 (Live Chat Assistance)',
-          Thu: '08:30 - 17:00 (Terminal Support)',
-          Fri: '08:30 - 17:00 (Customer Follow-up)',
-          Sat: 'Off',
+          Mon: '08:00 - 17:00 (Executive & Admin Desk)',
+          Tue: '08:00 - 17:00 (Executive & Admin Desk)',
+          Wed: '08:00 - 17:00 (Executive & Admin Desk)',
+          Thu: '08:00 - 17:00 (Executive & Admin Desk)',
+          Fri: '08:00 - 17:00 (Executive & Admin Desk)',
+          Sat: 'On-Call',
           Sun: 'Off'
         }
       }
@@ -6198,8 +6308,8 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
     let timecardReportLogs = [
       {
         id: 'tc-1',
-        staff_name: 'Marcus Vance',
-        staff_email: 'marcus.support@flexitapapp.com',
+        staff_name: 'Customer Support Desk',
+        staff_email: 'support@flexitapapp.com',
         role: 'support',
         date: '2026-10-12',
         date_formatted: 'Mon, Oct 12',
@@ -6214,40 +6324,8 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
       },
       {
         id: 'tc-2',
-        staff_name: 'Marcus Vance',
-        staff_email: 'marcus.support@flexitapapp.com',
-        role: 'support',
-        date: '2026-10-11',
-        date_formatted: 'Sun, Oct 11',
-        clock_in: '08:00 AM',
-        clock_out: '18:15 PM',
-        break_minutes: 45,
-        regular_hours: 8.0,
-        overtime_hours: 1.5,
-        total_hours: 9.5,
-        assignment: 'Weekend Merchant Escalations & Support',
-        status: 'approved'
-      },
-      {
-        id: 'tc-3',
-        staff_name: 'Sarah Jenkins',
-        staff_email: 'sarah.support@flexitapapp.com',
-        role: 'support',
-        date: '2026-10-12',
-        date_formatted: 'Mon, Oct 12',
-        clock_in: '09:00 AM',
-        clock_out: '17:30 PM',
-        break_minutes: 30,
-        regular_hours: 8.0,
-        overtime_hours: 0.0,
-        total_hours: 8.0,
-        assignment: 'Live Chat Queue & Merchant Assistance',
-        status: 'verified'
-      },
-      {
-        id: 'tc-4',
-        staff_name: 'David Kim',
-        staff_email: 'david.ops@flexitapapp.com',
+        staff_name: 'Qsr (Dev Engineering)',
+        staff_email: 'qsr@flexitapapp.com',
         role: 'dev',
         date: '2026-10-12',
         date_formatted: 'Mon, Oct 12',
@@ -6261,36 +6339,20 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
         status: 'approved'
       },
       {
-        id: 'tc-5',
-        staff_name: 'Alex Rivera',
-        staff_email: 'employee@flexitapapp.com',
-        role: 'support',
+        id: 'tc-3',
+        staff_name: 'Admin',
+        staff_email: 'info@flexitapapp.com',
+        role: 'admin',
         date: '2026-10-12',
         date_formatted: 'Mon, Oct 12',
-        clock_in: '08:30 AM',
+        clock_in: '08:00 AM',
         clock_out: '17:00 PM',
         break_minutes: 30,
-        regular_hours: 8.0,
+        regular_hours: 8.5,
         overtime_hours: 0.0,
-        total_hours: 8.0,
-        assignment: 'Merchant Onboarding & Support Queue',
+        total_hours: 8.5,
+        assignment: 'Platform Fleet Oversight & Merchant CRM Operations',
         status: 'verified'
-      },
-      {
-        id: 'tc-6',
-        staff_name: 'Alex Rivera',
-        staff_email: 'employee@flexitapapp.com',
-        role: 'support',
-        date: '2026-10-09',
-        date_formatted: 'Fri, Oct 09',
-        clock_in: '08:30 AM',
-        clock_out: '18:15 PM',
-        break_minutes: 30,
-        regular_hours: 8.0,
-        overtime_hours: 1.25,
-        total_hours: 9.25,
-        assignment: 'Support Queue Overtime & Merchant Assistance',
-        status: 'approved'
       }
     ];
 
@@ -6304,11 +6366,11 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
     function getDefaultSeedStaff() {
       return [
         {
-          id: 'staff-seed-1',
-          full_name: 'Marcus Vance',
-          email: 'marcus.support@flexitapapp.com',
+          id: 'staff-real-1',
+          full_name: 'Customer Support Desk',
+          email: 'support@flexitapapp.com',
           department: 'Customer Success & Support',
-          role_title: 'Customer Support Lead',
+          role_title: 'Support Desk Specialist',
           role: 'support',
           status: 'active',
           clock_status: 'clocked_in',
@@ -6327,72 +6389,49 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
           }
         },
         {
-          id: 'staff-seed-2',
-          full_name: 'Sarah Jenkins',
-          email: 'sarah.support@flexitapapp.com',
-          department: 'Customer Success & Support',
-          role_title: 'Senior Support Desk Specialist',
-          role: 'support',
+          id: 'staff-real-2',
+          full_name: 'Qsr (Dev Engineering)',
+          email: 'qsr@flexitapapp.com',
+          department: 'Platform & Dev Engineering',
+          role_title: 'Platform & DevOps Engineer',
+          role: 'dev',
           status: 'active',
           clock_status: 'clocked_in',
-          shift_time: '09:00 AM (3h 00m)',
-          current_assignment: 'Live Merchant Support Desk',
+          shift_time: '09:00 AM (3h 30m)',
+          current_assignment: 'Core Infrastructure & Fleet Sync',
           permissions: {
             clients: true,
             tickets: true,
             remote: true,
             support: true,
-            updates: false,
-            monitoring: false,
-            errors: false,
-            analytics: false,
-            team: false
-          }
-        },
-        {
-          id: 'staff-seed-3',
-          full_name: 'David Kim',
-          email: 'david.ops@flexitapapp.com',
-          department: 'Platform & Dev Engineering',
-          role_title: 'Senior DevOps & Platform Engineer',
-          role: 'dev',
-          status: 'active',
-          clock_status: 'clocked_out',
-          shift_time: 'Yesterday: 8.5 hrs',
-          current_assignment: 'OTA Releases & API Health',
-          permissions: {
-            clients: true,
-            tickets: true,
-            remote: true,
-            support: false,
             updates: true,
             monitoring: true,
             errors: true,
             analytics: true,
-            team: false
+            team: true
           }
         },
         {
-          id: 'staff-seed-4',
-          full_name: 'Alex Rivera',
-          email: 'employee@flexitapapp.com',
-          department: 'Customer Success & Support',
-          role_title: 'Customer Support Specialist',
-          role: 'support',
+          id: 'staff-real-3',
+          full_name: 'Admin',
+          email: 'info@flexitapapp.com',
+          department: 'Executive & Administration',
+          role_title: 'System Administrator',
+          role: 'admin',
           status: 'active',
-          clock_status: 'clocked_out',
-          shift_time: 'Ready for shift',
-          current_assignment: 'Merchant Support Desk',
+          clock_status: 'clocked_in',
+          shift_time: '08:00 AM (4h 30m)',
+          current_assignment: 'Merchant Operations & Systems Administration',
           permissions: {
             clients: true,
             tickets: true,
             remote: true,
             support: true,
-            updates: false,
-            monitoring: false,
-            errors: false,
-            analytics: false,
-            team: false
+            updates: true,
+            monitoring: true,
+            errors: true,
+            analytics: true,
+            team: true
           }
         }
       ];
@@ -6495,16 +6534,15 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
 
     function getEffectiveUserEmail() {
       if (currentSimulatedRole === 'support') {
-        if (!activeDevUser || activeDevUser.email.includes('dev') || activeDevUser.email.includes('admin')) {
-          return 'sarah.support@flexitapapp.com';
-        }
+        return 'support@flexitapapp.com';
       }
       if (currentSimulatedRole === 'dev') {
-        if (!activeDevUser || !activeDevUser.email.includes('dev')) {
-          return 'david.ops@flexitapapp.com';
-        }
+        return 'qsr@flexitapapp.com';
       }
-      return (activeDevUser && activeDevUser.email) ? activeDevUser.email.toLowerCase() : 'admin@flexitapapp.com';
+      if (currentSimulatedRole === 'admin') {
+        return 'info@flexitapapp.com';
+      }
+      return (activeDevUser && activeDevUser.email) ? activeDevUser.email.toLowerCase() : 'info@flexitapapp.com';
     }
 
     function getEffectiveUserDisplayName() {
@@ -6514,9 +6552,9 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
         if (staff && staff.full_name) return staff.full_name;
       }
       if (activeDevProfile && activeDevProfile.full_name) return activeDevProfile.full_name;
-      if (email.includes('david')) return 'David Kim';
-      if (email.includes('sarah')) return 'Sarah Jenkins';
-      if (email.includes('marcus')) return 'Marcus Vance';
+      if (email.includes('support')) return 'Customer Support Desk';
+      if (email.includes('qsr') || email.includes('dev')) return 'Qsr (Dev Engineering)';
+      if (email.includes('info') || email.includes('admin')) return 'Admin Desk';
       return email.split('@')[0];
     }
 
@@ -6607,7 +6645,15 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
         let localStaff = [];
         try {
           const saved = localStorage.getItem('flexitap_staff_team_members');
-          if (saved) localStaff = JSON.parse(saved);
+          if (saved) {
+            if (saved.includes('marcus.support') || saved.includes('sarah.support') || saved.includes('david.ops') || saved.includes('Sarah Jenkins') || saved.includes('Marcus Vance')) {
+              localStorage.removeItem('flexitap_staff_team_members');
+              localStaff = getDefaultSeedStaff();
+              localStorage.setItem('flexitap_staff_team_members', JSON.stringify(localStaff));
+            } else {
+              localStaff = JSON.parse(saved);
+            }
+          }
         } catch (e) {}
 
         if (!localStaff || localStaff.length === 0) {
@@ -7924,10 +7970,9 @@ Role: ${lastProvisionedCreds.role}`;
         'Metro Smoke Shop', 'Golden Dragon Cafe', 'Sunset Deli & Grill', 'Harbor Seafood'
       ];
       const specialists = [
-        { name: 'Sarah Jenkins', email: 'sarah.support@flexitapapp.com', role: 'support' },
-        { name: 'Alex Rivera', email: 'employee@flexitapapp.com', role: 'support' },
-        { name: 'David Kim', email: 'david.ops@flexitapapp.com', role: 'dev' },
-        { name: 'Maya Lin', email: 'maya.dev@flexitapapp.com', role: 'dev' }
+        { name: 'Customer Support Desk', email: 'support@flexitapapp.com', role: 'support' },
+        { name: 'Qsr (Dev Engineering)', email: 'qsr@flexitapapp.com', role: 'dev' },
+        { name: 'Admin', email: 'info@flexitapapp.com', role: 'admin' }
       ];
 
       const now = Date.now();
@@ -7937,9 +7982,9 @@ Role: ${lastProvisionedCreds.role}`;
       for (let i = 1; i <= 56; i++) {
         const cat = categories[i % categories.length];
         const prio = priorities[i % priorities.length];
-        const spec = (cat === 'printer' || cat === 'bug' || cat === 'sync') 
-          ? specialists.filter(s => s.role === 'dev')[i % 2]
-          : specialists.filter(s => s.role === 'support')[i % 2];
+        const devSpec = specialists.find(s => s.role === 'dev') || specialists[0];
+        const supSpec = specialists.find(s => s.role === 'support') || specialists[0];
+        const spec = (cat === 'printer' || cat === 'bug' || cat === 'sync') ? devSpec : supSpec;
         const store = stores[i % stores.length];
 
         const daysAgo = (i % 14) + 0.5;
@@ -8465,8 +8510,8 @@ Role: ${lastProvisionedCreds.role}`;
       {
         id: 'msg-1',
         channelId: 'c-dev',
-        senderName: 'David Kim',
-        senderEmail: 'david.ops@flexitapapp.com',
+        senderName: 'Qsr (Dev Engineering)',
+        senderEmail: 'qsr@flexitapapp.com',
         senderRole: 'dev',
         content: 'OTA Build v2.4.1 has been published to Supabase storage bucket! SQLite sync issue on Sunmi V2s is now patched.',
         timestamp: '09:42 AM',
@@ -8474,29 +8519,19 @@ Role: ${lastProvisionedCreds.role}`;
       },
       {
         id: 'msg-2',
-        channelId: 'c-dev',
-        senderName: 'Maya Lin',
-        senderEmail: 'maya.dev@flexitapapp.com',
-        senderRole: 'dev',
-        content: 'Verified the patch on Central Bakery counter register. Receipt cut delay reduced from 5s to 200ms!',
-        timestamp: '09:50 AM',
-        reactions: ['🔥']
-      },
-      {
-        id: 'msg-3',
         channelId: 'c-support',
-        senderName: 'Sarah Jenkins',
-        senderEmail: 'sarah.support@flexitapapp.com',
+        senderName: 'Customer Support Desk',
+        senderEmail: 'support@flexitapapp.com',
         senderRole: 'support',
         content: 'Investigating split-bill verification error for Taqueria Express (Ticket #103). Calling merchant now.',
         timestamp: '10:04 AM',
         reactions: ['👀']
       },
       {
-        id: 'msg-4',
+        id: 'msg-3',
         channelId: 'c-general',
-        senderName: 'Admin Team',
-        senderEmail: 'dev@flexitap.io',
+        senderName: 'Admin Desk',
+        senderEmail: 'info@flexitapapp.com',
         senderRole: 'admin',
         content: 'Good morning team! Current bi-weekly SLA compliance is at 97.4% (well above our 95% target). Keep up the great work!',
         timestamp: '10:15 AM',
@@ -8923,7 +8958,7 @@ Role: ${lastProvisionedCreds.role}`;
     function testIncomingCallSimulation() {
       const modal = document.getElementById('teams-incoming-call-modal');
       const info = document.getElementById('teams-incoming-caller-info');
-      if (info) info.textContent = 'Sarah Jenkins (Customer Support) is inviting you to an urgent Video Call';
+      if (info) info.textContent = 'Customer Support Desk is inviting you to an urgent Video Call';
       if (modal) modal.style.display = 'flex';
       playTeamsSound('ring');
     }
@@ -9324,11 +9359,11 @@ Role: ${lastProvisionedCreds.role}`;
         <div class="crm-form-grid" style="margin-bottom: 14px;">
           <div class="crm-form-group">
             <label>Full Name *</label>
-            <input type="text" id="add-staff-name" class="crm-input" placeholder="e.g. Marcus Vance" required />
+            <input type="text" id="add-staff-name" class="crm-input" placeholder="e.g. Support Specialist" required />
           </div>
           <div class="crm-form-group">
             <label>Work Email Address *</label>
-            <input type="email" id="add-staff-email" class="crm-input" placeholder="e.g. marcus.tech@flexitapapp.com" required />
+            <input type="email" id="add-staff-email" class="crm-input" placeholder="e.g. staff@flexitapapp.com" required />
           </div>
         </div>
 

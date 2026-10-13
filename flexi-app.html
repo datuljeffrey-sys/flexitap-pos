@@ -1380,27 +1380,11 @@
 
     // 7. AUTO-ASSIGNMENT ENGINE (EVERY INCOMING TICKET ASSIGNED FIRST TO CUSTOMER SUPPORT)
     function getAutoAssignedStaff(ticketData = {}) {
-      const defaultPool = [
-        { full_name: 'Sarah Jenkins', email: 'sarah.support@flexitapapp.com', role: 'support', role_title: 'Senior Support Desk Specialist' },
-        { full_name: 'Marcus Vance', email: 'marcus.support@flexitapapp.com', role: 'support', role_title: 'Customer Support Lead' },
-        { full_name: 'Alex Rivera', email: 'employee@flexitapapp.com', role: 'support', role_title: 'Customer Support Specialist' }
-      ];
-
-      let idx = 0;
-      try {
-        const saved = parseInt(localStorage.getItem('flexitap_ticket_assign_idx') || '0', 10);
-        idx = (saved + 1) % defaultPool.length;
-        localStorage.setItem('flexitap_ticket_assign_idx', String(idx));
-      } catch (e) {
-        idx = Math.floor(Math.random() * defaultPool.length);
-      }
-
-      const assigned = defaultPool[idx] || defaultPool[0];
       return {
-        assigned_to: assigned.email,
-        staff_name: assigned.full_name,
+        assigned_to: 'support@flexitapapp.com',
+        staff_name: 'Customer Support Desk',
         role: 'support',
-        role_title: assigned.role_title,
+        role_title: 'Customer Support Desk',
         routing_reason: 'Mandatory intake assignment to Customer Support Desk'
       };
     }
