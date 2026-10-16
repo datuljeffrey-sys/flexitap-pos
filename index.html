@@ -370,34 +370,7 @@
     </div>
   </footer>
 
-  <!-- SALES CHAT WIDGET -->
-  <button id="chat-btn" onclick="toggleSalesChat()" title="Sales & Inquiries Chat">💬</button>
-
-  <div id="sales-chat-panel">
-    <div class="chat-header">
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <div style="width: 10px; height: 10px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></div>
-        <div>
-          <div style="font-size: 13px; font-weight: 800; color: #fff;">FlexiTap Sales Assistant</div>
-          <div style="font-size: 11px; color: var(--text-muted);">info@flexitapapp.com</div>
-        </div>
-      </div>
-      <button onclick="toggleSalesChat()" style="background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer;">&times;</button>
-    </div>
-
-    <div class="chat-body" id="chat-messages">
-      <div class="chat-msg">
-        👋 <strong>Welcome to FlexiTap POS!</strong> How can we help configure your counter setup today?
-      </div>
-      <div class="chat-options" id="chat-quick-options">
-        <button class="chat-chip" onclick="handleChatSelect('demo')" style="background: rgba(16,185,129,0.1); color: #34d399; border-color: rgba(16,185,129,0.3);">📅 Book a Live 1-on-1 Demo</button>
-        <button class="chat-chip" onclick="handleChatSelect('pricing')">💳 Founders VIP Pass & Pricing</button>
-        <button class="chat-chip" onclick="handleChatSelect('platforms')">📱 Device & Hardware Support</button>
-        <button class="chat-chip" onclick="handleChatSelect('sync')">⚡ Offline Reliability & Cloud Sync</button>
-        <button class="chat-chip" onclick="handleChatSelect('contact')">✉️ Send Message to Sales</button>
-      </div>
-    </div>
-  </div>
+  <!-- Elevated Sales & Inquiries Live Chat is dynamically managed by sales-chat.js -->
 
   <!-- DEMO BOOKING MODAL -->
   <div class="modal-overlay" id="booking-modal">
@@ -660,78 +633,6 @@
       });
     });
 
-    function toggleSalesChat() {
-      const p = document.getElementById('sales-chat-panel');
-      p.style.display = (p.style.display === 'none' || p.style.display === '') ? 'flex' : 'none';
-    }
-
-    function appendMessage(html) {
-      const box = document.getElementById('chat-messages');
-      const div = document.createElement('div');
-      div.className = 'chat-msg';
-      div.innerHTML = html;
-      box.appendChild(div);
-      box.scrollTop = box.scrollHeight;
-    }
-
-    function handleChatSelect(type) {
-      if (type === 'demo') {
-        appendMessage(`<strong>Book a Live Demo:</strong><br>Schedule a 1-on-1 walkthrough with our engineers. We'll show you how the offline sync and multi-screen setup works.<br><br><button onclick="openCalendarBooking(event)" style="background:var(--primary); color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">📅 Choose Demo Time</button>`);
-      } else if (type === 'pricing') {
-        appendMessage(`<strong>Founders VIP Annual Pass:</strong><br>• <strong>Plus ($290/yr):</strong> Fixed for life. Up to 5 terminals, KDS, customer loyalty & web portal.<br>• <strong>Pro ($590/yr):</strong> Unlimited terminals, floor plan layouts, recipe inventory & phone/remote standby.<br><em>Includes 7-day live shift 100% money-back guarantee. Access begins launch day (Nov 13, 2026).</em>`);
-      } else if (type === 'platforms') {
-        appendMessage(`<strong>Bring Your Own Device:</strong><br>FlexiTap runs on off-the-shelf Android tablets, iPads, and Windows touch PCs. Stop paying thousands for proprietary hardware leases.`);
-      } else if (type === 'sync') {
-        appendMessage(`<strong>Offline-First Speed:</strong><br>Orders write locally in milliseconds. Even if your internet connection fails completely during a dinner rush, your counter, receipt printing, and kitchen routing keep running uninterrupted.`);
-      } else if (type === 'contact') {
-        appendMessage(`<strong>Contact Sales:</strong><br>Direct Email: <a href="mailto:info@flexitapapp.com" style="color:var(--primary); font-weight:700;">info@flexitapapp.com</a> or leave a message below:`);
-        showLeadForm();
-      }
-    }
-
-    function showLeadForm() {
-      appendMessage(`
-        <div class="chat-form-container">
-          <form onsubmit="submitSalesInquiry(event)">
-            <input type="text" id="lead-name" placeholder="Business Name / Contact Name" required />
-            <input type="email" id="lead-email" placeholder="Email (owner@cafe.com)" required />
-            <input type="tel" id="lead-phone" placeholder="Phone Number (Optional)" />
-            <textarea id="lead-message" placeholder="Type your inquiry here..." required></textarea>
-            <button type="submit">Send Inquiry</button>
-          </form>
-        </div>
-      `);
-    }
-
-    async function submitSalesInquiry(e) {
-      e.preventDefault();
-      const name = document.getElementById('lead-name').value;
-      const email = document.getElementById('lead-email').value;
-      const phone = document.getElementById('lead-phone').value;
-      const message = document.getElementById('lead-message').value;
-
-      const btn = e.target.querySelector('button');
-      btn.innerText = 'Sending...';
-      btn.disabled = true;
-
-      try {
-        const { error } = await supabaseClient
-          .from('leads')
-          .insert([{ business_name: name, contact_email: email, contact_phone: phone, message: message }]);
-
-        if (error) {
-          appendMessage(`❌ Failed to send inquiry. Please email info@flexitapapp.com directly.`);
-        } else {
-          appendMessage(`✅ <strong>Thank you, ${name}!</strong> Your inquiry has been routed to our team. We will reply shortly.`);
-          e.target.reset(); 
-        }
-      } catch (err) {
-        appendMessage(`❌ Network error. Please check your connection.`);
-      } finally {
-        btn.innerText = 'Send Inquiry';
-        btn.disabled = false;
-      }
-    }
 
     let pendingSubpageAuthEmail = '';
 
@@ -931,5 +832,7 @@
       });
     }
   </script>
+  <!-- Unified Elevated Sales & Inquiries Live Chat -->
+  <script src="sales-chat.js"></script>
 </body>
 </html>

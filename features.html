@@ -966,15 +966,7 @@
     </div>
   </footer>
 
-  <!-- MODALS -->
-  <button id="chat-btn" onclick="toggleSalesChat()" title="Sales Chat">💬</button>
-  <div id="sales-chat-panel">
-    <div class="chat-header">
-      <div style="font-size: 13px; font-weight: 800; color: #fff;">FlexiTap Assistant</div>
-      <button onclick="toggleSalesChat()" style="background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer;">&times;</button>
-    </div>
-    <div class="chat-body"><div class="chat-msg">👋 Welcome! Inquiring about our system features or hardware compatibility?</div></div>
-  </div>
+  <!-- Elevated Sales & Inquiries Live Chat is dynamically managed by sales-chat.js -->
 
   <div class="modal-overlay" id="login-modal">
     <div class="modal-card">
@@ -1074,7 +1066,8 @@
     }
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    function toggleSalesChat() { const p = document.getElementById('sales-chat-panel'); p.style.display = (p.style.display === 'flex' ? 'none' : 'flex'); }
   </script>
+  <!-- Unified Elevated Sales & Inquiries Live Chat -->
+  <script src="sales-chat.js"></script>
 </body>
 </html>

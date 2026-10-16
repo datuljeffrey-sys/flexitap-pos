@@ -162,19 +162,24 @@
     }
 
     /* Support Desk */
-    .support-desk-grid { display: grid; grid-template-columns: 320px 1fr; gap: 20px; height: 580px; }
-    .session-list { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; overflow-y: auto; display: flex; flex-direction: column; }
-    .session-item { padding: 14px 16px; border-bottom: 1px solid var(--card-border); cursor: pointer; transition: 0.2s; }
+    .support-desk-grid { display: grid; grid-template-columns: clamp(320px, 30vw, 440px) 1fr; gap: 20px; height: calc(100vh - 240px); min-height: 600px; }
+    .session-list { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; }
+    .session-item { padding: 12px 14px; border-bottom: 1px solid var(--card-border); cursor: pointer; transition: 0.2s; position: relative; }
     .session-item:hover, .session-item.active { background: rgba(59, 130, 246, 0.12); border-left: 4px solid var(--primary); }
-    .session-store-title { font-weight: 800; font-size: 0.9rem; color: #fff; }
-    .session-merchant-email { font-size: 0.75rem; color: var(--text-muted); }
+    .session-store-title { font-weight: 800; font-size: 0.88rem; color: #fff; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .session-merchant-email { font-size: 0.73rem; color: var(--text-muted); margin-top: 3px; }
+    .session-pill-lead { font-size: 0.65rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); text-transform: uppercase; }
+    .session-pill-store { font-size: 0.65rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); text-transform: uppercase; }
 
     .chat-console { background: #030712; border: 1px solid var(--card-border); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; }
     .chat-console-header { background: rgba(255, 255, 255, 0.03); padding: 14px 20px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
     .chat-console-body { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+    .chat-console-body::-webkit-scrollbar, .session-list::-webkit-scrollbar, #support-sessions-list::-webkit-scrollbar { width: 6px; }
+    .chat-console-body::-webkit-scrollbar-thumb, .session-list::-webkit-scrollbar-thumb, #support-sessions-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
     
     .agent-bubble { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.4; word-break: break-word; }
-    .agent-bubble.merchant { align-self: flex-start; background: rgba(255,255,255,0.08); color: #fff; border-bottom-left-radius: 2px; }
+    .agent-bubble.merchant, .agent-bubble.lead { align-self: flex-start; background: rgba(255,255,255,0.08); color: #fff; border-bottom-left-radius: 2px; }
+    .agent-bubble.lead { background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.3); }
     .agent-bubble.agent { align-self: flex-end; background: var(--primary); color: #fff; border-bottom-right-radius: 2px; }
     .bubble-ts { font-size: 10px; opacity: 0.6; margin-top: 4px; display: block; }
 
@@ -711,6 +716,9 @@
                 <button class="action-btn" onclick="toggleCrmViewMode()" id="crm-btn-toggle-view" style="padding: 9px 14px; font-weight: 700;">
                   <span>📋 All Accounts Directory</span>
                 </button>
+                <button class="action-btn" onclick="toggleCrmLeadsMode()" id="crm-btn-toggle-leads" style="padding: 9px 14px; font-weight: 700; background: rgba(168, 85, 247, 0.15); color: #c084fc; border-color: rgba(168, 85, 247, 0.4);">
+                  <span>💬 Sales Leads (<span id="crm-leads-badge-count">0</span>)</span>
+                </button>
                 <button class="action-btn" onclick="openAddMerchantModal()" style="padding: 9px 14px; background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700;">
                   <span>+ New Merchant</span>
                 </button>
@@ -1066,6 +1074,40 @@
             </div>
           </div>
 
+          <!-- SALES INQUIRIES & LEADS PIPELINE (Shown when toggled) -->
+          <div id="crm-leads-container" style="display: none;">
+            <div class="panel">
+              <div class="panel-header" style="flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <div class="panel-title" style="display: flex; align-items: center; gap: 8px;">
+                    <span>💬 Incoming Sales Inquiries &amp; Leads Pipeline</span>
+                    <span id="crm-leads-count-pill" class="crm-pill-badge" style="background: rgba(168, 85, 247, 0.3); color: #c084fc;">0 Leads</span>
+                  </div>
+                  <p style="font-size: 0.78rem; color: var(--text-muted);">Real-time prospective customer inquiries captured from marketing website chat widget.</p>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                  <input type="text" id="leads-search" onkeyup="filterLeadsTable()" placeholder="Search name, email, venue, or note..." style="padding: 8px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 280px;">
+                  <button class="action-btn" onclick="fetchLeadsData()" style="padding: 8px 12px; font-size: 0.8rem;">🔄 Refresh</button>
+                </div>
+              </div>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date Received</th>
+                    <th>Prospect &amp; Business Name</th>
+                    <th>Contact Details</th>
+                    <th>Inquiry Message / Qualification Spec</th>
+                    <th>Lead Status</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="crm-leads-tbody">
+                  <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">Loading sales inquiries...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
 
         <!-- ================= 2. UPDATE VIEW (SUPABASE STORAGE LISTENER) ================= -->
@@ -1119,26 +1161,54 @@
           </div>
         </div>
 
-        <!-- ================= 3. LIVE SUPPORT DESK ================= -->
+        <!-- ================= 3. LIVE SUPPORT DESK (OMNICHANNEL SALES & SUPPORT) ================= -->
         <div id="view-support" class="tab-view">
           <div class="support-desk-grid">
-            <div class="session-list" id="support-sessions-list">
-              <div style="padding: 16px; font-size: 12px; color: var(--text-muted); text-align: center;">Loading active merchant sessions...</div>
+            <div class="session-list">
+              <!-- Filter header -->
+              <div style="padding: 12px 14px; border-bottom: 1px solid var(--card-border); background: rgba(255, 255, 255, 0.02); display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Live Omnichannel Queues</span>
+                  <button onclick="loadSupportDeskSessions()" class="action-btn" style="padding: 2px 8px; font-size: 0.7rem;" title="Refresh queue">🔄</button>
+                </div>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  <button class="crm-pill-btn active" id="desk-filter-all" onclick="setDeskSessionFilter('all')" style="padding: 4px 8px; font-size: 0.72rem;">
+                    <span>📋 All</span> <span id="desk-cnt-all" class="crm-pill-badge">0</span>
+                  </button>
+                  <button class="crm-pill-btn" id="desk-filter-leads" onclick="setDeskSessionFilter('leads')" style="padding: 4px 8px; font-size: 0.72rem;">
+                    <span>💬 Sales Leads</span> <span id="desk-cnt-leads" class="crm-pill-badge" style="background: rgba(168, 85, 247, 0.3); color: #c084fc;">0</span>
+                  </button>
+                  <button class="crm-pill-btn" id="desk-filter-merchants" onclick="setDeskSessionFilter('merchants')" style="padding: 4px 8px; font-size: 0.72rem;">
+                    <span>🛠️ Stores</span> <span id="desk-cnt-merchants" class="crm-pill-badge">0</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Sessions list container -->
+              <div id="support-sessions-list" style="flex: 1; overflow-y: auto;">
+                <div style="padding: 16px; font-size: 12px; color: var(--text-muted); text-align: center;">Loading active sessions...</div>
+              </div>
             </div>
 
             <div class="chat-console">
               <div class="chat-console-header">
                 <div>
-                  <div style="font-weight: 800; color: #fff; font-size: 14px;" id="desk-selected-store">Select a merchant chat</div>
-                  <div style="font-size: 11px; color: var(--text-muted);" id="desk-selected-email">—</div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="font-weight: 800; color: #fff; font-size: 14px;" id="desk-selected-store">Select a chat session</div>
+                    <span id="desk-selected-badge" style="display: none;"></span>
+                  </div>
+                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" id="desk-selected-email">—</div>
                 </div>
-                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                  <button class="action-btn" id="desk-btn-convert" onclick="handleConvertSelectedLeadToMerchant()" style="display: none; background: rgba(168, 85, 247, 0.15); color: #c084fc; border-color: rgba(168, 85, 247, 0.4); font-weight: 700; font-size: 0.78rem;">
+                    ➕ Convert to Merchant
+                  </button>
                   <button class="action-btn" id="desk-btn-clear" onclick="clearCurrentChatHistory()" style="background: rgba(239, 68, 68, 0.12); color: #f87171; border-color: rgba(239, 68, 68, 0.35); font-size: 0.78rem;">🗑️ Clear Chat</button>
                   <button class="action-btn" id="desk-btn-resolve" onclick="markSessionResolvedAndClear()" style="background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700; font-size: 0.78rem;">✓ Mark Resolved &amp; Clear</button>
                 </div>
               </div>
               <div class="chat-console-body" id="desk-chat-body">
-                <div style="text-align: center; color: var(--text-muted); font-size: 13px; margin: auto;">Select an active merchant on the left to start live support.</div>
+                <div style="text-align: center; color: var(--text-muted); font-size: 13px; margin: auto;">Select an active sales lead or merchant on the left to start live support.</div>
               </div>
               <form class="chat-console-input-bar" onsubmit="sendAgentResponse(event)">
                 <input type="text" id="desk-input" placeholder="Type support reply..." autocomplete="off" disabled />
@@ -3093,6 +3163,7 @@
       if (currentCrmAccountId) {
         renderSelectedCrmAccount();
       }
+      fetchLeadsData();
     }
 
     function populateCrmAccountDropdown() {
@@ -3128,6 +3199,8 @@
       });
     }
 
+    let cachedLeads = [];
+
     function toggleCrmViewMode(forceMode) {
       if (forceMode) crmViewMode = forceMode;
       else crmViewMode = (crmViewMode === 'hub') ? 'directory' : 'hub';
@@ -3135,7 +3208,12 @@
       const hub = document.getElementById('crm-hub-container');
       const strip = document.getElementById('crm-selected-strip');
       const dir = document.getElementById('crm-directory-container');
+      const leadsBox = document.getElementById('crm-leads-container');
       const toggleBtn = document.getElementById('crm-btn-toggle-view');
+      const toggleLeadsBtn = document.getElementById('crm-btn-toggle-leads');
+
+      if (leadsBox) leadsBox.style.display = 'none';
+      if (toggleLeadsBtn) toggleLeadsBtn.classList.remove('active');
 
       if (crmViewMode === 'directory') {
         if (hub) hub.style.display = 'none';
@@ -3148,6 +3226,161 @@
         if (dir) dir.style.display = 'none';
         if (toggleBtn) toggleBtn.innerHTML = '<span>📋 All Accounts Directory</span>';
       }
+    }
+
+    function toggleCrmLeadsMode() {
+      const hub = document.getElementById('crm-hub-container');
+      const strip = document.getElementById('crm-selected-strip');
+      const dir = document.getElementById('crm-directory-container');
+      const leadsBox = document.getElementById('crm-leads-container');
+      const toggleBtn = document.getElementById('crm-btn-toggle-view');
+      const toggleLeadsBtn = document.getElementById('crm-btn-toggle-leads');
+
+      const isShowing = leadsBox && leadsBox.style.display === 'block';
+
+      if (!isShowing) {
+        if (hub) hub.style.display = 'none';
+        if (strip) strip.style.display = 'none';
+        if (dir) dir.style.display = 'none';
+        if (leadsBox) leadsBox.style.display = 'block';
+        if (toggleLeadsBtn) toggleLeadsBtn.classList.add('active');
+        if (toggleBtn) toggleBtn.innerHTML = '<span>🏢 Return to CRM 5-Tab Hub</span>';
+        fetchLeadsData();
+      } else {
+        toggleCrmViewMode('hub');
+      }
+    }
+
+    async function fetchLeadsData() {
+      const tbody = document.getElementById('crm-leads-tbody');
+      if (!tbody) return;
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('leads')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        cachedLeads = data || [];
+
+        const countBadge = document.getElementById('crm-leads-badge-count');
+        const countPill = document.getElementById('crm-leads-count-pill');
+        if (countBadge) countBadge.innerText = cachedLeads.length;
+        if (countPill) countPill.innerText = `${cachedLeads.length} Leads`;
+
+        renderLeadsTable(cachedLeads);
+      } catch (err) {
+        console.warn('Error fetching leads:', err);
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--danger); padding: 24px;">Failed to load leads from Supabase.</td></tr>';
+      }
+    }
+
+    function renderLeadsTable(leads) {
+      const tbody = document.getElementById('crm-leads-tbody');
+      if (!tbody) return;
+
+      if (!leads || leads.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">No website inquiries or leads logged yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = leads.map(function(lead) {
+        const dateStr = lead.created_at ? new Date(lead.created_at).toLocaleString() : 'Recent';
+        const name = escapeHtml(lead.business_name || 'Prospect');
+        const email = escapeHtml(lead.contact_email || '—');
+        const phone = escapeHtml(lead.contact_phone || '—');
+        const msg = escapeHtml(lead.message || '—');
+        const status = (lead.status || 'new').toLowerCase();
+
+        let statusBadge = '<span class="session-pill-lead">🟣 New Lead</span>';
+        if (status === 'contacted') {
+          statusBadge = '<span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); font-size: 10px; padding: 2px 7px; border-radius: 9999px;">🔵 Contacted</span>';
+        } else if (status === 'converted') {
+          statusBadge = '<span class="session-pill-store">🟢 Converted</span>';
+        }
+
+        const safeName = (lead.business_name || '').replace(/'/g, "\\'");
+        const safeEmail = (lead.contact_email || '').replace(/'/g, "\\'");
+
+        return `
+          <tr>
+            <td style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">${dateStr}</td>
+            <td style="font-weight: 700; color: #fff;">${name}</td>
+            <td style="font-size: 0.8rem;">
+              <div><a href="mailto:${email}" style="color: #60a5fa; text-decoration: none;">${email}</a></div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">📞 ${phone}</div>
+            </td>
+            <td style="font-size: 0.8rem; max-width: 300px; line-height: 1.4; color: #cbd5e1;">${msg}</td>
+            <td>
+              <select onchange="updateLeadStatus('${lead.id}', this.value)" style="padding: 3px 8px; font-size: 0.72rem; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 6px; outline: none; cursor: pointer;">
+                <option value="new" ${status === 'new' ? 'selected' : ''}>🟣 New</option>
+                <option value="contacted" ${status === 'contacted' ? 'selected' : ''}>🔵 Contacted</option>
+                <option value="converted" ${status === 'converted' ? 'selected' : ''}>🟢 Converted</option>
+              </select>
+            </td>
+            <td style="text-align: right; white-space: nowrap;">
+              <button class="action-btn" onclick="convertLeadToMerchant('${safeName}', '${safeEmail}')" style="padding: 4px 8px; font-size: 0.72rem; background: rgba(168, 85, 247, 0.15); color: #c084fc; border-color: rgba(168, 85, 247, 0.4); margin-right: 4px;" title="Convert lead into a registered Merchant profile">
+                ➕ Convert
+              </button>
+              <button class="action-btn" onclick="openLiveChatForLead('${safeEmail}', '${safeName}')" style="padding: 4px 8px; font-size: 0.72rem; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(59, 130, 246, 0.4);" title="Open Live Support Chat for this prospect">
+                💬 Chat
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterLeadsTable() {
+      const q = (document.getElementById('leads-search').value || '').toLowerCase();
+      if (!q) {
+        renderLeadsTable(cachedLeads);
+        return;
+      }
+      const filtered = cachedLeads.filter(function(l) {
+        return (l.business_name || '').toLowerCase().includes(q) ||
+               (l.contact_email || '').toLowerCase().includes(q) ||
+               (l.contact_phone || '').toLowerCase().includes(q) ||
+               (l.message || '').toLowerCase().includes(q);
+      });
+      renderLeadsTable(filtered);
+    }
+
+    async function updateLeadStatus(leadId, newStatus) {
+      try {
+        await supabaseClient.from('leads').update({ status: newStatus }).eq('id', leadId);
+        const l = cachedLeads.find(function(item) { return item.id === leadId; });
+        if (l) l.status = newStatus;
+      } catch (err) {
+        console.warn('Error updating lead status:', err);
+      }
+    }
+
+    function convertLeadToMerchant(name, email, venue) {
+      openAddMerchantModal();
+      if (name) {
+        const cleanName = name.replace(/^Lead:\s*/i, '');
+        const storeEl = document.getElementById('crm-new-store-name');
+        const ownerEl = document.getElementById('crm-new-owner-name');
+        if (storeEl) storeEl.value = venue || cleanName;
+        if (ownerEl) ownerEl.value = cleanName;
+      }
+      if (email && !email.includes('@flexitap.guest')) {
+        const emailEl = document.getElementById('crm-new-email');
+        if (emailEl) emailEl.value = email;
+      }
+    }
+
+    function openLiveChatForLead(email, name) {
+      switchNav('support', document.querySelector('.nav-btn[onclick*="support"]'));
+      setDeskSessionFilter('leads');
+      setTimeout(() => {
+        const found = cachedDeskSessions.find(s => s.merchant_email === email || (s.store_name && s.store_name.includes(name)));
+        if (found) {
+          selectSession(found.id, found.store_name, found.merchant_email);
+        }
+      }, 300);
     }
 
     function renderSelectedCrmAccount() {
@@ -4194,7 +4427,49 @@
       if (storagePollInterval) clearInterval(storagePollInterval);
     }
 
-    // --- SUPPORT DESK REAL-TIME AGENT LOGIC ---
+    // --- SUPPORT DESK REAL-TIME AGENT LOGIC (OMNICHANNEL SALES & SUPPORT) ---
+    let currentDeskSessionFilter = 'all';
+    let cachedDeskSessions = [];
+
+    function setDeskSessionFilter(filter) {
+      currentDeskSessionFilter = filter;
+      const allBtn = document.getElementById('desk-filter-all');
+      const leadsBtn = document.getElementById('desk-filter-leads');
+      const merchBtn = document.getElementById('desk-filter-merchants');
+      if (allBtn) allBtn.classList.toggle('active', filter === 'all');
+      if (leadsBtn) leadsBtn.classList.toggle('active', filter === 'leads');
+      if (merchBtn) merchBtn.classList.toggle('active', filter === 'merchants');
+
+      renderFilteredDeskSessions();
+    }
+
+    function isLeadSession(s) {
+      const name = (s.store_name || '').toLowerCase();
+      const email = (s.merchant_email || '').toLowerCase();
+      return name.startsWith('lead:') || name.includes('lead') || email.includes('@flexitap.guest') || email.includes('visitor-');
+    }
+
+    // Audio chime for Dev Portal incoming message
+    function playDevDeskChime() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(659.25, now);
+        osc.frequency.setValueAtTime(880.00, now + 0.1);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      } catch (e) {}
+    }
+
     async function loadSupportDeskSessions() {
       const res = await supabaseClient
         .from('support_sessions')
@@ -4202,20 +4477,38 @@
         .eq('status', 'open')
         .order('updated_at', { ascending: false });
 
-      const container = document.getElementById('support-sessions-list');
-      if (!res.data || res.data.length === 0) {
-        container.innerHTML = '<div style="padding: 16px; font-size: 13px; color: var(--text-muted); text-align: center;">No active merchant sessions.</div>';
-        return;
+      cachedDeskSessions = res.data || [];
+
+      // Compute counts
+      const leadsCount = cachedDeskSessions.filter(isLeadSession).length;
+      const merchCount = cachedDeskSessions.length - leadsCount;
+
+      const cntAll = document.getElementById('desk-cnt-all');
+      const cntLeads = document.getElementById('desk-cnt-leads');
+      const cntMerch = document.getElementById('desk-cnt-merchants');
+      if (cntAll) cntAll.innerText = cachedDeskSessions.length;
+      if (cntLeads) cntLeads.innerText = leadsCount;
+      if (cntMerch) cntMerch.innerText = merchCount;
+
+      // Update sidebar nav badge
+      const badge = document.getElementById('open-chats-badge');
+      if (badge) {
+        if (leadsCount > 0) {
+          badge.innerText = `${leadsCount} Lead${leadsCount > 1 ? 's' : ''}`;
+          badge.style.background = 'rgba(168, 85, 247, 0.25)';
+          badge.style.color = '#c084fc';
+        } else if (cachedDeskSessions.length > 0) {
+          badge.innerText = `${cachedDeskSessions.length} Live`;
+          badge.style.background = 'rgba(16, 185, 129, 0.2)';
+          badge.style.color = '#34d399';
+        } else {
+          badge.innerText = 'Live';
+          badge.style.background = '';
+          badge.style.color = '';
+        }
       }
 
-      container.innerHTML = res.data.map(function(s) {
-        const isSelected = selectedSession && selectedSession.id === s.id ? 'active' : '';
-        const safeStore = (s.store_name || 'Store').replace(/'/g, "\\'");
-        return '<div class="session-item ' + isSelected + '" onclick="selectSession(\'' + s.id + '\', \'' + safeStore + '\', \'' + s.merchant_email + '\')">' +
-          '<div class="session-store-title">' + s.store_name + '</div>' +
-          '<div class="session-merchant-email">' + s.merchant_email + '</div>' +
-        '</div>';
-      }).join('');
+      renderFilteredDeskSessions();
 
       if (!sessionsChannelSubscribed) {
         sessionsChannelSubscribed = true;
@@ -4225,14 +4518,86 @@
       }
     }
 
-    async function selectSession(sessionId, storeName, merchantEmail) {
-      selectedSession = { id: sessionId, storeName: storeName, merchantEmail: merchantEmail };
-      document.getElementById('desk-selected-store').innerText = storeName;
-      document.getElementById('desk-selected-email').innerText = merchantEmail;
+    function renderFilteredDeskSessions() {
+      const container = document.getElementById('support-sessions-list');
+      if (!container) return;
+
+      let list = cachedDeskSessions;
+      if (currentDeskSessionFilter === 'leads') {
+        list = cachedDeskSessions.filter(isLeadSession);
+      } else if (currentDeskSessionFilter === 'merchants') {
+        list = cachedDeskSessions.filter(s => !isLeadSession(s));
+      }
+
+      if (list.length === 0) {
+        const emptyMsg = currentDeskSessionFilter === 'leads' 
+          ? 'No active sales lead inquiries right now.' 
+          : (currentDeskSessionFilter === 'merchants' ? 'No active merchant support sessions.' : 'No active sessions.');
+        container.innerHTML = `<div style="padding: 24px 16px; font-size: 13px; color: var(--text-muted); text-align: center;">${emptyMsg}</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(function(s) {
+        const isSelected = selectedSession && selectedSession.id === s.id ? 'active' : '';
+        const isLead = isLeadSession(s);
+        const safeStore = (s.store_name || 'Store').replace(/'/g, "\\'");
+        const badgeHtml = isLead 
+          ? '<span class="session-pill-lead">🟣 Lead</span>'
+          : '<span class="session-pill-store">🟢 Store</span>';
+
+        const timeStr = s.updated_at ? new Date(s.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+
+        return `
+          <div class="session-item ${isSelected}" onclick="selectSession('${s.id}', '${safeStore}', '${s.merchant_email}', ${isLead})">
+            <div class="session-store-title">
+              <span>${escapeHtml(s.store_name)}</span>
+              ${badgeHtml}
+            </div>
+            <div class="session-merchant-email" style="display: flex; justify-content: space-between; align-items: center;">
+              <span>${escapeHtml(s.merchant_email)}</span>
+              <span style="font-size: 0.68rem; opacity: 0.7;">${timeStr}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function selectSession(sessionId, storeName, merchantEmail, isLeadParam) {
+      const isLead = (typeof isLeadParam === 'boolean') 
+        ? isLeadParam 
+        : isLeadSession({ store_name: storeName, merchant_email: merchantEmail });
+
+      selectedSession = { id: sessionId, storeName: storeName, merchantEmail: merchantEmail, isLead: isLead };
+
+      const storeEl = document.getElementById('desk-selected-store');
+      const emailEl = document.getElementById('desk-selected-email');
+      const badgeEl = document.getElementById('desk-selected-badge');
+      const convertBtn = document.getElementById('desk-btn-convert');
+
+      if (storeEl) storeEl.innerText = storeName;
+      if (emailEl) emailEl.innerText = merchantEmail;
+
+      if (badgeEl) {
+        badgeEl.style.display = 'inline-block';
+        badgeEl.innerHTML = isLead 
+          ? '<span class="session-pill-lead">🟣 Prospective Lead</span>'
+          : '<span class="session-pill-store">🟢 Registered Merchant</span>';
+      }
+
+      if (convertBtn) {
+        convertBtn.style.display = isLead ? 'inline-flex' : 'none';
+      }
+
       document.getElementById('desk-input').disabled = false;
       document.getElementById('desk-send-btn').disabled = false;
 
       loadDeskMessages(sessionId);
+      renderFilteredDeskSessions();
+    }
+
+    function handleConvertSelectedLeadToMerchant() {
+      if (!selectedSession) return;
+      convertLeadToMerchant(selectedSession.storeName, selectedSession.merchantEmail);
     }
 
     async function loadDeskMessages(sessionId) {
@@ -4257,8 +4622,9 @@
       currentChatChannel = supabaseClient.channel('desk-' + sessionId).on('postgres_changes', {
         event: 'INSERT', schema: 'public', table: 'support_messages', filter: 'session_id=eq.' + sessionId
       }, function(payload) {
-        if (payload.new && payload.new.sender_role === 'merchant') {
-          renderDeskBubble('merchant', payload.new.message, payload.new.created_at);
+        if (payload.new && payload.new.sender_role !== 'agent') {
+          renderDeskBubble(payload.new.sender_role || 'merchant', payload.new.message, payload.new.created_at);
+          playDevDeskChime();
         }
       }).subscribe();
     }
@@ -4268,7 +4634,12 @@
       const timeStr = timestamp ? new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
       const div = document.createElement('div');
       div.className = 'agent-bubble ' + role;
-      div.innerHTML = message + ' <span class="bubble-ts">' + (role === 'agent' ? 'You' : 'Merchant') + ' • ' + timeStr + '</span>';
+
+      let senderLabel = 'You (Staff)';
+      if (role === 'lead') senderLabel = 'Sales Lead';
+      else if (role === 'merchant') senderLabel = 'Merchant';
+
+      div.innerHTML = escapeHtml(message) + ' <span class="bubble-ts">' + senderLabel + ' • ' + timeStr + '</span>';
       body.appendChild(div);
       body.scrollTop = body.scrollHeight;
     }
@@ -4288,6 +4659,10 @@
         sender_role: 'agent',
         message: text
       }]);
+
+      await supabaseClient.from('support_sessions').update({
+        updated_at: new Date().toISOString()
+      }).eq('id', selectedSession.id);
     }
 
     function clearChatConsoleUI(msg = 'Chat session history has been cleared.') {

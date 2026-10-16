@@ -523,11 +523,6 @@
       if (modal) modal.style.display = 'none';
     }
 
-    // --- CHAT WIDGET TOGGLE ---
-    function toggleSalesChat() {
-      const p = document.getElementById('sales-chat-panel');
-      if (p) p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
-    }
 
     // --- AUTH LOGIN SUBMIT ---
     let pendingSubpageAuthEmail = '';
@@ -1160,20 +1155,7 @@
     </div>
   </footer>
 
-  <!-- FLOATING CHAT WIDGET -->
-  <button id="chat-btn" onclick="toggleSalesChat()" title="FlexiTap Support Chat">💬</button>
-  <div id="sales-chat-panel">
-    <div class="chat-header">
-      <div style="font-size: 13px; font-weight: 800; color: #fff;">FlexiTap Technical Assistant</div>
-      <button onclick="toggleSalesChat()" style="background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer;">&times;</button>
-    </div>
-    <div class="chat-body">
-      <div class="chat-msg">👋 Welcome to FlexiTap Support! Need assistance installing our Windows, Android, or iOS app, or pairing your hardware?</div>
-      <div class="chat-msg" style="background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3);">
-        💡 You can also submit an expedited support ticket using the form on this page to alert our engineering operations desk.
-      </div>
-    </div>
-  </div>
+  <!-- Elevated Sales & Inquiries Live Chat is dynamically managed by sales-chat.js -->
 
   <!-- MERCHANT LOGIN MODAL -->
   <div class="modal-overlay" id="login-modal">
@@ -1299,5 +1281,7 @@
     </div>
   </div>
 
+  <!-- Unified Elevated Sales & Inquiries Live Chat -->
+  <script src="sales-chat.js"></script>
 </body>
 </html>
