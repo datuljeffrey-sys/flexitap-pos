@@ -259,7 +259,7 @@
         <a href="about.html" class="nav-link" onclick="toggleMobileMenu()">About Us & FAQ</a>
         <a href="support.html" class="nav-link" onclick="toggleMobileMenu()">Support & Download</a>
         <a href="#" class="nav-link" onclick="openCalendarBooking(event)">Schedule Demo ↗</a>
-        <a href="dev_portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
+        <a href="dev-portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
       </div>
 
       <div style="display: flex; align-items: center; gap: 10px;">
@@ -545,6 +545,18 @@
       return localDate.toISOString();
     }
 
+    const GOOGLE_TICKET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzJu1CEi1qhT-k7Qc_tisMN7vXbbCuGymgiMMk_K6PGIMnrUHkIrYEuQFMCviZfaYvoQw/exec';
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     document.getElementById('demo-booking-form').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -571,11 +583,12 @@
         return;
       }
 
-      btn.innerText = 'Submitting...';
+      btn.innerText = 'Confirming Demo...';
       btn.disabled = true;
       message.innerHTML = '';
 
       try {
+        // 1. Insert into demo_bookings table
         const { error } = await supabaseClient
           .from('demo_bookings')
           .insert([{
@@ -584,7 +597,7 @@
             contact_phone: phone || null,
             scheduled_at: scheduledAt,
             notes: notes || null,
-            status: 'pending'
+            status: 'confirmed'
           }]);
 
         if (error) {
@@ -594,14 +607,127 @@
           return;
         }
 
+        // 2. Sync to leads table so it appears in CRM sales pipeline
+        try {
+          await supabaseClient.from('leads').insert([{
+            business_name: businessName,
+            contact_email: email,
+            contact_phone: phone || null,
+            status: 'demo_scheduled'
+          }]);
+        } catch (leadSyncErr) {
+          console.warn('Leads table sync note:', leadSyncErr);
+        }
+
+        // 3. Format date & time for email notifications
+        const schedObj = new Date(scheduledAt);
+        const formattedDateStr = schedObj.toLocaleDateString('en-US', {
+          weekday: 'long',
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric'
+        });
+        const formattedTimeStr = schedObj.toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        });
+
+        // 4. Send Confirmation Email to Client
+        const clientHtml = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+            <div style="background: #0f172a; padding: 26px 24px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">FlexiTap POS • 1-on-1 Live Demo</h1>
+              <p style="color: #94a3b8; margin: 4px 0 0; font-size: 13px;">Official Operations &amp; Engineering Walkthrough</p>
+            </div>
+            <div style="padding: 28px 24px;">
+              <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; padding: 16px 18px; margin-bottom: 22px;">
+                <div style="color: #065f46; font-size: 15px; font-weight: 800;">🗓️ Demo Session Confirmed</div>
+                <div style="color: #047857; font-size: 13.5px; margin-top: 3px;">We have reserved your dedicated walkthrough session for <strong>${escapeHtml(businessName)}</strong>.</div>
+              </div>
+              <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 22px;">
+                <tr><td style="padding: 7px 0; color: #64748b; width: 140px;">Venue / Business:</td><td style="padding: 7px 0; color: #0f172a; font-weight: 700;">${escapeHtml(businessName)}</td></tr>
+                <tr><td style="padding: 7px 0; color: #64748b;">Scheduled Date:</td><td style="padding: 7px 0; color: #0f172a; font-weight: 700;">${formattedDateStr}</td></tr>
+                <tr><td style="padding: 7px 0; color: #64748b;">Scheduled Time:</td><td style="padding: 7px 0; color: #2563eb; font-weight: 800; font-size: 14px;">${formattedTimeStr}</td></tr>
+                <tr><td style="padding: 7px 0; color: #64748b;">Meeting Room:</td><td style="padding: 7px 0;"><a href="https://meet.google.com/ft-demo-session" style="color: #16a34a; font-weight: 800; text-decoration: underline;">https://meet.google.com/ft-demo-session</a></td></tr>
+              </table>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                <div style="font-size: 12px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Your Walkthrough Focus:</div>
+                <div style="color: #1e293b; font-size: 13.5px; line-height: 1.6;">${escapeHtml(notes) || 'Full POS terminal fleet setup, live order synchronization, offline cash drawer reconciliation, and KDS routing.'}</div>
+              </div>
+              <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px;">
+                <strong>Need to reschedule or add team members?</strong><br>
+                Simply reply directly to this email or reach us anytime at <a href="mailto:info@flexitapapp.com" style="color: #2563eb;">info@flexitapapp.com</a>.
+              </p>
+            </div>
+            <div style="background: #f1f5f9; padding: 16px 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
+              &copy; 2026 FlexiTap POS &bull; <a href="https://www.flexitapapp.com" style="color: #64748b; text-decoration: none;">www.flexitapapp.com</a> &bull; Dedicated Solutions Engineering
+            </div>
+          </div>
+        `;
+
+        fetch(GOOGLE_TICKET_WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            notification_type: 'demo_booking_client_confirmation',
+            recipient_email: email,
+            subject: `[Confirmed] Your 1-on-1 FlexiTap POS Demo — ${businessName}`,
+            store_name: businessName,
+            details: notes || '1-on-1 Live POS Demo Walkthrough',
+            html: clientHtml
+          })
+        }).catch(err => console.warn('Client email webhook dispatch note:', err));
+
+        // 5. Send Alert Email to Us / FlexiTap Team
+        const teamHtml = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+            <div style="background: #1e1b4b; padding: 22px 24px; text-align: center;">
+              <h2 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 800;">🚀 New 1-on-1 Demo Booked</h2>
+              <p style="color: #c7d2fe; margin: 4px 0 0; font-size: 12.5px;">FlexiTap Inbound Sales &amp; Solutions Pipeline</p>
+            </div>
+            <div style="padding: 24px;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 18px;">
+                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Prospect Business:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 700;">${escapeHtml(businessName)}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Client Email:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 600;"><a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Client Phone:</td><td style="padding: 6px 0; color: #0f172a;">${escapeHtml(phone) || 'Not provided'}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Date &amp; Time:</td><td style="padding: 6px 0; color: #059669; font-weight: 800;">${formattedDateStr} @ ${formattedTimeStr}</td></tr>
+              </table>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; margin-bottom: 20px;">
+                <div style="font-size: 11.5px; font-weight: 700; color: #475569; text-transform: uppercase;">Hardware &amp; Requirements Note:</div>
+                <div style="color: #0f172a; font-size: 13px; margin-top: 4px; white-space: pre-wrap;">${escapeHtml(notes) || 'Standard venue walkthrough.'}</div>
+              </div>
+              <div style="text-align: center; margin-top: 14px;">
+                <a href="https://meet.google.com/ft-demo-session" style="display: inline-block; background: #2563eb; color: #ffffff; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none;">Join Google Meet Room</a>
+              </div>
+            </div>
+          </div>
+        `;
+
+        fetch(GOOGLE_TICKET_WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            notification_type: 'demo_booking_team_alert',
+            recipient_email: 'info@flexitapapp.com',
+            subject: `🚀 [New 1-on-1 Demo Booked] ${businessName} — ${formattedDateStr} @ ${formattedTimeStr}`,
+            store_name: businessName,
+            details: notes || 'New demo booking received from website.',
+            html: teamHtml
+          })
+        }).catch(err => console.warn('Team email webhook dispatch note:', err));
+
+        // 6. UI Success Feedback
         message.className = 'booking-success';
-        message.innerHTML = '✅ Demo requested! Our team will confirm your session shortly.';
+        message.innerHTML = '✅ <strong>Demo Confirmed!</strong> A confirmation email with calendar and video link has been dispatched to <strong>' + escapeHtml(email) + '</strong>.';
         e.target.reset();
 
         setTimeout(() => {
           closeModal('booking-modal');
           message.innerHTML = '';
-        }, 3500);
+        }, 4000);
 
       } catch (err) {
         console.error('Network Error:', err);

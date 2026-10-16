@@ -198,6 +198,21 @@
       header { padding: 12px 16px; }
       .footer-grid { grid-template-columns: 1fr; gap: 30px; }
     }
+    @media (max-width: 768px) {
+      .workflow-container { padding: 28px 18px; margin: 24px 0 48px; border-radius: 18px; }
+      .workflow-btn { padding: 8px 14px; font-size: 12.5px; }
+      .showcase-content h3 { font-size: 22px; }
+      .hardware-grid { grid-template-columns: 1fr; gap: 16px; }
+    }
+    @media (max-width: 480px) {
+      .container { padding: 0 16px; }
+      .workflow-toggle-wrap { width: 100%; gap: 6px; }
+      .workflow-btn { flex: 1; min-width: 100px; text-align: center; }
+      .screen-overlay-badge { padding: 6px 10px; font-size: 11px; }
+      .modal-card { padding: 24px 18px; }
+      #chat-btn { bottom: 16px; right: 16px; width: 48px; height: 48px; font-size: 20px; }
+      #sales-chat-panel { width: calc(100vw - 28px) !important; right: 14px !important; bottom: 74px !important; }
+    }
   </style>
 
   <script>
@@ -425,7 +440,7 @@
         <a href="pricing.html" class="nav-link" onclick="toggleMobileMenu()">Pricing</a>
         <a href="about.html" class="nav-link" onclick="toggleMobileMenu()">About Us & FAQ</a>
         <a href="support.html" class="nav-link" onclick="toggleMobileMenu()">Support & Download</a>
-        <a href="dev_portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
+        <a href="dev-portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
       </div>
 
       <div style="display: flex; align-items: center; gap: 10px;">

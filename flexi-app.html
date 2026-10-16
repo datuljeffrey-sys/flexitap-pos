@@ -437,6 +437,12 @@
     }
     .hidden { display: none !important; }
 
+    /* Tablet & Medium Screen Optimization */
+    @media (min-width: 641px) and (max-width: 1024px) {
+      .screen { max-width: 540px; }
+      .card { padding: 32px 28px; }
+    }
+
     /* Mobile Responsive */
     @media (max-width: 640px) {
       body { padding: 12px 8px; justify-content: center; }

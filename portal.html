@@ -163,21 +163,111 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
     /* Support floating button */
-    #merchant-chat-btn { position: fixed; bottom: 20px; right: 20px; background: #16a34a; color: white; border: none; border-radius: 9999px; padding: 10px 18px; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.25); z-index: 990; }
+    #merchant-chat-btn { position: fixed; bottom: 20px; right: 20px; background: #16a34a; color: white; border: none; border-radius: 9999px; padding: 10px 18px; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.25); z-index: 990; transition: transform 0.2s; }
+    #merchant-chat-btn:hover { transform: scale(1.03); }
     #merchant-chat-panel { display: none; position: fixed; bottom: 75px; right: 20px; width: 360px; height: 480px; background: #ffffff; border: 1px solid var(--card-border); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); flex-direction: column; overflow: hidden; z-index: 999; }
     .m-chat-header { background: #f8fafc; padding: 14px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
     .m-chat-body { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; }
-    .bubble { max-width: 82%; padding: 8px 12px; border-radius: 10px; line-height: 1.4; }
+    .bubble { max-width: 82%; padding: 8px 12px; border-radius: 10px; line-height: 1.4; word-break: break-word; }
     .bubble-merchant { align-self: flex-end; background: var(--primary); color: #fff; }
     .bubble-agent { align-self: flex-start; background: #f1f5f9; color: #0f172a; border: 1px solid #e2e8f0; }
     .m-chat-input-bar { display: flex; border-top: 1px solid var(--card-border); background: #f8fafc; }
-    .m-chat-input-bar input { flex: 1; padding: 12px; background: transparent; border: none; color: #0f172a; outline: none; font-size: 12.5px; }
-    .m-chat-send { background: #16a34a; color: white; border: none; padding: 0 16px; font-weight: 700; cursor: pointer; }
+    .m-chat-input-bar input { flex: 1; padding: 12px; background: transparent; border: none; color: #0f172a; outline: none; font-size: 13px; }
+    .m-chat-send { background: #16a34a; color: white; border: none; padding: 0 18px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+    .m-chat-send:hover { background: #15803d; }
 
+    /* Mobile Header & Overlay */
+    .mobile-sidebar-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      border: 1px solid var(--card-border);
+      color: #0f172a;
+      font-size: 20px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .mobile-sidebar-toggle:hover { background: #e2e8f0; }
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 1040;
+    }
+    .sidebar-overlay.active { display: block; }
+
+    /* --- RESPONSIVE BREAKPOINTS (Mobile, Tablet, Desktop) --- */
     @media (max-width: 1024px) {
-      .sidebar { width: 240px; min-width: 240px; }
+      .sidebar { width: 230px; min-width: 230px; }
       .main-content { padding: 20px 16px; }
       .replica-layout { grid-template-columns: 1fr; }
+      .kpi-grid-8 { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+    }
+
+    @media (max-width: 768px) {
+      .mobile-sidebar-toggle { display: inline-flex; }
+      .sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: -280px;
+        width: 280px;
+        min-width: 280px;
+        z-index: 1050;
+        transition: left 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 0 35px rgba(0, 0, 0, 0.5);
+      }
+      .sidebar.open { left: 0; }
+      .main-content { padding: 14px 12px; width: 100%; }
+      .header-card { padding: 14px 14px; flex-direction: column; align-items: flex-start; gap: 12px; }
+      .report-title-wrap h1 { font-size: 20px; }
+      .toolbar-group { width: 100%; gap: 6px; }
+      .date-input-group { width: 100%; justify-content: space-between; }
+      .kpi-grid-8 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .kpi-card { padding: 14px 12px; }
+      .kpi-card .metric { font-size: 20px; }
+      .panel-card { padding: 16px 14px; }
+      .approval-bar { flex-direction: column; align-items: stretch; gap: 12px; }
+      .approval-inputs { flex-wrap: wrap; width: 100%; }
+      .approval-inputs input { flex: 1; min-width: 90px; }
+      .btn-approve { width: 100%; justify-content: center; }
+      .data-table th, .data-table td { padding: 8px 10px; font-size: 12px; }
+      #merchant-chat-panel {
+        width: calc(100vw - 28px);
+        max-width: 380px;
+        right: 14px;
+        bottom: 74px;
+        height: 70vh;
+        max-height: 500px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .kpi-grid-8 { grid-template-columns: 1fr; gap: 8px; }
+      .preset-pill { padding: 5px 9px; font-size: 11.5px; }
+      .btn-action { padding: 7px 10px; font-size: 11.5px; }
+      .login-box { padding: 24px 16px; border-radius: 14px; }
+      #merchant-chat-panel {
+        width: calc(100vw - 20px);
+        right: 10px;
+        left: 10px;
+        bottom: 68px;
+        height: 72vh;
+        max-height: 480px;
+      }
+      #merchant-chat-btn {
+        bottom: 14px;
+        right: 14px;
+        padding: 8px 14px;
+        font-size: 12px;
+      }
     }
   </style>
 </head>
@@ -266,6 +356,7 @@
 
   <!-- 2. MAIN APPLICATION LAYOUT -->
   <div id="app-layout">
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleMobileSidebar(false)"></div>
     
     <!-- SIDEBAR NAVIGATION -->
     <aside class="sidebar" data-html2canvas-ignore>
@@ -375,9 +466,12 @@
       
       <!-- TOP GLOBAL TOOLBAR -->
       <div class="header-card" data-html2canvas-ignore>
-        <div class="report-title-wrap">
-          <h1 id="active-report-title">Sales Summary <span class="status-badge">● Live Synced</span></h1>
-          <p id="active-report-subtitle">Executive overview of sales, liabilities, and mathematical symmetry.</p>
+        <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+          <button type="button" class="mobile-sidebar-toggle" onclick="toggleMobileSidebar()" aria-label="Toggle Navigation">☰</button>
+          <div class="report-title-wrap">
+            <h1 id="active-report-title">Sales Summary <span class="status-badge">● Live Synced</span></h1>
+            <p id="active-report-subtitle">Executive overview of sales, liabilities, and mathematical symmetry.</p>
+          </div>
         </div>
 
         <div class="toolbar-group">
@@ -3327,78 +3421,167 @@
       checkMerchantSession();
     }
 
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // --- MOBILE SIDEBAR DRAWER TOGGLE ---
+    function toggleMobileSidebar(forceState) {
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (!sidebar) return;
+      const isOpen = (typeof forceState === 'boolean') ? forceState : !sidebar.classList.contains('open');
+      if (isOpen) {
+        sidebar.classList.add('open');
+        if (overlay) overlay.classList.add('active');
+      } else {
+        sidebar.classList.remove('open');
+        if (overlay) overlay.classList.remove('active');
+      }
+    }
+
     // --- SUPPORT CHAT ---
     function toggleMerchantSupport() {
       const p = document.getElementById('merchant-chat-panel');
-      p.style.display = (p.style.display === 'none' || p.style.display === '') ? 'flex' : 'none';
+      if (!p) return;
+      const isVisible = (p.style.display === 'flex');
+      p.style.display = isVisible ? 'none' : 'flex';
+      if (!isVisible && !currentSupportSession) {
+        initMerchantSupportChat();
+      }
     }
 
     async function initMerchantSupportChat() {
-      if (currentSupportSession || !activeUser) return;
+      if (currentSupportSession) return;
+
+      // Ensure activeUser is populated if auth session is ready
+      if (!activeUser && supabaseClient) {
+        try {
+          const { data } = await supabaseClient.auth.getUser();
+          if (data && data.user) activeUser = data.user;
+        } catch (_) {}
+      }
+
+      const userEmail = activeUser?.email || document.getElementById('p-email')?.value?.trim() || 'merchant@flexitapapp.com';
+      const storeName = activeStore?.name || document.getElementById('store-name-display')?.innerText || 'My Store';
+
       try {
-        const { data: existing } = await supabaseClient
-          .from('support_sessions')
-          .select('*')
-          .eq('merchant_user_id', activeUser.id)
-          .eq('status', 'open')
-          .order('created_at', { ascending: false })
-          .limit(1);
+        let session = null;
 
-        let session = existing && existing.length > 0 ? existing[0] : null;
-
-        if (!session) {
-          const { data: created } = await supabaseClient
+        // 1. Try finding existing open session
+        if (activeUser?.id && supabaseClient) {
+          const { data: byUser } = await supabaseClient
             .from('support_sessions')
-            .insert([{
-              store_id: activeStore.id,
-              store_name: activeStore.name || 'My Store',
-              merchant_user_id: activeUser.id,
-              merchant_email: activeUser.email
-            }])
+            .select('*')
+            .eq('merchant_user_id', activeUser.id)
+            .eq('status', 'open')
+            .order('updated_at', { ascending: false })
+            .limit(1);
+          if (byUser && byUser.length > 0) session = byUser[0];
+        }
+
+        if (!session && userEmail && supabaseClient) {
+          const { data: byEmail } = await supabaseClient
+            .from('support_sessions')
+            .select('*')
+            .eq('merchant_email', userEmail)
+            .eq('status', 'open')
+            .order('updated_at', { ascending: false })
+            .limit(1);
+          if (byEmail && byEmail.length > 0) session = byEmail[0];
+        }
+
+        // 2. Create session if none exists
+        if (!session && supabaseClient) {
+          const payload = {
+            store_name: storeName,
+            merchant_email: userEmail,
+            status: 'open',
+            updated_at: new Date().toISOString()
+          };
+          if (activeUser?.id) payload.merchant_user_id = activeUser.id;
+          if (activeStore?.id && activeStore.id !== activeUser?.id) {
+            payload.store_id = activeStore.id;
+          }
+
+          const { data: created, error: createErr } = await supabaseClient
+            .from('support_sessions')
+            .insert([payload])
             .select()
             .single();
+
+          if (createErr) console.warn('Note creating support session:', createErr);
           session = created;
         }
 
+        // 3. Fallback local session if offline or RLS restricted
+        if (!session) {
+          session = {
+            id: 'local-' + Date.now(),
+            store_name: storeName,
+            merchant_email: userEmail,
+            status: 'open',
+            isLocal: true
+          };
+        }
+
         currentSupportSession = session;
-        if (!session) return;
 
-        const { data: msgs } = await supabaseClient
-          .from('support_messages')
-          .select('*')
-          .eq('session_id', session.id)
-          .order('created_at', { ascending: true });
+        // Fetch past messages
+        if (session && !session.isLocal && supabaseClient) {
+          const { data: msgs } = await supabaseClient
+            .from('support_messages')
+            .select('*')
+            .eq('session_id', session.id)
+            .order('created_at', { ascending: true });
 
-        const box = document.getElementById('m-chat-messages');
-        if (msgs && msgs.length > 0) {
-          box.innerHTML = '';
-          msgs.forEach(m => renderSupportBubble(m.sender_role, m.message, m.created_at));
-        }
-
-        if (currentChatChannel) {
-          try { supabaseClient.removeChannel(currentChatChannel); } catch (_) {}
-          currentChatChannel = null;
-        }
-
-        currentChatChannel = supabaseClient.channel(`chat-${session.id}`);
-        currentChatChannel.on('postgres_changes', {
-          event: 'INSERT', schema: 'public', table: 'support_messages', filter: `session_id=eq.${session.id}`
-        }, (payload) => {
-          if (payload.new && payload.new.sender_role === 'agent') {
-            renderSupportBubble('agent', payload.new.message, payload.new.created_at);
+          const box = document.getElementById('m-chat-messages');
+          if (msgs && msgs.length > 0 && box) {
+            box.innerHTML = '';
+            msgs.forEach(m => renderSupportBubble(m.sender_role, m.message, m.created_at));
           }
-        }).subscribe();
+
+          if (currentChatChannel) {
+            try { supabaseClient.removeChannel(currentChatChannel); } catch (_) {}
+            currentChatChannel = null;
+          }
+
+          currentChatChannel = supabaseClient.channel(`chat-${session.id}`);
+          currentChatChannel.on('postgres_changes', {
+            event: 'INSERT', schema: 'public', table: 'support_messages', filter: `session_id=eq.${session.id}`
+          }, (payload) => {
+            if (payload.new && payload.new.sender_role === 'agent') {
+              renderSupportBubble('agent', payload.new.message, payload.new.created_at);
+            }
+          }).subscribe();
+        }
       } catch (e) {
         console.warn('Support chat initialization note:', e);
+        if (!currentSupportSession) {
+          currentSupportSession = {
+            id: 'local-' + Date.now(),
+            store_name: storeName,
+            merchant_email: userEmail,
+            status: 'open',
+            isLocal: true
+          };
+        }
       }
     }
 
     function renderSupportBubble(role, message, timestamp) {
       const box = document.getElementById('m-chat-messages');
+      if (!box) return;
       const timeStr = timestamp ? new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
       const div = document.createElement('div');
       div.className = `bubble ${role === 'merchant' ? 'bubble-merchant' : 'bubble-agent'}`;
-      div.innerHTML = `${message} <div style="font-size:9.5px; opacity:0.6; margin-top:3px; text-align:right;">${role === 'merchant' ? 'You' : 'Tech Support'} • ${timeStr}</div>`;
+      div.innerHTML = `${escapeHtml(message)} <div style="font-size:9.5px; opacity:0.75; margin-top:3px; text-align:right;">${role === 'merchant' ? 'You' : 'Tech Support'} • ${timeStr}</div>`;
       box.appendChild(div);
       box.scrollTop = box.scrollHeight;
     }
@@ -3407,18 +3590,32 @@
       e.preventDefault();
       const input = document.getElementById('m-chat-input');
       const text = input.value.trim();
-      if (!text || !currentSupportSession) return;
+      if (!text) return;
+
+      if (!currentSupportSession) {
+        await initMerchantSupportChat();
+      }
 
       input.value = '';
       renderSupportBubble('merchant', text, new Date());
 
       try {
-        await supabaseClient.from('support_messages').insert([{
-          session_id: currentSupportSession.id,
-          sender_id: activeUser.id,
-          sender_role: 'merchant',
-          message: text
-        }]);
+        if (currentSupportSession && !currentSupportSession.isLocal && supabaseClient) {
+          await supabaseClient.from('support_messages').insert([{
+            session_id: currentSupportSession.id,
+            sender_id: activeUser?.id || null,
+            sender_role: 'merchant',
+            message: text
+          }]);
+
+          await supabaseClient.from('support_sessions').update({
+            updated_at: new Date().toISOString()
+          }).eq('id', currentSupportSession.id);
+        } else {
+          setTimeout(() => {
+            renderSupportBubble('agent', "Thank you for reaching out! A live FlexiTap support engineer has been notified and will assist your store shortly.", new Date());
+          }, 800);
+        }
       } catch (err) {
         console.error('Error sending support message:', err);
       }

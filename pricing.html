@@ -158,6 +158,21 @@
       .nav-links.mobile-open { display: flex; }
       .mobile-menu-toggle { display: block; }
       header { padding: 12px 16px; }
+      .pricing-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    }
+    @media (max-width: 768px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+      .pricing-grid { grid-template-columns: 1fr; gap: 20px; }
+      .perks-grid { grid-template-columns: 1fr; gap: 16px; }
+      .matrix-wrapper { padding: 20px 14px; margin-top: 36px; border-radius: 16px; }
+      .matrix-table { min-width: 580px; font-size: 12.5px; }
+      .section-title { font-size: 26px; }
+    }
+    @media (max-width: 480px) {
+      .container { padding: 0 16px; }
+      .modal-card { padding: 24px 18px; }
+      #chat-btn { bottom: 16px; right: 16px; width: 48px; height: 48px; font-size: 20px; }
+      #sales-chat-panel { width: calc(100vw - 28px) !important; right: 14px !important; bottom: 74px !important; }
     }
   </style>
 
@@ -587,7 +602,7 @@
         <a href="pricing.html" class="nav-link active" onclick="toggleMobileMenu()">Pricing</a>
         <a href="about.html" class="nav-link" onclick="toggleMobileMenu()">About Us & FAQ</a>
         <a href="support.html" class="nav-link" onclick="toggleMobileMenu()">Support & Download</a>
-        <a href="dev_portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
+        <a href="dev-portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
       </div>
 
       <div style="display: flex; align-items: center; gap: 10px;">
