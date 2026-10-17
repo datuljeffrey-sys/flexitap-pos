@@ -49,13 +49,13 @@
       position: relative; 
     }
 
-    /* HERO VIDEO BACKGROUND - Dynamically Adapting */
+    /* HERO VIDEO BACKGROUND - Directional Contrast for Shift4 Style */
     .hero-video-container { 
       position: absolute; 
       top: 0; 
       left: 0; 
       width: 100%; 
-      height: clamp(560px, 85vh, 920px); 
+      height: clamp(620px, 92vh, 980px); 
       overflow: hidden; 
       z-index: 0; 
       pointer-events: none; 
@@ -64,7 +64,7 @@
       width: 100%; 
       height: 100%; 
       object-fit: cover; 
-      opacity: 0.75; 
+      opacity: 0.65; 
       filter: saturate(1.1) contrast(1.05); 
     }
     .hero-video-overlay { 
@@ -73,7 +73,10 @@
       left: 0; 
       width: 100%; 
       height: 100%; 
-      background: linear-gradient(180deg, rgba(9, 13, 22, 0.35) 0%, rgba(9, 13, 22, 0.7) 70%, var(--bg) 100%); 
+      background: 
+        radial-gradient(circle at 85% 35%, rgba(59, 130, 246, 0.12) 0%, transparent 60%),
+        linear-gradient(90deg, rgba(9, 13, 22, 0.96) 0%, rgba(9, 13, 22, 0.82) 50%, rgba(9, 13, 22, 0.45) 100%),
+        linear-gradient(180deg, rgba(9, 13, 22, 0.2) 0%, rgba(9, 13, 22, 0.6) 70%, var(--bg) 100%); 
     }
     .glow-top { 
       position: absolute; 
@@ -87,12 +90,12 @@
       z-index: 1; 
     }
     
-    /* FLUID CONTAINER - Seamless Across Mobile, Tablet & Desktop */
+    /* FLUID CONTAINER - Seamless Across Mobile, Tablet & Widescreen Desktop */
     .container { 
       width: 100%; 
-      max-width: min(92vw, 1440px); 
+      max-width: min(94vw, 1520px); 
       margin: 0 auto; 
-      padding: 0 clamp(16px, 2.5vw, 32px); 
+      padding: 0 clamp(16px, 2.5vw, 36px); 
       position: relative; 
       z-index: 2; 
     }
@@ -215,18 +218,26 @@
     }
     .mobile-only-login { display: none; }
 
-    /* HERO - Fluid Heights & Scaled Typography */
+    /* HERO 2-COLUMN SHIFT4 ASYMMETRIC FORMAT */
     .hero { 
-      text-align: center; 
-      padding: clamp(48px, 8vh, 96px) 0 clamp(40px, 6vh, 80px); 
+      padding: clamp(48px, 8vh, 100px) 0 clamp(40px, 6vh, 80px); 
       position: relative; 
       width: 100%; 
-      min-height: clamp(520px, 75vh, 840px); 
-      display: flex; 
-      flex-direction: column; 
-      justify-content: center; 
+      min-height: clamp(580px, 82vh, 880px); 
+      display: grid; 
+      grid-template-columns: 1.15fr 0.85fr; 
       align-items: center; 
+      gap: clamp(36px, 5vw, 72px); 
     }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      z-index: 2;
+    }
+
     .badge { 
       display: inline-flex; 
       align-items: center; 
@@ -234,13 +245,12 @@
       background: rgba(9, 13, 22, 0.85); 
       backdrop-filter: blur(10px); 
       border: 1px solid rgba(59, 130, 246, 0.45); 
-      padding: 8px 22px; 
+      padding: 8px 20px; 
       border-radius: 9999px; 
       font-size: 13.5px; 
       font-weight: 700; 
       color: #93c5fd; 
       margin-bottom: 24px; 
-      max-width: 90%; 
     }
     .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); flex-shrink: 0; animation: pulse-dot 2s infinite; }
     @keyframes pulse-dot {
@@ -248,30 +258,31 @@
       70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
-    .hero h1 { 
-      font-size: clamp(38px, 4.8vw, 62px); 
-      font-weight: 800; 
-      line-height: 1.15; 
+
+    .hero-title { 
+      font-size: clamp(38px, 4.4vw, 68px); 
+      font-weight: 850; 
+      line-height: 1.08; 
       margin-bottom: 22px; 
-      letter-spacing: -1.2px; 
-      text-shadow: 0 4px 28px rgba(0,0,0,0.9); 
+      letter-spacing: -1.6px; 
+      color: #ffffff;
+      text-shadow: 0 4px 30px rgba(0,0,0,0.9); 
     }
-    .hero p { 
-      font-size: clamp(17px, 1.5vw, 20.5px); 
+    .hero-subtitle { 
+      font-size: clamp(16px, 1.2vw, 19.5px); 
       color: #cbd5e1; 
-      max-width: 840px; 
-      margin: 0 auto 34px; 
-      padding: 0 16px; 
+      max-width: 620px; 
+      margin: 0 0 32px 0; 
       line-height: 1.65; 
       text-shadow: 0 2px 14px rgba(0,0,0,0.9); 
     }
     
-    .cta-group { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; width: 100%; }
+    .cta-group { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; width: 100%; }
     .btn-primary { 
       background: linear-gradient(135deg, var(--primary), #2563eb); 
       color: white; 
       border: none; 
-      padding: 16px 34px; 
+      padding: 16px 32px; 
       border-radius: 14px; 
       font-size: 16px; 
       font-weight: 700; 
@@ -282,6 +293,7 @@
       text-decoration: none; 
       box-shadow: 0 6px 25px rgba(37, 99, 235, 0.45); 
       transition: 0.25s ease; 
+      white-space: nowrap;
     }
     .btn-primary:hover { 
       background: linear-gradient(135deg, #2563eb, #1d4ed8); 
@@ -294,7 +306,7 @@
       backdrop-filter: blur(12px); 
       border: 1px solid rgba(255, 255, 255, 0.25); 
       color: #fff; 
-      padding: 16px 32px; 
+      padding: 16px 30px; 
       border-radius: 14px; 
       font-size: 16px; 
       font-weight: 700; 
@@ -305,6 +317,7 @@
       text-decoration: none; 
       transition: 0.25s ease; 
       box-shadow: 0 6px 22px rgba(0, 0, 0, 0.5); 
+      white-space: nowrap;
     }
     .btn-demo:hover { 
       background: rgba(30, 41, 59, 0.95); 
@@ -312,27 +325,271 @@
       transform: translateY(-2px); 
     }
 
-    /* PUBLIC ANNOUNCEMENT BANNER */
-    .home-announcement { 
-      background: rgba(15, 23, 42, 0.88); 
-      backdrop-filter: blur(14px); 
-      border: 1px solid rgba(59, 130, 246, 0.4); 
-      border-radius: 20px; 
-      padding: 24px 34px; 
-      max-width: 940px; 
-      margin: 0 auto 36px; 
-      text-align: center; 
-      box-shadow: 0 16px 40px rgba(0,0,0,0.6), 0 0 25px rgba(59, 130, 246, 0.15); 
-    }
-    .home-announcement h4 { color: #fff; font-size: 18px; font-weight: 800; margin-bottom: 6px; }
-    .home-announcement p { color: #cbd5e1; font-size: 15px; line-height: 1.6; margin: 0; }
-    .home-announcement a { color: #60a5fa; font-weight: 700; text-decoration: none; }
-    .home-announcement a:hover { text-decoration: underline; }
+    /* TRUST BADGES */
+    .trust-badges { display: flex; align-items: center; gap: clamp(14px, 2vw, 24px); flex-wrap: wrap; margin-top: 6px; font-size: 13.5px; color: #94a3b8; }
+    .trust-item { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+    .trust-item span { color: var(--accent-green); font-weight: 800; font-size: 15px; }
 
-    /* TRUST PROMISES TICKER */
-    .trust-badges { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 24px; font-size: 14.5px; color: var(--text-muted); }
-    .trust-item { display: inline-flex; align-items: center; gap: 8px; font-weight: 500; }
-    .trust-item span { color: var(--accent-green); font-weight: 800; font-size: 16px; }
+    /* HERO RIGHT - SHIFT4 STYLE VISUAL & LIVE POS PREVIEW */
+    .hero-right {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+      width: 100%;
+    }
+    .hero-backdrop-word {
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: clamp(130px, 16vw, 220px);
+      font-weight: 950;
+      color: rgba(255, 255, 255, 0.04);
+      letter-spacing: -6px;
+      user-select: none;
+      pointer-events: none;
+      line-height: 1;
+      z-index: 0;
+    }
+    .pos-preview-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 460px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 24px;
+      padding: clamp(20px, 2.5vw, 26px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(59, 130, 246, 0.2);
+      transition: transform 0.3s ease;
+    }
+    .pos-preview-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+    .pos-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 14px;
+    }
+    .pos-terminal-id {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .terminal-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #60a5fa;
+    }
+    .pos-offline-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #34d399;
+    }
+    .pos-order-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .pos-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .pos-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 8px 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .pos-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      text-align: left;
+    }
+    .pos-item-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .pos-item-addon {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+    .pos-item-price {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #60a5fa;
+    }
+    .pos-totals {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .pos-total-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+    .pos-total-row.highlight {
+      font-size: 17px;
+      font-weight: 800;
+      color: #ffffff;
+      padding-top: 4px;
+    }
+    .pos-grand-total {
+      color: #34d399;
+    }
+    .pos-actions {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .pos-btn-pay {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 13.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+      transition: transform 0.2s ease;
+    }
+    .pos-btn-pay:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+    }
+    .pos-btn-split {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #cbd5e1;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    .pos-btn-split:hover {
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+    }
+    .pos-telemetry {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #64748b;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .pos-telemetry strong {
+      color: #38bdf8;
+    }
+
+    /* FOUNDERS VIP PRE-LAUNCH BANNER STRIP - Modern Enterprise Bar */
+    .home-announcement { 
+      background: linear-gradient(90deg, rgba(15, 23, 42, 0.95) 0%, rgba(22, 30, 49, 0.95) 100%); 
+      backdrop-filter: blur(14px); 
+      border: 1px solid rgba(59, 130, 246, 0.35); 
+      border-radius: 20px; 
+      padding: 22px 32px; 
+      width: 100%; 
+      margin: 10px auto 48px; 
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 25px rgba(59, 130, 246, 0.12); 
+    }
+    .announcement-content {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      text-align: left;
+    }
+    .announcement-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #60a5fa;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .announcement-text { 
+      color: #cbd5e1; 
+      font-size: 14.5px; 
+      line-height: 1.55; 
+      margin: 0; 
+    }
+    .announcement-text strong {
+      color: #ffffff;
+    }
+    .announcement-text a { 
+      color: #60a5fa; 
+      font-weight: 700; 
+      text-decoration: none; 
+    }
+    .announcement-text a:hover { 
+      text-decoration: underline; 
+    }
+    .announcement-action {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: #60a5fa;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .announcement-action:hover {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    }
 
     /* PILLARS SECTION (Shift4 Style Desktop Card Grid) */
     .pillars-section {
@@ -543,11 +800,54 @@
         background: rgba(255, 255, 255, 0.08);
       }
       header { padding: 12px 0; }
+
+      /* Hero Mobile/Tablet Adaptation */
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 44px 0 32px;
+        min-height: auto;
+        gap: 40px;
+      }
+      .hero-left {
+        align-items: center;
+        text-align: center;
+      }
+      .hero-title {
+        letter-spacing: -1.2px;
+      }
+      .hero-subtitle {
+        margin: 0 auto 28px;
+      }
+      .cta-group {
+        justify-content: center;
+      }
+      .trust-badges {
+        justify-content: center;
+      }
+      .home-announcement {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px 24px;
+        gap: 16px;
+      }
+      .announcement-content {
+        align-items: center;
+        text-align: center;
+      }
+      .announcement-action {
+        width: 100%;
+        text-align: center;
+      }
+      .hero-backdrop-word {
+        display: none;
+      }
     }
     @media (max-width: 768px) {
       .footer-grid { grid-template-columns: 1fr; gap: 30px; }
       .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 8px; }
       .pillars-grid { grid-template-columns: 1fr; gap: 20px; }
+      .pos-preview-card { max-width: 100%; padding: 18px; }
     }
     @media (max-width: 640px) {
       .nav-actions .btn-login { display: none; }
@@ -599,36 +899,121 @@
   <!-- HERO SECTION -->
   <main class="container">
     <section class="hero">
-      <div class="badge">
-        <span class="badge-dot"></span> Founders VIP Pre-Launch Active • Launching Nov 13, 2026
-      </div>
-      
-      <h1>Offline-First Hybrid POS.<br>Built for Uninterrupted Commerce.</h1>
-      <p>Instant cashier checkout, visual table management, kitchen routing, and resilient offline reliability—running directly on your existing tablets, iPads, and PCs.</p>
-      
-      <!-- PUBLIC LAUNCH NOTICE BANNER -->
-      <div class="home-announcement">
-        <h4>🚀 Official Public Launch: November 13, 2026</h4>
-        <p>Retail monthly subscription plans unlock on launch day. Lock in your permanent <a href="pricing.html">Founders VIP Annual Pass</a> today with our 100% live shift guarantee, white-glove menu setup, and lifetime fixed rates.</p>
+      <div class="hero-left">
+        <div class="badge">
+          <span class="badge-dot"></span> Founders VIP Pre-Launch Active • Launching Nov 13, 2026
+        </div>
+        
+        <h1 class="hero-title">
+          Offline-First POS.<br>
+          Built for Uninterrupted Commerce.
+        </h1>
+        
+        <p class="hero-subtitle">
+          Instant cashier checkout, visual table management, and kitchen routing—running locally on your existing iPads, Android tablets, and PCs even when the internet drops.
+        </p>
+
+        <div class="cta-group">
+          <a href="pricing.html" class="btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            Claim Founders VIP Pass
+          </a>
+          <button onclick="openCalendarBooking(event)" class="btn-demo">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            Book a Live 1-on-1 Demo
+          </button>
+        </div>
+
+        <div class="trust-badges">
+          <div class="trust-item"><span>✓</span> Zero Proprietary Terminal Fees</div>
+          <div class="trust-item"><span>✓</span> 100% Offline When Internet Drops</div>
+          <div class="trust-item"><span>✓</span> 7-Day Live Shift Guarantee</div>
+        </div>
       </div>
 
-      <div class="cta-group">
-        <a href="pricing.html" class="btn-primary">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-          Claim Founders VIP Pass
-        </a>
-        <button onclick="openCalendarBooking(event)" class="btn-demo">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          Book a Live 1-on-1 Demo
-        </button>
-      </div>
+      <div class="hero-right">
+        <!-- SHIFT4 STYLE ARCHITECTURAL BACKDROP WORDMARK -->
+        <div class="hero-backdrop-word" aria-hidden="true">TAP</div>
 
-      <div class="trust-badges">
-        <div class="trust-item"><span>✓</span> Zero Proprietary Terminal Fees</div>
-        <div class="trust-item"><span>✓</span> Works 100% Offline When Internet Drops</div>
-        <div class="trust-item"><span>✓</span> 7-Day Live Shift Money-Back Guarantee</div>
+        <!-- SLEEK FLOATING GLASS POS REGISTER MOCKUP -->
+        <div class="pos-preview-card">
+          <div class="pos-card-header">
+            <div class="pos-terminal-id">
+              <span class="terminal-dot"></span> Terminal #01 • Main Register
+            </div>
+            <div class="pos-offline-pill">
+              <span class="badge-dot"></span> 100% Offline Ready
+            </div>
+          </div>
+
+          <div class="pos-order-meta">
+            <span>Order #1042 • Table 04</span>
+            <span class="pos-time">12:42 PM</span>
+          </div>
+
+          <div class="pos-items-list">
+            <div class="pos-item">
+              <div class="pos-item-info">
+                <span class="pos-item-name">2x Flat White</span>
+                <span class="pos-item-addon">Oat Milk • Extra Hot</span>
+              </div>
+              <span class="pos-item-price">$9.00</span>
+            </div>
+            <div class="pos-item">
+              <div class="pos-item-info">
+                <span class="pos-item-name">1x Avocado Tartine</span>
+                <span class="pos-item-addon">Poached Egg • Microgreens</span>
+              </div>
+              <span class="pos-item-price">$12.50</span>
+            </div>
+            <div class="pos-item">
+              <div class="pos-item-info">
+                <span class="pos-item-name">1x Cold Brew Nitro</span>
+                <span class="pos-item-addon">Single Origin 16oz</span>
+              </div>
+              <span class="pos-item-price">$5.50</span>
+            </div>
+          </div>
+
+          <div class="pos-totals">
+            <div class="pos-total-row">
+              <span>Subtotal</span>
+              <span>$27.00</span>
+            </div>
+            <div class="pos-total-row highlight">
+              <span>Total Due</span>
+              <span class="pos-grand-total">$27.00</span>
+            </div>
+          </div>
+
+          <div class="pos-actions">
+            <button class="pos-btn-pay" onclick="openModal('login-modal')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <span>⚡ Instant Offline Tap</span>
+            </button>
+            <button class="pos-btn-split" onclick="openModal('login-modal')">
+              Split / Cash
+            </button>
+          </div>
+
+          <div class="pos-telemetry">
+            <span>⚡ Local SQLite Engine: <strong>3ms latency</strong></span>
+            <span>🔒 Vault Synced</span>
+          </div>
+        </div>
       </div>
     </section>
+
+    <!-- STRATEGIC FOUNDERS VIP PRE-LAUNCH BANNER STRIP -->
+    <div class="home-announcement">
+      <div class="announcement-content">
+        <div class="announcement-badge">Official Public Launch: November 13, 2026</div>
+        <p class="announcement-text">
+          Retail monthly subscription plans unlock on launch day. Lock in your permanent <a href="pricing.html">Founders VIP Annual Pass</a> today with our 100% live shift guarantee, white-glove menu setup, and lifetime fixed rates.
+        </p>
+      </div>
+      <a href="pricing.html" class="announcement-action">Claim Founders Pass →</a>
+    </div>
 
     <!-- 3 SYSTEM PILLAR CARDS (Shift4 Style Enterprise Grid) -->
     <section class="pillars-section">
