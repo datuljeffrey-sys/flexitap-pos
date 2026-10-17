@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>FlexiTap POS — Resilient Hybrid POS & Founders VIP Access</title>
   
+  <link rel="icon" type="image/png" href="image_02e503.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="image_02e503.png">
+
   <!-- Supabase Official JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Include Paddle.js -->
@@ -86,71 +90,354 @@
     .container { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
 
     /* HEADER & NAV */
-    header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: rgba(9, 13, 22, 0.88); backdrop-filter: blur(12px); z-index: 100; width: 100%; }
-    header .container { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 12px; }
-    .logo { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 800; color: #ffffff; text-decoration: none; letter-spacing: -0.5px; }
-    .brand-logo-svg { width: 34px; height: 34px; flex-shrink: 0; display: block; border-radius: 50%; object-fit: contain; }
+    header { 
+      padding: 16px 0; 
+      border-bottom: 1px solid var(--card-border); 
+      position: sticky; 
+      top: 0; 
+      background: rgba(9, 13, 22, 0.92); 
+      backdrop-filter: blur(14px); 
+      z-index: 100; 
+      width: 100%; 
+    }
+    header .container { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      width: 100%; 
+      flex-wrap: nowrap; 
+      gap: 24px; 
+    }
+    .logo { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      font-size: 22px; 
+      font-weight: 800; 
+      color: #ffffff; 
+      text-decoration: none; 
+      letter-spacing: -0.5px; 
+      flex-shrink: 0; 
+    }
+    .brand-logo-svg { 
+      width: 36px; 
+      height: 36px; 
+      flex-shrink: 0; 
+      display: block; 
+      border-radius: 50%; 
+      object-fit: contain; 
+    }
     
-    .nav-links { display: flex; align-items: center; gap: 20px; }
-    .nav-link { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.2s; }
-    .nav-link:hover { color: #fff; }
+    .nav-links { 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 26px; 
+      flex: 1; 
+      margin: 0 16px; 
+    }
+    .nav-link { 
+      color: #cbd5e1; 
+      text-decoration: none; 
+      font-size: 14.5px; 
+      font-weight: 600; 
+      transition: color 0.2s, transform 0.2s; 
+      white-space: nowrap; 
+    }
+    .nav-link:hover, .nav-link.active { 
+      color: #ffffff; 
+    }
     .mobile-menu-toggle { display: none; background: none; border: 1px solid var(--card-border); padding: 4px 8px; border-radius: 8px; color: #fff; font-size: 24px; cursor: pointer; }
 
-    .btn-login { background: rgba(9, 13, 22, 0.6); backdrop-filter: blur(8px); border: 1px solid var(--card-border); color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; text-decoration: none; display: inline-flex; align-items: center; }
-    .btn-login:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.2); }
-    .btn-signup { background: var(--primary); border: none; color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; text-decoration: none; display: inline-flex; align-items: center; }
-    .btn-signup:hover { background: var(--primary-hover); }
+    .nav-actions { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      flex-shrink: 0; 
+    }
+    .btn-login { 
+      background: rgba(255, 255, 255, 0.08); 
+      backdrop-filter: blur(8px); 
+      border: 1px solid var(--card-border); 
+      color: #fff; 
+      padding: 10px 20px; 
+      border-radius: 10px; 
+      font-weight: 700; 
+      font-size: 14.5px; 
+      cursor: pointer; 
+      transition: 0.2s ease; 
+      text-decoration: none; 
+      display: inline-flex; 
+      align-items: center; 
+      white-space: nowrap; 
+    }
+    .btn-login:hover { 
+      background: rgba(255, 255, 255, 0.16); 
+      border-color: rgba(255, 255, 255, 0.25); 
+    }
+    .btn-signup { 
+      background: var(--primary); 
+      border: none; 
+      color: #fff; 
+      padding: 10px 20px; 
+      border-radius: 10px; 
+      font-weight: 700; 
+      font-size: 14.5px; 
+      cursor: pointer; 
+      transition: 0.2s ease; 
+      text-decoration: none; 
+      display: inline-flex; 
+      align-items: center; 
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35); 
+      white-space: nowrap; 
+    }
+    .btn-signup:hover { 
+      background: var(--primary-hover); 
+      transform: translateY(-1px); 
+    }
 
     /* HERO */
-    .hero { text-align: center; padding: 75px 0 60px; position: relative; width: 100%; }
-    .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(9, 13, 22, 0.75); backdrop-filter: blur(8px); border: 1px solid rgba(59, 130, 246, 0.4); padding: 7px 18px; border-radius: 9999px; font-size: 13px; font-weight: 700; color: #93c5fd; margin-bottom: 24px; max-width: 90%; }
+    .hero { 
+      text-align: center; 
+      padding: 75px 0 70px; 
+      position: relative; 
+      width: 100%; 
+      min-height: calc(82vh - 80px); 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: center; 
+      align-items: center; 
+    }
+    .badge { 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 9px; 
+      background: rgba(9, 13, 22, 0.85); 
+      backdrop-filter: blur(10px); 
+      border: 1px solid rgba(59, 130, 246, 0.45); 
+      padding: 8px 22px; 
+      border-radius: 9999px; 
+      font-size: 13.5px; 
+      font-weight: 700; 
+      color: #93c5fd; 
+      margin-bottom: 24px; 
+      max-width: 90%; 
+    }
     .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); flex-shrink: 0; animation: pulse-dot 2s infinite; }
     @keyframes pulse-dot {
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
       70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
-    .hero h1 { font-size: clamp(32px, 6vw, 56px); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -1px; text-shadow: 0 4px 24px rgba(0,0,0,0.85); }
-    .hero p { font-size: clamp(15px, 2vw, 18.5px); color: #f1f5f9; max-width: 760px; margin: 0 auto 32px; padding: 0 16px; text-shadow: 0 2px 14px rgba(0,0,0,0.9); }
+    .hero h1 { 
+      font-size: clamp(38px, 4.8vw, 62px); 
+      font-weight: 800; 
+      line-height: 1.15; 
+      margin-bottom: 22px; 
+      letter-spacing: -1.2px; 
+      text-shadow: 0 4px 28px rgba(0,0,0,0.9); 
+    }
+    .hero p { 
+      font-size: clamp(17px, 1.5vw, 20.5px); 
+      color: #cbd5e1; 
+      max-width: 840px; 
+      margin: 0 auto 34px; 
+      padding: 0 16px; 
+      line-height: 1.65; 
+      text-shadow: 0 2px 14px rgba(0,0,0,0.9); 
+    }
     
-    .cta-group { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; width: 100%; }
-    .btn-primary { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); transition: 0.2s ease; }
-    .btn-primary:hover { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
-    
-    .btn-demo { 
-      background: rgba(15, 23, 42, 0.75); 
-      backdrop-filter: blur(10px); 
-      border: 1px solid rgba(255, 255, 255, 0.25); 
-      color: #fff; 
-      padding: 14px 26px; 
-      border-radius: 12px; 
-      font-size: 15px; 
+    .cta-group { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; width: 100%; }
+    .btn-primary { 
+      background: linear-gradient(135deg, var(--primary), #2563eb); 
+      color: white; 
+      border: none; 
+      padding: 16px 34px; 
+      border-radius: 14px; 
+      font-size: 16px; 
       font-weight: 700; 
       cursor: pointer; 
       display: inline-flex; 
       align-items: center; 
       gap: 10px; 
       text-decoration: none; 
-      transition: 0.2s ease; 
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); 
+      box-shadow: 0 6px 25px rgba(37, 99, 235, 0.45); 
+      transition: 0.25s ease; 
+    }
+    .btn-primary:hover { 
+      background: linear-gradient(135deg, #2563eb, #1d4ed8); 
+      transform: translateY(-2px); 
+      box-shadow: 0 10px 32px rgba(37, 99, 235, 0.6); 
+    }
+    
+    .btn-demo { 
+      background: rgba(15, 23, 42, 0.82); 
+      backdrop-filter: blur(12px); 
+      border: 1px solid rgba(255, 255, 255, 0.25); 
+      color: #fff; 
+      padding: 16px 32px; 
+      border-radius: 14px; 
+      font-size: 16px; 
+      font-weight: 700; 
+      cursor: pointer; 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 10px; 
+      text-decoration: none; 
+      transition: 0.25s ease; 
+      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.5); 
     }
     .btn-demo:hover { 
-      background: rgba(30, 41, 59, 0.9); 
+      background: rgba(30, 41, 59, 0.95); 
       border-color: rgba(255, 255, 255, 0.45); 
-      transform: translateY(-1px); 
+      transform: translateY(-2px); 
     }
 
     /* PUBLIC ANNOUNCEMENT BANNER */
-    .home-announcement { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 18px; padding: 22px 26px; max-width: 860px; margin: 0 auto 36px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    .home-announcement h4 { color: #fff; font-size: 17px; font-weight: 800; margin-bottom: 6px; }
-    .home-announcement p { color: #cbd5e1; font-size: 14px; line-height: 1.6; margin: 0; }
+    .home-announcement { 
+      background: rgba(15, 23, 42, 0.88); 
+      backdrop-filter: blur(14px); 
+      border: 1px solid rgba(59, 130, 246, 0.4); 
+      border-radius: 20px; 
+      padding: 24px 34px; 
+      max-width: 940px; 
+      margin: 0 auto 36px; 
+      text-align: center; 
+      box-shadow: 0 16px 40px rgba(0,0,0,0.6), 0 0 25px rgba(59, 130, 246, 0.15); 
+    }
+    .home-announcement h4 { color: #fff; font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+    .home-announcement p { color: #cbd5e1; font-size: 15px; line-height: 1.6; margin: 0; }
     .home-announcement a { color: #60a5fa; font-weight: 700; text-decoration: none; }
     .home-announcement a:hover { text-decoration: underline; }
 
     /* TRUST PROMISES TICKER */
-    .trust-badges { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-top: 20px; font-size: 13px; color: var(--text-muted); }
-    .trust-item { display: inline-flex; align-items: center; gap: 7px; }
-    .trust-item span { color: var(--accent-green); font-weight: 800; }
+    .trust-badges { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 24px; font-size: 14.5px; color: var(--text-muted); }
+    .trust-item { display: inline-flex; align-items: center; gap: 8px; font-weight: 500; }
+    .trust-item span { color: var(--accent-green); font-weight: 800; font-size: 16px; }
+
+    /* PILLARS SECTION (Shift4 Style Desktop Card Grid) */
+    .pillars-section {
+      padding: 40px 0 90px;
+      width: 100%;
+    }
+    .pillars-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .pillars-pill {
+      font-size: 12px;
+      font-weight: 800;
+      color: #60a5fa;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+    .pillars-title {
+      font-size: clamp(26px, 3.5vw, 36px);
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.6px;
+    }
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 26px;
+    }
+    .pillar-card {
+      background: linear-gradient(180deg, rgba(22, 30, 49, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 22px;
+      padding: 36px 32px;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    }
+    .pillar-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(59, 130, 246, 0.2);
+    }
+    .pillar-card.highlight {
+      border-color: rgba(16, 185, 129, 0.45);
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.1) 0%, rgba(15, 23, 42, 0.95) 100%);
+    }
+    .pillar-card.highlight:hover {
+      border-color: #10b981;
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.6), 0 0 35px rgba(16, 185, 129, 0.25);
+    }
+    .pillar-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .pillar-icon-wrap {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      background: rgba(59, 130, 246, 0.14);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #60a5fa;
+      margin-bottom: 22px;
+    }
+    .pillar-card.highlight .pillar-icon-wrap {
+      background: rgba(16, 185, 129, 0.14);
+      border-color: rgba(16, 185, 129, 0.35);
+      color: #34d399;
+    }
+    .pillar-icon-wrap svg {
+      width: 28px;
+      height: 28px;
+    }
+    .pillar-tag {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #60a5fa;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 8px;
+    }
+    .pillar-content h3 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
+    }
+    .pillar-content p {
+      font-size: 14.5px;
+      color: #94a3b8;
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+    .pillar-link {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #60a5fa;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: gap 0.2s ease;
+    }
+    .pillar-card:hover .pillar-link {
+      gap: 10px;
+    }
 
     /* FOOTER & SOCIAL ICONS */
     footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #0b0f19; font-size: 14px; width: 100%; }
@@ -215,27 +502,35 @@
 
     @media (min-width: 1440px) {
       .container { max-width: 1380px; }
-      .hero { padding: 95px 0 70px; }
-      .hero-video-container { height: 1040px; }
-      .hero h1 { font-size: 58px; margin-bottom: 24px; }
-      .hero p { font-size: 19.5px; max-width: 860px; margin-bottom: 38px; }
-      .btn-primary { padding: 16px 32px; font-size: 16px; border-radius: 14px; }
-      .btn-demo { padding: 16px 30px; font-size: 16px; border-radius: 14px; }
-      .home-announcement { max-width: 1020px; padding: 26px 34px; border-radius: 20px; }
-      .home-announcement h4 { font-size: 19px; }
-      .home-announcement p { font-size: 15.5px; }
-      .trust-badges { font-size: 14.5px; gap: 32px; margin-top: 28px; }
+      .hero { padding: 95px 0 80px; min-height: calc(85vh - 80px); }
+      .hero-video-container { height: 1100px; }
+      .hero h1 { font-size: 60px; margin-bottom: 24px; }
+      .hero p { font-size: 20px; max-width: 900px; margin-bottom: 38px; }
+      .btn-primary { padding: 18px 36px; font-size: 16.5px; border-radius: 14px; }
+      .btn-demo { padding: 18px 34px; font-size: 16.5px; border-radius: 14px; }
+      .home-announcement { max-width: 1040px; padding: 28px 36px; border-radius: 22px; }
+      .home-announcement h4 { font-size: 19.5px; }
+      .home-announcement p { font-size: 16px; }
+      .trust-badges { font-size: 15px; gap: 36px; margin-top: 32px; }
+      .pillars-section { padding: 50px 0 110px; }
+      .pillars-grid { grid-template-columns: repeat(3, 1fr); gap: 32px; }
+      .pillar-card { padding: 42px 34px; border-radius: 24px; }
+      .pillar-content h3 { font-size: 24px; }
+      .pillar-content p { font-size: 15px; }
     }
 
     @media (min-width: 1720px) {
       .container { max-width: 1560px; }
-      .hero { padding: 110px 0 85px; }
-      .hero-video-container { height: 1120px; }
-      .hero h1 { font-size: 64px; }
-      .hero p { font-size: 21px; max-width: 940px; }
-      .home-announcement { max-width: 1140px; padding: 30px 40px; }
-      .home-announcement h4 { font-size: 20px; }
-      .home-announcement p { font-size: 16px; }
+      .hero { padding: 110px 0 95px; min-height: calc(88vh - 80px); }
+      .hero-video-container { height: 1180px; }
+      .hero h1 { font-size: 66px; }
+      .hero p { font-size: 21.5px; max-width: 960px; }
+      .home-announcement { max-width: 1180px; padding: 32px 42px; }
+      .home-announcement h4 { font-size: 21px; }
+      .home-announcement p { font-size: 16.5px; }
+      .pillars-grid { gap: 40px; }
+      .pillar-card { padding: 48px 38px; }
+      .pillar-content h3 { font-size: 26px; }
     }
 
     @media (max-width: 1023px) {
@@ -287,9 +582,9 @@
         <a href="dev-portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <a href="pricing.html" class="btn-signup">Get Started</a>
+      <div class="nav-actions">
         <button class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
+        <a href="pricing.html" class="btn-signup">Get Started</a>
       </div>
     </div>
   </header>
@@ -325,6 +620,53 @@
         <div class="trust-item"><span>✓</span> Zero Proprietary Terminal Fees</div>
         <div class="trust-item"><span>✓</span> Works 100% Offline When Internet Drops</div>
         <div class="trust-item"><span>✓</span> 7-Day Live Shift Money-Back Guarantee</div>
+      </div>
+    </section>
+
+    <!-- 3 SYSTEM PILLAR CARDS (Shift4 Style Enterprise Grid) -->
+    <section class="pillars-section">
+      <div class="pillars-header">
+        <span class="pillars-pill">Platform Architecture</span>
+        <h2 class="pillars-title">Engineered for Maximum Retail &amp; F&amp;B Resilience</h2>
+      </div>
+
+      <div class="pillars-grid">
+        <a href="features.html" class="pillar-card">
+          <div class="pillar-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="pillar-content">
+            <div class="pillar-tag">System Capabilities</div>
+            <h3>Offline-First Architecture</h3>
+            <p>Full register operation without internet, visual floor plans, automated kitchen routing, barcode SKU scanning, and sub-second checkout.</p>
+            <span class="pillar-link">Explore Capabilities →</span>
+          </div>
+        </a>
+
+        <a href="pricing.html" class="pillar-card highlight">
+          <div class="pillar-badge">Priority Access</div>
+          <div class="pillar-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <div class="pillar-content">
+            <div class="pillar-tag" style="color: #34d399;">VIP Pre-Launch</div>
+            <h3>Founders VIP Annual Pass</h3>
+            <p>Lock in lifetime fixed rates before the Nov 13 public launch. Zero per-terminal fees, white-glove onboarding, and our 100% live shift guarantee.</p>
+            <span class="pillar-link" style="color: #34d399;">Claim Founders Pass →</span>
+          </div>
+        </a>
+
+        <a href="support.html" class="pillar-card">
+          <div class="pillar-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <div class="pillar-content">
+            <div class="pillar-tag">Downloads &amp; Setup</div>
+            <h3>Multi-Platform Apps</h3>
+            <p>Production packages for Windows, Android, and iOS. Certified ESC/POS receipt printers, thermal kitchen printers, and direct support desk.</p>
+            <span class="pillar-link">Get Apps &amp; Support →</span>
+          </div>
+        </a>
       </div>
     </section>
   </main>

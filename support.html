@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>FlexiTap POS — Support & App Downloads</title>
   
+  <link rel="icon" type="image/png" href="image_02e503.png">
+  <link rel="shortcut icon" href="favicon.ico">
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./image_02e503.png">
   <meta name="theme-color" content="#080c14">
@@ -36,20 +38,21 @@
     .container { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
 
     /* HEADER & NAV */
-    header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: rgba(9, 13, 22, 0.94); backdrop-filter: blur(12px); z-index: 100; width: 100%; }
-    header .container { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 12px; }
-    .logo { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 800; color: #ffffff; text-decoration: none; letter-spacing: -0.5px; }
-    .brand-logo-svg { width: 34px; height: 34px; flex-shrink: 0; display: block; border-radius: 50%; object-fit: contain; }
+    header { padding: 16px 0; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: rgba(9, 13, 22, 0.94); backdrop-filter: blur(12px); z-index: 100; width: 100%; }
+    header .container { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: nowrap; gap: 24px; }
+    .logo { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 800; color: #ffffff; text-decoration: none; letter-spacing: -0.5px; flex-shrink: 0; }
+    .brand-logo-svg { width: 36px; height: 36px; flex-shrink: 0; display: block; border-radius: 50%; object-fit: contain; }
     
-    .nav-links { display: flex; align-items: center; gap: 20px; }
-    .nav-link { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.2s; }
+    .nav-links { display: flex; align-items: center; justify-content: center; gap: 26px; flex: 1; margin: 0 16px; }
+    .nav-link { color: #cbd5e1; text-decoration: none; font-size: 14.5px; font-weight: 600; transition: color 0.2s, transform 0.2s; white-space: nowrap; }
     .nav-link:hover, .nav-link.active { color: #fff; }
     .mobile-menu-toggle { display: none; background: none; border: 1px solid var(--card-border); padding: 4px 8px; border-radius: 8px; color: #fff; font-size: 24px; cursor: pointer; }
 
-    .btn-login { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border); color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; }
-    .btn-login:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.2); }
-    .btn-signup { background: var(--primary); border: none; color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s ease; text-decoration: none; display: inline-flex; align-items: center; }
-    .btn-signup:hover { background: var(--primary-hover); }
+    .nav-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .btn-login { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(8px); border: 1px solid var(--card-border); color: #fff; padding: 10px 20px; border-radius: 10px; font-weight: 700; font-size: 14.5px; cursor: pointer; transition: 0.2s ease; text-decoration: none; display: inline-flex; align-items: center; white-space: nowrap; }
+    .btn-login:hover { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.25); }
+    .btn-signup { background: var(--primary); border: none; color: #fff; padding: 10px 20px; border-radius: 10px; font-weight: 700; font-size: 14.5px; cursor: pointer; transition: 0.2s ease; text-decoration: none; display: inline-flex; align-items: center; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35); white-space: nowrap; }
+    .btn-signup:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
     /* HERO */
     .support-hero { padding: 60px 0 40px; text-align: center; }
@@ -823,12 +826,12 @@
         </div>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <button onclick="triggerPwaInstall()" style="background: linear-gradient(135deg, rgba(59,130,246,0.22), rgba(37,99,235,0.35)); border: 1px solid rgba(59,130,246,0.6); color: #93c5fd; padding: 7px 12px; border-radius: 10px; font-weight: 700; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s; font-family: inherit; white-space: nowrap;">
+      <div class="nav-actions">
+        <button onclick="triggerPwaInstall()" style="background: linear-gradient(135deg, rgba(59,130,246,0.22), rgba(37,99,235,0.35)); border: 1px solid rgba(59,130,246,0.6); color: #93c5fd; padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; font-family: inherit; white-space: nowrap;">
           <span>📲</span> <span>Install App</span>
         </button>
-        <a href="pricing.html" class="btn-signup desktop-only-btn">Get Started</a>
         <button class="btn-login desktop-only-btn" onclick="openModal('login-modal')">Merchant Login</button>
+        <a href="pricing.html" class="btn-signup desktop-only-btn">Get Started</a>
       </div>
     </div>
   </header>
