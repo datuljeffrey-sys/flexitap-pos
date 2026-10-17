@@ -201,13 +201,21 @@
       let badgeBg = '#ecfdf5';
       let badgeBorder = '#a7f3d0';
       let badgeText = 'Spot Secured: Free Launch Waitlist';
-      let priceDesc = 'Free forever ($0 / mo) — Official Public Release: Nov 13, 2026';
+      let priceDesc = 'Free forever ($0 / mo) - Official Public Release: Nov 13, 2026';
+      let ctaUrl = 'https://www.flexitapapp.com/flexi-app.html';
+      let ctaText = 'Launch FlexiTap POS PWA &rarr;';
       let perksHtml = `
         <li><strong>Offline-First Engine:</strong> Ring sales, hold checks, and tender cash without internet drops.</li>
         <li><strong>Universal Terminal Compatibility:</strong> Runs on Windows PCs, Android tablets, and Sunmi/Clover POS.</li>
-        <li><strong>Real-Time Cloud Back Office:</strong> Monitor shifts, sales summaries, and Z-readings remotely.</li>
+        <li><strong>Manual Data Backup:</strong> Export and secure your database anytime via Google Drive or local drive storage.</li>
       `;
       let extraNote = `
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px 16px; margin-bottom: 16px;">
+          <div style="color: #166534; font-size: 13.5px; font-weight: 800; margin-bottom: 3px;">POS Terminal PWA Ready</div>
+          <div style="color: #14532d; font-size: 12.5px; line-height: 1.5;">
+            As a Free Community Edition member, your POS runs directly on your device via our lightweight PWA. (Cloud Back Office and remote multi-device sync are included exclusively with Plus and Pro).
+          </div>
+        </div>
         <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px;">
           We are preparing your terminal deployment package for our public launch on <strong>November 13, 2026</strong>. Want an early system walkthrough or hardware readiness check? <a href="https://www.flexitapapp.com/#demo-booking-section" style="color: #2563eb; font-weight: 700;">Book a 1-on-1 demo with our engineering team here</a>.
         </p>
@@ -219,11 +227,13 @@
         badgeBg = '#eff6ff';
         badgeBorder = '#bfdbfe';
         badgeText = 'Founders VIP Pass Confirmed ($290/yr Fixed)';
-        priceDesc = '$290 / year fixed rate — 7-Day Live Shift Money-Back Guarantee';
+        priceDesc = '$290 / year fixed rate - 7-Day Live Shift Money-Back Guarantee';
+        ctaUrl = 'https://www.flexitapapp.com/portal.html';
+        ctaText = 'Access Merchant Back Office &rarr;';
         perksHtml = `
           <li><strong>Float &amp; Safe Tracking:</strong> Paid-in, paid-out ledger, cash drops, and shift drawer balancing.</li>
           <li><strong>Auditor Z-Readings:</strong> Complete mathematical symmetry checks with cashier loss prevention &amp; exception audits.</li>
-          <li><strong>Priority Customer Support:</strong> Expedited queue to our technical operations desk.</li>
+          <li><strong>Automated Cloud Back Office:</strong> Real-time remote sales monitoring, cloud backups, and priority support.</li>
         `;
         extraNote = `
           <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px;">
@@ -236,7 +246,9 @@
         badgeBg = '#faf5ff';
         badgeBorder = '#e9d5ff';
         badgeText = 'Pro VIP Onboarding Activated ($590/yr Fixed)';
-        priceDesc = '$590 / year fixed rate — White-Glove Migration &amp; Standby';
+        priceDesc = '$590 / year fixed rate - White-Glove Migration &amp; Standby';
+        ctaUrl = 'https://www.flexitapapp.com/portal.html';
+        ctaText = 'Access Merchant Back Office &rarr;';
         perksHtml = `
           <li><strong>White-Glove Menu &amp; Inventory Migration:</strong> Send us your menu PDF or spreadsheet, and our engineers will configure your entire catalog within 24 hours.</li>
           <li><strong>Ad-Hoc Remote Standby:</strong> Live 6-character terminal remote control for on-demand technician intervention.</li>
@@ -244,7 +256,7 @@
         `;
         extraNote = `
           <div style="background: #fdf4ff; border: 1px solid #f0abfc; border-radius: 8px; padding: 14px 16px; margin-bottom: 18px;">
-            <div style="color: #86198f; font-size: 13.5px; font-weight: 800; margin-bottom: 3px;">✨ Complimentary Catalog Migration Included</div>
+            <div style="color: #86198f; font-size: 13.5px; font-weight: 800; margin-bottom: 3px;">Complimentary Catalog Migration Included</div>
             <div style="color: #701a75; font-size: 12.5px; line-height: 1.5;">Simply reply directly to this email with your menu PDF, price sheet, or POS database export. Our engineering team will configure and verify your menu items for you!</div>
           </div>
         `;
@@ -276,7 +288,7 @@
             </div>
             ${extraNote}
             <div style="text-align: center; margin: 24px 0 16px;">
-              <a href="https://www.flexitapapp.com/portal.html" style="display: inline-block; background: #2563eb; color: #ffffff; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none;">Access Merchant Back Office &rarr;</a>
+              <a href="${ctaUrl}" style="display: inline-block; background: #2563eb; color: #ffffff; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none;">${ctaText}</a>
             </div>
             <p style="font-size: 12.5px; color: #64748b; line-height: 1.5; margin: 0; text-align: center;">
               Need help or have questions? Contact our solutions engineering desk anytime at <a href="mailto:support@flexitapapp.com" style="color: #2563eb;">support@flexitapapp.com</a>.
@@ -292,7 +304,7 @@
       const teamHtml = `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
           <div style="background: #1e1b4b; padding: 22px 24px; text-align: center;">
-            <h2 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 800;">🎉 New Merchant Account Registered</h2>
+            <h2 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 800;">New Merchant Account Registered</h2>
             <p style="color: #c7d2fe; margin: 4px 0 0; font-size: 12.5px;">FlexiTap Customer Onboarding Pipeline</p>
           </div>
           <div style="padding: 24px;">
@@ -319,7 +331,7 @@
           body: JSON.stringify({
             notification_type: 'merchant_welcome_signup',
             recipient_email: email,
-            subject: `[Welcome to FlexiTap] Your Store Account is Ready — ${businessName}`,
+            subject: `[Welcome to FlexiTap] Your Store Account is Ready - ${businessName}`,
             store_name: businessName,
             details: `New account registered for ${tierTitle}`,
             html: clientHtml
@@ -338,7 +350,7 @@
           body: JSON.stringify({
             notification_type: 'merchant_signup_team_alert',
             recipient_email: 'info@flexitapapp.com',
-            subject: `[New Store Signup] ${businessName} — ${tierTitle}`,
+            subject: `[New Store Signup] ${businessName} - ${tierTitle}`,
             store_name: businessName,
             details: `Store registration for ${businessName} (${email}) on ${tierTitle}`,
             html: teamHtml
@@ -833,9 +845,11 @@
               <li><span class="check-sign">✓</span> <strong>1 Cashier / User Account</strong></li>
               <li><span class="check-sign">✓</span> <strong>Complete Offline Functionality</strong></li>
               <li><span class="check-sign">✓</span> <strong>Local Device Sales & Daily Reports</strong></li>
-              <li><span class="check-sign">✓</span> Local Device Backup Only</li>
+              <li><span class="check-sign">✓</span> Manual Backup (Google Drive or Local Storage)</li>
+              <li><span class="check-sign">✓</span> Free Terminal PWA Access</li>
               <li><span class="check-sign">✓</span> Community & FAQ Support</li>
               <li class="dimmed"><span class="dash-sign">✕</span> Cloud Multi-Device Sync</li>
+              <li class="dimmed"><span class="dash-sign">✕</span> Cloud Merchant Back Office</li>
               <li class="dimmed"><span class="dash-sign">✕</span> Kitchen Display System (KDS)</li>
               <li class="dimmed"><span class="dash-sign">✕</span> Customer Loyalty Program</li>
             </ul>
@@ -967,8 +981,8 @@
             <tr><td><strong>Max Devices</strong></td><td class="col-center"><strong>1</strong></td><td class="col-center" style="color: #60a5fa;"><strong>5</strong></td><td class="col-center" style="color: #a855f7;"><strong>Unlimited (9,999)</strong></td></tr>
             <tr><td><strong>Max Users</strong></td><td class="col-center"><strong>1</strong></td><td class="col-center" style="color: #60a5fa;"><strong>5</strong></td><td class="col-center" style="color: #a855f7;"><strong>Unlimited (9,999)</strong></td></tr>
             <tr><td>Local Device Sales Reporting</td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
-            <tr><td>Web / Merchant Portal Analytics</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
-            <tr><td>Automated Cloud Backup</td><td class="col-center"><span class="dash-icon">✕ Local Only</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
+            <tr><td>Web / Merchant Portal Back Office</td><td class="col-center"><span class="dash-icon">✕ Plus &amp; Pro Only</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
+            <tr><td>Automated Cloud Backup</td><td class="col-center"><span class="dash-icon">✕ Manual / Google Drive</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
             <tr><td>Technical Support Channels</td><td class="col-center" style="font-size: 12px; color: var(--text-muted);">Community & FAQ</td><td class="col-center" style="color: #60a5fa;"><strong>Chat Support Only</strong></td><td class="col-center" style="color: #a855f7;"><strong>Phone, Chat & Remote Access</strong></td></tr>
             <tr><td>Customer Loyalty Program</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
             <tr><td>HR Features</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>

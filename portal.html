@@ -296,6 +296,42 @@
     </div>
   </div>
 
+  <!-- FREE TIER GATE VIEW (MERCHANT BACK OFFICE RESTRICTED) -->
+  <div id="free-gate-view" style="display: none; width: 100%; min-height: 100vh; background: var(--bg); align-items: center; justify-content: center; padding: 24px;">
+    <div class="login-box" style="max-width: 480px; text-align: center;">
+      <div class="login-header-logo" style="justify-content: center; margin-bottom: 12px;">
+        <img src="image_02e503.png" alt="FlexiTap Logo" style="width: 44px; height: 44px; border-radius: 50%; object-fit: contain;" />
+        <h2 style="font-size: 22px; font-weight: 800; color: #0f172a;">FlexiTap Back Office</h2>
+      </div>
+      <div style="display: inline-block; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 9999px; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.5px;">
+        Free Community Edition
+      </div>
+      <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 10px;">Back Office is Reserved for Plus &amp; Pro</h3>
+      <p style="color: var(--text-muted); font-size: 13.5px; line-height: 1.6; margin-bottom: 14px;">
+        Your store account (<strong id="free-gate-email">owner@store.com</strong>) is on the Free Community Edition.
+      </p>
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; text-align: left; font-size: 12.5px; color: #334155; line-height: 1.6; margin-bottom: 22px;">
+        <strong>How Free Community Works:</strong>
+        <ul style="margin: 6px 0 0; padding-left: 18px;">
+          <li>Your offline-first register runs directly in the <strong>FlexiTap POS PWA</strong> on your tablet or POS device.</li>
+          <li>Database backups are exported manually via Google Drive or local drive storage.</li>
+          <li>Cloud Back Office, remote sales sync, and multi-terminal analytics are unlocked with <strong>Plus ($290/yr)</strong> or <strong>Pro ($590/yr)</strong>.</li>
+        </ul>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <a href="flexi-app.html" style="display: block; background: var(--primary); color: #ffffff; padding: 12px 20px; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 14px;">
+          Launch FlexiTap POS PWA &rarr;
+        </a>
+        <a href="pricing.html" style="display: block; background: #f8fafc; color: #0f172a; border: 1px solid #cbd5e1; padding: 11px 20px; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 13.5px;">
+          Upgrade to Plus Edition ($290/yr) &rarr;
+        </a>
+        <button type="button" onclick="logout()" style="background: none; border: none; color: #64748b; font-size: 13px; font-weight: 600; cursor: pointer; padding: 8px; margin-top: 4px;">
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- FORGOT PASSWORD MODAL (MERCHANT) -->
   <div id="p-forgot-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); z-index: 2500; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(4px);">
     <div class="login-box" style="position: relative; max-width: 400px; text-align: left;">
@@ -2663,11 +2699,25 @@
         if (storeNameEl) storeNameEl.innerText = activeStore.name || 'My Store';
 
         const tier = profile?.subscription_tier || 'Pro';
+        const tierLower = tier.toLowerCase();
+
+        // Access Gate: Free Community tier accounts run only on POS terminal PWA (not Cloud Back Office)
+        if (tierLower === 'free' || tierLower.includes('free')) {
+          if (appLayout) appLayout.style.display = 'none';
+          if (loginView) loginView.style.display = 'none';
+          const gate = document.getElementById('free-gate-view');
+          if (gate) {
+            gate.style.display = 'flex';
+            const emailEl = document.getElementById('free-gate-email');
+            if (emailEl) emailEl.innerText = user.email || 'Free Community Account';
+          }
+          return;
+        }
+
         const storeTierEl = document.getElementById('store-tier-display');
         if (storeTierEl) storeTierEl.innerText = tier.toUpperCase() + ' EDITION';
 
         // Check Pro/Enterprise tier for Remote Access feature
-        const tierLower = tier.toLowerCase();
         const isProOrAbove = ['pro', 'vip', 'enterprise', 'unlimited'].some(t => tierLower.includes(t));
         const lockedEl = document.getElementById('remote-access-locked');
         const unlockedEl = document.getElementById('remote-access-unlocked');
@@ -3036,6 +3086,8 @@
       activeUser = null;
       activeStore = null;
       document.getElementById('app-layout').style.display = 'none';
+      const gate = document.getElementById('free-gate-view');
+      if (gate) gate.style.display = 'none';
       const pw = document.getElementById('p-password');
       if (pw) pw.value = '';
       const btn = document.getElementById('p-btn');
@@ -3111,6 +3163,8 @@
         } else {
           const loginView = document.getElementById('login-view');
           const appLayout = document.getElementById('app-layout');
+          const gate = document.getElementById('free-gate-view');
+          if (gate) gate.style.display = 'none';
           if (loginView) loginView.style.display = 'flex';
           if (appLayout) appLayout.style.display = 'none';
         }
@@ -3144,7 +3198,7 @@
             </div>
             <div style="padding: 28px 24px;">
               <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
-                <div style="color: #065f46; font-size: 14px; font-weight: 700;">✅ Issue Marked as Resolved</div>
+                <div style="color: #065f46; font-size: 14px; font-weight: 700;">Issue Marked as Resolved</div>
                 <div style="color: #047857; font-size: 13px; margin-top: 2px;">Ticket <strong>#${ticketNumber}</strong> has been completed and verified.</div>
               </div>
               <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">
@@ -3171,7 +3225,7 @@
             </div>
             <div style="padding: 28px 24px;">
               <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
-                <div style="color: #1e40af; font-size: 14px; font-weight: 700;">🎫 Ticket Received &amp; Logged</div>
+                <div style="color: #1e40af; font-size: 14px; font-weight: 700;">Ticket Received &amp; Logged</div>
                 <div style="color: #2563eb; font-size: 13px; margin-top: 2px;">Your ticket <strong>#${ticketNumber}</strong> has been dispatched to our engineering queue.</div>
               </div>
               <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">

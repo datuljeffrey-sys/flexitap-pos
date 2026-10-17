@@ -642,7 +642,7 @@
             </div>
             <div style="padding: 28px 24px;">
               <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; padding: 16px 18px; margin-bottom: 22px;">
-                <div style="color: #065f46; font-size: 15px; font-weight: 800;">🗓️ Demo Session Confirmed</div>
+                <div style="color: #065f46; font-size: 15px; font-weight: 800;">Demo Session Confirmed</div>
                 <div style="color: #047857; font-size: 13.5px; margin-top: 3px;">We have reserved your dedicated walkthrough session for <strong>${escapeHtml(businessName)}</strong>.</div>
               </div>
               <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 22px;">
@@ -673,7 +673,7 @@
           body: JSON.stringify({
             notification_type: 'demo_booking_client_confirmation',
             recipient_email: email,
-            subject: `[Confirmed] Your 1-on-1 FlexiTap POS Demo — ${businessName}`,
+            subject: `[Confirmed] Your 1-on-1 FlexiTap POS Demo - ${businessName}`,
             store_name: businessName,
             details: notes || '1-on-1 Live POS Demo Walkthrough',
             html: clientHtml
@@ -684,7 +684,7 @@
         const teamHtml = `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
             <div style="background: #1e1b4b; padding: 22px 24px; text-align: center;">
-              <h2 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 800;">🚀 New 1-on-1 Demo Booked</h2>
+              <h2 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 800;">New 1-on-1 Demo Booked</h2>
               <p style="color: #c7d2fe; margin: 4px 0 0; font-size: 12.5px;">FlexiTap Inbound Sales &amp; Solutions Pipeline</p>
             </div>
             <div style="padding: 24px;">
@@ -712,7 +712,7 @@
           body: JSON.stringify({
             notification_type: 'demo_booking_team_alert',
             recipient_email: 'info@flexitapapp.com',
-            subject: `[New 1-on-1 Demo Booked] ${businessName} — ${formattedDateStr} @ ${formattedTimeStr}`,
+            subject: `[New 1-on-1 Demo Booked] ${businessName} - ${formattedDateStr} @ ${formattedTimeStr}`,
             store_name: businessName,
             details: notes || 'New demo booking received from website.',
             html: teamHtml

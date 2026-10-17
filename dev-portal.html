@@ -2793,7 +2793,7 @@
             </div>
             <div style="padding: 28px 24px;">
               <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
-                <div style="color: #065f46; font-size: 14px; font-weight: 700;">✅ Issue Marked as Resolved</div>
+                <div style="color: #065f46; font-size: 14px; font-weight: 700;">Issue Marked as Resolved</div>
                 <div style="color: #047857; font-size: 13px; margin-top: 2px;">Ticket <strong>#${ticketNumber}</strong> has been completed and verified.</div>
               </div>
               <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">
@@ -2820,7 +2820,7 @@
             </div>
             <div style="padding: 28px 24px;">
               <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
-                <div style="color: #1e40af; font-size: 14px; font-weight: 700;">🎫 Ticket Received &amp; Logged</div>
+                <div style="color: #1e40af; font-size: 14px; font-weight: 700;">Ticket Received &amp; Logged</div>
                 <div style="color: #2563eb; font-size: 13px; margin-top: 2px;">Your ticket <strong>#${ticketNumber}</strong> has been dispatched to our engineering queue.</div>
               </div>
               <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">
@@ -3631,7 +3631,7 @@
           </div>
           <div style="padding: 28px 24px;">
             <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; padding: 16px 18px; margin-bottom: 22px;">
-              <div style="color: #065f46; font-size: 15px; font-weight: 800;">🗓️ Demo Session Confirmed</div>
+              <div style="color: #065f46; font-size: 15px; font-weight: 800;">Demo Session Confirmed</div>
               <div style="color: #047857; font-size: 13.5px; margin-top: 3px;">Your dedicated walkthrough session for <strong>${escapeHtml(businessName)}</strong> is confirmed.</div>
             </div>
             <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 22px;">
@@ -3658,7 +3658,7 @@
           body: JSON.stringify({
             notification_type: 'demo_booking_client_confirmation',
             recipient_email: clientEmail,
-            subject: `[Confirmed] Your 1-on-1 FlexiTap POS Demo — ${businessName}`,
+            subject: `[Confirmed] Your 1-on-1 FlexiTap POS Demo - ${businessName}`,
             store_name: businessName,
             details: 'Live 1-on-1 POS Demo Walkthrough',
             html: clientHtml
@@ -4262,7 +4262,7 @@
             body: JSON.stringify({
               notification_type: 'merchant_crm_onboarding',
               recipient_email: recipientEmail,
-              subject: `[FlexiTap POS] Merchant Account Activated — ${storeName}`,
+              subject: `[FlexiTap POS] Merchant Account Activated - ${storeName}`,
               store_name: storeName,
               details: `Store onboarding initiated for ${tier}`,
               html: clientHtml
@@ -4277,7 +4277,7 @@
       const teamHtml = `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
           <div style="background: #1e1b4b; padding: 22px 24px; text-align: center;">
-            <h2 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 800;">🏢 CRM Merchant Account Created</h2>
+            <h2 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 800;">CRM Merchant Account Created</h2>
             <p style="color: #c7d2fe; margin: 4px 0 0; font-size: 12.5px;">Dev Portal Merchant Provisioning Desk</p>
           </div>
           <div style="padding: 24px;">
@@ -4306,7 +4306,7 @@
           body: JSON.stringify({
             notification_type: 'crm_merchant_created_alert',
             recipient_email: 'info@flexitapapp.com',
-            subject: `[CRM Merchant Created] ${storeName} — ${tier}`,
+            subject: `[CRM Merchant Created] ${storeName} - ${tier}`,
             store_name: storeName,
             details: `Store account provisioned in Dev Portal CRM for ${storeName} (${recipientEmail || 'no email'}) on ${tier}`,
             html: teamHtml
@@ -7770,7 +7770,7 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
           body: JSON.stringify({
             notification_type: 'staff_welcome_invitation',
             recipient_email: email,
-            subject: `[FlexiTap Staff] Welcome to the Team — ${roleDisplay}`,
+            subject: `[FlexiTap Staff] Welcome to the Team - ${roleDisplay}`,
             store_name: 'FlexiTap Internal Team',
             details: `Staff account provisioned for ${fullName} (${email}) as ${roleDisplay}`,
             html: staffHtml
