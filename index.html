@@ -49,13 +49,13 @@
       position: relative; 
     }
 
-    /* HERO VIDEO BACKGROUND */
+    /* HERO VIDEO BACKGROUND - Dynamically Adapting */
     .hero-video-container { 
       position: absolute; 
       top: 0; 
       left: 0; 
       width: 100%; 
-      height: 920px; 
+      height: clamp(560px, 85vh, 920px); 
       overflow: hidden; 
       z-index: 0; 
       pointer-events: none; 
@@ -73,7 +73,7 @@
       left: 0; 
       width: 100%; 
       height: 100%; 
-      background: linear-gradient(180deg, rgba(9, 13, 22, 0.35) 0%, rgba(9, 13, 22, 0.6) 65%, var(--bg) 100%); 
+      background: linear-gradient(180deg, rgba(9, 13, 22, 0.35) 0%, rgba(9, 13, 22, 0.7) 70%, var(--bg) 100%); 
     }
     .glow-top { 
       position: absolute; 
@@ -87,15 +87,23 @@
       z-index: 1; 
     }
     
-    .container { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+    /* FLUID CONTAINER - Seamless Across Mobile, Tablet & Desktop */
+    .container { 
+      width: 100%; 
+      max-width: min(92vw, 1440px); 
+      margin: 0 auto; 
+      padding: 0 clamp(16px, 2.5vw, 32px); 
+      position: relative; 
+      z-index: 2; 
+    }
 
-    /* HEADER & NAV */
+    /* HEADER & NAV - Fully Responsive & Non-Stepped */
     header { 
-      padding: 16px 0; 
+      padding: clamp(12px, 1.6vh, 18px) 0; 
       border-bottom: 1px solid var(--card-border); 
       position: sticky; 
       top: 0; 
-      background: rgba(9, 13, 22, 0.92); 
+      background: rgba(9, 13, 22, 0.94); 
       backdrop-filter: blur(14px); 
       z-index: 100; 
       width: 100%; 
@@ -105,14 +113,14 @@
       justify-content: space-between; 
       align-items: center; 
       width: 100%; 
-      flex-wrap: nowrap; 
-      gap: 24px; 
+      gap: clamp(12px, 1.8vw, 24px); 
+      position: relative;
     }
     .logo { 
       display: flex; 
       align-items: center; 
       gap: 12px; 
-      font-size: 22px; 
+      font-size: clamp(19px, 1.6vw, 22px); 
       font-weight: 800; 
       color: #ffffff; 
       text-decoration: none; 
@@ -120,8 +128,8 @@
       flex-shrink: 0; 
     }
     .brand-logo-svg { 
-      width: 36px; 
-      height: 36px; 
+      width: clamp(32px, 2.4vw, 38px); 
+      height: clamp(32px, 2.4vw, 38px); 
       flex-shrink: 0; 
       display: block; 
       border-radius: 50%; 
@@ -132,14 +140,14 @@
       display: flex; 
       align-items: center; 
       justify-content: center; 
-      gap: 26px; 
+      gap: clamp(14px, 1.8vw, 28px); 
       flex: 1; 
-      margin: 0 16px; 
+      margin: 0; 
     }
     .nav-link { 
       color: #cbd5e1; 
       text-decoration: none; 
-      font-size: 14.5px; 
+      font-size: clamp(13.5px, 0.95vw, 15px); 
       font-weight: 600; 
       transition: color 0.2s, transform 0.2s; 
       white-space: nowrap; 
@@ -147,12 +155,22 @@
     .nav-link:hover, .nav-link.active { 
       color: #ffffff; 
     }
-    .mobile-menu-toggle { display: none; background: none; border: 1px solid var(--card-border); padding: 4px 8px; border-radius: 8px; color: #fff; font-size: 24px; cursor: pointer; }
+    .mobile-menu-toggle { 
+      display: none; 
+      background: rgba(255, 255, 255, 0.06); 
+      border: 1px solid var(--card-border); 
+      padding: 8px 12px; 
+      border-radius: 10px; 
+      color: #fff; 
+      font-size: 22px; 
+      cursor: pointer; 
+      line-height: 1; 
+    }
 
     .nav-actions { 
       display: flex; 
       align-items: center; 
-      gap: 12px; 
+      gap: clamp(8px, 1vw, 12px); 
       flex-shrink: 0; 
     }
     .btn-login { 
@@ -160,10 +178,10 @@
       backdrop-filter: blur(8px); 
       border: 1px solid var(--card-border); 
       color: #fff; 
-      padding: 10px 20px; 
+      padding: clamp(8px, 1vh, 11px) clamp(14px, 1.3vw, 20px); 
       border-radius: 10px; 
       font-weight: 700; 
-      font-size: 14.5px; 
+      font-size: clamp(13.5px, 0.95vw, 14.5px); 
       cursor: pointer; 
       transition: 0.2s ease; 
       text-decoration: none; 
@@ -179,10 +197,10 @@
       background: var(--primary); 
       border: none; 
       color: #fff; 
-      padding: 10px 20px; 
+      padding: clamp(8px, 1vh, 11px) clamp(16px, 1.4vw, 22px); 
       border-radius: 10px; 
       font-weight: 700; 
-      font-size: 14.5px; 
+      font-size: clamp(13.5px, 0.95vw, 14.5px); 
       cursor: pointer; 
       transition: 0.2s ease; 
       text-decoration: none; 
@@ -195,14 +213,15 @@
       background: var(--primary-hover); 
       transform: translateY(-1px); 
     }
+    .mobile-only-login { display: none; }
 
-    /* HERO */
+    /* HERO - Fluid Heights & Scaled Typography */
     .hero { 
       text-align: center; 
-      padding: 75px 0 70px; 
+      padding: clamp(48px, 8vh, 96px) 0 clamp(40px, 6vh, 80px); 
       position: relative; 
       width: 100%; 
-      min-height: calc(82vh - 80px); 
+      min-height: clamp(520px, 75vh, 840px); 
       display: flex; 
       flex-direction: column; 
       justify-content: center; 
@@ -487,67 +506,54 @@
       .booking-grid .full { grid-column: auto; }
     }
 
-    /* SALES CHAT WIDGET */
-    #chat-btn { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #2563eb); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 24px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 990; transition: transform 0.2s; }
-    #sales-chat-panel { display: none; position: fixed; bottom: 90px; right: 24px; width: min(90vw, 370px); height: 520px; background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); flex-direction: column; overflow: hidden; z-index: 999; }
-    .chat-header { background: rgba(255,255,255,0.03); padding: 14px 18px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
-    .chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 13px; }
-    .chat-msg { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; color: #f8fafc; }
-    .chat-options { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
-    .chat-chip { padding: 9px 12px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); color: #60a5fa; border-radius: 8px; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer; }
-    .chat-form-container { background-color: #1a1d24; padding: 16px; border-radius: 8px; border: 1px solid #2d323d; margin-top: 8px; }
-    .chat-form-container input, .chat-form-container textarea { width: 100%; padding: 10px; margin-bottom: 12px; background-color: #242933; border: 1px solid #3b4252; border-radius: 6px; color: #ffffff; font-family: inherit; font-size: 13px; box-sizing: border-box; }
-    .chat-form-container textarea { resize: vertical; min-height: 80px; }
-    .chat-form-container button { width: 100%; padding: 10px; background-color: #10b981; border: none; border-radius: 6px; color: #ffffff; font-weight: 700; cursor: pointer; }
-
-    @media (min-width: 1440px) {
-      .container { max-width: 1380px; }
-      .hero { padding: 95px 0 80px; min-height: calc(85vh - 80px); }
-      .hero-video-container { height: 1100px; }
-      .hero h1 { font-size: 60px; margin-bottom: 24px; }
-      .hero p { font-size: 20px; max-width: 900px; margin-bottom: 38px; }
-      .btn-primary { padding: 18px 36px; font-size: 16.5px; border-radius: 14px; }
-      .btn-demo { padding: 18px 34px; font-size: 16.5px; border-radius: 14px; }
-      .home-announcement { max-width: 1040px; padding: 28px 36px; border-radius: 22px; }
-      .home-announcement h4 { font-size: 19.5px; }
-      .home-announcement p { font-size: 16px; }
-      .trust-badges { font-size: 15px; gap: 36px; margin-top: 32px; }
-      .pillars-section { padding: 50px 0 110px; }
-      .pillars-grid { grid-template-columns: repeat(3, 1fr); gap: 32px; }
-      .pillar-card { padding: 42px 34px; border-radius: 24px; }
-      .pillar-content h3 { font-size: 24px; }
-      .pillar-content p { font-size: 15px; }
-    }
-
-    @media (min-width: 1720px) {
-      .container { max-width: 1560px; }
-      .hero { padding: 110px 0 95px; min-height: calc(88vh - 80px); }
-      .hero-video-container { height: 1180px; }
-      .hero h1 { font-size: 66px; }
-      .hero p { font-size: 21.5px; max-width: 960px; }
-      .home-announcement { max-width: 1180px; padding: 32px 42px; }
-      .home-announcement h4 { font-size: 21px; }
-      .home-announcement p { font-size: 16.5px; }
-      .pillars-grid { gap: 40px; }
-      .pillar-card { padding: 48px 38px; }
-      .pillar-content h3 { font-size: 26px; }
-    }
-
+    /* DYNAMIC RESPONSIVE RULES (Mobile, Tablet, Desktop) */
     @media (max-width: 1023px) {
-      .nav-links { display: none; width: 100%; flex-direction: column; align-items: flex-start; background: rgba(15, 23, 42, 0.98); padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); margin-top: 10px; box-sizing: border-box; }
+      .logo { order: 1; }
+      .nav-actions { order: 2; }
+      .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; order: 3; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: calc(100% + 1px);
+        left: 0;
+        right: 0;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        background: rgba(9, 13, 22, 0.98);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 20px 24px;
+        gap: 10px;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85);
+        border-radius: 0 0 16px 16px;
+        box-sizing: border-box;
+        z-index: 1000;
+        margin: 0;
+      }
       .nav-links.mobile-open { display: flex; }
-      .mobile-menu-toggle { display: block; }
-      header { padding: 12px 16px; }
+      .nav-link {
+        padding: 12px 14px;
+        font-size: 15.5px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      header { padding: 12px 0; }
     }
     @media (max-width: 768px) {
       .footer-grid { grid-template-columns: 1fr; gap: 30px; }
       .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 8px; }
+      .pillars-grid { grid-template-columns: 1fr; gap: 20px; }
     }
-    @media (max-width: 480px) {
-      .container { padding: 0 16px; }
+    @media (max-width: 640px) {
+      .nav-actions .btn-login { display: none; }
+      .mobile-only-login { display: inline-flex; width: 100%; justify-content: center; margin-top: 8px; }
       .cta-group { flex-direction: column; width: 100%; padding: 0; }
       .btn-primary, .btn-demo { width: 100%; justify-content: center; }
-      #sales-chat-panel { width: calc(100vw - 32px) !important; right: 16px !important; bottom: 85px !important; height: 460px; }
     }
   </style>
 </head>
@@ -580,6 +586,7 @@
         <a href="support.html" class="nav-link" onclick="toggleMobileMenu()">Support & Download</a>
         <a href="#" class="nav-link" onclick="openCalendarBooking(event)">Schedule Demo ↗</a>
         <a href="dev-portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
+        <button class="btn-login mobile-only-login" onclick="openModal('login-modal'); toggleMobileMenu();">Merchant Login</button>
       </div>
 
       <div class="nav-actions">
@@ -695,17 +702,6 @@
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="Instagram">
               <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
             </a>
-          </div>
-
-          <div class="app-buttons" style="margin-top: 20px;">
-            <div class="app-btn">
-               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.793 12 3.61 22.186c-.301-.318-.485-.75-.485-1.229V3.043c0-.479.184-.911.484-1.229zm11.306 11.307l2.42 2.42-11.89 6.842 9.47-9.262zm0-2.242L5.445 1.617l11.89 6.842-2.42 2.42zm1.536 1.536l3.815-2.194c.833-.479.833-1.258 0-1.737L16.451 10.29l-2.115 2.125 2.115 2.126v-.126z"/></svg>
-               Android (Nov 13)
-            </div>
-            <div class="app-btn">
-               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.01c.67-.82 1.13-1.96 1.01-3.1-.97.04-2.15.65-2.85 1.47-.62.72-1.16 1.88-1.02 2.99 1.08.08 2.19-.54 2.86-1.36z"/></svg>
-               iOS / iPadOS (Nov 13)
-            </div>
           </div>
         </div>
 

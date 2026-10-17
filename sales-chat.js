@@ -125,18 +125,18 @@
     const style = document.createElement('style');
     style.id = 'flexitap-chat-styles';
     style.textContent = `
-      /* FlexiTap Sales Chat Widget Styles */
+      /* FlexiTap Sales Chat Widget Styles - Dynamically Fluid Across All Screen Sizes */
       #ft-chat-launcher {
         position: fixed;
-        bottom: 24px;
-        right: 24px;
-        width: 60px;
-        height: 60px;
+        bottom: clamp(20px, 2.5vh, 32px);
+        right: clamp(20px, 2.5vw, 32px);
+        width: clamp(56px, 4.2vw, 68px);
+        height: clamp(56px, 4.2vw, 68px);
         border-radius: 50%;
         background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-        border: 2px solid rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.22);
         color: #ffffff;
-        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.45), 0 4px 12px rgba(0,0,0,0.3);
+        box-shadow: 0 10px 32px rgba(37, 99, 235, 0.45), 0 4px 14px rgba(0,0,0,0.35);
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -147,7 +147,7 @@
       }
       #ft-chat-launcher:hover {
         transform: scale(1.08);
-        box-shadow: 0 14px 36px rgba(37, 99, 235, 0.6), 0 6px 16px rgba(0,0,0,0.4);
+        box-shadow: 0 16px 40px rgba(37, 99, 235, 0.6), 0 6px 18px rgba(0,0,0,0.4);
       }
       #ft-chat-launcher:active {
         transform: scale(0.96);
@@ -177,23 +177,24 @@
         color: #ffffff;
         font-size: 11px;
         font-weight: 800;
-        padding: 2px 6px;
+        padding: 2px 7px;
         border-radius: 10px;
         border: 2px solid #090d16;
         display: none;
       }
 
-      /* Chat Window */
+      /* Chat Window - Fluid Tablet & Desktop Size */
       #ft-chat-window {
         position: fixed;
-        bottom: 96px;
-        right: 24px;
-        width: clamp(330px, 92vw, 400px);
-        height: clamp(480px, 80vh, 580px);
+        bottom: clamp(84px, 9vh, 112px);
+        right: clamp(20px, 2.5vw, 32px);
+        width: clamp(380px, 28vw, 480px);
+        height: clamp(540px, 72vh, 720px);
+        max-height: calc(100dvh - 100px);
         background: #090d16;
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        border-radius: 20px;
-        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), 0 0 1px rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: clamp(18px, 1.8vw, 24px);
+        box-shadow: 0 28px 70px rgba(0, 0, 0, 0.8), 0 0 2px rgba(255, 255, 255, 0.25);
         display: none;
         flex-direction: column;
         overflow: hidden;
@@ -210,8 +211,8 @@
       /* Header */
       .ft-chat-header {
         background: rgba(15, 23, 42, 0.95);
-        backdrop-filter: blur(8px);
-        padding: 14px 18px;
+        backdrop-filter: blur(12px);
+        padding: clamp(14px, 1.6vh, 18px) clamp(16px, 1.6vw, 22px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         display: flex;
         justify-content: space-between;
@@ -509,156 +510,77 @@
         cursor: not-allowed;
       }
 
-      @media (min-width: 1200px) {
-        #ft-chat-launcher {
-          width: 66px;
-          height: 66px;
-          bottom: 28px;
-          right: 28px;
-        }
-        #ft-launcher-icon {
-          font-size: 28px !important;
-        }
-        #ft-chat-launcher.ft-open #ft-launcher-icon {
-          font-size: 34px !important;
-        }
-        #ft-chat-window {
-          bottom: 104px;
-          right: 28px;
-          width: 440px;
-          height: 640px;
-          max-height: calc(100vh - 130px);
-          border-radius: 22px;
-        }
-        .ft-chat-header {
-          padding: 16px 20px;
-        }
-        .ft-avatar {
-          width: 42px;
-          height: 42px;
-          font-size: 20px;
-        }
-        .ft-header-title {
-          font-size: 15px;
-        }
-        .ft-header-sub {
-          font-size: 12px;
-        }
-        .ft-chat-body {
-          padding: 18px 20px;
-          gap: 14px;
-        }
-        .ft-msg {
-          max-width: 82%;
-          padding: 13px 17px;
-          font-size: 14px;
-          line-height: 1.55;
-          border-radius: 16px;
-        }
-        .ft-chip-btn {
-          padding: 11px 16px;
-          font-size: 13.5px;
-          border-radius: 10px;
-        }
-        .ft-chat-card {
-          padding: 15px 18px;
-        }
-        .ft-form-input {
-          padding: 11px 14px;
-          font-size: 13.5px;
-          border-radius: 8px;
-          margin-bottom: 10px;
-        }
-        .ft-form-submit {
-          padding: 11px;
-          font-size: 13.5px;
-          border-radius: 8px;
-        }
-        .ft-chat-footer {
-          padding: 12px 18px;
-          gap: 10px;
-        }
-        .ft-chat-input {
-          padding: 12px 18px;
-          font-size: 14px;
-        }
-        .ft-chat-send-btn {
-          width: 40px;
-          height: 40px;
-        }
-      }
-
-      @media (min-width: 1600px) {
-        #ft-chat-launcher {
-          width: 72px;
-          height: 72px;
-          bottom: 32px;
-          right: 32px;
-        }
-        #ft-launcher-icon {
-          font-size: 32px !important;
-        }
-        #ft-chat-launcher.ft-open #ft-launcher-icon {
-          font-size: 38px !important;
-        }
-        #ft-chat-window {
-          bottom: 116px;
-          right: 32px;
-          width: 480px;
-          height: 700px;
-          max-height: calc(100vh - 140px);
-          border-radius: 24px;
-        }
-        .ft-chat-header {
-          padding: 18px 22px;
-        }
-        .ft-avatar {
-          width: 46px;
-          height: 46px;
-          font-size: 22px;
-        }
-        .ft-header-title {
-          font-size: 16px;
-        }
-        .ft-header-sub {
-          font-size: 12.5px;
-        }
-        .ft-chat-body {
-          padding: 20px 22px;
-          gap: 16px;
-        }
-        .ft-msg {
-          font-size: 14.5px;
-          line-height: 1.58;
-          padding: 14px 18px;
-        }
-        .ft-chip-btn {
-          padding: 12px 18px;
-          font-size: 14px;
-        }
-        .ft-chat-input {
-          padding: 13px 20px;
-          font-size: 14.5px;
-        }
-        .ft-chat-send-btn {
-          width: 44px;
-          height: 44px;
-        }
-      }
-
+      /* Adaptive Mobile & Tablet Media Queries */
       @media (max-width: 640px) {
         #ft-chat-window {
-          bottom: 84px;
-          right: 12px;
-          left: 12px;
-          width: calc(100vw - 24px) !important;
-          height: calc(100dvh - 100px) !important;
+          position: fixed;
+          bottom: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          width: 100% !important;
+          max-width: 100% !important;
+          height: min(88dvh, 620px) !important;
+          max-height: 90dvh !important;
+          border-radius: 22px 22px 0 0 !important;
+          border-left: none !important;
+          border-right: none !important;
+          border-bottom: none !important;
+          box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.85);
         }
         #ft-chat-launcher {
-          bottom: 16px;
-          right: 16px;
-          width: 52px;
-          height: 52px;
+          bottom: 18px;
+          right: 18px;
+          width: 54px;
+          height: 54px;
+        }
+        .ft-chat-header {
+          padding: 14px 18px;
+        }
+        .ft-chat-body {
+          padding: 16px;
+          gap: 12px;
+        }
+        .ft-msg {
+          max-width: 88%;
+          font-size: 14px;
+          line-height: 1.5;
+        }
+        .ft-chat-input, .ft-form-input {
+          font-size: 16px !important; /* Prevents auto-zoom on iOS Safari */
+        }
+        .ft-chip-btn {
+          min-height: 44px;
+          padding: 12px 16px;
+          font-size: 13.5px;
+        }
+        .ft-chat-footer {
+          padding: 12px 16px;
+        }
+      }
+
+      @media (min-width: 641px) and (max-width: 1024px) {
+        #ft-chat-window {
+          width: clamp(380px, 46vw, 440px);
+          height: clamp(520px, 68vh, 620px);
+        }
+        .ft-msg {
+          font-size: 13.5px;
+        }
+      }
+
+      @media (min-width: 1025px) {
+        .ft-msg {
+          font-size: 14px;
+          line-height: 1.55;
+          padding: 13px 17px;
+        }
+        .ft-chip-btn {
+          font-size: 13.5px;
+          padding: 11px 16px;
+        }
+        .ft-chat-input {
+          font-size: 14px;
+          padding: 12px 18px;
         }
       }
     `;
