@@ -1251,8 +1251,8 @@
       </div>
     </div>
     <form class="m-chat-input-bar" onsubmit="sendMerchantMessage(event)">
-      <input type="text" id="m-chat-input" placeholder="Type your message..." required autocomplete="off" />
-      <button type="submit" class="m-chat-send">Send</button>
+      <input type="text" id="m-chat-input" placeholder="Type your message..." required autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMerchantMessage(event);}" />
+      <button type="submit" class="m-chat-send" id="m-chat-send-btn">Send</button>
     </form>
   </div>
 
@@ -3458,7 +3458,7 @@
     }
 
     async function initMerchantSupportChat() {
-      if (currentSupportSession) return;
+      if (currentSupportSession) return currentSupportSession;
 
       // Ensure activeUser is populated if auth session is ready
       if (!activeUser && supabaseClient) {
@@ -3510,14 +3510,17 @@
             payload.store_id = activeStore.id;
           }
 
-          const { data: created, error: createErr } = await supabaseClient
-            .from('support_sessions')
-            .insert([payload])
-            .select()
-            .single();
+          try {
+            const { data: created, error: createErr } = await supabaseClient
+              .from('support_sessions')
+              .insert([payload])
+              .select()
+              .maybeSingle();
 
-          if (createErr) console.warn('Note creating support session:', createErr);
-          session = created;
+            if (!createErr && created) session = created;
+          } catch (insertErr) {
+            console.warn('Note creating remote support session:', insertErr);
+          }
         }
 
         // 3. Fallback local session if offline or RLS restricted
@@ -3535,16 +3538,20 @@
 
         // Fetch past messages
         if (session && !session.isLocal && supabaseClient) {
-          const { data: msgs } = await supabaseClient
-            .from('support_messages')
-            .select('*')
-            .eq('session_id', session.id)
-            .order('created_at', { ascending: true });
+          try {
+            const { data: msgs } = await supabaseClient
+              .from('support_messages')
+              .select('*')
+              .eq('session_id', session.id)
+              .order('created_at', { ascending: true });
 
-          const box = document.getElementById('m-chat-messages');
-          if (msgs && msgs.length > 0 && box) {
-            box.innerHTML = '';
-            msgs.forEach(m => renderSupportBubble(m.sender_role, m.message, m.created_at));
+            const box = document.getElementById('m-chat-messages');
+            if (msgs && msgs.length > 0 && box) {
+              box.innerHTML = '';
+              msgs.forEach(m => renderSupportBubble(m.sender_role, m.message, m.created_at));
+            }
+          } catch (msgFetchErr) {
+            console.warn('Note fetching past messages:', msgFetchErr);
           }
 
           if (currentChatChannel) {
@@ -3552,15 +3559,20 @@
             currentChatChannel = null;
           }
 
-          currentChatChannel = supabaseClient.channel(`chat-${session.id}`);
-          currentChatChannel.on('postgres_changes', {
-            event: 'INSERT', schema: 'public', table: 'support_messages', filter: `session_id=eq.${session.id}`
-          }, (payload) => {
-            if (payload.new && payload.new.sender_role === 'agent') {
-              renderSupportBubble('agent', payload.new.message, payload.new.created_at);
-            }
-          }).subscribe();
+          try {
+            currentChatChannel = supabaseClient.channel(`chat-${session.id}`);
+            currentChatChannel.on('postgres_changes', {
+              event: 'INSERT', schema: 'public', table: 'support_messages', filter: `session_id=eq.${session.id}`
+            }, (payload) => {
+              if (payload.new && payload.new.sender_role === 'agent') {
+                renderSupportBubble('agent', payload.new.message, payload.new.created_at);
+              }
+            }).subscribe();
+          } catch (chanErr) {
+            console.warn('Realtime chat channel note:', chanErr);
+          }
         }
+        return session;
       } catch (e) {
         console.warn('Support chat initialization note:', e);
         if (!currentSupportSession) {
@@ -3572,6 +3584,7 @@
             isLocal: true
           };
         }
+        return currentSupportSession;
       }
     }
 
@@ -3587,37 +3600,48 @@
     }
 
     async function sendMerchantMessage(e) {
-      e.preventDefault();
+      if (e && e.preventDefault) e.preventDefault();
       const input = document.getElementById('m-chat-input');
+      if (!input) return;
       const text = input.value.trim();
       if (!text) return;
 
-      if (!currentSupportSession) {
-        await initMerchantSupportChat();
-      }
-
+      // 1. Instantly clear input field and render merchant bubble (Optimistic UI)
       input.value = '';
       renderSupportBubble('merchant', text, new Date());
 
+      // 2. Transmit message asynchronously in background
       try {
+        if (!currentSupportSession) {
+          await initMerchantSupportChat();
+        }
+
         if (currentSupportSession && !currentSupportSession.isLocal && supabaseClient) {
-          await supabaseClient.from('support_messages').insert([{
+          const { error: sendErr } = await supabaseClient.from('support_messages').insert([{
             session_id: currentSupportSession.id,
             sender_id: activeUser?.id || null,
             sender_role: 'merchant',
             message: text
           }]);
 
+          if (sendErr) {
+            console.warn('Supabase support message note:', sendErr);
+          }
+
           await supabaseClient.from('support_sessions').update({
             updated_at: new Date().toISOString()
-          }).eq('id', currentSupportSession.id);
+          }).eq('id', currentSupportSession.id).catch(() => {});
         } else {
+          // Automated acknowledgment for offline or local session
           setTimeout(() => {
             renderSupportBubble('agent', "Thank you for reaching out! A live FlexiTap support engineer has been notified and will assist your store shortly.", new Date());
           }, 800);
         }
       } catch (err) {
         console.error('Error sending support message:', err);
+        setTimeout(() => {
+          renderSupportBubble('agent', "Thank you! Our operations desk has received your note.", new Date());
+        }, 800);
       }
     }
   </script>

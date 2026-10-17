@@ -649,7 +649,7 @@
                 <tr><td style="padding: 7px 0; color: #64748b; width: 140px;">Venue / Business:</td><td style="padding: 7px 0; color: #0f172a; font-weight: 700;">${escapeHtml(businessName)}</td></tr>
                 <tr><td style="padding: 7px 0; color: #64748b;">Scheduled Date:</td><td style="padding: 7px 0; color: #0f172a; font-weight: 700;">${formattedDateStr}</td></tr>
                 <tr><td style="padding: 7px 0; color: #64748b;">Scheduled Time:</td><td style="padding: 7px 0; color: #2563eb; font-weight: 800; font-size: 14px;">${formattedTimeStr}</td></tr>
-                <tr><td style="padding: 7px 0; color: #64748b;">Meeting Room:</td><td style="padding: 7px 0;"><a href="https://meet.google.com/ft-demo-session" style="color: #16a34a; font-weight: 800; text-decoration: underline;">https://meet.google.com/ft-demo-session</a></td></tr>
+                <tr><td style="padding: 7px 0; color: #64748b;">Meeting Room:</td><td style="padding: 7px 0;"><a href="https://meet.google.com/flx-demo-pos" style="color: #16a34a; font-weight: 800; text-decoration: underline;">https://meet.google.com/flx-demo-pos</a></td></tr>
               </table>
               <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
                 <div style="font-size: 12px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Your Walkthrough Focus:</div>
@@ -699,7 +699,7 @@
                 <div style="color: #0f172a; font-size: 13px; margin-top: 4px; white-space: pre-wrap;">${escapeHtml(notes) || 'Standard venue walkthrough.'}</div>
               </div>
               <div style="text-align: center; margin-top: 14px;">
-                <a href="https://meet.google.com/ft-demo-session" style="display: inline-block; background: #2563eb; color: #ffffff; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none;">Join Google Meet Room</a>
+                <a href="https://meet.google.com/flx-demo-pos" style="display: inline-block; background: #2563eb; color: #ffffff; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none;">Join Google Meet Room</a>
               </div>
             </div>
           </div>
@@ -712,7 +712,7 @@
           body: JSON.stringify({
             notification_type: 'demo_booking_team_alert',
             recipient_email: 'info@flexitapapp.com',
-            subject: `🚀 [New 1-on-1 Demo Booked] ${businessName} — ${formattedDateStr} @ ${formattedTimeStr}`,
+            subject: `[New 1-on-1 Demo Booked] ${businessName} — ${formattedDateStr} @ ${formattedTimeStr}`,
             store_name: businessName,
             details: notes || 'New demo booking received from website.',
             html: teamHtml

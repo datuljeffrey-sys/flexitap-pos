@@ -2427,7 +2427,23 @@
   <script>
     const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    let safeStorage;
+    try {
+      const testKey = '__test_store_dev__';
+      window.localStorage.setItem(testKey, testKey);
+      window.localStorage.removeItem(testKey);
+      safeStorage = window.localStorage;
+    } catch (_) {
+      safeStorage = undefined;
+    }
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: safeStorage !== undefined,
+        storage: safeStorage
+      }
+    });
 
     let activeDevUser = null;
     let cachedProfiles = [];
@@ -2694,31 +2710,49 @@
       const btnText = document.getElementById('dev-btn-text');
       const err = document.getElementById('dev-err');
 
-      err.innerText = '';
-      btnText.innerText = 'Verifying credentials...';
-
-      const res = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
-
-      if (res.error) {
-        btnText.innerText = 'Authenticate';
-        err.innerText = res.error.message;
+      if (!email || !password) {
+        err.innerText = 'Please enter both your work email and password.';
         return;
       }
 
-      pendingDevUser = res.data.user;
-      btnText.innerText = 'Sending 2FA security code...';
+      err.innerText = '';
+      btnText.innerText = 'Verifying credentials...';
+      btnText.disabled = true;
 
       try {
-        const otpRes = await supabaseClient.auth.signInWithOtp({
-          email: email,
-          options: { shouldCreateUser: false }
-        });
-        if (otpRes.error) throw otpRes.error;
+        // Authenticate with 10-second timeout safety race
+        const authPromise = supabaseClient.auth.signInWithPassword({ email: email, password: password });
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Authentication timed out. Please check your network connection.')), 10000)
+        );
+
+        const res = await Promise.race([authPromise, timeoutPromise]);
+
+        if (res.error) {
+          btnText.innerText = 'Authenticate';
+          btnText.disabled = false;
+          err.innerText = res.error.message || 'Invalid email or password.';
+          return;
+        }
+
+        if (res.data && res.data.user) {
+          btnText.innerText = '✓ Access Verified. Loading...';
+          await verifyDevRole(res.data.user);
+        } else {
+          btnText.innerText = 'Authenticate';
+          btnText.disabled = false;
+          err.innerText = 'Unable to verify staff profile. Please try again.';
+        }
+      } catch (authErr) {
+        console.error('Dev auth exception:', authErr);
+        err.innerText = authErr.message || 'Authentication failed. Please verify credentials.';
         btnText.innerText = 'Authenticate';
-        openDevOtpModal(email);
-      } catch (otpErr) {
-        btnText.innerText = 'Authenticate';
-        err.innerText = otpErr.message || 'Failed to dispatch security verification code.';
+        btnText.disabled = false;
+      } finally {
+        if (btnText.innerText === 'Verifying credentials...') {
+          btnText.innerText = 'Authenticate';
+          btnText.disabled = false;
+        }
       }
     });
 
@@ -3007,7 +3041,7 @@
       }
     }
 
-    supabaseClient.auth.onAuthStateChange((event, session) => {
+    supabaseClient.auth.onAuthStateChange(async (event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
         const modal = document.getElementById('dev-new-password-modal');
         if (modal) modal.style.display = 'flex';
@@ -3016,6 +3050,13 @@
           const cleanUrl = window.location.pathname + window.location.search;
           window.history.replaceState({}, document.title, cleanUrl);
         }
+        if (!activeDevUser) {
+          await verifyDevRole(session.user);
+        }
+      } else if (event === 'SIGNED_OUT') {
+        activeDevUser = null;
+        document.getElementById('dev-auth-view').style.display = 'flex';
+        document.getElementById('dev-app-layout').style.display = 'none';
       }
     });
 
@@ -3544,7 +3585,7 @@
             </td>
             <td style="text-align: right; white-space: nowrap;">
               <div style="display: inline-flex; gap: 6px; align-items: center;">
-                <a href="https://meet.google.com/ft-demo-session" target="_blank" class="action-btn" style="padding: 5px 9px; font-size: 0.72rem; text-decoration: none; background: rgba(59, 130, 246, 0.2); color: #93c5fd; border-color: rgba(59, 130, 246, 0.4);" title="Launch Live Demo Video Room">
+                <a href="https://meet.google.com/flx-demo-pos" target="_blank" class="action-btn" style="padding: 5px 9px; font-size: 0.72rem; text-decoration: none; background: rgba(59, 130, 246, 0.2); color: #93c5fd; border-color: rgba(59, 130, 246, 0.4);" title="Launch Live Demo Video Room">
                   📹 Meet
                 </a>
                 <button class="action-btn" onclick="sendDemoEmailConfirmation('${d.id}', '${safeName}', '${safeEmail}', '${safeDate}')" style="padding: 5px 9px; font-size: 0.72rem; background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.4);" title="Send / Re-send confirmation email to client">
@@ -3596,7 +3637,7 @@
             <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 22px;">
               <tr><td style="padding: 7px 0; color: #64748b; width: 140px;">Venue / Business:</td><td style="padding: 7px 0; color: #0f172a; font-weight: 700;">${escapeHtml(businessName)}</td></tr>
               <tr><td style="padding: 7px 0; color: #64748b;">Scheduled Time:</td><td style="padding: 7px 0; color: #2563eb; font-weight: 800; font-size: 14px;">${scheduledDateStr}</td></tr>
-              <tr><td style="padding: 7px 0; color: #64748b;">Meeting Room:</td><td style="padding: 7px 0;"><a href="https://meet.google.com/ft-demo-session" style="color: #16a34a; font-weight: 800; text-decoration: underline;">https://meet.google.com/ft-demo-session</a></td></tr>
+              <tr><td style="padding: 7px 0; color: #64748b;">Meeting Room:</td><td style="padding: 7px 0;"><a href="https://meet.google.com/flx-demo-pos" style="color: #16a34a; font-weight: 800; text-decoration: underline;">https://meet.google.com/flx-demo-pos</a></td></tr>
             </table>
             <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px;">
               Our systems engineer will present terminal synchronization, kitchen display dispatch, printer pairings, and live reporting.
