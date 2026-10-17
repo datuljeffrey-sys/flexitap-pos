@@ -4197,6 +4197,126 @@
       document.getElementById('crm-modal-merchant').classList.remove('open');
     }
 
+    async function sendCrmMerchantOnboardingEmail({
+      storeName,
+      legalName,
+      ownerName,
+      email,
+      tier,
+      currency,
+      monthlyRate,
+      accountId
+    }) {
+      const recipientEmail = (email || '').trim();
+      const planRateDesc = monthlyRate > 0 ? `${currency} ${monthlyRate.toFixed(2)}/mo` : 'Free Community Edition';
+      const portalUrl = 'https://www.flexitapapp.com/portal.html';
+
+      // 1. Client Onboarding Email (if client has an email address)
+      if (recipientEmail && recipientEmail.includes('@') && !recipientEmail.endsWith('.invalid')) {
+        const clientHtml = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.06);">
+            <div style="background: #0f172a; padding: 26px 24px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">FlexiTap POS</h1>
+              <p style="color: #94a3b8; margin: 4px 0 0; font-size: 13px;">Merchant Back Office &amp; Provisioning Desk</p>
+            </div>
+            <div style="padding: 28px 24px;">
+              <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; padding: 16px 18px; margin-bottom: 22px;">
+                <div style="color: #065f46; font-size: 15px; font-weight: 800;">Account Successfully Provisioned</div>
+                <div style="color: #334155; font-size: 13.5px; margin-top: 3px;">Welcome, <strong>${escapeHtml(ownerName || storeName)}</strong>! Your store back-office account for <strong>${escapeHtml(storeName)}</strong> has been activated by our merchant operations team.</div>
+              </div>
+              <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 22px;">
+                <tr><td style="padding: 7px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 7px 0; color: #0f172a; font-weight: 700;">${escapeHtml(storeName)}</td></tr>
+                <tr><td style="padding: 7px 0; color: #64748b;">Legal Entity:</td><td style="padding: 7px 0; color: #0f172a; font-weight: 600;">${escapeHtml(legalName || storeName)}</td></tr>
+                <tr><td style="padding: 7px 0; color: #64748b;">Merchant ID:</td><td style="padding: 7px 0; color: #64748b; font-family: monospace; font-size: 13px;">${escapeHtml(accountId)}</td></tr>
+                <tr><td style="padding: 7px 0; color: #64748b;">Primary Email:</td><td style="padding: 7px 0; color: #2563eb; font-weight: 700;">${escapeHtml(recipientEmail)}</td></tr>
+                <tr><td style="padding: 7px 0; color: #64748b;">Subscribed Tier:</td><td style="padding: 7px 0; color: #059669; font-weight: 800;">${escapeHtml(tier)}</td></tr>
+                <tr><td style="padding: 7px 0; color: #64748b;">Billing Rate:</td><td style="padding: 7px 0; color: #0f172a; font-weight: 700;">${escapeHtml(planRateDesc)}</td></tr>
+              </table>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px;">
+                <div style="font-size: 12px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Next Steps to Start Ringing Up Sales:</div>
+                <ul style="color: #1e293b; font-size: 13px; line-height: 1.7; padding-left: 18px; margin: 0;">
+                  <li>Log in to your back office at <a href="${portalUrl}" style="color: #2563eb; font-weight: 600;">flexitapapp.com/portal.html</a> using your registered email.</li>
+                  <li>Configure hardware terminals, ESC/POS Bluetooth/USB printers, and cash drawers.</li>
+                  <li>Upload your catalog, set category groupings, modifiers, and store tax rules.</li>
+                  <li>Need hands-on guidance? Schedule a complimentary walkthrough with your dedicated onboarding engineer.</li>
+                </ul>
+              </div>
+              <div style="text-align: center; margin: 24px 0 16px;">
+                <a href="${portalUrl}" style="display: inline-block; background: #2563eb; color: #ffffff; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none;">Open Merchant Back Office &rarr;</a>
+              </div>
+              <p style="font-size: 12.5px; color: #64748b; line-height: 1.5; margin: 0; text-align: center;">
+                Have questions or need hardware pairing support? Contact us anytime at <a href="mailto:support@flexitapapp.com" style="color: #2563eb;">support@flexitapapp.com</a>.
+              </p>
+            </div>
+            <div style="background: #f1f5f9; padding: 16px 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
+              &copy; 2026 FlexiTap POS &bull; <a href="https://www.flexitapapp.com" style="color: #64748b; text-decoration: none;">www.flexitapapp.com</a> &bull; Offline-First Point of Sale
+            </div>
+          </div>
+        `;
+
+        try {
+          fetch(GOOGLE_TICKET_WEBHOOK_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              notification_type: 'merchant_crm_onboarding',
+              recipient_email: recipientEmail,
+              subject: `[FlexiTap POS] Merchant Account Activated — ${storeName}`,
+              store_name: storeName,
+              details: `Store onboarding initiated for ${tier}`,
+              html: clientHtml
+            })
+          }).catch(err => console.warn('CRM merchant onboarding webhook note:', err));
+        } catch (e) {
+          console.warn('CRM merchant onboarding dispatch exception:', e);
+        }
+      }
+
+      // 2. Team Notification to info@flexitapapp.com
+      const teamHtml = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+          <div style="background: #1e1b4b; padding: 22px 24px; text-align: center;">
+            <h2 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 800;">🏢 CRM Merchant Account Created</h2>
+            <p style="color: #c7d2fe; margin: 4px 0 0; font-size: 12.5px;">Dev Portal Merchant Provisioning Desk</p>
+          </div>
+          <div style="padding: 24px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 18px;">
+              <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 700;">${escapeHtml(storeName)}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748b;">Legal Entity:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${escapeHtml(legalName || storeName)}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748b;">Primary Contact:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${escapeHtml(ownerName)}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748b;">Contact Email:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 600;"><a href="mailto:${escapeHtml(recipientEmail)}">${escapeHtml(recipientEmail || 'None provided')}</a></td></tr>
+              <tr><td style="padding: 6px 0; color: #64748b;">Selected Tier:</td><td style="padding: 6px 0; color: #059669; font-weight: 800;">${escapeHtml(tier)}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748b;">Billing Rate:</td><td style="padding: 7px 0; color: #0f172a; font-weight: 700;">${escapeHtml(planRateDesc)}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748b;">Store ID:</td><td style="padding: 6px 0; color: #64748b; font-family: monospace;">${escapeHtml(accountId)}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748b;">Created Date:</td><td style="padding: 6px 0; color: #64748b;">${new Date().toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</td></tr>
+            </table>
+            <div style="text-align: center; margin-top: 14px;">
+              <a href="https://www.flexitapapp.com/dev-portal.html" style="display: inline-block; background: #2563eb; color: #ffffff; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none;">Manage in Dev Portal CRM &rarr;</a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      try {
+        fetch(GOOGLE_TICKET_WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            notification_type: 'crm_merchant_created_alert',
+            recipient_email: 'info@flexitapapp.com',
+            subject: `[CRM Merchant Created] ${storeName} — ${tier}`,
+            store_name: storeName,
+            details: `Store account provisioned in Dev Portal CRM for ${storeName} (${recipientEmail || 'no email'}) on ${tier}`,
+            html: teamHtml
+          })
+        }).catch(err => console.warn('CRM team alert webhook note:', err));
+      } catch (e) {
+        console.warn('CRM team alert dispatch exception:', e);
+      }
+    }
+
     async function handleCrmNewMerchantSubmit(event) {
       event.preventDefault();
       const storeName = document.getElementById('crm-new-store-name').value.trim();
@@ -4259,6 +4379,18 @@
       try {
         await supabaseClient.from('merchant_crm_accounts').insert(newAcc);
       } catch (e) {}
+
+      // Dispatch Onboarding Email to Merchant and Alert to FlexiTap Team
+      sendCrmMerchantOnboardingEmail({
+        storeName: storeName,
+        legalName: legalName,
+        ownerName: ownerName,
+        email: email,
+        tier: tier,
+        currency: currency,
+        monthlyRate: monthlyRate,
+        accountId: newId
+      });
 
       closeCrmMerchantModal();
       populateCrmAccountDropdown();
@@ -7595,6 +7727,60 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
       }
     }
 
+    async function sendStaffWelcomeEmail({ fullName, email, role, department, roleTitle }) {
+      if (!email || !email.includes('@')) return;
+      const roleDisplay = (roleTitle || role || 'Team Specialist');
+      const devPortalUrl = 'https://www.flexitapapp.com/dev-portal.html';
+
+      const staffHtml = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.06);">
+          <div style="background: #0f172a; padding: 26px 24px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 800;">FlexiTap POS</h1>
+            <p style="color: #94a3b8; margin: 4px 0 0; font-size: 13px;">Team Onboarding &amp; Operations Portal</p>
+          </div>
+          <div style="padding: 28px 24px;">
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 16px 18px; margin-bottom: 22px;">
+              <div style="color: #1d4ed8; font-size: 15px; font-weight: 800;">Welcome to the FlexiTap Team</div>
+              <div style="color: #334155; font-size: 13.5px; margin-top: 3px;">Hello <strong>${escapeHtml(fullName)}</strong>, your staff account for the FlexiTap operations portal has been created.</div>
+            </div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 22px;">
+              <tr><td style="padding: 7px 0; color: #64748b; width: 140px;">Full Name:</td><td style="padding: 7px 0; color: #0f172a; font-weight: 700;">${escapeHtml(fullName)}</td></tr>
+              <tr><td style="padding: 7px 0; color: #64748b;">Staff Email:</td><td style="padding: 7px 0; color: #2563eb; font-weight: 700;">${escapeHtml(email)}</td></tr>
+              <tr><td style="padding: 7px 0; color: #64748b;">Department:</td><td style="padding: 7px 0; color: #0f172a; font-weight: 600;">${escapeHtml(department)}</td></tr>
+              <tr><td style="padding: 7px 0; color: #64748b;">Assigned Role:</td><td style="padding: 7px 0; color: #059669; font-weight: 800;">${escapeHtml(roleDisplay)}</td></tr>
+            </table>
+            <div style="text-align: center; margin: 24px 0 16px;">
+              <a href="${devPortalUrl}" style="display: inline-block; background: #2563eb; color: #ffffff; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none;">Sign In to Dev Portal &rarr;</a>
+            </div>
+            <p style="font-size: 12.5px; color: #64748b; line-height: 1.5; margin: 0; text-align: center;">
+              Your initial credentials were provided by your team lead. Please reset your password after your initial sign-in.
+            </p>
+          </div>
+          <div style="background: #f1f5f9; padding: 16px 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
+            &copy; 2026 FlexiTap POS Internal Systems &bull; <a href="https://www.flexitapapp.com" style="color: #64748b; text-decoration: none;">flexitapapp.com</a>
+          </div>
+        </div>
+      `;
+
+      try {
+        fetch(GOOGLE_TICKET_WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            notification_type: 'staff_welcome_invitation',
+            recipient_email: email,
+            subject: `[FlexiTap Staff] Welcome to the Team — ${roleDisplay}`,
+            store_name: 'FlexiTap Internal Team',
+            details: `Staff account provisioned for ${fullName} (${email}) as ${roleDisplay}`,
+            html: staffHtml
+          })
+        }).catch(err => console.warn('Staff welcome email webhook note:', err));
+      } catch (e) {
+        console.warn('Staff welcome email dispatch exception:', e);
+      }
+    }
+
     async function handleCreateStaffSubmit(e) {
       e.preventDefault();
       const submitBtn = document.getElementById('btn-submit-staff-add');
@@ -7690,6 +7876,15 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
       submitBtn.textContent = originalText;
       submitBtn.disabled = false;
       closeAddStaffModal();
+
+      // Dispatch Staff Welcome Invitation Email
+      sendStaffWelcomeEmail({
+        fullName: fullName,
+        email: email,
+        role: role,
+        department: department,
+        roleTitle: roleTitle
+      });
 
       lastProvisionedCreds = {
         name: fullName,

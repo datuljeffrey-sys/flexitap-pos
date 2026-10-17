@@ -179,7 +179,175 @@
   <script>
     const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+    const GOOGLE_TICKET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzJu1CEi1qhT-k7Qc_tisMN7vXbbCuGymgiMMk_K6PGIMnrUHkIrYEuQFMCviZfaYvoQw/exec';
     let supabaseClient;
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    async function dispatchSignupWelcomeEmail({ businessName, email, tierName, paymentStatus }) {
+      if (!email || !email.includes('@')) return;
+
+      const tierKey = (tierName || 'free').toLowerCase();
+      let tierTitle = 'Free Community Edition';
+      let badgeColor = '#059669';
+      let badgeBg = '#ecfdf5';
+      let badgeBorder = '#a7f3d0';
+      let badgeText = 'Spot Secured: Free Launch Waitlist';
+      let priceDesc = 'Free forever ($0 / mo) — Official Public Release: Nov 13, 2026';
+      let perksHtml = `
+        <li><strong>Offline-First Engine:</strong> Ring sales, hold checks, and tender cash without internet drops.</li>
+        <li><strong>Universal Terminal Compatibility:</strong> Runs on Windows PCs, Android tablets, and Sunmi/Clover POS.</li>
+        <li><strong>Real-Time Cloud Back Office:</strong> Monitor shifts, sales summaries, and Z-readings remotely.</li>
+      `;
+      let extraNote = `
+        <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px;">
+          We are preparing your terminal deployment package for our public launch on <strong>November 13, 2026</strong>. Want an early system walkthrough or hardware readiness check? <a href="https://www.flexitapapp.com/#demo-booking-section" style="color: #2563eb; font-weight: 700;">Book a 1-on-1 demo with our engineering team here</a>.
+        </p>
+      `;
+
+      if (tierKey === 'plus') {
+        tierTitle = 'Plus Founders VIP Edition';
+        badgeColor = '#1d4ed8';
+        badgeBg = '#eff6ff';
+        badgeBorder = '#bfdbfe';
+        badgeText = 'Founders VIP Pass Confirmed ($290/yr Fixed)';
+        priceDesc = '$290 / year fixed rate — 7-Day Live Shift Money-Back Guarantee';
+        perksHtml = `
+          <li><strong>Float &amp; Safe Tracking:</strong> Paid-in, paid-out ledger, cash drops, and shift drawer balancing.</li>
+          <li><strong>Auditor Z-Readings:</strong> Complete mathematical symmetry checks with cashier loss prevention &amp; exception audits.</li>
+          <li><strong>Priority Customer Support:</strong> Expedited queue to our technical operations desk.</li>
+        `;
+        extraNote = `
+          <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px;">
+            Your 7-day live shift trial starts the moment you ring your first order. If you need any assistance getting started, reply to this email anytime or sign into your <a href="https://www.flexitapapp.com/portal.html" style="color: #2563eb; font-weight: 700;">Merchant Back Office</a>.
+          </p>
+        `;
+      } else if (tierKey === 'pro') {
+        tierTitle = 'Pro Founders VIP Edition';
+        badgeColor = '#6b21a8';
+        badgeBg = '#faf5ff';
+        badgeBorder = '#e9d5ff';
+        badgeText = 'Pro VIP Onboarding Activated ($590/yr Fixed)';
+        priceDesc = '$590 / year fixed rate — White-Glove Migration &amp; Standby';
+        perksHtml = `
+          <li><strong>White-Glove Menu &amp; Inventory Migration:</strong> Send us your menu PDF or spreadsheet, and our engineers will configure your entire catalog within 24 hours.</li>
+          <li><strong>Ad-Hoc Remote Standby:</strong> Live 6-character terminal remote control for on-demand technician intervention.</li>
+          <li><strong>Multi-Station KDS &amp; Kitchen Routing:</strong> Real-time bump bar routing between bar, kitchen, and expediter stations.</li>
+        `;
+        extraNote = `
+          <div style="background: #fdf4ff; border: 1px solid #f0abfc; border-radius: 8px; padding: 14px 16px; margin-bottom: 18px;">
+            <div style="color: #86198f; font-size: 13.5px; font-weight: 800; margin-bottom: 3px;">✨ Complimentary Catalog Migration Included</div>
+            <div style="color: #701a75; font-size: 12.5px; line-height: 1.5;">Simply reply directly to this email with your menu PDF, price sheet, or POS database export. Our engineering team will configure and verify your menu items for you!</div>
+          </div>
+        `;
+      }
+
+      // 1. Client Welcome & Onboarding Email
+      const clientHtml = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+          <div style="background: #0f172a; padding: 26px 24px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">FlexiTap POS</h1>
+            <p style="color: #94a3b8; margin: 4px 0 0; font-size: 13px;">Official Store Onboarding &amp; Registration</p>
+          </div>
+          <div style="padding: 28px 24px;">
+            <div style="background: ${badgeBg}; border: 1px solid ${badgeBorder}; border-radius: 10px; padding: 16px 18px; margin-bottom: 22px;">
+              <div style="color: ${badgeColor}; font-size: 15px; font-weight: 800;">${badgeText}</div>
+              <div style="color: #334155; font-size: 13.5px; margin-top: 3px;">Welcome aboard, <strong>${escapeHtml(businessName)}</strong>! Your store account is registered.</div>
+            </div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 22px;">
+              <tr><td style="padding: 7px 0; color: #64748b; width: 140px;">Store / Business:</td><td style="padding: 7px 0; color: #0f172a; font-weight: 700;">${escapeHtml(businessName)}</td></tr>
+              <tr><td style="padding: 7px 0; color: #64748b;">Account Email:</td><td style="padding: 7px 0; color: #2563eb; font-weight: 700;">${escapeHtml(email)}</td></tr>
+              <tr><td style="padding: 7px 0; color: #64748b;">Selected Edition:</td><td style="padding: 7px 0; color: #0f172a; font-weight: 700;">${tierTitle}</td></tr>
+              <tr><td style="padding: 7px 0; color: #64748b;">Pricing / Status:</td><td style="padding: 7px 0; color: #059669; font-weight: 700;">${priceDesc}</td></tr>
+            </table>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px;">
+              <div style="font-size: 12px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">What's Included in Your Edition:</div>
+              <ul style="color: #1e293b; font-size: 13px; line-height: 1.7; padding-left: 18px; margin: 0;">
+                ${perksHtml}
+              </ul>
+            </div>
+            ${extraNote}
+            <div style="text-align: center; margin: 24px 0 16px;">
+              <a href="https://www.flexitapapp.com/portal.html" style="display: inline-block; background: #2563eb; color: #ffffff; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none;">Access Merchant Back Office &rarr;</a>
+            </div>
+            <p style="font-size: 12.5px; color: #64748b; line-height: 1.5; margin: 0; text-align: center;">
+              Need help or have questions? Contact our solutions engineering desk anytime at <a href="mailto:support@flexitapapp.com" style="color: #2563eb;">support@flexitapapp.com</a>.
+            </p>
+          </div>
+          <div style="background: #f1f5f9; padding: 16px 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
+            &copy; 2026 FlexiTap POS &bull; <a href="https://www.flexitapapp.com" style="color: #64748b; text-decoration: none;">www.flexitapapp.com</a> &bull; Offline-First Point of Sale
+          </div>
+        </div>
+      `;
+
+      // 2. Internal Team Notification Email
+      const teamHtml = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+          <div style="background: #1e1b4b; padding: 22px 24px; text-align: center;">
+            <h2 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 800;">🎉 New Merchant Account Registered</h2>
+            <p style="color: #c7d2fe; margin: 4px 0 0; font-size: 12.5px;">FlexiTap Customer Onboarding Pipeline</p>
+          </div>
+          <div style="padding: 24px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 18px;">
+              <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store / Business:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 700;">${escapeHtml(businessName)}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748b;">Merchant Email:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 600;"><a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></td></tr>
+              <tr><td style="padding: 6px 0; color: #64748b;">Selected Tier:</td><td style="padding: 6px 0; color: #059669; font-weight: 800;">${tierTitle}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748b;">Payment Status:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 700;">${(paymentStatus || 'unpaid').toUpperCase()}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748b;">Registration Time:</td><td style="padding: 6px 0; color: #64748b;">${new Date().toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</td></tr>
+            </table>
+            <div style="text-align: center; margin-top: 14px;">
+              <a href="https://www.flexitapapp.com/dev-portal.html" style="display: inline-block; background: #2563eb; color: #ffffff; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none;">View in Dev Portal CRM &rarr;</a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Dispatch Client Welcome Email via Google Workspace Webhook
+      try {
+        fetch(GOOGLE_TICKET_WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            notification_type: 'merchant_welcome_signup',
+            recipient_email: email,
+            subject: `[Welcome to FlexiTap] Your Store Account is Ready — ${businessName}`,
+            store_name: businessName,
+            details: `New account registered for ${tierTitle}`,
+            html: clientHtml
+          })
+        }).catch(err => console.warn('Welcome email webhook dispatch note:', err));
+      } catch (e) {
+        console.warn('Welcome email dispatch exception:', e);
+      }
+
+      // Dispatch Team Alert to info@flexitapapp.com
+      try {
+        fetch(GOOGLE_TICKET_WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            notification_type: 'merchant_signup_team_alert',
+            recipient_email: 'info@flexitapapp.com',
+            subject: `[New Store Signup] ${businessName} — ${tierTitle}`,
+            store_name: businessName,
+            details: `Store registration for ${businessName} (${email}) on ${tierTitle}`,
+            html: teamHtml
+          })
+        }).catch(err => console.warn('Team signup alert dispatch note:', err));
+      } catch (e) {
+        console.warn('Team alert dispatch exception:', e);
+      }
+    }
 
     document.addEventListener("DOMContentLoaded", function() {
       supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -347,6 +515,14 @@
         }
       }
 
+      // Dispatch Welcome Email to Merchant & Alert Email to FlexiTap Team
+      dispatchSignupWelcomeEmail({
+        businessName: businessName,
+        email: email,
+        tierName: tierName,
+        paymentStatus: paymentStatus
+      });
+
       closeModal('signup-modal');
       document.getElementById('portal-signup-form').reset();
       syncModalState();
@@ -365,6 +541,12 @@
           customer_email: email
         },
         successCallback: function(checkoutData) {
+          dispatchSignupWelcomeEmail({
+            businessName: businessName,
+            email: email,
+            tierName: tierName,
+            paymentStatus: 'paid'
+          });
           showRegistrationSuccess(email);
         }
       });
