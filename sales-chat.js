@@ -509,6 +509,143 @@
         cursor: not-allowed;
       }
 
+      @media (min-width: 1200px) {
+        #ft-chat-launcher {
+          width: 66px;
+          height: 66px;
+          bottom: 28px;
+          right: 28px;
+        }
+        #ft-launcher-icon {
+          font-size: 28px !important;
+        }
+        #ft-chat-launcher.ft-open #ft-launcher-icon {
+          font-size: 34px !important;
+        }
+        #ft-chat-window {
+          bottom: 104px;
+          right: 28px;
+          width: 440px;
+          height: 640px;
+          max-height: calc(100vh - 130px);
+          border-radius: 22px;
+        }
+        .ft-chat-header {
+          padding: 16px 20px;
+        }
+        .ft-avatar {
+          width: 42px;
+          height: 42px;
+          font-size: 20px;
+        }
+        .ft-header-title {
+          font-size: 15px;
+        }
+        .ft-header-sub {
+          font-size: 12px;
+        }
+        .ft-chat-body {
+          padding: 18px 20px;
+          gap: 14px;
+        }
+        .ft-msg {
+          max-width: 82%;
+          padding: 13px 17px;
+          font-size: 14px;
+          line-height: 1.55;
+          border-radius: 16px;
+        }
+        .ft-chip-btn {
+          padding: 11px 16px;
+          font-size: 13.5px;
+          border-radius: 10px;
+        }
+        .ft-chat-card {
+          padding: 15px 18px;
+        }
+        .ft-form-input {
+          padding: 11px 14px;
+          font-size: 13.5px;
+          border-radius: 8px;
+          margin-bottom: 10px;
+        }
+        .ft-form-submit {
+          padding: 11px;
+          font-size: 13.5px;
+          border-radius: 8px;
+        }
+        .ft-chat-footer {
+          padding: 12px 18px;
+          gap: 10px;
+        }
+        .ft-chat-input {
+          padding: 12px 18px;
+          font-size: 14px;
+        }
+        .ft-chat-send-btn {
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      @media (min-width: 1600px) {
+        #ft-chat-launcher {
+          width: 72px;
+          height: 72px;
+          bottom: 32px;
+          right: 32px;
+        }
+        #ft-launcher-icon {
+          font-size: 32px !important;
+        }
+        #ft-chat-launcher.ft-open #ft-launcher-icon {
+          font-size: 38px !important;
+        }
+        #ft-chat-window {
+          bottom: 116px;
+          right: 32px;
+          width: 480px;
+          height: 700px;
+          max-height: calc(100vh - 140px);
+          border-radius: 24px;
+        }
+        .ft-chat-header {
+          padding: 18px 22px;
+        }
+        .ft-avatar {
+          width: 46px;
+          height: 46px;
+          font-size: 22px;
+        }
+        .ft-header-title {
+          font-size: 16px;
+        }
+        .ft-header-sub {
+          font-size: 12.5px;
+        }
+        .ft-chat-body {
+          padding: 20px 22px;
+          gap: 16px;
+        }
+        .ft-msg {
+          font-size: 14.5px;
+          line-height: 1.58;
+          padding: 14px 18px;
+        }
+        .ft-chip-btn {
+          padding: 12px 18px;
+          font-size: 14px;
+        }
+        .ft-chat-input {
+          padding: 13px 20px;
+          font-size: 14.5px;
+        }
+        .ft-chat-send-btn {
+          width: 44px;
+          height: 44px;
+        }
+      }
+
       @media (max-width: 640px) {
         #ft-chat-window {
           bottom: 84px;
@@ -611,12 +748,15 @@
     state.isOpen = !state.isOpen;
     const win = document.getElementById('ft-chat-window');
     const icon = document.getElementById('ft-launcher-icon');
+    const launcher = document.getElementById('ft-chat-launcher');
     const badge = document.getElementById('ft-launcher-badge');
+
+    if (launcher) launcher.classList.toggle('ft-open', state.isOpen);
 
     if (state.isOpen) {
       win.style.display = 'flex';
       icon.innerHTML = '&times;';
-      icon.style.fontSize = '28px';
+      icon.style.fontSize = '';
       if (badge) badge.style.display = 'none';
       scrollToBottom();
       const input = document.getElementById('ft-chat-input');
@@ -624,7 +764,7 @@
     } else {
       win.style.display = 'none';
       icon.innerHTML = '💬';
-      icon.style.fontSize = '24px';
+      icon.style.fontSize = '';
     }
     persistState();
   }
@@ -1230,10 +1370,12 @@
     if (state.isOpen) {
       const win = document.getElementById('ft-chat-window');
       const icon = document.getElementById('ft-launcher-icon');
+      const launcher = document.getElementById('ft-chat-launcher');
+      if (launcher) launcher.classList.add('ft-open');
       if (win) win.style.display = 'flex';
       if (icon) {
         icon.innerHTML = '&times;';
-        icon.style.fontSize = '28px';
+        icon.style.fontSize = '';
       }
     }
 

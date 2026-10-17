@@ -196,6 +196,48 @@
     .chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 13px; }
     .chat-msg { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; color: #f8fafc; }
 
+    @media (min-width: 1440px) {
+      .container { max-width: 1380px; }
+      .support-hero { padding: 80px 0 50px; }
+      .section-title { font-size: 46px; }
+      .section-subtitle { font-size: 18px; max-width: 840px; margin-bottom: 40px; }
+      .download-grid { gap: 28px; grid-template-columns: repeat(3, 1fr); }
+      .download-card { padding: 36px 30px; border-radius: 22px; }
+      .platform-name { font-size: 25px; }
+      .platform-desc { font-size: 14.5px; }
+      .feature-bullets { font-size: 14px; gap: 10px; }
+      .btn-download-placeholder { padding: 15px 20px; font-size: 15px; }
+      .hardware-banner { padding: 30px 36px; border-radius: 20px; }
+      .hw-info h4 { font-size: 19px; }
+      .hw-info p { font-size: 14.5px; }
+      .ticket-section { padding: 60px 0 100px; }
+      .ticket-grid { grid-template-columns: 1fr 1.6fr; gap: 48px; }
+      .ticket-info-card { padding: 40px 34px; border-radius: 22px; }
+      .ticket-info-card h3 { font-size: 27px; }
+      .ticket-form-card { padding: 42px 36px; border-radius: 22px; }
+      .ticket-form-card h3 { font-size: 25px; }
+      .form-group label { font-size: 14px; margin-bottom: 8px; }
+      .form-group input, .form-group select, .form-group textarea { font-size: 15px; padding: 14px 16px; border-radius: 12px; }
+      .btn-submit-ticket { padding: 16px; font-size: 16px; border-radius: 14px; }
+      .remote-callout-card { padding: 30px 36px; border-radius: 20px; }
+      .remote-callout-text h4 { font-size: 18px; }
+      .remote-callout-text p { font-size: 14.5px; }
+    }
+
+    @media (min-width: 1720px) {
+      .container { max-width: 1560px; }
+      .support-hero { padding: 90px 0 60px; }
+      .section-title { font-size: 50px; }
+      .section-subtitle { font-size: 19px; max-width: 920px; }
+      .download-grid { gap: 36px; }
+      .download-card { padding: 40px 34px; }
+      .platform-name { font-size: 27px; }
+      .ticket-grid { gap: 60px; grid-template-columns: 1fr 1.8fr; }
+      .ticket-info-card { padding: 46px 38px; }
+      .ticket-form-card { padding: 48px 42px; }
+      .hardware-banner { padding: 36px 42px; }
+    }
+
     @media (max-width: 1023px) {
       .nav-links { display: none; width: 100%; flex-direction: column; align-items: flex-start; background: rgba(15, 23, 42, 0.98); padding: 18px; border-radius: 14px; border: 1px solid var(--card-border); margin-top: 12px; box-sizing: border-box; }
       .nav-links.mobile-open { display: flex; }

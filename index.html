@@ -213,6 +213,31 @@
     .chat-form-container textarea { resize: vertical; min-height: 80px; }
     .chat-form-container button { width: 100%; padding: 10px; background-color: #10b981; border: none; border-radius: 6px; color: #ffffff; font-weight: 700; cursor: pointer; }
 
+    @media (min-width: 1440px) {
+      .container { max-width: 1380px; }
+      .hero { padding: 95px 0 70px; }
+      .hero-video-container { height: 1040px; }
+      .hero h1 { font-size: 58px; margin-bottom: 24px; }
+      .hero p { font-size: 19.5px; max-width: 860px; margin-bottom: 38px; }
+      .btn-primary { padding: 16px 32px; font-size: 16px; border-radius: 14px; }
+      .btn-demo { padding: 16px 30px; font-size: 16px; border-radius: 14px; }
+      .home-announcement { max-width: 1020px; padding: 26px 34px; border-radius: 20px; }
+      .home-announcement h4 { font-size: 19px; }
+      .home-announcement p { font-size: 15.5px; }
+      .trust-badges { font-size: 14.5px; gap: 32px; margin-top: 28px; }
+    }
+
+    @media (min-width: 1720px) {
+      .container { max-width: 1560px; }
+      .hero { padding: 110px 0 85px; }
+      .hero-video-container { height: 1120px; }
+      .hero h1 { font-size: 64px; }
+      .hero p { font-size: 21px; max-width: 940px; }
+      .home-announcement { max-width: 1140px; padding: 30px 40px; }
+      .home-announcement h4 { font-size: 20px; }
+      .home-announcement p { font-size: 16px; }
+    }
+
     @media (max-width: 1023px) {
       .nav-links { display: none; width: 100%; flex-direction: column; align-items: flex-start; background: rgba(15, 23, 42, 0.98); padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); margin-top: 10px; box-sizing: border-box; }
       .nav-links.mobile-open { display: flex; }

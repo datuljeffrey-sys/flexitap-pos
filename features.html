@@ -190,6 +190,51 @@
     .chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 13px; }
     .chat-msg { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; color: #f8fafc; }
 
+    @media (min-width: 1440px) {
+      .container { max-width: 1380px; }
+      .capabilities-hero { padding: 84px 0 54px; }
+      .section-title { font-size: 46px; }
+      .section-subtitle { font-size: 18px; max-width: 860px; }
+      .showcase-row { grid-template-columns: 1fr 1.35fr; gap: 64px; margin-bottom: 110px; }
+      .showcase-row.reversed { grid-template-columns: 1.35fr 1fr; }
+      .showcase-content h3 { font-size: 32px; margin-bottom: 16px; }
+      .showcase-content p { font-size: 16.5px; line-height: 1.7; margin-bottom: 24px; }
+      .metric-item strong { font-size: 24px; }
+      .metric-item span { font-size: 13px; }
+      .workflow-container { padding: 48px 40px; margin: 40px 0 80px; border-radius: 26px; }
+      .workflow-btn { padding: 13px 26px; font-size: 14.5px; }
+      .workflow-card { padding: 28px; }
+      .workflow-card h4 { font-size: 17.5px; }
+      .workflow-card p { font-size: 14.5px; }
+      .hardware-grid { gap: 24px; }
+      .hub-tile { padding: 28px; }
+      .hub-tile h4 { font-size: 17.5px; }
+      .hub-tile p { font-size: 14px; }
+      .cta-card { padding: 48px 40px; }
+      .cta-card h3 { font-size: 30px; }
+      .cta-card p { font-size: 16.5px; }
+    }
+
+    @media (min-width: 1720px) {
+      .container { max-width: 1560px; }
+      .capabilities-hero { padding: 96px 0 60px; }
+      .section-title { font-size: 50px; }
+      .section-subtitle { font-size: 19px; max-width: 940px; }
+      .showcase-row { grid-template-columns: 1fr 1.45fr; gap: 80px; margin-bottom: 130px; }
+      .showcase-row.reversed { grid-template-columns: 1.45fr 1fr; }
+      .showcase-content h3 { font-size: 36px; }
+      .showcase-content p { font-size: 17.5px; }
+      .metric-item strong { font-size: 26px; }
+      .workflow-container { padding: 56px 48px; }
+      .workflow-card { padding: 32px; }
+      .workflow-card h4 { font-size: 19px; }
+      .hardware-grid { gap: 28px; }
+      .hub-tile { padding: 32px; }
+      .cta-card { padding: 56px 48px; }
+      .cta-card h3 { font-size: 34px; }
+      .cta-card p { font-size: 17.5px; max-width: 720px; }
+    }
+
     @media (max-width: 960px) {
       .showcase-row, .showcase-row.reversed { grid-template-columns: 1fr; gap: 36px; }
       .nav-links { display: none; width: 100%; flex-direction: column; align-items: flex-start; background: rgba(15, 23, 42, 0.98); padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); margin-top: 10px; }
