@@ -360,6 +360,8 @@
       .kpi-card .metric { font-size: 20px; }
       .exec-kpi-val { font-size: 20px; }
       .panel-card, .v2-chart-card, .v2-mini-card { padding: 16px 14px; }
+      .affiliate-share-grid { grid-template-columns: 1fr !important; }
+      .affiliate-tables-grid { grid-template-columns: 1fr !important; }
       .approval-bar { flex-direction: column; align-items: stretch; gap: 12px; }
       .approval-inputs { flex-wrap: wrap; width: 100%; }
       .approval-inputs input { flex: 1; min-width: 90px; }
@@ -601,7 +603,13 @@
           <span class="icon">🎁</span> Gift Cards & Vouchers
         </button>
 
-        <!-- Group 6: Support -->
+        <!-- Group 6: Partner & Growth -->
+        <div class="nav-section-title">Partner & Growth</div>
+        <button class="nav-item" data-report="affiliate-referrals" onclick="switchReport('affiliate-referrals', this)">
+          <span class="icon">🤝</span> Refer & Earn (₱) <span class="badge" style="background: rgba(34, 197, 94, 0.2); color: #4ade80;">₱6,000</span>
+        </button>
+
+        <!-- Group 7: Support -->
         <div class="nav-section-title">Support</div>
         <button class="nav-item" data-report="remote-access" onclick="switchReport('remote-access', this)">
           <span class="icon">🛠️</span> Remote Access <span class="badge">Live</span>
@@ -1521,6 +1529,292 @@
         </div>
       </div>
 
+      <!-- ================= 8. REFER & EARN (AFFILIATE PARTNER PROGRAM) ================= -->
+      <div id="report-affiliate-referrals" class="tab-content">
+        <!-- Hero Header Card -->
+        <div class="panel-card" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; border: 1px solid rgba(255,255,255,0.1); position: relative; overflow: hidden;">
+          <div style="position: absolute; right: -20px; top: -20px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(34,197,94,0.18) 0%, transparent 70%); pointer-events: none;"></div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; position: relative; z-index: 2;">
+            <div>
+              <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(34,197,94,0.18); border: 1px solid rgba(34,197,94,0.35); padding: 4px 12px; border-radius: 9999px; font-size: 11.5px; font-weight: 700; color: #4ade80; margin-bottom: 10px;">
+                <span>🇵🇭</span> EXCLUSIVE FOR PHILIPPINE FOOD &amp; BEVERAGE OPERATORS
+              </div>
+              <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 6px; color: #fff; letter-spacing: -0.5px;">
+                Turn Your Restaurant &amp; Café Network into Cash Bounties
+              </h2>
+              <p style="font-size: 13.5px; color: #94a3b8; max-width: 650px; line-height: 1.5;">
+                Know fellow restaurateurs, café owners, or bar operators? Refer them to FlexiTap POS. When they subscribe, you earn a flat cash bounty paid straight to your GCash, Maya, or Philippine bank account.
+              </p>
+            </div>
+            <!-- Bounty Rates Mini-Pill -->
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); padding: 12px 18px; border-radius: 10px; text-align: center;">
+                <div style="font-size: 11px; text-transform: uppercase; color: #94a3b8; font-weight: 700; letter-spacing: 0.5px;">Plus Founders VIP</div>
+                <div style="font-size: 22px; font-weight: 800; color: #4ade80; font-family: 'JetBrains Mono', monospace;">₱3,000</div>
+                <div style="font-size: 11px; color: #cbd5e1;">per store referred</div>
+              </div>
+              <div style="background: rgba(37,99,235,0.15); border: 1px solid rgba(59,130,246,0.3); padding: 12px 18px; border-radius: 10px; text-align: center;">
+                <div style="font-size: 11px; text-transform: uppercase; color: #93c5fd; font-weight: 700; letter-spacing: 0.5px;">Pro Founders VIP</div>
+                <div style="font-size: 22px; font-weight: 800; color: #60a5fa; font-family: 'JetBrains Mono', monospace;">₱6,000</div>
+                <div style="font-size: 11px; color: #cbd5e1;">per store referred</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STATE A: ONBOARDING / ACTIVATE PARTNER ACCOUNT -->
+        <div id="affiliate-onboarding-panel" class="panel-card" style="display: none;">
+          <div class="panel-header-row">
+            <div class="panel-header-title">
+              <span style="font-size: 20px;">🚀</span>
+              <span>Activate Your Partner Referral Account</span>
+            </div>
+            <span class="badge-status info">Instant Activation</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 20px;">
+            Set your custom referral code and choose where you want commissions sent. There are zero signup fees or minimum commitments.
+          </p>
+          <form id="affiliate-activate-form" onsubmit="handleActivateAffiliate(event)">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 16px;">
+              <div>
+                <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Your Custom Referral Code *</label>
+                <div style="display: flex; align-items: center; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; padding-left: 12px;">
+                  <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #64748b;">?ref=</span>
+                  <input type="text" id="aff-custom-code" required placeholder="e.g. CAFEDAVAO" style="flex: 1; padding: 11px 12px; background: transparent; border: none; font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; outline: none; color: #0f172a;" />
+                </div>
+                <small style="color: var(--text-muted); font-size: 11.5px; margin-top: 4px; display: block;">Letters, numbers, and hyphens only (3-30 characters).</small>
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Payout Rail *</label>
+                <select id="aff-payout-method" required style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px; font-weight: 600;" onchange="handleAffiliatePayoutMethodChange()">
+                  <option value="gcash">🟢 GCash (E-Wallet)</option>
+                  <option value="maya">🟩 Maya (E-Wallet)</option>
+                  <option value="bank">🏦 Philippine Local Bank (InstaPay / PESONet)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 20px;">
+              <div>
+                <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Account Holder Name *</label>
+                <input type="text" id="aff-account-name" required placeholder="Full Name as registered on account" style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px;" />
+              </div>
+              <div>
+                <label id="aff-account-number-label" style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">GCash Mobile Number *</label>
+                <input type="text" id="aff-account-number" required placeholder="09XXXXXXXXX" style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px;" />
+              </div>
+              <div id="aff-bank-name-wrap" style="display: none;">
+                <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Bank Name *</label>
+                <input type="text" id="aff-bank-name" placeholder="e.g. BDO, BPI, UnionBank, Metrobank" style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px;" />
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+              <button type="submit" id="aff-activate-btn" class="btn-action btn-primary-action" style="padding: 12px 28px; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px;">
+                <span>✨</span> Activate Partner Link &amp; Start Earning
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- STATE B: ACTIVATED PARTNER DASHBOARD -->
+        <div id="affiliate-dashboard-panel" style="display: none;">
+          <!-- Link & QR Code Share Card -->
+          <div class="panel-card" style="margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 180px; gap: 24px; align-items: center;" class="affiliate-share-grid">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                  <span style="font-size: 18px;">🔗</span>
+                  <h3 style="font-size: 16px; font-weight: 800; color: #0f172a;">Your Unique Referral Link</h3>
+                  <span class="badge-status healthy" id="aff-active-code-badge">ACTIVE</span>
+                </div>
+                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 14px;">
+                  Share this link with store owners or let them scan your QR code. The 60-day attribution cookie ensures you get credited on signup.
+                </p>
+
+                <!-- Link Copy Box -->
+                <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+                  <input type="text" id="aff-share-url" readonly style="flex: 1; min-width: 260px; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 600; color: #2563eb;" />
+                  <button type="button" class="btn-action btn-primary-action" onclick="copyAffiliateLink()" id="aff-copy-btn" style="padding: 10px 18px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                    <span id="aff-copy-icon">📋</span> <span id="aff-copy-text">Copy Link</span>
+                  </button>
+                </div>
+
+                <!-- 1-Click Social Share Buttons -->
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <span style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">1-Click Share:</span>
+                  <button type="button" class="btn-action" onclick="shareAffiliate('messenger')" title="Share via Facebook Messenger" style="padding: 6px 12px; font-size: 12.5px;">
+                    💬 Messenger
+                  </button>
+                  <button type="button" class="btn-action" onclick="shareAffiliate('viber')" title="Share via Viber" style="padding: 6px 12px; font-size: 12.5px;">
+                    📱 Viber
+                  </button>
+                  <button type="button" class="btn-action" onclick="shareAffiliate('facebook')" title="Post on Facebook" style="padding: 6px 12px; font-size: 12.5px;">
+                    📘 Facebook
+                  </button>
+                  <button type="button" class="btn-action" onclick="shareAffiliate('email')" title="Send Email" style="padding: 6px 12px; font-size: 12.5px;">
+                    ✉️ Email
+                  </button>
+                </div>
+              </div>
+
+              <!-- Dynamic QR Code Container -->
+              <div style="text-align: center; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 12px; padding: 14px;">
+                <div style="width: 140px; height: 140px; margin: 0 auto 10px; background: #fff; padding: 6px; border-radius: 8px; border: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: center;">
+                  <img id="aff-qr-img" src="" alt="Referral QR Code" style="width: 100%; height: 100%; display: block;" />
+                </div>
+                <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">In-Person Scan</div>
+                <button type="button" class="btn-action" onclick="downloadAffiliateQR()" style="padding: 4px 10px; font-size: 11.5px; width: 100%;">
+                  ⬇️ Save QR
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4-Card KPI Grid -->
+          <div class="kpi-grid-8" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 20px;">
+            <div class="kpi-card">
+              <div class="card-head">
+                <h3>Unique Clicks</h3>
+                <span style="font-size: 16px;">👆</span>
+              </div>
+              <div class="metric" id="aff-kpi-clicks">0</div>
+              <div class="sub-metric">Store visitors tracked</div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="card-head">
+                <h3>Signed Up Stores</h3>
+                <span style="font-size: 16px;">🏪</span>
+              </div>
+              <div class="metric" id="aff-kpi-referrals">0</div>
+              <div class="sub-metric">Active merchant accounts</div>
+            </div>
+
+            <div class="kpi-card" style="border-left: 3px solid #d97706;">
+              <div class="card-head">
+                <h3>Pending Commission</h3>
+                <span style="font-size: 16px;">⏳</span>
+              </div>
+              <div class="metric" style="color: #d97706;" id="aff-kpi-pending">₱0</div>
+              <div class="sub-metric">30-day verification hold</div>
+            </div>
+
+            <div class="kpi-card" style="border-left: 3px solid #16a34a;">
+              <div class="card-head">
+                <h3>Total Disbursed</h3>
+                <span style="font-size: 16px;">💸</span>
+              </div>
+              <div class="metric" style="color: #16a34a;" id="aff-kpi-paid">₱0</div>
+              <div class="sub-metric">Transferred to your rail</div>
+            </div>
+          </div>
+
+          <!-- Dual Section: Referrals List & Commissions Ledger -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;" class="affiliate-tables-grid">
+            <!-- Table 1: Referred Stores -->
+            <div class="panel-card" style="margin-bottom: 0;">
+              <div class="panel-header-row">
+                <div class="panel-header-title">
+                  <span style="font-size: 16px;">👥</span>
+                  <span>Referred Stores</span>
+                </div>
+                <button class="btn-action" onclick="loadAffiliatePortalData()" style="padding: 4px 10px; font-size: 11.5px;">Refresh</button>
+              </div>
+              <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Store Name</th>
+                      <th>Plan Tier</th>
+                      <th>Date</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="aff-referrals-tbody">
+                    <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">No referrals yet. Share your link to get started!</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Table 2: Commissions & Payouts -->
+            <div class="panel-card" style="margin-bottom: 0;">
+              <div class="panel-header-row">
+                <div class="panel-header-title">
+                  <span style="font-size: 16px;">💰</span>
+                  <span>Commission Ledger</span>
+                </div>
+                <span style="font-size: 11.5px; color: var(--text-muted);">Auto-verified</span>
+              </div>
+              <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Payout Ref</th>
+                      <th>Bounty</th>
+                      <th>Unlock Date</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="aff-commissions-tbody">
+                    <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">No commissions recorded yet.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payout Method Config Banner -->
+          <div class="panel-card" style="margin-top: 20px; background: #f8fafc;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(37,99,235,0.1); color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                  💳
+                </div>
+                <div>
+                  <div style="font-size: 13.5px; font-weight: 700; color: #0f172a;">
+                    Receiving Payouts via <span id="aff-dest-label" style="text-transform: uppercase;">GCash</span>
+                  </div>
+                  <div style="font-size: 12px; color: var(--text-muted);" id="aff-dest-sub">
+                    Account: —
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn-action" onclick="toggleAffiliatePayoutEdit()" id="aff-edit-payout-btn">
+                ✏️ Edit Payout Details
+              </button>
+            </div>
+
+            <!-- Edit Payout Form (Collapsible) -->
+            <div id="aff-edit-payout-drawer" style="display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--card-border);">
+              <form onsubmit="handleUpdateAffiliatePayout(event)" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) auto; gap: 12px; align-items: flex-end;">
+                <div>
+                  <label style="display: block; font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">Rail</label>
+                  <select id="aff-edit-method" required style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--card-border); font-size: 13px;">
+                    <option value="gcash">GCash</option>
+                    <option value="maya">Maya</option>
+                    <option value="bank">Local Bank</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="display: block; font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">Account Name</label>
+                  <input type="text" id="aff-edit-name" required placeholder="Account Holder" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--card-border); font-size: 13px;" />
+                </div>
+                <div>
+                  <label style="display: block; font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">Mobile / Account No.</label>
+                  <input type="text" id="aff-edit-num" required placeholder="09XXXXXXXXX" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--card-border); font-size: 13px;" />
+                </div>
+                <div>
+                  <button type="submit" class="btn-action btn-primary-action" style="padding: 8px 16px; font-size: 13px; font-weight: 700;">Save Changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </main>
   </div>
 
@@ -1655,17 +1949,18 @@
         'loyalty-report': ['Loyalty & Rewards', 'Accrued loyalty points, member tiers, and redeemed rewards impact.'],
         'gift-cards': ['Gift Cards & Vouchers', 'Issued vouchers, card activations, remaining balances, and store liability.'],
         'remote-access': ['Remote Access & Support', 'Live customer support assistance, diagnostic sessions, and screen share.'],
-        'submit-ticket': ['Merchant Support & Tickets', 'Open a diagnostic support ticket, report hardware issues, or track open resolutions.']
+        'submit-ticket': ['Merchant Support & Tickets', 'Open a diagnostic support ticket, report hardware issues, or track open resolutions.'],
+        'affiliate-referrals': ['Refer & Earn (Partner Program)', 'Earn ₱3,000 to ₱6,000 flat cash bounty for every restaurant or café you refer to FlexiTap.']
       };
 
       if (titleMap[reportId]) {
-        const badge = reportId === 'submit-ticket' ? '● Help Desk' : (reportId === 'remote-access' ? '● Tech Support' : '● Live Synced');
+        const badge = reportId === 'submit-ticket' ? '● Help Desk' : (reportId === 'remote-access' ? '● Tech Support' : (reportId === 'affiliate-referrals' ? '● Partner Hub' : '● Live Synced'));
         document.getElementById('active-report-title').innerHTML = `${titleMap[reportId][0]} <span class="status-badge">${badge}</span>`;
         document.getElementById('active-report-subtitle').innerText = titleMap[reportId][1];
       }
 
-      // Hide reporting controls & audit notice banner for non-reporting tools like Remote Access & Ticket Desk
-      const isSupportTool = reportId === 'remote-access' || reportId === 'submit-ticket';
+      // Hide reporting controls & audit notice banner for non-reporting tools like Remote Access, Ticket Desk & Partner Hub
+      const isSupportTool = reportId === 'remote-access' || reportId === 'submit-ticket' || reportId === 'affiliate-referrals';
       const toolbarGroup = document.querySelector('.toolbar-group');
       if (toolbarGroup) toolbarGroup.style.display = isSupportTool ? 'none' : 'flex';
 
@@ -1675,7 +1970,395 @@
       if (reportId === 'submit-ticket') {
         initMerchantTicketForm();
         loadMerchantTickets();
+      } else if (reportId === 'affiliate-referrals') {
+        loadAffiliatePortalData();
       }
+    }
+
+    // ==========================================
+    // 🤝 IN-HOUSE PHILIPPINE AFFILIATE PARTNER ENGINE
+    // ==========================================
+    let currentAffiliateRecord = null;
+
+    function handleAffiliatePayoutMethodChange() {
+      const method = document.getElementById('aff-payout-method').value;
+      const bankWrap = document.getElementById('aff-bank-name-wrap');
+      const numLabel = document.getElementById('aff-account-number-label');
+      const numInp = document.getElementById('aff-account-number');
+      const bankInp = document.getElementById('aff-bank-name');
+
+      if (method === 'gcash') {
+        if (numLabel) numLabel.innerText = 'GCash Mobile Number *';
+        if (numInp) numInp.placeholder = '09XXXXXXXXX';
+        if (bankWrap) bankWrap.style.display = 'none';
+        if (bankInp) bankInp.removeAttribute('required');
+      } else if (method === 'maya') {
+        if (numLabel) numLabel.innerText = 'Maya Mobile Number *';
+        if (numInp) numInp.placeholder = '09XXXXXXXXX';
+        if (bankWrap) bankWrap.style.display = 'none';
+        if (bankInp) bankInp.removeAttribute('required');
+      } else if (method === 'bank') {
+        if (numLabel) numLabel.innerText = 'Bank Account Number *';
+        if (numInp) numInp.placeholder = 'Account Number (10-16 digits)';
+        if (bankWrap) bankWrap.style.display = 'block';
+        if (bankInp) bankInp.setAttribute('required', 'true');
+      }
+    }
+
+    async function loadAffiliatePortalData() {
+      const userEmail = activeUser?.email || document.getElementById('p-email')?.value?.trim() || '';
+      const userId = activeUser?.id || null;
+      const storeName = activeStore?.name || document.getElementById('store-name-display')?.innerText || 'My Store';
+
+      // 1. Check if affiliate record exists in Supabase or localStorage
+      let affiliate = null;
+      try {
+        if (supabaseClient && (userId || userEmail)) {
+          let q = supabaseClient.from('affiliates').select('*');
+          if (userId && userEmail) {
+            q = q.or(`user_id.eq.${userId},contact_email.eq.${userEmail}`);
+          } else if (userId) {
+            q = q.eq('user_id', userId);
+          } else {
+            q = q.eq('contact_email', userEmail);
+          }
+          const { data, error } = await q.maybeSingle();
+          if (!error && data) affiliate = data;
+        }
+      } catch (err) {
+        console.warn('Affiliate fetch note:', err);
+      }
+
+      if (!affiliate) {
+        try {
+          const cached = localStorage.getItem('flexitap_merchant_affiliate');
+          if (cached) affiliate = JSON.parse(cached);
+        } catch (_) {}
+      }
+
+      currentAffiliateRecord = affiliate;
+
+      const onboardingPanel = document.getElementById('affiliate-onboarding-panel');
+      const dashboardPanel = document.getElementById('affiliate-dashboard-panel');
+
+      if (!affiliate) {
+        // Show Onboarding State
+        if (onboardingPanel) onboardingPanel.style.display = 'block';
+        if (dashboardPanel) dashboardPanel.style.display = 'none';
+
+        // Auto-suggest referral code from store name
+        const codeInput = document.getElementById('aff-custom-code');
+        if (codeInput && !codeInput.value) {
+          const cleanName = storeName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 16);
+          codeInput.value = cleanName || 'VIPPARTNER';
+        }
+        const nameInput = document.getElementById('aff-account-name');
+        if (nameInput && !nameInput.value) {
+          nameInput.value = storeName !== 'My Store' ? storeName : (activeUser?.user_metadata?.full_name || '');
+        }
+        return;
+      }
+
+      // Show Activated Dashboard State
+      if (onboardingPanel) onboardingPanel.style.display = 'none';
+      if (dashboardPanel) dashboardPanel.style.display = 'block';
+
+      // Set Referral URL & QR
+      const baseUrl = window.location.origin && window.location.origin.startsWith('http') ? window.location.origin : 'https://flexitapapp.com';
+      const refUrl = `${baseUrl}/?ref=${encodeURIComponent(affiliate.code)}`;
+      
+      const shareUrlInput = document.getElementById('aff-share-url');
+      if (shareUrlInput) shareUrlInput.value = refUrl;
+
+      const codeBadge = document.getElementById('aff-active-code-badge');
+      if (codeBadge) codeBadge.innerText = `CODE: ${affiliate.code}`;
+
+      const qrImg = document.getElementById('aff-qr-img');
+      if (qrImg) {
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(refUrl)}`;
+      }
+
+      // Populate Payout Rail Banner
+      const destLabel = document.getElementById('aff-dest-label');
+      const destSub = document.getElementById('aff-dest-sub');
+      const payoutMethod = affiliate.payout_method || 'gcash';
+      const details = affiliate.payout_details || {};
+
+      if (destLabel) {
+        destLabel.innerText = payoutMethod === 'bank' ? `Bank (${details.bank_name || 'Philippine Bank'})` : payoutMethod.toUpperCase();
+      }
+      if (destSub) {
+        destSub.innerText = `${details.account_name || 'Account'} • ${details.account_number || '—'}`;
+      }
+
+      // Query Stats (Clicks, Referrals, Commissions, Payouts)
+      let clickCount = 0;
+      let referralsList = [];
+      let commissionsList = [];
+
+      try {
+        if (supabaseClient && affiliate.id) {
+          const [clicksRes, refsRes, commsRes] = await Promise.all([
+            supabaseClient.from('affiliate_clicks').select('*', { count: 'exact', head: true }).eq('affiliate_id', affiliate.id),
+            supabaseClient.from('affiliate_referrals').select('*').eq('affiliate_id', affiliate.id).order('created_at', { ascending: false }),
+            supabaseClient.from('affiliate_commissions').select('*').eq('affiliate_id', affiliate.id).order('created_at', { ascending: false })
+          ]);
+
+          if (clicksRes && clicksRes.count !== null && clicksRes.count !== undefined) clickCount = clicksRes.count;
+          if (refsRes && refsRes.data) referralsList = refsRes.data;
+          if (commsRes && commsRes.data) commissionsList = commsRes.data;
+        }
+      } catch (err) {
+        console.warn('Error fetching affiliate metrics:', err);
+      }
+
+      // Calculate totals
+      let pendingPhp = 0;
+      let paidPhp = 0;
+      commissionsList.forEach(c => {
+        const amt = Number(c.amount_php) || 0;
+        if (c.status === 'paid') {
+          paidPhp += amt;
+        } else if (c.status === 'pending_hold' || c.status === 'available') {
+          pendingPhp += amt;
+        }
+      });
+
+      // Update KPI DOM
+      const kpiClicks = document.getElementById('aff-kpi-clicks');
+      const kpiRefs = document.getElementById('aff-kpi-referrals');
+      const kpiPending = document.getElementById('aff-kpi-pending');
+      const kpiPaid = document.getElementById('aff-kpi-paid');
+
+      if (kpiClicks) kpiClicks.innerText = clickCount.toLocaleString();
+      if (kpiRefs) kpiRefs.innerText = referralsList.length.toLocaleString();
+      if (kpiPending) kpiPending.innerText = `₱${pendingPhp.toLocaleString()}`;
+      if (kpiPaid) kpiPaid.innerText = `₱${paidPhp.toLocaleString()}`;
+
+      // Render Referrals Table
+      const refsTbody = document.getElementById('aff-referrals-tbody');
+      if (refsTbody) {
+        if (referralsList.length === 0) {
+          refsTbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">No stores signed up yet. Share your link to cafes and restaurants!</td></tr>`;
+        } else {
+          refsTbody.innerHTML = referralsList.map(r => {
+            const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+            const tierBadge = r.plan_tier && r.plan_tier.toLowerCase().includes('pro') 
+              ? `<span class="badge-status info">Pro VIP (₱6k)</span>` 
+              : `<span class="badge-status" style="background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0;">Plus VIP (₱3k)</span>`;
+            const statusBadge = r.status === 'verified' 
+              ? `<span class="badge-status healthy">Verified</span>` 
+              : (r.status === 'cancelled' ? `<span class="badge-status danger">Refunded</span>` : `<span class="badge-status warning">Pending Hold</span>`);
+            return `
+              <tr>
+                <td><strong>${r.referred_store_name || r.referred_email || 'Merchant Store'}</strong></td>
+                <td>${tierBadge}</td>
+                <td style="color: var(--text-muted); font-size: 12px;">${dateStr}</td>
+                <td>${statusBadge}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      // Render Commissions Table
+      const commsTbody = document.getElementById('aff-commissions-tbody');
+      if (commsTbody) {
+        if (commissionsList.length === 0) {
+          commsTbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">No commissions recorded yet.</td></tr>`;
+        } else {
+          commsTbody.innerHTML = commissionsList.map(c => {
+            const unlockStr = c.available_at ? new Date(c.available_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+            const amtStr = `₱${Number(c.amount_php || 0).toLocaleString()}`;
+            const statusBadge = c.status === 'paid' 
+              ? `<span class="badge-status healthy">Disbursed</span>` 
+              : (c.status === 'available' ? `<span class="badge-status info">Approved</span>` : `<span class="badge-status warning">30d Verification Hold</span>`);
+            const refStr = c.paddle_transaction_id ? c.paddle_transaction_id.slice(-8) : (c.id ? c.id.slice(0, 8) : 'COM-REF');
+            return `
+              <tr>
+                <td><code style="font-family:'JetBrains Mono', monospace; font-size: 11.5px;">#${refStr}</code></td>
+                <td><strong style="color: #16a34a; font-family:'JetBrains Mono', monospace;">${amtStr}</strong></td>
+                <td style="color: var(--text-muted); font-size: 12px;">${unlockStr}</td>
+                <td>${statusBadge}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    async function handleActivateAffiliate(e) {
+      e.preventDefault();
+      const codeInput = document.getElementById('aff-custom-code');
+      const payoutMethod = document.getElementById('aff-payout-method').value;
+      const accountName = document.getElementById('aff-account-name').value.trim();
+      const accountNumber = document.getElementById('aff-account-number').value.trim();
+      const bankName = document.getElementById('aff-bank-name')?.value?.trim() || null;
+      const btn = document.getElementById('aff-activate-btn');
+
+      const rawCode = codeInput.value.trim().toUpperCase().replace(/[^A-Z0-9-]/g, '');
+      if (rawCode.length < 3) {
+        alert('Please enter a referral code of at least 3 alphanumeric characters.');
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳</span> Activating Partner Account...';
+      }
+
+      const storeName = activeStore?.name || document.getElementById('store-name-display')?.innerText || 'Merchant Store';
+      const userEmail = activeUser?.email || document.getElementById('p-email')?.value?.trim() || 'affiliate@flexitapapp.com';
+
+      const payload = {
+        user_id: activeUser?.id || null,
+        code: rawCode,
+        name: storeName,
+        contact_email: userEmail,
+        payout_method: payoutMethod,
+        payout_details: {
+          account_name: accountName,
+          account_number: accountNumber,
+          bank_name: payoutMethod === 'bank' ? bankName : null
+        },
+        status: 'active'
+      };
+
+      try {
+        if (supabaseClient) {
+          const { data, error } = await supabaseClient
+            .from('affiliates')
+            .insert([payload])
+            .select()
+            .single();
+
+          if (error) {
+            if (error.code === '23505' || (error.message && error.message.includes('unique'))) {
+              alert(`Referral code "${rawCode}" is already taken by another partner. Please choose a different code.`);
+              if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<span>✨</span> Activate Partner Link & Start Earning';
+              }
+              return;
+            }
+            console.warn('Supabase affiliate insert note:', error);
+          } else if (data) {
+            currentAffiliateRecord = data;
+          }
+        }
+      } catch (err) {
+        console.warn('Affiliate creation note:', err);
+      }
+
+      // Fallback local storage
+      if (!currentAffiliateRecord) {
+        currentAffiliateRecord = {
+          id: 'aff_' + Date.now(),
+          ...payload,
+          created_at: new Date().toISOString()
+        };
+      }
+      localStorage.setItem('flexitap_merchant_affiliate', JSON.stringify(currentAffiliateRecord));
+
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>✨</span> Activate Partner Link & Start Earning';
+      }
+
+      loadAffiliatePortalData();
+    }
+
+    function copyAffiliateLink() {
+      const shareUrlInput = document.getElementById('aff-share-url');
+      if (!shareUrlInput) return;
+      shareUrlInput.select();
+      shareUrlInput.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(shareUrlInput.value).then(() => {
+        const textSpan = document.getElementById('aff-copy-text');
+        const iconSpan = document.getElementById('aff-copy-icon');
+        if (textSpan) textSpan.innerText = 'Copied! ✓';
+        if (iconSpan) iconSpan.innerText = '✅';
+        setTimeout(() => {
+          if (textSpan) textSpan.innerText = 'Copy Link';
+          if (iconSpan) iconSpan.innerText = '📋';
+        }, 2500);
+      }).catch(() => {
+        alert('Referral link copied to clipboard: ' + shareUrlInput.value);
+      });
+    }
+
+    function shareAffiliate(platform) {
+      const shareUrl = document.getElementById('aff-share-url')?.value || 'https://flexitapapp.com';
+      const promoMsg = encodeURIComponent("Kumusta! We've been using FlexiTap POS for our store. It eliminates paper tickets, syncs to KDS, and has automated BIR reports. Check it out here: ");
+      const encUrl = encodeURIComponent(shareUrl);
+
+      if (platform === 'messenger') {
+        window.open(`https://www.facebook.com/dialog/send?link=${encUrl}&app_id=291494419107518&redirect_uri=${encUrl}`, '_blank', 'width=600,height=500');
+      } else if (platform === 'viber') {
+        window.open(`viber://forward?text=${promoMsg}%20${encUrl}`, '_blank');
+      } else if (platform === 'facebook') {
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encUrl}`, '_blank', 'width=600,height=500');
+      } else if (platform === 'email') {
+        window.location.href = `mailto:?subject=${encodeURIComponent("Recommended POS for Food & Beverage: FlexiTap")}&body=${promoMsg}%0A%0A${encUrl}`;
+      }
+    }
+
+    function downloadAffiliateQR() {
+      const qrImg = document.getElementById('aff-qr-img');
+      if (!qrImg || !qrImg.src) return;
+      window.open(qrImg.src, '_blank');
+    }
+
+    function toggleAffiliatePayoutEdit() {
+      const drawer = document.getElementById('aff-edit-payout-drawer');
+      const btn = document.getElementById('aff-edit-payout-btn');
+      if (!drawer) return;
+      const isHidden = drawer.style.display === 'none' || !drawer.style.display;
+      drawer.style.display = isHidden ? 'block' : 'none';
+      if (btn) btn.innerText = isHidden ? '✕ Close' : '✏️ Edit Payout Details';
+
+      if (isHidden && currentAffiliateRecord) {
+        const details = currentAffiliateRecord.payout_details || {};
+        const methodEl = document.getElementById('aff-edit-method');
+        const nameEl = document.getElementById('aff-edit-name');
+        const numEl = document.getElementById('aff-edit-num');
+        if (methodEl) methodEl.value = currentAffiliateRecord.payout_method || 'gcash';
+        if (nameEl) nameEl.value = details.account_name || '';
+        if (numEl) numEl.value = details.account_number || '';
+      }
+    }
+
+    async function handleUpdateAffiliatePayout(e) {
+      e.preventDefault();
+      const method = document.getElementById('aff-edit-method').value;
+      const name = document.getElementById('aff-edit-name').value.trim();
+      const num = document.getElementById('aff-edit-num').value.trim();
+
+      if (!currentAffiliateRecord) return;
+
+      currentAffiliateRecord.payout_method = method;
+      currentAffiliateRecord.payout_details = {
+        ...(currentAffiliateRecord.payout_details || {}),
+        account_name: name,
+        account_number: num
+      };
+
+      try {
+        if (supabaseClient && currentAffiliateRecord.id && !String(currentAffiliateRecord.id).startsWith('aff_')) {
+          await supabaseClient.from('affiliates').update({
+            payout_method: method,
+            payout_details: currentAffiliateRecord.payout_details,
+            updated_at: new Date().toISOString()
+          }).eq('id', currentAffiliateRecord.id);
+        }
+      } catch (err) {
+        console.warn('Update payout note:', err);
+      }
+
+      localStorage.setItem('flexitap_merchant_affiliate', JSON.stringify(currentAffiliateRecord));
+      toggleAffiliatePayoutEdit();
+      loadAffiliatePortalData();
+      alert('Your payout details have been updated successfully.');
     }
 
     // --- AUTO-ASSIGNMENT ENGINE (EVERY INCOMING TICKET ASSIGNED FIRST TO CUSTOMER SUPPORT) ---

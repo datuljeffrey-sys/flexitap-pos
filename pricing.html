@@ -677,6 +677,31 @@
         paymentStatus: paymentStatus
       });
 
+      // Check and bind affiliate referral if visitor arrived via partner link
+      const activeAffCode = (window.FlexiTapAffiliate ? window.FlexiTapAffiliate.getCode() : '') || localStorage.getItem('flexitap_ref') || '';
+      if (activeAffCode) {
+        try {
+          supabaseClient
+            .from('affiliates')
+            .select('id')
+            .ilike('affiliate_code', activeAffCode)
+            .eq('status', 'active')
+            .maybeSingle()
+            .then(({ data: affData }) => {
+              if (affData && affData.id) {
+                supabaseClient.from('affiliate_referrals').insert([{
+                  affiliate_id: affData.id,
+                  referred_email: email,
+                  store_id: userId,
+                  store_name: businessName
+                }]).then(() => {}).catch(err => console.warn('Affiliate referral bind note:', err));
+              }
+            });
+        } catch (affErr) {
+          console.warn('Affiliate attribution note:', affErr);
+        }
+      }
+
       closeModal('signup-modal');
       document.getElementById('portal-signup-form').reset();
       syncModalState();
@@ -692,7 +717,8 @@
         customData: {
           business_name: businessName,
           supabase_user_id: userId,
-          customer_email: email
+          customer_email: email,
+          affiliate_code: activeAffCode
         },
         successCallback: function(checkoutData) {
           dispatchSignupWelcomeEmail({
@@ -1353,6 +1379,8 @@
     </div>
   </div>
 
+  <!-- In-House Affiliate & Referral Tracker -->
+  <script src="affiliate-tracker.js"></script>
   <!-- Unified Elevated Sales & Inquiries Live Chat -->
   <script src="sales-chat.js"></script>
 </body>
