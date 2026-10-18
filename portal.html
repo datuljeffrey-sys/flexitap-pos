@@ -167,38 +167,59 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
     /* Support floating button & AI + Live Support Panel */
-    #merchant-chat-btn { position: fixed; bottom: 20px; right: 20px; background: #16a34a; color: white; border: none; border-radius: 9999px; padding: 10px 18px; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.25); z-index: 990; transition: transform 0.2s, background 0.2s; }
-    #merchant-chat-btn:hover { transform: scale(1.03); }
-    #merchant-chat-panel { display: none; position: fixed; bottom: 75px; right: 20px; width: 380px; height: 530px; background: #ffffff; border: 1px solid var(--card-border); border-radius: 16px; box-shadow: 0 20px 45px rgba(0,0,0,0.22); flex-direction: column; overflow: hidden; z-index: 999; }
-    .m-chat-header { background: #f8fafc; padding: 12px 14px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .m-chat-header-actions { display: flex; align-items: center; gap: 6px; }
-    .m-chat-escalate-btn { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 9999px; padding: 5px 10px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.15s; white-space: nowrap; }
+    #merchant-chat-btn { position: fixed; bottom: 22px; right: 24px; background: #16a34a; color: white; border: none; border-radius: 9999px; padding: 12px 22px; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 9px; cursor: pointer; box-shadow: 0 12px 28px rgba(0,0,0,0.28); z-index: 990; transition: transform 0.2s, background 0.2s; }
+    #merchant-chat-btn:hover { transform: scale(1.04); background: #15803d; }
+    #merchant-chat-panel {
+      display: none;
+      position: fixed;
+      bottom: 82px;
+      right: 24px;
+      width: clamp(460px, 34vw, 560px);
+      height: clamp(640px, 78vh, 820px);
+      max-height: calc(100vh - 104px);
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 20px;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28), 0 4px 16px rgba(15, 23, 42, 0.1);
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 999;
+      transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1), height 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #merchant-chat-panel.expanded {
+      width: min(760px, calc(100vw - 48px));
+      height: min(88vh, 920px);
+      max-height: calc(100vh - 96px);
+    }
+    .m-chat-header { background: #f8fafc; padding: 16px 18px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .m-chat-header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .m-chat-escalate-btn { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 9999px; padding: 7px 13px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.15s; white-space: nowrap; }
     .m-chat-escalate-btn:hover { background: #dbeafe; border-color: #93c5fd; }
     .m-chat-escalate-btn.live-active { background: #dcfce7; color: #15803d; border-color: #86efac; cursor: default; }
-    .m-chat-icon-btn { background: none; border: none; color: #64748b; font-size: 16px; cursor: pointer; padding: 2px 5px; border-radius: 6px; line-height: 1; transition: background 0.15s, color 0.15s; }
+    .m-chat-icon-btn { background: none; border: none; color: #64748b; font-size: 17px; cursor: pointer; padding: 4px 7px; border-radius: 8px; line-height: 1; transition: background 0.15s, color 0.15s; }
     .m-chat-icon-btn:hover { background: #e2e8f0; color: #0f172a; }
-    .m-chat-body { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; background: #ffffff; }
-    .bubble { max-width: 86%; padding: 10px 13px; border-radius: 12px; line-height: 1.45; word-break: break-word; }
-    .bubble-merchant { align-self: flex-end; background: var(--primary); color: #fff; border-bottom-right-radius: 3px; }
-    .bubble-agent { align-self: flex-start; background: #f0fdf4; color: #0f172a; border: 1px solid #bbf7d0; border-bottom-left-radius: 3px; }
-    .bubble-ai { align-self: flex-start; background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0; border-bottom-left-radius: 3px; }
-    .bubble-role-tag { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+    .m-chat-body { flex: 1; padding: 18px 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; font-size: 14px; background: #ffffff; }
+    .bubble { max-width: 88%; padding: 13px 16px; border-radius: 14px; line-height: 1.55; word-break: break-word; font-size: 14px; }
+    .bubble-merchant { align-self: flex-end; background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
+    .bubble-agent { align-self: flex-start; background: #f0fdf4; color: #0f172a; border: 1px solid #bbf7d0; border-bottom-left-radius: 4px; }
+    .bubble-ai { align-self: flex-start; background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
+    .bubble-role-tag { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.35px; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
     .bubble-ai .bubble-role-tag { color: #2563eb; }
     .bubble-agent .bubble-role-tag { color: #15803d; }
-    .bubble-system { align-self: center; max-width: 94%; background: #f1f5f9; color: #475569; border: 1px dashed #cbd5e1; font-size: 11.5px; text-align: center; padding: 7px 12px; border-radius: 8px; }
-    .m-chat-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .m-chat-chip { background: #ffffff; border: 1px solid #cbd5e1; color: #1e293b; padding: 5px 10px; border-radius: 9999px; font-size: 11.5px; font-weight: 600; cursor: pointer; transition: all 0.15s; text-align: left; display: inline-flex; align-items: center; gap: 4px; }
-    .m-chat-chip:hover { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; }
+    .bubble-system { align-self: center; max-width: 94%; background: #f1f5f9; color: #475569; border: 1px dashed #cbd5e1; font-size: 12.5px; text-align: center; padding: 9px 14px; border-radius: 10px; }
+    .m-chat-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .m-chat-chip { background: #ffffff; border: 1px solid #cbd5e1; color: #1e293b; padding: 7px 13px; border-radius: 9999px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.15s; text-align: left; display: inline-flex; align-items: center; gap: 5px; }
+    .m-chat-chip:hover { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; transform: translateY(-1px); }
     .m-chat-chip.chip-live { background: #f0fdf4; border-color: #86efac; color: #15803d; font-weight: 700; }
     .m-chat-chip.chip-live:hover { background: #dcfce7; border-color: #22c55e; color: #166534; }
-    .m-chat-typing { display: none; align-self: flex-start; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 7px 12px; font-size: 11.5px; color: #64748b; align-items: center; gap: 5px; margin: 0 14px 8px; }
-    .m-chat-dot { width: 5px; height: 5px; background: #3b82f6; border-radius: 50%; display: inline-block; animation: mChatBlink 1.3s infinite both; }
+    .m-chat-typing { display: none; align-self: flex-start; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 9px 14px; font-size: 12.5px; color: #64748b; align-items: center; gap: 6px; margin: 0 20px 10px; }
+    .m-chat-dot { width: 6px; height: 6px; background: #3b82f6; border-radius: 50%; display: inline-block; animation: mChatBlink 1.3s infinite both; }
     .m-chat-dot:nth-child(2) { animation-delay: 0.2s; }
     .m-chat-dot:nth-child(3) { animation-delay: 0.4s; }
     @keyframes mChatBlink { 0%, 80%, 100% { opacity: 0.25; transform: scale(0.85); } 40% { opacity: 1; transform: scale(1.15); } }
-    .m-chat-input-bar { display: flex; border-top: 1px solid var(--card-border); background: #f8fafc; }
-    .m-chat-input-bar input { flex: 1; padding: 12px; background: transparent; border: none; color: #0f172a; outline: none; font-size: 13px; }
-    .m-chat-send { background: #16a34a; color: white; border: none; padding: 0 18px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+    .m-chat-input-bar { display: flex; border-top: 1px solid var(--card-border); background: #f8fafc; min-height: 54px; }
+    .m-chat-input-bar input { flex: 1; padding: 14px 16px; background: transparent; border: none; color: #0f172a; outline: none; font-size: 14px; }
+    .m-chat-send { background: #16a34a; color: white; border: none; padding: 0 24px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
     .m-chat-send:hover { background: #15803d; }
 
     /* Mobile Header & Overlay */
@@ -234,6 +255,10 @@
       .main-content { padding: 20px 16px; }
       .replica-layout { grid-template-columns: 1fr; }
       .kpi-grid-8 { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+      #merchant-chat-panel {
+        width: clamp(400px, 48vw, 480px);
+        height: clamp(560px, 74vh, 700px);
+      }
     }
 
     @media (max-width: 768px) {
@@ -264,13 +289,13 @@
       .approval-inputs input { flex: 1; min-width: 90px; }
       .btn-approve { width: 100%; justify-content: center; }
       .data-table th, .data-table td { padding: 8px 10px; font-size: 12px; }
-      #merchant-chat-panel {
-        width: calc(100vw - 28px);
-        max-width: 380px;
-        right: 14px;
-        bottom: 74px;
-        height: 70vh;
-        max-height: 500px;
+      #merchant-chat-panel, #merchant-chat-panel.expanded {
+        width: calc(100vw - 24px);
+        max-width: 460px;
+        right: 12px;
+        bottom: 76px;
+        height: 78vh;
+        max-height: 640px;
       }
     }
 
@@ -279,19 +304,19 @@
       .preset-pill { padding: 5px 9px; font-size: 11.5px; }
       .btn-action { padding: 7px 10px; font-size: 11.5px; }
       .login-box { padding: 24px 16px; border-radius: 14px; }
-      #merchant-chat-panel {
-        width: calc(100vw - 20px);
-        right: 10px;
-        left: 10px;
-        bottom: 68px;
-        height: 72vh;
-        max-height: 480px;
+      #merchant-chat-panel, #merchant-chat-panel.expanded {
+        width: calc(100vw - 16px);
+        right: 8px;
+        left: 8px;
+        bottom: 70px;
+        height: 80vh;
+        max-height: 620px;
       }
       #merchant-chat-btn {
         bottom: 14px;
         right: 14px;
-        padding: 8px 14px;
-        font-size: 12px;
+        padding: 10px 16px;
+        font-size: 13px;
       }
     }
   </style>
@@ -1300,16 +1325,17 @@
   <!-- AI + LIVE SUPPORT CHAT PANEL -->
   <div id="merchant-chat-panel">
     <div class="m-chat-header">
-      <div>
-        <div id="m-chat-header-title" style="font-weight: 800; color: #0f172a; font-size: 13.5px;">🤖 FlexiTap AI Support</div>
-        <div id="m-chat-header-sub" style="font-size: 11px; color: #2563eb; font-weight: 700;">● Instant AI Answers • Live Agent Standby</div>
+      <div style="min-width: 0;">
+        <div id="m-chat-header-title" style="font-weight: 800; color: #0f172a; font-size: 15px; line-height: 1.25;">🤖 FlexiTap AI Support</div>
+        <div id="m-chat-header-sub" style="font-size: 11.5px; color: #2563eb; font-weight: 700; margin-top: 2px;">● Instant AI Answers • Live Agent Standby</div>
       </div>
       <div class="m-chat-header-actions">
         <button type="button" id="m-chat-escalate-btn" class="m-chat-escalate-btn" onclick="requestLiveSupportAgent()" title="Connect to a Live Support Engineer">
           👤 Live Agent
         </button>
+        <button type="button" id="m-chat-expand-btn" class="m-chat-icon-btn" onclick="toggleExpandMerchantChat()" title="Expand / Restore Chat Size">⛶</button>
         <button type="button" class="m-chat-icon-btn" onclick="resetMerchantChat()" title="Reset AI Chat">↺</button>
-        <button type="button" class="m-chat-icon-btn" onclick="toggleMerchantSupport()" title="Close" style="font-size: 20px;">&times;</button>
+        <button type="button" class="m-chat-icon-btn" onclick="toggleMerchantSupport()" title="Close" style="font-size: 21px;">&times;</button>
       </div>
     </div>
     <div class="m-chat-body" id="m-chat-messages">
@@ -3596,6 +3622,19 @@
         const inp = document.getElementById('m-chat-input');
         if (inp && window.innerWidth > 640) setTimeout(() => inp.focus(), 120);
       }
+    }
+
+    function toggleExpandMerchantChat() {
+      const p = document.getElementById('merchant-chat-panel');
+      const btn = document.getElementById('m-chat-expand-btn');
+      if (!p) return;
+      const isExpanded = p.classList.toggle('expanded');
+      if (btn) {
+        btn.innerText = isExpanded ? '🗗' : '⛶';
+        btn.title = isExpanded ? 'Restore Standard Size' : 'Expand Chat Window';
+      }
+      const box = document.getElementById('m-chat-messages');
+      if (box) setTimeout(() => { box.scrollTop = box.scrollHeight; }, 120);
     }
 
     function resetMerchantChat() {
