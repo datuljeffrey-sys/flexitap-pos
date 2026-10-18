@@ -1,5 +1,5 @@
 // FlexiTap POS Support PWA - Service Worker
-const CACHE_NAME = 'flexitap-support-v1';
+const CACHE_NAME = 'flexitap-support-v2';
 const STATIC_ASSETS = [
   './flexi-app.html',
   './manifest.json',
@@ -31,8 +31,8 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
 
-  // For Supabase API queries, bypass cache to ensure real-time ticket data
-  if (url.hostname.includes('supabase.co')) {
+  // For Supabase & Gemini API queries, bypass cache to ensure real-time data
+  if (url.hostname.includes('supabase.co') || url.hostname.includes('googleapis.com')) {
     event.respondWith(fetch(event.request));
     return;
   }

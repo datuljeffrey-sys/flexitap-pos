@@ -217,9 +217,13 @@
     .m-chat-dot:nth-child(2) { animation-delay: 0.2s; }
     .m-chat-dot:nth-child(3) { animation-delay: 0.4s; }
     @keyframes mChatBlink { 0%, 80%, 100% { opacity: 0.25; transform: scale(0.85); } 40% { opacity: 1; transform: scale(1.15); } }
-    .m-chat-input-bar { display: flex; border-top: 1px solid var(--card-border); background: #f8fafc; min-height: 54px; }
-    .m-chat-input-bar input { flex: 1; padding: 14px 16px; background: transparent; border: none; color: #0f172a; outline: none; font-size: 14px; }
-    .m-chat-send { background: #16a34a; color: white; border: none; padding: 0 24px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+    .m-chat-input-bar { display: flex; align-items: stretch; border-top: 1px solid var(--card-border); background: #f8fafc; min-height: 54px; }
+    .m-chat-input-bar input { flex: 1; padding: 14px 12px 14px 16px; background: transparent; border: none; color: #0f172a; outline: none; font-size: 14px; min-width: 0; }
+    .m-chat-mic-btn { background: transparent; border: none; color: #64748b; padding: 0 12px; font-size: 18px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: color 0.15s, background 0.15s, transform 0.15s; flex-shrink: 0; }
+    .m-chat-mic-btn:hover { color: #2563eb; background: #eff6ff; }
+    .m-chat-mic-btn.listening { color: #dc2626; background: #fef2f2; animation: micPulse 1.2s infinite ease-in-out; }
+    @keyframes micPulse { 0%, 100% { box-shadow: inset 0 0 0 0 rgba(220, 38, 38, 0.35); transform: scale(1); } 50% { box-shadow: inset 0 0 0 4px rgba(220, 38, 38, 0.25); transform: scale(1.08); } }
+    .m-chat-send { background: #16a34a; color: white; border: none; padding: 0 24px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.15s; flex-shrink: 0; }
     .m-chat-send:hover { background: #15803d; }
 
     /* Mobile Header & Overlay */
@@ -1346,6 +1350,7 @@
     </div>
     <form class="m-chat-input-bar" onsubmit="sendMerchantMessage(event)">
       <input type="text" id="m-chat-input" maxlength="350" placeholder="Ask a question about your FlexiTap reports or POS..." required autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMerchantMessage(event);}" />
+      <button type="button" class="m-chat-mic-btn" id="m-chat-mic-btn" onclick="toggleMerchantVoiceInput()" title="Speak your question (Voice Input)" aria-label="Voice Input">🎙️</button>
       <button type="submit" class="m-chat-send" id="m-chat-send-btn">Send</button>
     </form>
   </div>
@@ -3735,6 +3740,91 @@
       el.style.display = visible ? 'inline-flex' : 'none';
       const box = document.getElementById('m-chat-messages');
       if (box && visible) box.scrollTop = box.scrollHeight;
+    }
+
+    // --- VOICE RECOGNITION (WEB SPEECH API) ---
+    let merchantSpeechRecognizer = null;
+    let isMerchantVoiceListening = false;
+
+    function toggleMerchantVoiceInput() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const micBtn = document.getElementById('m-chat-mic-btn');
+      const inputEl = document.getElementById('m-chat-input');
+
+      if (!SpeechRecognition) {
+        renderSystemNotice('🎙️ Voice recognition is supported in Chrome, Edge, Safari, and mobile browsers.');
+        return;
+      }
+
+      if (isMerchantVoiceListening && merchantSpeechRecognizer) {
+        try { merchantSpeechRecognizer.stop(); } catch (_) {}
+        return;
+      }
+
+      const recognizer = new SpeechRecognition();
+      merchantSpeechRecognizer = recognizer;
+      recognizer.lang = 'en-US';
+      recognizer.interimResults = true;
+      recognizer.continuous = false;
+      recognizer.maxAlternatives = 1;
+
+      const prevPlaceholder = inputEl ? inputEl.placeholder : '';
+      let finalSpokenText = '';
+
+      recognizer.onstart = () => {
+        isMerchantVoiceListening = true;
+        if (micBtn) {
+          micBtn.classList.add('listening');
+          micBtn.title = 'Listening... Click to stop';
+        }
+        if (inputEl) {
+          inputEl.placeholder = '🎙️ Listening... speak your question';
+        }
+      };
+
+      recognizer.onresult = (event) => {
+        let interimTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalSpokenText += transcript + ' ';
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+        if (inputEl) {
+          const combined = (finalSpokenText + interimTranscript).trim();
+          inputEl.value = combined.slice(0, AI_GUARDRAIL_CONFIG.MAX_INPUT_CHARS);
+        }
+      };
+
+      recognizer.onerror = (event) => {
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          renderSystemNotice('🎙️ Microphone permission was blocked. Please allow microphone access in your browser address bar.');
+        }
+      };
+
+      recognizer.onend = () => {
+        isMerchantVoiceListening = false;
+        if (micBtn) {
+          micBtn.classList.remove('listening');
+          micBtn.title = 'Speak your question (Voice Input)';
+        }
+        if (inputEl) {
+          inputEl.placeholder = prevPlaceholder || (supportChatMode === 'live' ? 'Message live support engineer...' : 'Ask a question about your FlexiTap reports or POS...');
+          if (inputEl.value.trim().length > 0) {
+            sendMerchantMessage(new Event('submit'));
+          } else {
+            inputEl.focus();
+          }
+        }
+      };
+
+      try {
+        recognizer.start();
+      } catch (e) {
+        console.warn('SpeechRecognition start error:', e);
+      }
     }
 
     // --- 5-LAYER GUARDRAIL ENGINE ---
