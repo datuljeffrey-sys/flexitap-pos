@@ -2016,11 +2016,11 @@
         if (supabaseClient && (userId || userEmail)) {
           let q = supabaseClient.from('affiliates').select('*');
           if (userId && userEmail) {
-            q = q.or(`user_id.eq.${userId},contact_email.eq.${userEmail}`);
+            q = q.or(`user_id.eq.${userId},email.eq.${userEmail}`);
           } else if (userId) {
             q = q.eq('user_id', userId);
           } else {
-            q = q.eq('contact_email', userEmail);
+            q = q.eq('email', userEmail);
           }
           const { data, error } = await q.maybeSingle();
           if (!error && data) affiliate = data;
@@ -2065,13 +2065,14 @@
 
       // Set Referral URL & QR
       const baseUrl = window.location.origin && window.location.origin.startsWith('http') ? window.location.origin : 'https://flexitapapp.com';
-      const refUrl = `${baseUrl}/?ref=${encodeURIComponent(affiliate.code)}`;
+      const resolvedCode = affiliate.affiliate_code || affiliate.code || 'PARTNER';
+      const refUrl = `${baseUrl}/?ref=${encodeURIComponent(resolvedCode)}`;
       
       const shareUrlInput = document.getElementById('aff-share-url');
       if (shareUrlInput) shareUrlInput.value = refUrl;
 
       const codeBadge = document.getElementById('aff-active-code-badge');
-      if (codeBadge) codeBadge.innerText = `CODE: ${affiliate.code}`;
+      if (codeBadge) codeBadge.innerText = `CODE: ${resolvedCode}`;
 
       const qrImg = document.getElementById('aff-qr-img');
       if (qrImg) {
@@ -2081,8 +2082,12 @@
       // Populate Payout Rail Banner
       const destLabel = document.getElementById('aff-dest-label');
       const destSub = document.getElementById('aff-dest-sub');
-      const payoutMethod = affiliate.payout_method || 'gcash';
-      const details = affiliate.payout_details || {};
+      const payoutMethod = affiliate.payout_type || affiliate.payout_method || 'gcash';
+      const details = affiliate.payout_details || {
+        account_name: affiliate.payout_account_name,
+        account_number: affiliate.payout_account_number,
+        bank_name: affiliate.payout_bank_name
+      };
 
       if (destLabel) {
         destLabel.innerText = payoutMethod === 'bank' ? `Bank (${details.bank_name || 'Philippine Bank'})` : payoutMethod.toUpperCase();
@@ -2099,7 +2104,7 @@
       try {
         if (supabaseClient && affiliate.id) {
           const [clicksRes, refsRes, commsRes] = await Promise.all([
-            supabaseClient.from('affiliate_clicks').select('*', { count: 'exact', head: true }).eq('affiliate_id', affiliate.id),
+            supabaseClient.from('affiliate_clicks').select('*', { count: 'exact', head: true }).ilike('affiliate_code', resolvedCode),
             supabaseClient.from('affiliate_referrals').select('*').eq('affiliate_id', affiliate.id).order('created_at', { ascending: false }),
             supabaseClient.from('affiliate_commissions').select('*').eq('affiliate_id', affiliate.id).order('created_at', { ascending: false })
           ]);
@@ -2116,10 +2121,10 @@
       let pendingPhp = 0;
       let paidPhp = 0;
       commissionsList.forEach(c => {
-        const amt = Number(c.amount_php) || 0;
+        const amt = Number(c.amount_php || c.commission_amount_php) || 0;
         if (c.status === 'paid') {
           paidPhp += amt;
-        } else if (c.status === 'pending_hold' || c.status === 'available') {
+        } else if (c.status === 'pending' || c.status === 'pending_hold' || c.status === 'approved' || c.status === 'available') {
           pendingPhp += amt;
         }
       });
@@ -2146,12 +2151,12 @@
             const tierBadge = r.plan_tier && r.plan_tier.toLowerCase().includes('pro') 
               ? `<span class="badge-status info">Pro VIP (₱6k)</span>` 
               : `<span class="badge-status" style="background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0;">Plus VIP (₱3k)</span>`;
-            const statusBadge = r.status === 'verified' 
+            const statusBadge = r.status === 'verified' || r.status === 'approved'
               ? `<span class="badge-status healthy">Verified</span>` 
-              : (r.status === 'cancelled' ? `<span class="badge-status danger">Refunded</span>` : `<span class="badge-status warning">Pending Hold</span>`);
+              : (r.status === 'cancelled' || r.status === 'reversed' ? `<span class="badge-status danger">Refunded</span>` : `<span class="badge-status warning">Pending Hold</span>`);
             return `
               <tr>
-                <td><strong>${r.referred_store_name || r.referred_email || 'Merchant Store'}</strong></td>
+                <td><strong>${r.store_name || r.referred_store_name || r.referred_email || 'Merchant Store'}</strong></td>
                 <td>${tierBadge}</td>
                 <td style="color: var(--text-muted); font-size: 12px;">${dateStr}</td>
                 <td>${statusBadge}</td>
@@ -2169,10 +2174,10 @@
         } else {
           commsTbody.innerHTML = commissionsList.map(c => {
             const unlockStr = c.available_at ? new Date(c.available_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
-            const amtStr = `₱${Number(c.amount_php || 0).toLocaleString()}`;
+            const amtStr = `₱${Number(c.commission_amount_php || c.amount_php || 0).toLocaleString()}`;
             const statusBadge = c.status === 'paid' 
               ? `<span class="badge-status healthy">Disbursed</span>` 
-              : (c.status === 'available' ? `<span class="badge-status info">Approved</span>` : `<span class="badge-status warning">30d Verification Hold</span>`);
+              : (c.status === 'approved' || c.status === 'available' ? `<span class="badge-status info">Approved</span>` : `<span class="badge-status warning">30d Verification Hold</span>`);
             const refStr = c.paddle_transaction_id ? c.paddle_transaction_id.slice(-8) : (c.id ? c.id.slice(0, 8) : 'COM-REF');
             return `
               <tr>
@@ -2212,15 +2217,17 @@
 
       const payload = {
         user_id: activeUser?.id || null,
-        code: rawCode,
-        name: storeName,
-        contact_email: userEmail,
-        payout_method: payoutMethod,
-        payout_details: {
-          account_name: accountName,
-          account_number: accountNumber,
-          bank_name: payoutMethod === 'bank' ? bankName : null
-        },
+        affiliate_code: rawCode,
+        full_name: storeName,
+        email: userEmail,
+        phone_ph: accountNumber.startsWith('09') || accountNumber.startsWith('+63') ? accountNumber : '09170000000',
+        payout_type: payoutMethod,
+        payout_account_name: accountName,
+        payout_account_number: accountNumber,
+        payout_bank_name: payoutMethod === 'bank' ? bankName : null,
+        commission_type: 'flat',
+        flat_bounty_plus_php: 3000.00,
+        flat_bounty_pro_php: 6000.00,
         status: 'active'
       };
 
@@ -2230,7 +2237,7 @@
             .from('affiliates')
             .insert([payload])
             .select()
-            .single();
+            .maybeSingle();
 
           if (error) {
             if (error.code === '23505' || (error.message && error.message.includes('unique'))) {

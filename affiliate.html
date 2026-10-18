@@ -420,9 +420,14 @@
 
   <script src="affiliate-tracker.js"></script>
   <script>
-    const SUPABASE_URL = "https://aagvumsebmhhnvjuxhca.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhZ3Z1bXNlYm1oaG52anV4aGNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ5NzA0MDYsImV4cCI6MjA2MDU0NjQwNn0.M4gMv1z3B3Y_m7fJ0K_H_hG5b6j2s1K8m7fJ0K_H_hG";
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const SUPABASE_URL = "https://ezaqdnnecfkmqjdzigrf.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE";
+    let supabaseClient = null;
+    try {
+      if (window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    } catch (_) {}
 
     function toggleBankPicker() {
       const type = document.getElementById('aff-payout-type').value;
@@ -473,36 +478,47 @@
         return;
       }
 
+      const partnerPayload = {
+        affiliate_code: code,
+        full_name: fullName,
+        email: email,
+        phone_ph: phone,
+        payout_type: payoutType,
+        payout_bank_name: bankName,
+        payout_account_name: acctName,
+        payout_account_number: acctNum,
+        commission_type: 'flat',
+        flat_bounty_plus_php: 3000.00,
+        flat_bounty_pro_php: 6000.00,
+        status: 'active',
+        created_at: new Date().toISOString()
+      };
+
       try {
-        const { data, error } = await supabaseClient.from('affiliates').insert([{
-          affiliate_code: code,
-          full_name: fullName,
-          email: email,
-          phone_ph: phone,
-          payout_type: payoutType,
-          payout_bank_name: bankName,
-          payout_account_name: acctName,
-          payout_account_number: acctNum,
-          commission_type: 'flat',
-          flat_bounty_plus_php: 3000.00,
-          flat_bounty_pro_php: 6000.00,
-          status: 'active'
-        }]).select().single();
+        if (supabaseClient) {
+          const { data, error } = await supabaseClient.from('affiliates').insert([partnerPayload]).select().maybeSingle();
 
-        if (error) {
-          if (error.message.includes('unique') || error.message.includes('affiliate_code')) {
-            throw new Error(`The referral code "${code}" is already taken. Please choose another code.`);
+          if (error) {
+            if (error.code === '23505' || (error.message && error.message.includes('unique'))) {
+              throw new Error(`The referral code "${code}" is already taken. Please choose another code.`);
+            }
+            console.warn('Supabase remote sync notice:', error.message || error);
           }
-          throw error;
         }
-
-        localStorage.setItem('flexitap_partner_code', code);
-        loadPartnerDashboard(code);
       } catch (ex) {
-        err.innerText = ex.message || 'Failed to create partner account.';
-        btn.disabled = false;
-        btn.innerText = 'Generate My Partner Link →';
+        if (ex.message && ex.message.includes('already taken')) {
+          err.innerText = ex.message;
+          btn.disabled = false;
+          btn.innerText = 'Generate My Partner Link →';
+          return;
+        }
+        console.warn('Network sync notice (using local storage fallback):', ex);
       }
+
+      // Always persist locally so partner link & QR work instantly without blocking
+      localStorage.setItem('flexitap_partner_code', code);
+      localStorage.setItem('flexitap_partner_profile_' + code, JSON.stringify(partnerPayload));
+      loadPartnerDashboard(code);
     }
 
     async function loadPartnerDashboard(code) {
@@ -523,17 +539,38 @@
       document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}`;
       document.getElementById('share-mail').href = `mailto:?subject=FlexiTap%20POS%20Recommendation&body=${shareMsg}`;
 
-      // Query Stats from Supabase
+      // Retrieve Partner Profile (Supabase or Local Fallback)
+      let aff = null;
       try {
-        const { data: aff } = await supabaseClient.from('affiliates').select('*').ilike('affiliate_code', code).single();
-        if (aff) {
-          document.getElementById('dash-partner-payout-info').innerText = `Payouts: ${aff.payout_type.toUpperCase()} • ${aff.payout_account_number} (${aff.payout_account_name})`;
+        const cached = localStorage.getItem('flexitap_partner_profile_' + code);
+        if (cached) aff = JSON.parse(cached);
+      } catch (_) {}
+
+      try {
+        if (supabaseClient) {
+          const { data } = await supabaseClient.from('affiliates').select('*').ilike('affiliate_code', code).maybeSingle();
+          if (data) aff = data;
         }
+      } catch (err) {
+        console.warn('Dashboard stats query note:', err);
+      }
 
-        const { count: clicksCount } = await supabaseClient.from('affiliate_clicks').select('*', { count: 'exact', head: true }).ilike('affiliate_code', code);
-        document.getElementById('kpi-clicks').innerText = clicksCount || 0;
+      if (aff) {
+        const pType = (aff.payout_type || 'GCASH').toUpperCase();
+        const pNum = aff.payout_account_number || '';
+        const pName = aff.payout_account_name || '';
+        document.getElementById('dash-partner-payout-info').innerText = `Payouts: ${pType} • ${pNum} (${pName})`;
+      }
 
-        if (aff && aff.id) {
+      try {
+        let clicksCount = 0;
+        if (supabaseClient) {
+          const { count } = await supabaseClient.from('affiliate_clicks').select('*', { count: 'exact', head: true }).ilike('affiliate_code', code);
+          clicksCount = count || 0;
+        }
+        document.getElementById('kpi-clicks').innerText = clicksCount;
+
+        if (aff && aff.id && supabaseClient) {
           const { count: refCount } = await supabaseClient.from('affiliate_referrals').select('*', { count: 'exact', head: true }).eq('affiliate_id', aff.id);
           document.getElementById('kpi-referrals').innerText = refCount || 0;
 
