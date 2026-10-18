@@ -896,24 +896,57 @@
         </div>
       </div>
 
-      <!-- SHOWCASE 7: BACK OFFICE REPORTS HUB -->
+      <!-- SHOWCASE 7: ORDER STATUS DISPLAY (OSD) -->
       <div class="showcase-row">
         <div class="showcase-content">
-          <div class="pill-indicator">Financial Intelligence & Control</div>
-          <h3>Executive Back Office Reports Hub</h3>
-          <p>Stay on top of store performance with comprehensive revenue trend curves, product category mix distributions, hourly rush volume, and cashier performance audits. All cash settlement records and liabilities are verified automatically.</p>
+          <div class="pill-indicator">Guest Pickup &amp; Queue Transparency</div>
+          <h3>Live Order Status Display (OSD)</h3>
+          <p>Eliminate crowded pickup counters and shouted ticket numbers. Mount any TV or tablet in your lobby to broadcast a real-time dual-column pickup board—automatically moving orders from <strong>⏳ Preparing</strong> to <strong>✓ Now Serving</strong> the instant your kitchen bumps a ticket on the KDS.</p>
           <div class="showcase-metrics">
             <div class="metric-item">
-              <strong>Audit Verified</strong>
-              <span>Cash & Card Balance Match</span>
+              <strong>Dual-Column Queue</strong>
+              <span>Preparing &amp; Now Serving</span>
             </div>
             <div class="metric-item">
-              <strong>Hourly Curves</strong>
-              <span>Peak Service Detection</span>
+              <strong>Auto KDS Sync</strong>
+              <span>Instant LAN Status Broadcast</span>
             </div>
           </div>
         </div>
 
+        <div class="screen-mockup-wrapper">
+          <div class="window-header">
+            <div class="window-dots">
+              <div class="window-dot dot-red"></div>
+              <div class="window-dot dot-yellow"></div>
+              <div class="window-dot dot-green"></div>
+            </div>
+            <div class="window-title">Order Status Display (OSD) — Live Guest Pickup Queue</div>
+            <div style="font-size: 11px; color: #10b981; font-weight: 700;">● Live Queue</div>
+          </div>
+          
+          <img src="osd.png" alt="FlexiTap Order Status Display (OSD) Screen" class="screenshot-img" />
+
+          <div class="screen-overlay-badge top-right">
+            <div style="font-size: 16px;">⏳</div>
+            <div>
+              <div style="font-size: 11px; font-weight: 800; color: #fff;">PREPARING &rarr; NOW SERVING</div>
+              <div style="font-size: 10px; color: #fde68a;">Synced with Kitchen KDS Bump</div>
+            </div>
+          </div>
+
+          <div class="screen-overlay-badge bottom-left">
+            <div class="status-dot-pulse"></div>
+            <div>
+              <div style="font-size: 11.5px; font-weight: 700; color: #fff;">Zero Counter Congestion</div>
+              <div style="font-size: 10px; color: #94a3b8;">Real-time guest pickup notifications</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHOWCASE 8: BACK OFFICE REPORTS HUB -->
+      <div class="showcase-row reversed">
         <div class="screen-mockup-wrapper">
           <div class="window-header">
             <div class="window-dots">
@@ -931,7 +964,7 @@
             <div style="font-size: 16px;">📊</div>
             <div>
               <div style="font-size: 11px; font-weight: 800; color: #fff;">SALES SUMMARY</div>
-              <div style="font-size: 10px; color: #cbd5e1;">Hourly Trends & Product Mix</div>
+              <div style="font-size: 10px; color: #cbd5e1;">Hourly Trends &amp; Product Mix</div>
             </div>
           </div>
 
@@ -940,6 +973,22 @@
             <div>
               <div style="font-size: 11.5px; font-weight: 700; color: #fff;">Reconciliation Hub</div>
               <div style="font-size: 10px; color: #94a3b8;">One-Click Detailed Report Export</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="showcase-content">
+          <div class="pill-indicator">Financial Intelligence &amp; Control</div>
+          <h3>Executive Back Office Reports Hub</h3>
+          <p>Stay on top of store performance with comprehensive revenue trend curves, product category mix distributions, hourly rush volume, and cashier performance audits. All cash settlement records and liabilities are verified automatically.</p>
+          <div class="showcase-metrics">
+            <div class="metric-item">
+              <strong>Audit Verified</strong>
+              <span>Cash &amp; Card Balance Match</span>
+            </div>
+            <div class="metric-item">
+              <strong>Hourly Curves</strong>
+              <span>Peak Service Detection</span>
             </div>
           </div>
         </div>
@@ -953,23 +1002,23 @@
       <p style="color: var(--text-muted); font-size: 14.5px; margin-bottom: 28px;">Switch effortlessly between restaurant tables, retail barcodes, and spa appointment schedules.</p>
       
       <div class="workflow-toggle-wrap">
-        <button class="workflow-btn active" id="wf-btn-retail" onclick="switchWorkflow('retail')">🏷️ Retail & Convenience</button>
-        <button class="workflow-btn" id="wf-btn-services" onclick="switchWorkflow('services')">💆 Appointments & Services</button>
-        <button class="workflow-btn" id="wf-btn-fb" onclick="switchWorkflow('fb')">🍽️ Food & Beverage (F&B)</button>
+        <button class="workflow-btn active" id="wf-btn-retail" onclick="switchWorkflow('retail')">🏷️ Retail &amp; Convenience</button>
+        <button class="workflow-btn" id="wf-btn-services" onclick="switchWorkflow('services')">💆 Appointments &amp; Services</button>
+        <button class="workflow-btn" id="wf-btn-fb" onclick="switchWorkflow('fb')">🍽️ Food &amp; Beverage (F&amp;B)</button>
       </div>
 
       <!-- RETAIL CARDS -->
       <div class="workflow-view active" id="wf-retail">
         <div class="workflow-card">
-          <h4>📷 Instant Barcode & SKU Lookup</h4>
+          <h4>📷 Instant Barcode &amp; SKU Lookup</h4>
           <p>Scan barcodes or type SKUs with instantaneous item matching and live stock counts displayed on every product tile.</p>
         </div>
         <div class="workflow-card">
-          <h4>🏷️ Parked Sales & Cart Memory</h4>
+          <h4>🏷️ Parked Sales &amp; Cart Memory</h4>
           <p>Suspend transactions immediately into Parked Sales when a customer forgets an item, and resume with zero line delay.</p>
         </div>
         <div class="workflow-card">
-          <h4>💵 Till Audits & Cash Controls</h4>
+          <h4>💵 Till Audits &amp; Cash Controls</h4>
           <p>Automated drawer kicks via RJ11, recorded cash drops, and manager PIN authorizations for secure shift reconciliation.</p>
         </div>
       </div>
@@ -985,7 +1034,7 @@
           <p>Attribute therapist commissions directly on the service ticket, ensuring accurate payroll and tip allocation.</p>
         </div>
         <div class="workflow-card">
-          <h4>🚪 Rooms & Stations Management</h4>
+          <h4>🚪 Rooms &amp; Stations Management</h4>
           <p>Assign bookings directly to individual massage suites, nail stations, or private treatment rooms with live status badges.</p>
         </div>
       </div>
@@ -997,11 +1046,11 @@
           <p>Interactive dining room floor plan with live table occupancy, elapsed meal timers, and check transfers between tables.</p>
         </div>
         <div class="workflow-card">
-          <h4>🍳 Direct Kitchen Routing</h4>
-          <p>Route food tickets straight to thermal line printers or digital KDS screens with modifier grouping (e.g., extra shots, dairy alternatives).</p>
+          <h4>🍳 KDS &amp; Order Status Display (OSD)</h4>
+          <p>Route food tickets straight to digital KDS screens and broadcast live <strong>Preparing / Now Serving</strong> queues on lobby OSD monitors.</p>
         </div>
         <div class="workflow-card">
-          <h4>🧾 Seat-Based Ordering & Bill Split</h4>
+          <h4>🧾 Seat-Based Ordering &amp; Bill Split</h4>
           <p>Split tickets cleanly by guest seat or item, with complete tip reconciliation integrated into end-of-shift cashier Z-reports.</p>
         </div>
       </div>
@@ -1018,9 +1067,9 @@
           <h4>Thermal Receipt Printers</h4>
           <p>Standard ESC/POS protocol compatibility across counter checkouts and kitchen prep stations.</p>
           <div class="hub-badges">
-            <span class="hub-tag">58mm & 80mm</span>
+            <span class="hub-tag">58mm &amp; 80mm</span>
             <span class="hub-tag">Network LAN IP</span>
-            <span class="hub-tag">Wi-Fi & Bluetooth</span>
+            <span class="hub-tag">Wi-Fi &amp; Bluetooth</span>
           </div>
         </div>
 
@@ -1031,6 +1080,7 @@
           <div class="hub-badges">
             <span class="hub-tag">Kitchen KDS</span>
             <span class="hub-tag">Customer CDS</span>
+            <span class="hub-tag">Order Status OSD</span>
             <span class="hub-tag">Digital Menu Boards</span>
           </div>
         </div>
