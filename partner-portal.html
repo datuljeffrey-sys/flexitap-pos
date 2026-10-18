@@ -1116,6 +1116,12 @@
 
     // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', async () => {
+      // Check if arriving via #register or ?tab=register
+      const urlParams = new URLSearchParams(window.location.search);
+      if (window.location.hash === '#register' || urlParams.get('tab') === 'register' || urlParams.get('action') === 'register') {
+        switchAuthTab('register');
+      }
+
       // Check if session verified
       const verifiedEmail = localStorage.getItem('flexitap_partner_verified_session');
       if (verifiedEmail) {

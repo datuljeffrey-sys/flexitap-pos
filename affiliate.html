@@ -261,125 +261,45 @@
         </div>
       </div>
 
-      <!-- PARTNER SIGNUP & DASHBOARD BOX -->
-      <div class="partner-box">
-        <!-- 1. SIGNUP VIEW -->
-        <div id="partner-signup-view">
-          <h2>Create Your Partner Account</h2>
-          <p class="sub">Register in under 60 seconds to get your personal tracking link and start earning today.</p>
+      <!-- PARTNER PROGRAM SIGN UP & ACCESS HERO CARD -->
+      <div class="partner-box" style="text-align: center; max-width: 820px; padding: 48px 36px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 20px; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5); position: relative; overflow: hidden; margin: 0 auto 60px;">
+        <div style="position: absolute; right: -30px; top: -30px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%); pointer-events: none;"></div>
 
-          <form id="affiliate-signup-form" onsubmit="handleAffiliateSignup(event)">
-            <div class="form-grid">
-              <div class="form-field">
-                <label>Full Name / Business Name *</label>
-                <input type="text" id="aff-name" required placeholder="Juan Dela Cruz">
-              </div>
-              <div class="form-field">
-                <label>Email Address *</label>
-                <input type="email" id="aff-email" required placeholder="juan@gmail.com">
-              </div>
-              <div class="form-field">
-                <label>Philippine Mobile Number *</label>
-                <input type="tel" id="aff-phone" required placeholder="09171234567" pattern="^(09|\+639)\d{9}$">
-              </div>
-              <div class="form-field">
-                <label>Desired Custom Referral Code *</label>
-                <input type="text" id="aff-code" required placeholder="JUAN-POS" maxlength="20" style="text-transform: uppercase;">
-              </div>
-              <div class="form-field">
-                <label>Payout Method *</label>
-                <select id="aff-payout-type" required onchange="toggleBankPicker()">
-                  <option value="gcash">GCash (Mobile Wallet)</option>
-                  <option value="maya">Maya (PayMaya)</option>
-                  <option value="bank">Local Bank Transfer (InstaPay)</option>
-                </select>
-              </div>
-              <div class="form-field" id="field-bank-name" style="display: none;">
-                <label>Bank Name *</label>
-                <select id="aff-bank-name">
-                  <option value="BDO">BDO Unibank</option>
-                  <option value="BPI">BPI (Bank of the Philippine Islands)</option>
-                  <option value="UnionBank">UnionBank of the Philippines</option>
-                  <option value="Metrobank">Metrobank</option>
-                  <option value="GoTyme">GoTyme Bank</option>
-                  <option value="SeaBank">SeaBank Philippines</option>
-                  <option value="Landbank">Landbank</option>
-                  <option value="RCBC">RCBC</option>
-                </select>
-              </div>
-              <div class="form-field">
-                <label id="lbl-acct-name">GCash Account Name *</label>
-                <input type="text" id="aff-acct-name" required placeholder="JUAN DELA CRUZ">
-              </div>
-              <div class="form-field">
-                <label id="lbl-acct-number">GCash Registered Number *</label>
-                <input type="text" id="aff-acct-number" required placeholder="09171234567">
-              </div>
-              <div class="form-field full">
-                <button type="submit" class="btn-submit-partner" id="aff-btn">Generate My Partner Link &rarr;</button>
-              </div>
-            </div>
-          </form>
+        <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 9999px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #34d399; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 18px;">
+          <span>🇵🇭</span> Official Philippine Partner Program
+        </div>
+        
+        <h2 style="font-size: clamp(24px, 3.2vw, 34px); font-weight: 800; color: #fff; margin-bottom: 14px; letter-spacing: -0.5px; line-height: 1.25;">
+          Ready to Earn ₱3,000 to ₱6,000 Cash Per Store?
+        </h2>
+        
+        <p style="font-size: 15px; color: var(--text-muted); max-width: 620px; margin: 0 auto 30px; line-height: 1.6;">
+          Join the FlexiTap Partner Network. Register your email and password, secure your account with 2FA, generate custom referral links and café QR codes, and track your 30-day hold payouts direct to GCash, Maya, or local bank.
+        </p>
 
-          <div style="text-align: center; margin-top: 18px; font-size: 13px; color: var(--text-muted);">
-            Already have a partner account? <a href="partner-portal.html" style="color: #60a5fa; text-decoration: none; font-weight: 700;">Sign In to Dedicated Partner Portal (2FA) &rarr;</a>
-          </div>
-          <div id="aff-error-msg" style="color: #f87171; font-size: 13px; margin-top: 12px; font-weight: 600;"></div>
+        <!-- CTA Buttons -->
+        <div style="display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 28px;">
+          <a href="partner-portal.html#register" class="btn-submit-partner" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 15px 34px; font-size: 15px; font-weight: 800; border-radius: 12px; box-shadow: 0 12px 30px rgba(37, 99, 235, 0.35); width: auto;">
+            <span>✨</span> Sign Up for Partner Program &rarr;
+          </a>
+          <a href="partner-portal.html" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 15px 28px; font-size: 14px; font-weight: 700; border-radius: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff; transition: background 0.2s;">
+            <span>🛡️</span> Sign In to Partner Portal (2FA)
+          </a>
         </div>
 
-        <!-- 2. LIVE DASHBOARD VIEW -->
-        <div id="partner-dashboard-view">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-            <div>
-              <h2 id="dash-partner-name" style="margin-bottom: 2px;">Welcome, Partner</h2>
-              <div style="font-size: 13px; color: var(--text-muted);" id="dash-partner-payout-info">Payouts: GCash • 09171234567</div>
-            </div>
-            <button onclick="logoutPartnerDashboard()" style="background: none; border: 1px solid var(--card-border); color: var(--text-muted); padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;">Sign Out</button>
+        <!-- Trust Badges -->
+        <div style="display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; font-size: 12px; color: #94a3b8; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08);">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="color: #34d399; font-weight: bold;">✓</span> Zero fees to join
           </div>
-
-          <!-- KPI Cards -->
-          <div class="dash-kpis">
-            <div class="dash-kpi">
-              <div class="label">Total Link Clicks</div>
-              <div class="val" id="kpi-clicks">0</div>
-            </div>
-            <div class="dash-kpi">
-              <div class="label">Stores Signed Up</div>
-              <div class="val" id="kpi-referrals">0</div>
-            </div>
-            <div class="dash-kpi">
-              <div class="label">Pending Bounty (Hold)</div>
-              <div class="val" style="color: #f59e0b;" id="kpi-pending">₱0.00</div>
-            </div>
-            <div class="dash-kpi">
-              <div class="label">Total Disbursed</div>
-              <div class="val" style="color: #10b981;" id="kpi-paid">₱0.00</div>
-            </div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="color: #34d399; font-weight: bold;">✓</span> 60-day first-party cookie lock
           </div>
-
-          <!-- Share Hub -->
-          <div class="link-share-box">
-            <div style="font-size: 13px; font-weight: 700; color: #fff;">Your Personal Referral Link:</div>
-            <div class="link-copy-row">
-              <input type="text" class="link-copy-input" id="aff-share-url" readonly>
-              <button class="btn-copy-link" onclick="copyAffiliateLink()"><span id="copy-btn-text">📋 Copy Link</span></button>
-            </div>
-
-            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 8px; font-weight: 600;">1-Click Share to Philippine Merchants:</div>
-            <div class="share-buttons">
-              <a href="#" target="_blank" class="share-btn btn-msgr" id="share-msgr">💬 Messenger</a>
-              <a href="#" target="_blank" class="share-btn btn-viber" id="share-viber">📱 Viber</a>
-              <a href="#" target="_blank" class="share-btn btn-fb" id="share-fb">📘 Facebook</a>
-              <a href="#" class="share-btn btn-mail" id="share-mail">✉️ Email</a>
-            </div>
-
-            <div class="qr-row">
-              <img id="aff-qr-img" class="qr-code-img" src="" alt="Partner QR Code">
-              <div>
-                <div style="font-size: 13px; font-weight: 700; color: #fff;">In-Person Store Scan</div>
-                <div style="font-size: 12px; color: #94a3b8; margin-top: 2px;">Show this QR code on your phone when visiting a fellow café owner. They scan to open your tagged link instantly.</div>
-              </div>
-            </div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="color: #34d399; font-weight: bold;">✓</span> Direct GCash / Maya / Bank rails
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="color: #34d399; font-weight: bold;">✓</span> Two-step email 2FA security
           </div>
         </div>
       </div>
