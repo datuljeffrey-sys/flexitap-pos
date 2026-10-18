@@ -101,7 +101,7 @@ ALTER TABLE public.affiliate_referrals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.affiliate_commissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.affiliate_payouts ENABLE ROW LEVEL SECURITY;
 
--- Clean existing policies if re-running
+-- Drop existing policies if re-running
 DROP POLICY IF EXISTS "Public can look up active affiliate codes" ON public.affiliates;
 DROP POLICY IF EXISTS "Public can register as affiliate" ON public.affiliates;
 DROP POLICY IF EXISTS "Affiliates can update their profile" ON public.affiliates;
@@ -173,53 +173,3 @@ CREATE POLICY "Affiliates can view payouts"
   FOR SELECT
   TO anon, authenticated
   USING (true);
-
--- 7. HELPER RPC FUNCTION FOR AFFILIATE DASHBOARD TELEMETRY
-CREATE OR REPLACE FUNCTION public.get_affiliate_stats_v1(p_code TEXT)
-RETURNS JSON AS $$
-DECLARE
-  v_affiliate public.affiliates%ROWTYPE;
-  v_clicks BIGINT;
-  v_referrals BIGINT;
-  v_pending NUMERIC(10,2);
-  v_approved NUMERIC(10,2);
-  v_paid NUMERIC(10,2);
-BEGIN
-  -- Lookup affiliate
-  SELECT * INTO v_affiliate FROM public.affiliates WHERE LOWER(affiliate_code) = LOWER(p_code);
-  IF NOT FOUND THEN
-    RETURN json_build_object('success', false, 'error', 'Affiliate code not found');
-  END IF;
-
-  -- Count clicks
-  SELECT COUNT(*) INTO v_clicks FROM public.affiliate_clicks WHERE LOWER(affiliate_code) = LOWER(p_code);
-
-  -- Count referrals
-  SELECT COUNT(*) INTO v_referrals FROM public.affiliate_referrals WHERE affiliate_id = v_affiliate.id;
-
-  -- Aggregate commissions
-  SELECT COALESCE(SUM(commission_amount_php), 0) INTO v_pending
-    FROM public.affiliate_commissions WHERE affiliate_id = v_affiliate.id AND status = 'pending';
-
-  SELECT COALESCE(SUM(commission_amount_php), 0) INTO v_approved
-    FROM public.affiliate_commissions WHERE affiliate_id = v_affiliate.id AND status = 'approved';
-
-  SELECT COALESCE(SUM(commission_amount_php), 0) INTO v_paid
-    FROM public.affiliate_commissions WHERE affiliate_id = v_affiliate.id AND status = 'paid';
-
-  RETURN json_build_object(
-    'success', true,
-    'affiliate_code', v_affiliate.affiliate_code,
-    'full_name', v_affiliate.full_name,
-    'payout_type', v_affiliate.payout_type,
-    'payout_account_name', v_affiliate.payout_account_name,
-    'payout_account_number', v_affiliate.payout_account_number,
-    'payout_bank_name', v_affiliate.payout_bank_name,
-    'clicks', v_clicks,
-    'referrals', v_referrals,
-    'pending_php', v_pending,
-    'approved_php', v_approved,
-    'paid_php', v_paid
-  );
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
