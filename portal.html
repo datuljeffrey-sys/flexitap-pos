@@ -2747,14 +2747,21 @@
           .eq('id', user.id)
           .maybeSingle();
 
-        activeStore = store || {
+        const emailPrefix = (user.email?.split('@')[0] || '').trim();
+        const genericMailboxes = ['info', 'admin', 'support', 'sales', 'contact', 'hello', 'help', 'billing', 'office', 'test', 'user'];
+        const rawCandidateName = (store?.name || profile?.store_name || emailPrefix || '').trim();
+        const resolvedStoreName = (rawCandidateName && !genericMailboxes.includes(rawCandidateName.toLowerCase()))
+          ? rawCandidateName
+          : 'FlexiTap Merchant Store';
+
+        activeStore = store ? { ...store, name: resolvedStoreName } : {
           id: user.id,
-          name: profile?.store_name || user.email?.split('@')[0] || 'My Store',
+          name: resolvedStoreName,
           currency_symbol: '$'
         };
 
         const storeNameEl = document.getElementById('store-name-display');
-        if (storeNameEl) storeNameEl.innerText = activeStore.name || 'My Store';
+        if (storeNameEl) storeNameEl.innerText = activeStore.name;
 
         const tier = profile?.subscription_tier || 'Pro';
         const tierLower = tier.toLowerCase();
@@ -2801,7 +2808,7 @@
         if (!activeStore) {
           activeStore = {
             id: user.id,
-            name: user.email?.split('@')[0] || 'My Store',
+            name: 'FlexiTap Merchant Store',
             currency_symbol: '$'
           };
         }
@@ -3635,16 +3642,24 @@
       renderInitialAiSupportGreeting();
     }
 
+    function getCleanStoreLabel(defaultLabel = 'your store') {
+      const raw = (activeStore?.name || document.getElementById('store-name-display')?.innerText || '').trim();
+      const invalidLabels = ['info', 'admin', 'support', 'sales', 'contact', 'hello', 'help', 'billing', 'office', 'test', 'user', 'loading store...', 'my store'];
+      if (!raw || invalidLabels.includes(raw.toLowerCase())) {
+        return defaultLabel;
+      }
+      return raw;
+    }
+
     function renderInitialAiSupportGreeting() {
       const box = document.getElementById('m-chat-messages');
       if (!box) return;
-      const storeLabel = activeStore?.name || document.getElementById('store-name-display')?.innerText || 'your store';
       renderAiBubble(
-        `👋 Hello! I'm the <strong>FlexiTap AI Support Assistant</strong> for <strong>${escapeHtml(storeLabel)}</strong>, trained on all <strong>42 official FlexiTap v2 POS Guides</strong> and your live Back Office reports.<br><br>` +
-        `Ask me anything about printer/KDS setup, multi-register networking, modifiers, split bills, Z-Read balancing, or inventory!`,
+        `👋 Hello! I'm your <strong>FlexiTap AI Support Assistant</strong>.<br><br>` +
+        `How can I help you with your POS setup, Back Office reports, Z-Read balancing, or hardware troubleshooting today?`,
         [
           { label: '📊 My Store Sales Today', query: 'What are my current store sales and drawer totals?' },
-          { label: '📚 Browse 42 POS Guides', query: 'Show all FlexiTap POS guides and FAQ topics' },
+          { label: '📚 Browse POS Guides', query: 'Show all FlexiTap POS guides and FAQ topics' },
           { label: '🧾 Z-Read & Variance Help', query: 'How does Z-Read balancing and variance verification work?' },
           { label: '🖨️ Printers & KDS Setup', query: 'Printer and cash drawer troubleshooting' },
           { label: '🖥️ Multi-Register Setup', query: 'Multi-register and network setup master vs satellite' },
@@ -3675,7 +3690,7 @@
       }
 
       div.innerHTML =
-        `<div class="bubble-role-tag">🤖 FlexiTap AI • Guardrailed</div>` +
+        `<div class="bubble-role-tag">🤖 FlexiTap AI Assistant</div>` +
         `<div>${htmlContent}</div>` +
         chipsHtml +
         `<div style="font-size:9.5px; opacity:0.65; margin-top:4px; text-align:right;">AI Assistant • ${timeStr}</div>`;
@@ -4550,7 +4565,7 @@
     }
 
     function buildGroundedSystemPrompt(userQuery = '') {
-      const storeName = activeStore?.name || document.getElementById('store-name-display')?.innerText || 'Merchant Store';
+      const storeName = getCleanStoreLabel('Merchant Store');
       const sym = activeStore?.currency_symbol || '$';
       const gross = formatMoney(currentAgg?.grossSales || 0);
       const net = formatMoney(currentAgg?.netSales || 0);
@@ -4616,7 +4631,7 @@
 
     function matchBuiltInFlexiTapKnowledge(query) {
       const q = query.toLowerCase().trim();
-      const storeName = activeStore?.name || document.getElementById('store-name-display')?.innerText || 'your store';
+      const storeName = getCleanStoreLabel('your store');
 
       // Check if user says previous steps didn't work -> Last-resort escalation
       if (isLastResortUnresolvedIntent(q)) {
