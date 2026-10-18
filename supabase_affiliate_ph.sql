@@ -52,6 +52,8 @@ CREATE TABLE IF NOT EXISTS public.affiliate_referrals (
   referred_email TEXT NOT NULL,
   store_id UUID,
   store_name TEXT,
+  plan_tier TEXT DEFAULT 'plus',
+  status TEXT DEFAULT 'pending_verification',
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -99,50 +101,78 @@ ALTER TABLE public.affiliate_referrals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.affiliate_commissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.affiliate_payouts ENABLE ROW LEVEL SECURITY;
 
--- Anonymous users can verify/look up an affiliate code for link validation
+-- Clean existing policies if re-running
+DROP POLICY IF EXISTS "Public can look up active affiliate codes" ON public.affiliates;
+DROP POLICY IF EXISTS "Public can register as affiliate" ON public.affiliates;
+DROP POLICY IF EXISTS "Affiliates can update their profile" ON public.affiliates;
+DROP POLICY IF EXISTS "Public can record affiliate clicks" ON public.affiliate_clicks;
+DROP POLICY IF EXISTS "Public can view clicks" ON public.affiliate_clicks;
+DROP POLICY IF EXISTS "Public can bind affiliate referrals" ON public.affiliate_referrals;
+DROP POLICY IF EXISTS "Affiliates can view referrals" ON public.affiliate_referrals;
+DROP POLICY IF EXISTS "Affiliates can view commissions" ON public.affiliate_commissions;
+DROP POLICY IF EXISTS "Affiliates can view payouts" ON public.affiliate_payouts;
+
+-- 1. Look up affiliate by code or email
 CREATE POLICY "Public can look up active affiliate codes"
   ON public.affiliates
   FOR SELECT
   TO anon, authenticated
-  USING (status = 'active');
+  USING (true);
 
--- Anyone can log a click
+-- 2. Anyone can register as an affiliate
+CREATE POLICY "Public can register as affiliate"
+  ON public.affiliates
+  FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+
+-- 3. Affiliates can update their own payout details
+CREATE POLICY "Affiliates can update their profile"
+  ON public.affiliates
+  FOR UPDATE
+  TO anon, authenticated
+  USING (true)
+  WITH CHECK (true);
+
+-- 4. Anyone can record and read clicks
 CREATE POLICY "Public can record affiliate clicks"
   ON public.affiliate_clicks
   FOR INSERT
   TO anon, authenticated
   WITH CHECK (true);
 
--- Affiliates can view only their own records if logged in
-CREATE POLICY "Affiliates can view their own profile"
-  ON public.affiliates
+CREATE POLICY "Public can view clicks"
+  ON public.affiliate_clicks
   FOR SELECT
-  TO authenticated
-  USING (auth.uid() = user_id);
+  TO anon, authenticated
+  USING (true);
 
-CREATE POLICY "Affiliates can view their own referrals"
+-- 5. Referrals binding & viewing
+CREATE POLICY "Public can bind affiliate referrals"
+  ON public.affiliate_referrals
+  FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+
+CREATE POLICY "Affiliates can view referrals"
   ON public.affiliate_referrals
   FOR SELECT
-  TO authenticated
-  USING (
-    affiliate_id IN (SELECT id FROM public.affiliates WHERE user_id = auth.uid())
-  );
+  TO anon, authenticated
+  USING (true);
 
-CREATE POLICY "Affiliates can view their own commissions"
+-- 6. Commissions viewing
+CREATE POLICY "Affiliates can view commissions"
   ON public.affiliate_commissions
   FOR SELECT
-  TO authenticated
-  USING (
-    affiliate_id IN (SELECT id FROM public.affiliates WHERE user_id = auth.uid())
-  );
+  TO anon, authenticated
+  USING (true);
 
-CREATE POLICY "Affiliates can view their own payouts"
+-- 7. Payouts viewing
+CREATE POLICY "Affiliates can view payouts"
   ON public.affiliate_payouts
   FOR SELECT
-  TO authenticated
-  USING (
-    affiliate_id IN (SELECT id FROM public.affiliates WHERE user_id = auth.uid())
-  );
+  TO anon, authenticated
+  USING (true);
 
 -- 7. HELPER RPC FUNCTION FOR AFFILIATE DASHBOARD TELEMETRY
 CREATE OR REPLACE FUNCTION public.get_affiliate_stats_v1(p_code TEXT)
