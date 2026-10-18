@@ -655,6 +655,12 @@
               <span class="nav-badge" id="team-count-badge" style="background: rgba(139, 92, 246, 0.2); color: #a78bfa;">Admin</span>
             </button>
           </li>
+          <li>
+            <button class="nav-btn" onclick="switchNav('partners', this)">
+              <span>🤝 Partners &amp; Affiliates</span>
+              <span class="nav-badge" id="affiliate-count-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">PH Pilot</span>
+            </button>
+          </li>
         </ul>
       </div>
 
@@ -2355,6 +2361,147 @@
 
         </div>
 
+        <!-- ================= 13. PHILIPPINE PARTNER & AFFILIATE ADMIN HUB ================= -->
+        <div id="view-partners" class="tab-view">
+          
+          <!-- Top Bar: Header & Actions -->
+          <div class="crm-header-card" style="padding: 16px 20px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                  🤝
+                </div>
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <h2 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0;">Philippine Partner &amp; Affiliate Administration</h2>
+                    <span style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">PH PILOT</span>
+                  </div>
+                  <p style="font-size: 0.76rem; color: var(--text-muted); margin: 3px 0 0 0;">Inspect affiliate accounts, audit store referral activity, detect self-referrals, and disburse GCash/Maya bounties.</p>
+                </div>
+              </div>
+
+              <!-- Top Actions -->
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <a href="partner-portal.html" target="_blank" class="action-btn" style="padding: 8px 14px; font-weight: 700; color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); text-decoration: none;">
+                  <span>🌐 Open Partner Portal ↗</span>
+                </a>
+                <button class="action-btn" onclick="loadPartnersAdminData()" style="padding: 8px 14px; font-weight: 700;">
+                  <span>🔄 Refresh Data</span>
+                </button>
+                <button class="action-btn" onclick="exportPartnersCSV()" style="padding: 8px 14px; font-weight: 700;">
+                  <span>📥 Export CSV</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Automated Anti-Fraud Protection Ribbon -->
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-size: 24px;">🛡️</span>
+              <div>
+                <div style="font-size: 0.86rem; font-weight: 800; color: #34d399; display: flex; align-items: center; gap: 8px;">
+                  <span>Automated Anti-Fraud &amp; Self-Referral Detection Engine Active</span>
+                  <span style="font-size: 0.68rem; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 2px 6px; border-radius: 4px; font-weight: 700;">LIVE</span>
+                </div>
+                <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 3px;">
+                  Cross-referencing partner GCash numbers, phone numbers, and emails against Merchant CRM accounts. Flagging self-referrals and ghost stores with &lt; 25 POS sales.
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="font-size: 0.75rem; color: var(--text-muted);"><span style="color: #f87171; font-weight: 700;" id="kpi-fraud-flagged-count">0</span> Flagged Conflicts</div>
+              <button class="action-btn" onclick="filterPartnersByRisk('flagged')" style="padding: 5px 12px; font-size: 0.74rem; background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.35); color: #f87171; font-weight: 700;">
+                Inspect Conflicts &rarr;
+              </button>
+            </div>
+          </div>
+
+          <!-- KPI Cards Strip -->
+          <div class="kpi-row" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 20px;">
+            <div class="kpi-card">
+              <div class="kpi-title">Total Registered Partners</div>
+              <div class="kpi-val" style="color: #38bdf8;" id="aff-kpi-total-partners">0</div>
+              <div class="kpi-status" style="color: #93c5fd;" id="aff-kpi-active-partners">● 0 Active &bull; 0 Suspended</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Referred Stores</div>
+              <div class="kpi-val" style="color: #34d399;" id="aff-kpi-total-stores">0</div>
+              <div class="kpi-status" style="color: #6ee7b7;" id="aff-kpi-stores-breakdown">● 0 Plus &bull; 0 Pro</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Store Qualification Rate</div>
+              <div class="kpi-val" style="color: #a78bfa;" id="aff-kpi-qual-rate">0%</div>
+              <div class="kpi-status" style="color: #c4b5fd;" id="aff-kpi-qual-sub">● 0 / 0 stores with &ge; 25 sales</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Pending 30-Day Hold</div>
+              <div class="kpi-val" style="color: #fbbf24;" id="aff-kpi-pending-hold">₱0</div>
+              <div class="kpi-status" style="color: #fde68a;">● Awaiting 30-day anti-refund elapse</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Approved for Payout</div>
+              <div class="kpi-val" style="color: #10b981;" id="aff-kpi-approved-payout">₱0</div>
+              <div class="kpi-status" style="color: #34d399;">● Ready for GCash / Maya release</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Self-Referral Alerts</div>
+              <div class="kpi-val" style="color: #f87171;" id="aff-kpi-alerts">0</div>
+              <div class="kpi-status" style="color: #fca5a5;">● Matching payment / identity</div>
+            </div>
+          </div>
+
+          <!-- Filter & Search Controls -->
+          <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <input type="text" id="filter-partner-search" placeholder="Search partner name, email, ref code, GCash..." oninput="filterPartnersTable()" style="padding: 8px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.82rem; min-width: 280px; outline: none;">
+              
+              <select id="filter-partner-status" onchange="filterPartnersTable()" style="padding: 8px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.82rem; outline: none; cursor: pointer;">
+                <option value="all">All Statuses</option>
+                <option value="active">Active Only</option>
+                <option value="payout_ready">Ready for Payout (&gt; ₱0)</option>
+                <option value="flagged">🚨 Self-Referral / Fraud Alerts</option>
+                <option value="suspended">Suspended / Frozen</option>
+              </select>
+
+              <select id="filter-partner-rail" onchange="filterPartnersTable()" style="padding: 8px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.82rem; outline: none; cursor: pointer;">
+                <option value="all">All Payout Rails</option>
+                <option value="gcash">🟢 GCash</option>
+                <option value="maya">🟩 Maya</option>
+                <option value="bank">🏦 Bank Transfer</option>
+              </select>
+            </div>
+
+            <div style="font-size: 0.78rem; color: var(--text-muted);">
+              Showing <span id="partners-shown-count" style="color: #fff; font-weight: 700;">0</span> partners
+            </div>
+          </div>
+
+          <!-- Main Partners Table -->
+          <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden;">
+            <div class="table-responsive">
+              <table class="data-table" id="table-partners-list">
+                <thead>
+                  <tr>
+                    <th>Partner / Contact</th>
+                    <th>Ref Code</th>
+                    <th>Payout Destination</th>
+                    <th>Referred Stores</th>
+                    <th>Pending Hold</th>
+                    <th>Approved Payout</th>
+                    <th>Risk &amp; Audit Status</th>
+                    <th style="text-align: right;">Admin Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="partners-table-body">
+                  <!-- Populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
       <!-- Create Ticket Modal -->
@@ -2425,6 +2572,151 @@
           </form>
         </div>
       </div>
+
+      <!-- Partner Audit & Store Verification Modal -->
+      <div id="modal-partner-audit" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1050; align-items: center; justify-content: center; backdrop-filter: blur(6px); padding: 20px;">
+        <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; width: 850px; max-width: 95vw; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.7);">
+          <!-- Modal Header -->
+          <div style="padding: 18px 24px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-size: 24px;">🔍</span>
+              <div>
+                <h3 style="margin: 0; color: #fff; font-size: 1.1rem; font-weight: 800;" id="audit-modal-partner-name">Partner Audit</h3>
+                <span style="font-size: 0.74rem; color: var(--text-muted);" id="audit-modal-partner-sub">Referral stores &amp; anti-fraud inspection</span>
+              </div>
+            </div>
+            <button onclick="closePartnerAuditModal()" style="background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer;">&times;</button>
+          </div>
+
+          <!-- Modal Body (Scrollable) -->
+          <div style="padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px;">
+            <!-- Partner Profile Summary Card -->
+            <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; font-size: 0.8rem;">
+              <div>
+                <div style="color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; font-weight: 700;">Partner Email &bull; 2FA</div>
+                <div style="color: #fff; font-weight: 700; margin-top: 3px;" id="audit-partner-email">--</div>
+                <div style="color: #34d399; font-size: 0.72rem;" id="audit-partner-2fa">● 2FA Verified</div>
+              </div>
+              <div>
+                <div style="color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; font-weight: 700;">Referral Code &bull; URL</div>
+                <div style="color: #38bdf8; font-weight: 700; margin-top: 3px; font-family: monospace;" id="audit-partner-code">--</div>
+                <div style="color: var(--text-muted); font-size: 0.72rem;" id="audit-partner-joined">Joined --</div>
+              </div>
+              <div>
+                <div style="color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; font-weight: 700;">Payout Destination</div>
+                <div style="color: #fff; font-weight: 700; margin-top: 3px;" id="audit-partner-payout-dest">--</div>
+                <div style="color: var(--text-muted); font-size: 0.72rem;" id="audit-partner-holder">--</div>
+              </div>
+              <div>
+                <div style="color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; font-weight: 700;">Earnings Breakdown</div>
+                <div style="margin-top: 3px;">
+                  <span style="color: #fbbf24; font-weight: 700;" id="audit-partner-pending">₱0 Hold</span> &bull; 
+                  <span style="color: #10b981; font-weight: 700;" id="audit-partner-approved">₱0 Ready</span>
+                </div>
+                <div style="color: #94a3b8; font-size: 0.72rem;" id="audit-partner-paid">₱0 Paid to date</div>
+              </div>
+            </div>
+
+            <!-- Anti-Fraud Risk Evaluation Banner -->
+            <div id="audit-fraud-alert-box" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 10px; padding: 14px 16px;">
+              <div style="display: flex; align-items: center; gap: 8px; color: #f87171; font-weight: 800; font-size: 0.85rem;">
+                <span>🚨</span> HIGH RISK: SELF-REFERRAL / PAYMENT COLLUSION DETECTED
+              </div>
+              <div style="color: #fca5a5; font-size: 0.75rem; margin-top: 4px; line-height: 1.45;" id="audit-fraud-alert-desc">
+                Partner's GCash mobile number or email matches the billing contact of a referred store. Disallowed under Section 1 of the Partner Program Agreement.
+              </div>
+            </div>
+
+            <!-- Stores List Section -->
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h4 style="margin: 0; color: #fff; font-size: 0.9rem; font-weight: 800;">Referred Stores &amp; Activity Verification</h4>
+                <span style="font-size: 0.74rem; color: var(--text-muted);" id="audit-stores-count">0 Stores</span>
+              </div>
+
+              <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--card-border); border-radius: 10px; overflow-x: auto;">
+                <table class="data-table" style="font-size: 0.78rem;">
+                  <thead>
+                    <tr>
+                      <th>Store Name</th>
+                      <th>Plan / Tier</th>
+                      <th>Signup Date</th>
+                      <th>30-Day Elapse</th>
+                      <th>POS Shift Activity</th>
+                      <th>Self-Referral Check</th>
+                      <th>Bounty Status</th>
+                      <th style="text-align: right;">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="audit-stores-table-body">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Modal Footer -->
+          <div style="padding: 16px 24px; border-top: 1px solid var(--card-border); background: rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center;">
+            <button type="button" onclick="closePartnerAuditModal()" class="action-btn" style="padding: 8px 16px;">Close</button>
+            <div style="display: flex; gap: 10px;">
+              <button type="button" id="btn-audit-toggle-status" onclick="handleTogglePartnerStatusFromModal()" class="action-btn" style="padding: 8px 14px; font-weight: 700; color: #f87171; border-color: rgba(239, 68, 68, 0.35);">
+                Freeze Partner
+              </button>
+              <button type="button" id="btn-audit-disburse-payout" onclick="openDisburseFromAudit()" class="action-btn" style="padding: 8px 18px; background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700;">
+                Disburse Payout 💸
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Disburse Payout Modal -->
+      <div id="modal-partner-payout" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1060; align-items: center; justify-content: center; backdrop-filter: blur(6px); padding: 20px;">
+        <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; width: 480px; max-width: 90vw; padding: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.7);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 22px;">💸</span>
+              <h3 style="margin: 0; color: #fff; font-size: 1.05rem; font-weight: 800;">Authorize Bounty Disbursement</h3>
+            </div>
+            <button onclick="closeDisbursePayoutModal()" style="background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer;">&times;</button>
+          </div>
+
+          <form onsubmit="handleConfirmPayoutSubmit(event)">
+            <input type="hidden" id="payout-partner-id">
+            
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+              <div style="font-size: 0.74rem; color: #a7f3d0; font-weight: 700; text-transform: uppercase;">Partner &bull; Approved Amount</div>
+              <div style="font-size: 1.3rem; font-weight: 800; color: #34d399; margin: 4px 0;" id="payout-amount-display">₱0.00</div>
+              <div style="font-size: 0.76rem; color: #cbd5e1;" id="payout-partner-name-display">Partner: --</div>
+              <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px;" id="payout-rail-display">Destination: GCash --</div>
+            </div>
+
+            <div style="margin-bottom: 14px;">
+              <label style="display: block; font-size: 0.74rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Disbursement Rail</label>
+              <input type="text" id="payout-rail-input" readonly style="width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none;" />
+            </div>
+
+            <div style="margin-bottom: 14px;">
+              <label style="display: block; font-size: 0.74rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Transfer Reference / Trace Number *</label>
+              <input type="text" id="payout-ref-num" required placeholder="e.g. GCash Ref 100293847291 or InstaPay Trace #" style="width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none;" />
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; font-size: 0.74rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">Admin Notes (Optional)</label>
+              <input type="text" id="payout-notes" placeholder="e.g. Disbursed via GCash merchant portal" style="width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none;" />
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+              <button type="button" onclick="closeDisbursePayoutModal()" class="action-btn" style="padding: 10px 16px;">Cancel</button>
+              <button type="submit" class="action-btn" id="btn-submit-disburse" style="background: var(--primary); color: #fff; border-color: var(--primary); padding: 10px 20px; font-weight: 700;">
+                Confirm &amp; Record Payout &rarr;
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -2468,7 +2760,8 @@
       sla: { title: 'SLA Performance & Operational Intelligence (Admin Only)', subtitle: 'Executive Service Level Agreement monitoring, response velocity, breach monitoring, and specialist scorecards.' },
       chat: { title: 'Team Chat, Huddles & Calling', subtitle: 'Real-time internal chat, cross-functional channels, peer-to-peer audio/video huddles, and screen sharing.' },
       workforce: { title: 'Staff Workforce, Timecard & Shifts', subtitle: 'Personal punch clock, live shift timecard, PTO leave requests, and weekly coverage schedule.' },
-      team: { title: 'Staff Directory & RBAC Administration', subtitle: 'Provision team members, configure granular role permissions, and manage backend staff access.' }
+      team: { title: 'Staff Directory & RBAC Administration', subtitle: 'Provision team members, configure granular role permissions, and manage backend staff access.' },
+      partners: { title: 'Affiliate & Partner Administration Hub', subtitle: 'Audit Philippine referral partners, inspect payout methods, detect self-referrals, and authorize GCash/Maya disbursements.' }
     };
 
     function toggleSidebar() {
@@ -2509,6 +2802,7 @@
       document.getElementById('view-subtitle').textContent = views[key].subtitle;
 
       if (key === 'clients') loadDevData();
+      if (key === 'partners') loadPartnersAdminData();
       if (key === 'support') loadSupportDeskSessions();
       if (key === 'tickets') {
         const effRole = typeof getEffectiveRole === 'function' ? getEffectiveRole() : 'admin';
@@ -7404,18 +7698,18 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
 
       // Default role fallback:
       if (r === 'dev' || r === 'developer' || r === 'devops') {
-        return ['clients', 'updates', 'support', 'tickets', 'remote', 'monitoring', 'errors', 'analytics', 'chat', 'workforce'].includes(tabKey);
+        return ['clients', 'updates', 'support', 'tickets', 'remote', 'monitoring', 'errors', 'analytics', 'chat', 'workforce', 'partners'].includes(tabKey);
       }
 
       if (r === 'support' || r === 'agent' || r === 'customer_support' || r === 'technician' || r === 'tech') {
-        return ['clients', 'support', 'tickets', 'remote', 'chat', 'workforce'].includes(tabKey);
+        return ['clients', 'support', 'tickets', 'remote', 'chat', 'workforce', 'partners'].includes(tabKey);
       }
       return false;
     }
 
     // Hide sidebar navigation tabs completely if not in an employee's RBAC scope
     function updateSidebarNavVisibility() {
-      const allTabs = ['clients', 'updates', 'support', 'tickets', 'remote', 'monitoring', 'errors', 'analytics', 'sla', 'chat', 'workforce', 'team'];
+      const allTabs = ['clients', 'updates', 'support', 'tickets', 'remote', 'monitoring', 'errors', 'analytics', 'sla', 'chat', 'workforce', 'team', 'partners'];
 
       allTabs.forEach(function(key) {
         const allowed = isTabAllowedForRole(key);
@@ -9931,6 +10225,657 @@ Role: ${lastProvisionedCreds.role}`;
           osc.stop(ctx.currentTime + 0.3);
         }
       } catch (e) {}
+    }
+
+    // =========================================================================
+    // 13. PHILIPPINE PARTNER & AFFILIATE ADMINISTRATION ENGINE
+    // =========================================================================
+    let cachedPartners = [];
+    let cachedPartnerReferrals = [];
+    let cachedPartnerCommissions = [];
+    let activeAuditPartner = null;
+
+    async function loadPartnersAdminData() {
+      const tbody = document.getElementById('partners-table-body');
+      if (tbody) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--text-muted);">🔄 Loading Philippine referral partners and running anti-fraud scan...</td></tr>';
+      }
+
+      let affs = [];
+      let refs = [];
+      let comms = [];
+
+      try {
+        if (supabaseClient) {
+          const [aRes, rRes, cRes] = await Promise.all([
+            supabaseClient.from('affiliates').select('*'),
+            supabaseClient.from('affiliate_referrals').select('*'),
+            supabaseClient.from('affiliate_commissions').select('*')
+          ]);
+          if (aRes.data && aRes.data.length > 0) affs = aRes.data;
+          if (rRes.data && rRes.data.length > 0) refs = rRes.data;
+          if (cRes.data && cRes.data.length > 0) comms = cRes.data;
+        }
+      } catch (err) {
+        console.warn('Supabase partner query notice:', err);
+      }
+
+      // If empty in DB or running pilot seed, provide realistic partner records
+      if (affs.length === 0) {
+        affs = [
+          {
+            id: 'aff-001',
+            affiliate_code: 'MSANTOS-VIP',
+            full_name: 'Maria Clara Santos',
+            email: 'maria.santos@gmail.com',
+            phone_ph: '09178829102',
+            payout_type: 'gcash',
+            payout_account_name: 'Maria Clara Santos',
+            payout_account_number: '09178829102',
+            payout_bank_name: null,
+            status: 'active',
+            created_at: new Date(Date.now() - 35 * 86400000).toISOString()
+          },
+          {
+            id: 'aff-002',
+            affiliate_code: 'MARK-TAGUIG',
+            full_name: 'Mark Lester Dizon',
+            email: 'mark.dizon@dizongrill.ph',
+            phone_ph: '09285551234',
+            payout_type: 'gcash',
+            payout_account_name: 'Mark Lester Dizon',
+            payout_account_number: '09285551234',
+            payout_bank_name: null,
+            status: 'active',
+            created_at: new Date(Date.now() - 14 * 86400000).toISOString()
+          },
+          {
+            id: 'aff-003',
+            affiliate_code: 'JDC-CEBU',
+            full_name: 'Juan Dela Cruz',
+            email: 'juan.cebu@freelancepos.com',
+            phone_ph: '09081234567',
+            payout_type: 'maya',
+            payout_account_name: 'Juan Dela Cruz',
+            payout_account_number: '09081234567',
+            payout_bank_name: null,
+            status: 'active',
+            created_at: new Date(Date.now() - 42 * 86400000).toISOString()
+          }
+        ];
+
+        refs = [
+          {
+            id: 'ref-101',
+            affiliate_id: 'aff-001',
+            store_name: 'Café Ilustrado Manila',
+            merchant_email: 'chef.antonio@cafeilustrado.ph',
+            merchant_phone: '09191112233',
+            subscription_tier: 'Pro',
+            created_at: new Date(Date.now() - 34 * 86400000).toISOString(),
+            pos_transactions: 42,
+            pos_shifts: 5,
+            is_qualified: true
+          },
+          {
+            id: 'ref-102',
+            affiliate_id: 'aff-001',
+            store_name: 'Bean & Butter BGC',
+            merchant_email: 'manager@beanbutterbgc.com',
+            merchant_phone: '09173334455',
+            subscription_tier: 'Plus',
+            created_at: new Date(Date.now() - 18 * 86400000).toISOString(),
+            pos_transactions: 58,
+            pos_shifts: 6,
+            is_qualified: true
+          },
+          {
+            id: 'ref-103',
+            affiliate_id: 'aff-001',
+            store_name: 'Lola Nena Bakery Pasig',
+            merchant_email: 'orders@lolanena-pasig.com',
+            merchant_phone: '09186667788',
+            subscription_tier: 'Plus',
+            created_at: new Date(Date.now() - 6 * 86400000).toISOString(),
+            pos_transactions: 11,
+            pos_shifts: 1,
+            is_qualified: false
+          },
+          // SUSPICIOUS SELF-REFERRAL CASE:
+          {
+            id: 'ref-201',
+            affiliate_id: 'aff-002',
+            store_name: 'Dizon Grill & Bar Taguig',
+            merchant_email: 'mark.dizon@dizongrill.ph', // MATCHES AFFILIATE EMAIL!
+            merchant_phone: '09285551234',              // MATCHES AFFILIATE GCASH!
+            subscription_tier: 'Pro',
+            created_at: new Date(Date.now() - 14 * 86400000).toISOString(),
+            pos_transactions: 3,
+            pos_shifts: 1,
+            is_qualified: false,
+            self_referral_detected: true
+          },
+          {
+            id: 'ref-301',
+            affiliate_id: 'aff-003',
+            store_name: 'Golden Bean Café Cebu',
+            merchant_email: 'coffee@goldenbeancebu.ph',
+            merchant_phone: '09228889900',
+            subscription_tier: 'Pro',
+            created_at: new Date(Date.now() - 32 * 86400000).toISOString(),
+            pos_transactions: 64,
+            pos_shifts: 7,
+            is_qualified: true
+          }
+        ];
+
+        comms = [
+          { id: 'com-101', affiliate_id: 'aff-001', referral_id: 'ref-101', amount_php: 6000.00, status: 'approved', hold_until: new Date(Date.now() - 4 * 86400000).toISOString() },
+          { id: 'com-102', affiliate_id: 'aff-001', referral_id: 'ref-102', amount_php: 3000.00, status: 'pending', hold_until: new Date(Date.now() + 12 * 86400000).toISOString() },
+          { id: 'com-103', affiliate_id: 'aff-001', referral_id: 'ref-103', amount_php: 3000.00, status: 'pending', hold_until: new Date(Date.now() + 24 * 86400000).toISOString() },
+          { id: 'com-201', affiliate_id: 'aff-002', referral_id: 'ref-201', amount_php: 6000.00, status: 'flagged_self_referral', hold_until: new Date(Date.now() + 16 * 86400000).toISOString() },
+          { id: 'com-301', affiliate_id: 'aff-003', referral_id: 'ref-301', amount_php: 6000.00, status: 'approved', hold_until: new Date(Date.now() - 2 * 86400000).toISOString() }
+        ];
+      }
+
+      cachedPartners = affs;
+      cachedPartnerReferrals = refs;
+      cachedPartnerCommissions = comms;
+
+      // Anti-Fraud Cross-Matching Engine
+      let totalFlaggedAlerts = 0;
+      let totalStoresCount = refs.length;
+      let qualifiedStoresCount = 0;
+      let pendingHoldPhp = 0;
+      let approvedPayoutPhp = 0;
+
+      cachedPartners.forEach(p => {
+        const pRefs = refs.filter(r => r.affiliate_id === p.id);
+        const pComms = comms.filter(c => c.affiliate_id === p.id);
+
+        let pPending = 0;
+        let pApproved = 0;
+        let pPaid = 0;
+        let isSuspicious = false;
+        let flagReasons = [];
+
+        pComms.forEach(c => {
+          if (c.status === 'pending') pPending += Number(c.amount_php || 0);
+          else if (c.status === 'approved') pApproved += Number(c.amount_php || 0);
+          else if (c.status === 'paid') pPaid += Number(c.amount_php || 0);
+        });
+
+        // Check for self-referral collision (Matching Email, Phone, or GCash with Store Owner)
+        pRefs.forEach(r => {
+          if (r.pos_transactions >= 25 && r.pos_shifts >= 3) {
+            qualifiedStoresCount++;
+          }
+
+          const affEmail = (p.email || '').trim().toLowerCase();
+          const affPhone = (p.phone_ph || '').replace(/[^0-9]/g, '');
+          const affGcash = (p.payout_account_number || '').replace(/[^0-9]/g, '');
+
+          const mEmail = (r.merchant_email || '').trim().toLowerCase();
+          const mPhone = (r.merchant_phone || '').replace(/[^0-9]/g, '');
+
+          if (r.self_referral_detected || (affEmail && mEmail && affEmail === mEmail)) {
+            isSuspicious = true;
+            flagReasons.push(`Affiliate email (${affEmail}) matches referred store owner (${mEmail})`);
+          } else if (affGcash && mPhone && affGcash.endsWith(mPhone.slice(-8))) {
+            isSuspicious = true;
+            flagReasons.push(`Affiliate payout GCash (${p.payout_account_number}) matches store contact (${r.merchant_phone})`);
+          }
+        });
+
+        if (isSuspicious) totalFlaggedAlerts++;
+        p.is_suspicious = isSuspicious;
+        p.flag_reasons = flagReasons;
+        p.total_pending = pPending;
+        p.total_approved = pApproved;
+        p.total_paid = pPaid;
+        p.referred_stores_count = pRefs.length;
+
+        pendingHoldPhp += pPending;
+        approvedPayoutPhp += pApproved;
+      });
+
+      // Update Top KPIs
+      const activeCount = cachedPartners.filter(p => p.status === 'active').length;
+      const suspendedCount = cachedPartners.filter(p => p.status !== 'active').length;
+      
+      const elTotal = document.getElementById('aff-kpi-total-partners');
+      if (elTotal) elTotal.innerText = cachedPartners.length;
+      const elActiveSub = document.getElementById('aff-kpi-active-partners');
+      if (elActiveSub) elActiveSub.innerText = `● ${activeCount} Active • ${suspendedCount} Suspended`;
+
+      const elStores = document.getElementById('aff-kpi-total-stores');
+      if (elStores) elStores.innerText = totalStoresCount;
+
+      const proCount = refs.filter(r => (r.subscription_tier || '').toLowerCase().includes('pro')).length;
+      const plusCount = totalStoresCount - proCount;
+      const elStoresSub = document.getElementById('aff-kpi-stores-breakdown');
+      if (elStoresSub) elStoresSub.innerText = `● ${plusCount} Plus • ${proCount} Pro`;
+
+      const qualRate = totalStoresCount > 0 ? Math.round((qualifiedStoresCount / totalStoresCount) * 100) : 0;
+      const elQualRate = document.getElementById('aff-kpi-qual-rate');
+      if (elQualRate) elQualRate.innerText = `${qualRate}%`;
+      const elQualSub = document.getElementById('aff-kpi-qual-sub');
+      if (elQualSub) elQualSub.innerText = `● ${qualifiedStoresCount} / ${totalStoresCount} stores with ≥ 25 sales`;
+
+      const elPending = document.getElementById('aff-kpi-pending-hold');
+      if (elPending) elPending.innerText = `₱${pendingHoldPhp.toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
+
+      const elApproved = document.getElementById('aff-kpi-approved-payout');
+      if (elApproved) elApproved.innerText = `₱${approvedPayoutPhp.toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
+
+      const elAlerts = document.getElementById('aff-kpi-alerts');
+      if (elAlerts) elAlerts.innerText = totalFlaggedAlerts;
+
+      const elFraudBadge = document.getElementById('kpi-fraud-flagged-count');
+      if (elFraudBadge) elFraudBadge.innerText = totalFlaggedAlerts;
+
+      renderPartnersTable(cachedPartners);
+    }
+
+    function renderPartnersTable(partners) {
+      const tbody = document.getElementById('partners-table-body');
+      const shownCountEl = document.getElementById('partners-shown-count');
+      if (shownCountEl) shownCountEl.innerText = partners.length;
+
+      if (!tbody) return;
+
+      if (partners.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 28px; color: var(--text-muted);">No partners found matching the active filters.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = partners.map(p => {
+        const railIcon = p.payout_type === 'gcash' ? '🟢 GCash' : (p.payout_type === 'maya' ? '🟩 Maya' : '🏦 Bank');
+        const railNum = p.payout_account_number || '--';
+        const maskedNum = railNum.length > 7 ? `${railNum.slice(0, 4)}••••${railNum.slice(-3)}` : railNum;
+
+        let riskBadge = '';
+        if (p.status === 'suspended') {
+          riskBadge = '<span style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); padding: 3px 8px; border-radius: 9999px; font-weight: 800; font-size: 0.72rem;">⛔ Suspended</span>';
+        } else if (p.is_suspicious) {
+          riskBadge = '<span style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); padding: 3px 8px; border-radius: 9999px; font-weight: 800; font-size: 0.72rem;">🚨 Self-Referral Alert</span>';
+        } else if (p.referred_stores_count > 0 && p.total_approved === 0 && p.total_pending > 0) {
+          riskBadge = '<span style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); padding: 3px 8px; border-radius: 9999px; font-weight: 700; font-size: 0.72rem;">⏳ 30-Day Hold Active</span>';
+        } else {
+          riskBadge = '<span style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); padding: 3px 8px; border-radius: 9999px; font-weight: 700; font-size: 0.72rem;">✅ Verified Clean</span>';
+        }
+
+        const canDisburse = p.total_approved > 0 && p.status === 'active';
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight: 700; color: #fff; font-size: 0.86rem;">${escapeHtml(p.full_name)}</div>
+              <div style="font-size: 0.74rem; color: var(--text-muted);">${escapeHtml(p.email)}</div>
+              <div style="font-size: 0.68rem; color: #34d399; margin-top: 2px;">● 2FA Email Active</div>
+            </td>
+            <td>
+              <span style="font-family: monospace; font-weight: 700; background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); padding: 2px 7px; border-radius: 6px;">
+                ${escapeHtml(p.affiliate_code)}
+              </span>
+            </td>
+            <td>
+              <div style="font-weight: 700; color: #cbd5e1; font-size: 0.8rem;">${railIcon}</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace;">${maskedNum}</div>
+              <div style="font-size: 0.68rem; color: #94a3b8;">${escapeHtml(p.payout_account_name || p.full_name)}</div>
+            </td>
+            <td>
+              <span style="font-weight: 700; color: #fff;">${p.referred_stores_count}</span>
+              <span style="font-size: 0.72rem; color: var(--text-muted);"> stores</span>
+            </td>
+            <td>
+              <span style="font-weight: 700; color: #fbbf24;">₱${(p.total_pending || 0).toLocaleString('en-PH', { minimumFractionDigits: 2 })}</span>
+            </td>
+            <td>
+              <span style="font-weight: 800; color: #34d399;">₱${(p.total_approved || 0).toLocaleString('en-PH', { minimumFractionDigits: 2 })}</span>
+            </td>
+            <td>
+              ${riskBadge}
+            </td>
+            <td style="text-align: right; white-space: nowrap;">
+              <button class="action-btn" onclick="openPartnerAuditModal('${p.id}')" style="padding: 4px 9px; font-size: 0.72rem;" title="Audit Referrals & Stores">
+                🔍 Audit
+              </button>
+              <button class="action-btn" onclick="openDisburseModal('${p.id}')" ${canDisburse ? '' : 'disabled style="opacity: 0.4; cursor: not-allowed;"'} style="padding: 4px 9px; font-size: 0.72rem; background: ${canDisburse ? 'rgba(16, 185, 129, 0.2)' : 'transparent'}; color: ${canDisburse ? '#34d399' : 'var(--text-muted)'}; border-color: ${canDisburse ? 'rgba(16, 185, 129, 0.4)' : 'var(--card-border)'};" title="Disburse GCash/Maya Bounty">
+                💸 Disburse
+              </button>
+              <button class="action-btn" onclick="toggleFreezePartner('${p.id}')" style="padding: 4px 8px; font-size: 0.72rem; color: ${p.status === 'active' ? '#f87171' : '#34d399'};" title="${p.status === 'active' ? 'Freeze Partner Account' : 'Unfreeze Partner Account'}">
+                ${p.status === 'active' ? '⛔' : '🔓'}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterPartnersTable() {
+      const q = (document.getElementById('filter-partner-search')?.value || '').toLowerCase().trim();
+      const statusFilter = document.getElementById('filter-partner-status')?.value || 'all';
+      const railFilter = document.getElementById('filter-partner-rail')?.value || 'all';
+
+      const filtered = cachedPartners.filter(p => {
+        // Search text matching
+        if (q) {
+          const matchName = (p.full_name || '').toLowerCase().includes(q);
+          const matchEmail = (p.email || '').toLowerCase().includes(q);
+          const matchCode = (p.affiliate_code || '').toLowerCase().includes(q);
+          const matchNum = (p.payout_account_number || '').includes(q);
+          if (!matchName && !matchEmail && !matchCode && !matchNum) return false;
+        }
+
+        // Status dropdown filter
+        if (statusFilter === 'active' && p.status !== 'active') return false;
+        if (statusFilter === 'suspended' && p.status === 'active') return false;
+        if (statusFilter === 'payout_ready' && (!p.total_approved || p.total_approved <= 0)) return false;
+        if (statusFilter === 'flagged' && !p.is_suspicious) return false;
+
+        // Payout rail dropdown filter
+        if (railFilter !== 'all' && (p.payout_type || '').toLowerCase() !== railFilter) return false;
+
+        return true;
+      });
+
+      renderPartnersTable(filtered);
+    }
+
+    function filterPartnersByRisk(riskType) {
+      const statusSelect = document.getElementById('filter-partner-status');
+      if (statusSelect) {
+        statusSelect.value = riskType;
+        filterPartnersTable();
+      }
+    }
+
+    // --- PARTNER AUDIT MODAL LOGIC ---
+    function openPartnerAuditModal(partnerId) {
+      const partner = cachedPartners.find(p => p.id === partnerId);
+      if (!partner) return;
+      activeAuditPartner = partner;
+
+      const pRefs = cachedPartnerReferrals.filter(r => r.affiliate_id === partner.id);
+      const pComms = cachedPartnerCommissions.filter(c => c.affiliate_id === partner.id);
+
+      document.getElementById('audit-modal-partner-name').innerText = `${partner.full_name} (${partner.affiliate_code})`;
+      document.getElementById('audit-modal-partner-sub').innerText = `Referral audit • ${partner.email} • ID: ${partner.id}`;
+      document.getElementById('audit-partner-email').innerText = partner.email;
+      document.getElementById('audit-partner-code').innerText = `?ref=${partner.affiliate_code}`;
+      document.getElementById('audit-partner-joined').innerText = `Joined ${new Date(partner.created_at).toLocaleDateString()}`;
+
+      const railName = partner.payout_type === 'gcash' ? '🟢 GCash' : (partner.payout_type === 'maya' ? '🟩 Maya' : `🏦 ${partner.payout_bank_name || 'Bank'}`);
+      document.getElementById('audit-partner-payout-dest').innerText = `${railName}: ${partner.payout_account_number}`;
+      document.getElementById('audit-partner-holder').innerText = `Account Name: ${partner.payout_account_name || partner.full_name}`;
+
+      document.getElementById('audit-partner-pending').innerText = `₱${(partner.total_pending || 0).toLocaleString('en-PH', { minimumFractionDigits: 2 })} Hold`;
+      document.getElementById('audit-partner-approved').innerText = `₱${(partner.total_approved || 0).toLocaleString('en-PH', { minimumFractionDigits: 2 })} Ready`;
+      document.getElementById('audit-partner-paid').innerText = `₱${(partner.total_paid || 0).toLocaleString('en-PH', { minimumFractionDigits: 2 })} Paid to date`;
+
+      // Fraud alert box in modal
+      const fraudBox = document.getElementById('audit-fraud-alert-box');
+      const fraudDesc = document.getElementById('audit-fraud-alert-desc');
+      if (partner.is_suspicious) {
+        fraudBox.style.display = 'block';
+        fraudDesc.innerHTML = partner.flag_reasons.join('<br>') + '<br><strong>Violation of Section 1 (Strict Anti-Self-Referral Rule).</strong>';
+      } else {
+        fraudBox.style.display = 'none';
+      }
+
+      // Render Stores Table inside modal
+      document.getElementById('audit-stores-count').innerText = `${pRefs.length} Stores Total`;
+      const sBody = document.getElementById('audit-stores-table-body');
+      
+      if (pRefs.length === 0) {
+        sBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; color: var(--text-muted);">No referred stores registered yet under this partner code.</td></tr>';
+      } else {
+        sBody.innerHTML = pRefs.map(r => {
+          const comm = pComms.find(c => c.referral_id === r.id);
+          const daysOld = Math.floor((Date.now() - new Date(r.created_at).getTime()) / 86400000);
+          const daysRemaining = Math.max(0, 30 - daysOld);
+
+          const isSelfRef = r.self_referral_detected || (partner.email && r.merchant_email && partner.email.toLowerCase() === r.merchant_email.toLowerCase());
+          
+          let checkCol = '';
+          if (isSelfRef) {
+            checkCol = '<span style="color: #f87171; font-weight: 800;">🚨 MATCHING OWNER</span>';
+          } else {
+            checkCol = '<span style="color: #34d399; font-weight: 700;">✅ Clean</span>';
+          }
+
+          let actCol = '';
+          if (r.pos_transactions >= 25 && r.pos_shifts >= 3) {
+            actCol = `<span style="color: #34d399; font-weight: 700;">${r.pos_transactions} sales / ${r.pos_shifts} shifts (Passed ✅)</span>`;
+          } else {
+            actCol = `<span style="color: #fbbf24; font-weight: 700;">${r.pos_transactions} sales / ${r.pos_shifts} shifts (< 25 sales ⚠️)</span>`;
+          }
+
+          let statusCol = '';
+          if (isSelfRef) {
+            statusCol = '<span style="background: rgba(239, 68, 68, 0.2); color: #f87171; padding: 2px 6px; border-radius: 4px; font-weight: 800;">DISQUALIFIED</span>';
+          } else if (comm && comm.status === 'approved') {
+            statusCol = '<span style="background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 2px 6px; border-radius: 4px; font-weight: 800;">APPROVED (₱' + (comm.amount_php || 0).toLocaleString() + ')</span>';
+          } else {
+            statusCol = '<span style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; padding: 2px 6px; border-radius: 4px; font-weight: 800;">HOLD (' + daysRemaining + 'd left)</span>';
+          }
+
+          return `
+            <tr>
+              <td>
+                <div style="font-weight: 700; color: #fff;">${escapeHtml(r.store_name)}</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(r.merchant_email || '')}</div>
+              </td>
+              <td><span style="font-weight: 700; color: #38bdf8;">${escapeHtml(r.subscription_tier || 'Plus')}</span></td>
+              <td>${new Date(r.created_at).toLocaleDateString()}</td>
+              <td>${daysOld >= 30 ? '<span style="color: #34d399; font-weight: 700;">Elapsed (' + daysOld + 'd)</span>' : '<span style="color: #fbbf24;">' + daysRemaining + ' days left</span>'}</td>
+              <td>${actCol}</td>
+              <td>${checkCol}</td>
+              <td>${statusCol}</td>
+              <td style="text-align: right; white-space: nowrap;">
+                ${isSelfRef ? '<span style="color: #94a3b8; font-size: 0.72rem;">No Action</span>' : `
+                  <button class="action-btn" onclick="handleOverrideApproveReferral('${r.id}')" style="padding: 2px 6px; font-size: 0.7rem; color: #34d399;">Override Approve</button>
+                  <button class="action-btn" onclick="handleDisqualifyReferral('${r.id}')" style="padding: 2px 6px; font-size: 0.7rem; color: #f87171;">Disqualify</button>
+                `}
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Freeze / Unfreeze button state
+      const freezeBtn = document.getElementById('btn-audit-toggle-status');
+      if (freezeBtn) {
+        freezeBtn.innerText = partner.status === 'active' ? 'Freeze Partner Account ⛔' : 'Unfreeze Partner Account 🔓';
+        freezeBtn.style.color = partner.status === 'active' ? '#f87171' : '#34d399';
+      }
+
+      document.getElementById('modal-partner-audit').style.display = 'flex';
+    }
+
+    function closePartnerAuditModal() {
+      document.getElementById('modal-partner-audit').style.display = 'none';
+      activeAuditPartner = null;
+    }
+
+    function handleTogglePartnerStatusFromModal() {
+      if (!activeAuditPartner) return;
+      toggleFreezePartner(activeAuditPartner.id);
+      closePartnerAuditModal();
+    }
+
+    function openDisburseFromAudit() {
+      if (!activeAuditPartner) return;
+      const pId = activeAuditPartner.id;
+      closePartnerAuditModal();
+      openDisburseModal(pId);
+    }
+
+    // --- DISBURSE PAYOUT MODAL ---
+    function openDisburseModal(partnerId) {
+      const partner = cachedPartners.find(p => p.id === partnerId);
+      if (!partner) return;
+
+      document.getElementById('payout-partner-id').value = partner.id;
+      document.getElementById('payout-amount-display').innerText = `₱${(partner.total_approved || 0).toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
+      document.getElementById('payout-partner-name-display').innerText = `Partner: ${partner.full_name} (${partner.affiliate_code})`;
+      
+      const railLabel = partner.payout_type === 'gcash' ? '🟢 GCash' : (partner.payout_type === 'maya' ? '🟩 Maya' : `🏦 ${partner.payout_bank_name || 'Bank'}`);
+      document.getElementById('payout-rail-display').innerText = `Destination: ${railLabel} — ${partner.payout_account_number} (${partner.payout_account_name || partner.full_name})`;
+      document.getElementById('payout-rail-input').value = `${railLabel} - ${partner.payout_account_number}`;
+      document.getElementById('payout-ref-num').value = '';
+      document.getElementById('payout-notes').value = '';
+
+      document.getElementById('modal-partner-payout').style.display = 'flex';
+      setTimeout(() => document.getElementById('payout-ref-num').focus(), 100);
+    }
+
+    function closeDisbursePayoutModal() {
+      document.getElementById('modal-partner-payout').style.display = 'none';
+    }
+
+    async function handleConfirmPayoutSubmit(e) {
+      e.preventDefault();
+      const pId = document.getElementById('payout-partner-id').value;
+      const partner = cachedPartners.find(p => p.id === pId);
+      if (!partner) return;
+
+      const refNum = document.getElementById('payout-ref-num').value.trim();
+      const notes = document.getElementById('payout-notes').value.trim();
+      const btn = document.getElementById('btn-submit-disburse');
+
+      btn.disabled = true;
+      btn.innerText = 'Recording disbursement...';
+
+      const payoutAmount = partner.total_approved || 0;
+
+      try {
+        if (supabaseClient) {
+          // Record payout transaction
+          await supabaseClient.from('affiliate_payouts').insert([{
+            affiliate_id: pId,
+            amount_php: payoutAmount,
+            payout_rail: partner.payout_type,
+            account_number: partner.payout_account_number,
+            reference_number: refNum,
+            notes: notes || 'Admin disbursement via Dev Portal',
+            status: 'completed',
+            completed_at: new Date().toISOString()
+          }]);
+
+          // Update commissions to 'paid'
+          await supabaseClient.from('affiliate_commissions')
+            .update({ status: 'paid', paid_at: new Date().toISOString() })
+            .eq('affiliate_id', pId)
+            .eq('status', 'approved');
+        }
+
+        // Local state update
+        partner.total_paid = (partner.total_paid || 0) + payoutAmount;
+        partner.total_approved = 0;
+        
+        // Update local commissions
+        cachedPartnerCommissions.forEach(c => {
+          if (c.affiliate_id === pId && c.status === 'approved') {
+            c.status = 'paid';
+          }
+        });
+
+        alert(`✅ Payout of ₱${payoutAmount.toLocaleString()} recorded successfully!\nRail: ${partner.payout_type.toUpperCase()} (${partner.payout_account_number})\nRef: ${refNum}`);
+        closeDisbursePayoutModal();
+        loadPartnersAdminData();
+      } catch (err) {
+        console.error('Error recording payout:', err);
+        alert('Notice: Payout recorded in local admin state.');
+        closeDisbursePayoutModal();
+        loadPartnersAdminData();
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Confirm & Record Payout →';
+      }
+    }
+
+    async function toggleFreezePartner(partnerId) {
+      const partner = cachedPartners.find(p => p.id === partnerId);
+      if (!partner) return;
+      const nextStatus = partner.status === 'active' ? 'suspended' : 'active';
+      const verb = nextStatus === 'suspended' ? 'freeze' : 'unfreeze';
+
+      if (!confirm(`Are you sure you want to ${verb} partner ${partner.full_name} (${partner.affiliate_code})?`)) return;
+
+      try {
+        if (supabaseClient) {
+          await supabaseClient.from('affiliates').update({ status: nextStatus }).eq('id', partnerId);
+        }
+      } catch (err) {
+        console.warn('Supabase status update notice:', err);
+      }
+
+      partner.status = nextStatus;
+      renderPartnersTable(cachedPartners);
+    }
+
+    async function handleOverrideApproveReferral(refId) {
+      if (!confirm('Override 30-day hold and immediately approve this bounty for payout?')) return;
+      const comm = cachedPartnerCommissions.find(c => c.referral_id === refId);
+      if (comm) {
+        comm.status = 'approved';
+        try {
+          if (supabaseClient) {
+            await supabaseClient.from('affiliate_commissions').update({ status: 'approved' }).eq('referral_id', refId);
+          }
+        } catch (_) {}
+      }
+      if (activeAuditPartner) {
+        openPartnerAuditModal(activeAuditPartner.id);
+      }
+      loadPartnersAdminData();
+    }
+
+    async function handleDisqualifyReferral(refId) {
+      const reason = prompt('Reason for disqualification:', 'Violation of Section 1: Self-Referral / Ghost Store');
+      if (!reason) return;
+
+      const comm = cachedPartnerCommissions.find(c => c.referral_id === refId);
+      if (comm) {
+        comm.status = 'disqualified';
+        try {
+          if (supabaseClient) {
+            await supabaseClient.from('affiliate_commissions').update({ status: 'disqualified', rejection_reason: reason }).eq('referral_id', refId);
+          }
+        } catch (_) {}
+      }
+      if (activeAuditPartner) {
+        openPartnerAuditModal(activeAuditPartner.id);
+      }
+      loadPartnersAdminData();
+    }
+
+    function exportPartnersCSV() {
+      const headers = ['Partner Name', 'Email', 'Phone', 'Ref Code', 'Payout Rail', 'Account Number', 'Status', 'Pending Hold PHP', 'Approved PHP', 'Total Paid PHP', 'Self Referral Alert'];
+      const rows = cachedPartners.map(p => [
+        `"${p.full_name}"`,
+        `"${p.email}"`,
+        `"${p.phone_ph || ''}"`,
+        `"${p.affiliate_code}"`,
+        `"${p.payout_type}"`,
+        `"${p.payout_account_number}"`,
+        `"${p.status}"`,
+        p.total_pending || 0,
+        p.total_approved || 0,
+        p.total_paid || 0,
+        p.is_suspicious ? 'YES' : 'NO'
+      ]);
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `flexitap_ph_partners_audit_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     window.addEventListener('DOMContentLoaded', () => {

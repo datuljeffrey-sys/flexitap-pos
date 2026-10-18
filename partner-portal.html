@@ -143,11 +143,16 @@
         </div>
       </a>
 
-      <div id="header-user-actions" style="display: none; align-items: center; gap: 12px;">
-        <span id="header-user-email" style="font-size: 13px; color: var(--text-muted);"></span>
-        <button onclick="handlePartnerSignOut()" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 6px 14px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer;">
-          Sign Out
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <button type="button" onclick="openTermsModal()" style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; padding: 6px 13px; border-radius: 8px; font-weight: 700; font-size: 11.5px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+          <span>📜</span> <span>Program Terms &amp; Anti-Fraud</span>
         </button>
+        <div id="header-user-actions" style="display: none; align-items: center; gap: 12px;">
+          <span id="header-user-email" style="font-size: 13px; color: var(--text-muted);"></span>
+          <button onclick="handlePartnerSignOut()" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 6px 14px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer;">
+            Sign Out
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -235,6 +240,16 @@
             <label id="lbl-reg-acct-num" style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">GCash Mobile Number *</label>
             <input type="text" id="reg-acct-num" required class="form-control" placeholder="09XXXXXXXXX">
           </div>
+        </div>
+
+        <!-- Strict Terms & Anti-Fraud Consent Checkbox -->
+        <div style="margin: 16px 0; background: rgba(0, 0, 0, 0.28); border: 1px solid var(--border-card); padding: 12px; border-radius: 9px; text-align: left;">
+          <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 11.5px; color: var(--text-muted); line-height: 1.45;">
+            <input type="checkbox" id="reg-agree-terms" required style="margin-top: 2px; accent-color: var(--accent-emerald); width: 16px; height: 16px; cursor: pointer;">
+            <span>
+              I certify that I have read and agree to the <a href="javascript:void(0)" onclick="openTermsModal()" style="color: #38bdf8; text-decoration: underline; font-weight: 700;">FlexiTap Partner Agreement &amp; Anti-Fraud Policy</a>, including the strict <strong>No Self-Referral</strong>, <strong>Active Store Verification (25+ POS sales)</strong>, and <strong>30-day anti-refund hold</strong> rules.
+            </span>
+          </label>
         </div>
 
         <button type="submit" class="btn-submit" id="btn-reg-submit">
@@ -334,6 +349,23 @@
           </button>
         </div>
       </div>
+    <!-- ANTI-FRAUD & STORE QUALIFICATION RIBBON -->
+    <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.22); border-radius: 12px; padding: 14px 18px; margin-top: 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 24px;">🛡️</span>
+        <div>
+          <div style="font-size: 13.5px; font-weight: 800; color: #34d399; display: flex; align-items: center; gap: 8px;">
+            <span>Anti-Fraud &amp; Store Qualification Engine Active</span>
+            <span style="font-size: 10px; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">STRICT ENFORCEMENT</span>
+          </div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px; line-height: 1.45;">
+            To release ₱3,000 / ₱6,000 bounties from 30-day hold, referred stores must be genuine operating restaurants/cafés logging &ge; 25 POS sales. Self-referrals and self-funded subscriptions are disqualified.
+          </div>
+        </div>
+      </div>
+      <button onclick="openTermsModal()" style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); color: #38bdf8; font-size: 11.5px; font-weight: 700; padding: 7px 15px; border-radius: 8px; cursor: pointer; white-space: nowrap;">
+        View Program Rules &rarr;
+      </button>
     </div>
 
     <!-- 5-METRIC KPI STRIP -->
@@ -492,6 +524,90 @@
     </div>
   </div>
 
+  <!-- ======================================================== -->
+  <!-- 5. PROGRAM TERMS & ANTI-FRAUD AGREEMENT MODAL            -->
+  <!-- ======================================================== -->
+  <div id="terms-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); z-index: 1060; justify-content: center; align-items: center; padding: 20px;">
+    <div class="auth-card" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column; text-align: left; padding: 0; overflow: hidden; border: 1px solid rgba(56, 189, 248, 0.3); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);">
+      <div style="padding: 20px 24px; border-bottom: 1px solid var(--border-card); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 24px;">📜</span>
+          <div>
+            <h3 style="font-size: 16px; font-weight: 800; color: #fff; margin: 0;">Partner Program Agreement &amp; Anti-Fraud Policy</h3>
+            <span style="font-size: 11px; color: #34d399; font-weight: 700;">Effective: October 2026 &bull; Philippine Commercial SaaS Terms</span>
+          </div>
+        </div>
+        <button onclick="closeTermsModal()" style="background: none; border: none; color: var(--text-muted); font-size: 26px; cursor: pointer; padding: 0 4px; line-height: 1;">&times;</button>
+      </div>
+
+      <div style="padding: 22px 24px; overflow-y: auto; font-size: 13px; line-height: 1.6; color: #cbd5e1; display: flex; flex-direction: column; gap: 16px;">
+        
+        <!-- SECTION 1 -->
+        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 14px 16px;">
+          <div style="font-weight: 800; color: #f87171; font-size: 13.5px; display: flex; align-items: center; gap: 8px;">
+            <span>⚠️</span> SECTION 1: STRICT ANTI-SELF-REFERRAL &amp; NON-ARBITRAGE RULE
+          </div>
+          <div style="margin-top: 6px; font-size: 12px; color: #fca5a5; line-height: 1.5;">
+            Affiliates and partners are <strong>strictly prohibited</strong> from earning commissions or bounties on software accounts created for themselves, their own food service establishments, or businesses in which they hold a direct or beneficial ownership stake. Using your own referral link to purchase subscriptions with your own money in order to collect the ₱3,000 or ₱6,000 bounty constitutes affiliate fraud. Any detected self-referrals will be summarily cancelled with forfeit of pending balances.
+          </div>
+        </div>
+
+        <!-- SECTION 2 -->
+        <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 14px 16px;">
+          <div style="font-weight: 800; color: #38bdf8; font-size: 13.5px; display: flex; align-items: center; gap: 8px;">
+            <span>🏪</span> SECTION 2: STORE ACTIVATION &amp; COMMERCIAL USAGE GATE
+          </div>
+          <div style="margin-top: 6px; font-size: 12px; color: #bae6fd; line-height: 1.5;">
+            To qualify for bounty disbursement, referred stores must be genuine, operating commercial enterprises. A referral bounty is released from hold only after the referred store logs a minimum of <strong>25 completed POS checkout transactions</strong> across at least <strong>3 distinct register shifts</strong>. Inactive "ghost stores" or dummy accounts created solely to collect bounties will be permanently disqualified.
+          </div>
+        </div>
+
+        <!-- SECTION 3 -->
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 14px 16px;">
+          <div style="font-weight: 800; color: #34d399; font-size: 13.5px; display: flex; align-items: center; gap: 8px;">
+            <span>🔍</span> SECTION 3: AUTOMATED PAYMENT &amp; DEVICE CROSS-MATCHING
+          </div>
+          <div style="margin-top: 6px; font-size: 12px; color: #a7f3d0; line-height: 1.5;">
+            FlexiTap employs automated risk detection algorithms. If a referred store's subscription payment or billing profile matches the <strong>same credit card, GCash mobile number, Maya wallet, tax ID, device hardware fingerprint, or IP subnet</strong> as the referring partner, the referral will be automatically flagged for administrative fraud review. Self-funded merchant signups will not be remunerated under the retail partner program.
+          </div>
+        </div>
+
+        <!-- SECTION 4 -->
+        <div>
+          <div style="font-weight: 800; color: #fff; font-size: 13.5px;">⏳ SECTION 4: 30-DAY ANTI-REFUND &amp; DISPUTE HOLD</div>
+          <p style="margin: 6px 0 0 0; font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+            All commissions are placed in <code>Pending Hold</code> for thirty (30) calendar days from the date of the merchant's initial subscription payment. If the merchant requests a refund under our 7-Day Live Shift Money-Back Guarantee, cancels their service, or disputes the charge within this window, the commission is immediately revoked.
+          </p>
+        </div>
+
+        <!-- SECTION 5 -->
+        <div>
+          <div style="font-weight: 800; color: #fff; font-size: 13.5px;">💸 SECTION 5: CHARGEBACK CLAWBACK &amp; DISPUTE INDEMNITY</div>
+          <p style="margin: 6px 0 0 0; font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+            If an affiliate receives a bounty disbursement and the referred store subsequently initiates a bank chargeback or fraud dispute within 120 days, FlexiTap reserves the right to deduct the disbursed amount from current or future earnings, or initiate formal legal recovery under Philippine civil commerce regulations for fraudulent collusion.
+          </p>
+        </div>
+
+        <!-- SECTION 6 -->
+        <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 10px; padding: 14px 16px;">
+          <div style="font-weight: 800; color: #fbbf24; font-size: 13.5px; display: flex; align-items: center; gap: 8px;">
+            <span>💼</span> SECTION 6: SOLUTION PARTNER / RESELLER PROGRAM EXCLUSION
+          </div>
+          <div style="margin-top: 6px; font-size: 12px; color: #fde68a; line-height: 1.5;">
+            IT freelancers, system integrators, and POS hardware vendors who purchase subscriptions on behalf of clients using their own capital must apply for the <strong>FlexiTap Solution Partner / Authorized Reseller</strong> tier. Resellers receive wholesale margins and hardware bundling rights, but may not claim retail affiliate bounties on client payments made through their own accounts.
+          </div>
+        </div>
+
+      </div>
+
+      <div style="padding: 16px 24px; border-top: 1px solid var(--border-card); background: rgba(0,0,0,0.3); display: flex; justify-content: flex-end;">
+        <button onclick="closeTermsModal()" style="background: var(--accent-emerald); border: none; color: #041009; font-weight: 800; padding: 9px 22px; border-radius: 8px; font-size: 13px; cursor: pointer;">
+          I Understand &amp; Agree
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Client Tracking & Portal Engine -->
   <script src="affiliate-tracker.js"></script>
   <script>
@@ -622,6 +738,12 @@
         return;
       }
 
+      const agreeTerms = document.getElementById('reg-agree-terms').checked;
+      if (!agreeTerms) {
+        err.innerText = 'You must review and agree to the Partner Terms & Anti-Fraud Policy to register.';
+        return;
+      }
+
       btn.disabled = true;
       btn.innerHTML = 'Registering partner account...';
 
@@ -699,6 +821,17 @@
     function closeOtpModal() {
       document.getElementById('otp-modal').style.display = 'none';
       if (resendTimer) clearInterval(resendTimer);
+    }
+
+    // --- PROGRAM TERMS & ANTI-FRAUD MODAL ---
+    function openTermsModal() {
+      const modal = document.getElementById('terms-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeTermsModal() {
+      const modal = document.getElementById('terms-modal');
+      if (modal) modal.style.display = 'none';
     }
 
     function startResendCountdown(seconds) {
