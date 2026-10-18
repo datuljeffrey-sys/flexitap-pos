@@ -90,12 +90,13 @@
       z-index: 1; 
     }
     
-    /* FLUID CONTAINER - Seamless Across Mobile, Tablet & Widescreen Desktop */
+    /* FLUID CONTAINER - True Full-Width Edge-to-Edge Like Shift4 */
     .container { 
       width: 100%; 
-      max-width: min(96vw, 1600px); 
-      margin: 0 auto; 
-      padding: 0 clamp(20px, 3.5vw, 56px); 
+      max-width: 100%; 
+      margin: 0; 
+      padding: 0 clamp(24px, 4vw, 64px); 
+      box-sizing: border-box; 
       position: relative; 
       z-index: 2; 
     }
@@ -223,15 +224,16 @@
       position: relative; 
       width: 100%; 
       height: calc(100vh - 76px); 
-      min-height: 640px; 
+      min-height: 620px; 
       display: flex; 
       align-items: center; 
-      justify-content: space-between; 
+      justify-content: flex-start; 
       box-sizing: border-box; 
     }
 
     .hero-left {
-      max-width: 680px;
+      max-width: min(880px, 62vw);
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -266,13 +268,13 @@
       line-height: 1.05; 
       margin-bottom: 24px; 
       letter-spacing: -2px; 
-      color: #ffffff;
+      color: #ffffff; 
       text-shadow: 0 4px 30px rgba(0,0,0,0.9); 
     }
     .hero-subtitle { 
       font-size: clamp(16.5px, 1.3vw, 21.5px); 
       color: #cbd5e1; 
-      max-width: 580px; 
+      max-width: 680px; 
       margin: 0 0 34px 0; 
       line-height: 1.6; 
       text-shadow: 0 2px 14px rgba(0,0,0,0.9); 
@@ -331,47 +333,21 @@
     .trust-item { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
     .trust-item span { color: var(--accent-green); font-weight: 800; font-size: 15px; }
 
-    /* SHIFT4 VERTICAL ARCHITECTURAL WORDMARK */
-    .hero-shift4-wordmark {
-      position: absolute;
-      right: clamp(16px, 3.5vw, 60px);
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      height: 80vh;
-      max-height: 700px;
-      user-select: none;
-      pointer-events: none;
-      z-index: 2;
-    }
-    .hero-shift4-wordmark span {
-      font-size: clamp(110px, 16.5vh, 190px);
-      font-weight: 950;
-      color: #ffffff;
-      letter-spacing: -4px;
-      line-height: 0.82;
-      text-transform: uppercase;
-      display: block;
-      text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-    }
-
     /* FOUNDERS VIP PRE-LAUNCH BANNER STRIP - Modern Enterprise Bar */
     .home-announcement { 
       background: linear-gradient(90deg, rgba(15, 23, 42, 0.95) 0%, rgba(22, 30, 49, 0.95) 100%); 
       backdrop-filter: blur(14px); 
       border: 1px solid rgba(59, 130, 246, 0.35); 
       border-radius: 20px; 
-      padding: 22px 32px; 
+      padding: 24px clamp(24px, 3vw, 40px); 
       width: 100%; 
-      margin: 10px auto 48px; 
+      margin: 30px 0 60px; 
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 24px;
       box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 25px rgba(59, 130, 246, 0.12); 
+      box-sizing: border-box;
     }
     .announcement-content {
       display: flex;
@@ -452,8 +428,9 @@
     }
     .pillars-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 26px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(20px, 2.5vw, 36px);
+      width: 100%;
     }
     .pillar-card {
       background: linear-gradient(180deg, rgba(22, 30, 49, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
@@ -663,8 +640,9 @@
       .trust-badges {
         justify-content: center;
       }
-      .hero-shift4-wordmark {
-        display: none;
+      .pillars-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
       }
       .home-announcement {
         flex-direction: column;
@@ -763,13 +741,6 @@
         </div>
       </div>
 
-      <!-- SHIFT4 ARCHITECTURAL VERTICAL WORDMARK -->
-      <div class="hero-shift4-wordmark" aria-hidden="true">
-        <span>P</span>
-        <span>L</span>
-        <span>A</span>
-        <span>Y</span>
-      </div>
     </section>
 
     <!-- STRATEGIC FOUNDERS VIP PRE-LAUNCH BANNER STRIP -->
