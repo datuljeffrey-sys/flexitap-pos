@@ -475,6 +475,77 @@
     .schedule-shift-support { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
     .schedule-shift-devops { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
     .schedule-shift-off { background: rgba(107, 114, 128, 0.12); color: #64748b; border: 1px dashed rgba(107, 114, 128, 0.3); }
+
+    /* =========================================================================
+       FLEXITEAMS FLOATING / DRAGGABLE WINDOW & MINIMIZED PILL STYLES
+       ========================================================================= */
+    #view-chat.teams-floating-mode {
+      position: fixed !important;
+      bottom: 24px;
+      right: 24px;
+      width: 540px;
+      max-width: calc(100vw - 32px);
+      height: 680px;
+      max-height: calc(100vh - 48px);
+      z-index: 2500 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      background: #090e1a !important;
+      border: 1.5px solid rgba(59, 130, 246, 0.5) !important;
+      border-radius: 16px !important;
+      box-shadow: 0 25px 65px -10px rgba(0, 0, 0, 0.95), 0 0 35px rgba(59, 130, 246, 0.25) !important;
+      overflow: hidden !important;
+      resize: both;
+      animation: teamsWindowPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #view-chat.teams-floating-mode .crm-header-card {
+      margin-bottom: 0 !important;
+      border-radius: 0 !important;
+      border-bottom: 1px solid var(--card-border) !important;
+      cursor: grab;
+      user-select: none;
+      padding: 10px 14px !important;
+      background: rgba(15, 23, 42, 0.95) !important;
+    }
+
+    #view-chat.teams-floating-mode .crm-header-card:active {
+      cursor: grabbing;
+    }
+
+    #view-chat.teams-floating-mode > div:last-child {
+      flex: 1 !important;
+      min-height: 0 !important;
+      border-radius: 0 !important;
+      border: none !important;
+    }
+
+    @keyframes teamsWindowPop {
+      from { transform: scale(0.94) translateY(18px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    @keyframes teamsPillPulse {
+      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7), 0 15px 35px rgba(0, 0, 0, 0.8); }
+      70% { box-shadow: 0 0 0 12px rgba(59, 130, 246, 0), 0 15px 35px rgba(0, 0, 0, 0.8); }
+      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0), 0 15px 35px rgba(0, 0, 0, 0.8); }
+    }
+
+    @keyframes teamsChimeFlash {
+      0%, 100% { transform: translateY(0) scale(1); }
+      30% { transform: translateY(-8px) scale(1.05); }
+      60% { transform: translateY(2px) scale(0.98); }
+    }
+
+    .teams-pill-chime {
+      animation: teamsChimeFlash 0.6s ease, teamsPillPulse 1.8s infinite !important;
+      border-color: #10b981 !important;
+    }
+
+    @keyframes teamsToastSlide {
+      from { opacity: 0; transform: translateY(12px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
   </style>
 </head>
 <body>
@@ -2208,27 +2279,46 @@
         <!-- ================= 12. BUILT-IN TEAM CHAT & HUDDLES ("FLEXITEAMS") ================= -->
         <div id="view-chat" class="tab-view">
           
-          <!-- Top Header Strip & Active Call Banner -->
-          <div class="crm-header-card" style="padding: 14px 18px; margin-bottom: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); display: flex; align-items: center; justify-content: center; font-size: 20px;">
+          <!-- Top Header Strip & Window Drag Handle (Microsoft Teams Style) -->
+          <div id="teams-window-header" class="crm-header-card" onmousedown="startTeamsDrag(event)" ontouchstart="startTeamsDrag(event)" style="padding: 12px 18px; margin-bottom: 14px; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 10px; cursor: inherit;">
+                <div style="width: 36px; height: 36px; border-radius: 9px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
                   💬
                 </div>
                 <div>
-                  <h2 style="font-size: 1.1rem; font-weight: 800; color: #fff; margin: 0 0 2px 0;">FlexiTeams &bull; Internal Collab &amp; Calling</h2>
-                  <p style="font-size: 0.74rem; color: var(--text-muted); margin: 0;">Cross-functional channels, direct messaging, WebRTC audio/video huddles, and live screen sharing.</p>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <h2 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0;">FlexiTeams &bull; Chat &amp; Calls</h2>
+                    <span id="teams-floating-drag-indicator" style="display: none; font-size: 10px; font-weight: 700; background: rgba(59, 130, 246, 0.2); color: #93c5fd; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.3px;">⋮⋮ DRAG TO MOVE</span>
+                  </div>
+                  <p id="teams-header-subtitle" style="font-size: 0.72rem; color: var(--text-muted); margin: 0;">Channels, direct messaging, WebRTC audio/video huddles, and live screen sharing.</p>
                 </div>
               </div>
 
-              <!-- Quick Action & Presence -->
-              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <!-- Quick Actions & Window Controls (Teams Style) -->
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                 <div id="teams-user-status-pill" style="display: flex; align-items: center; gap: 6px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; color: #34d399;">
                   <span style="display: inline-block; width: 7px; height: 7px; border-radius: 9999px; background: #34d399;"></span> Available
                 </div>
-                <button class="action-btn" onclick="openNewGroupModal()" style="padding: 6px 12px; font-size: 0.74rem; background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700;">
-                  + New Group / Channel
+                <button class="action-btn" onclick="openNewGroupModal()" style="padding: 5px 10px; font-size: 0.72rem; background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700;">
+                  + Group
                 </button>
+                <button class="action-btn" onclick="triggerTestIncomingMessage()" style="padding: 5px 9px; font-size: 0.72rem; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);" title="Test Teams Audio Chime & Minimized Toast">
+                  🔔 Test Ding
+                </button>
+
+                <!-- Teams Window Controls -->
+                <div style="display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.3); padding: 2px 4px; border-radius: 8px; border: 1px solid var(--card-border);">
+                  <button type="button" class="action-btn" onclick="minimizeTeamsWindow()" style="padding: 4px 8px; font-size: 0.72rem; line-height: 1;" title="Minimize to floating corner pill">
+                    —
+                  </button>
+                  <button type="button" class="action-btn" id="teams-btn-float-toggle" onclick="toggleTeamsFloatingWindow()" style="padding: 4px 9px; font-size: 0.72rem; line-height: 1;" title="Float window across all tabs">
+                    🗗 Float
+                  </button>
+                  <button type="button" class="action-btn" onclick="maximizeTeamsWindow()" style="padding: 4px 8px; font-size: 0.72rem; line-height: 1;" title="Full-page tab view">
+                    ⛶ Full
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -2795,7 +2885,19 @@
         return;
       }
 
-      document.querySelectorAll('.tab-view').forEach(function(v) { v.classList.remove('active'); });
+      // If user navigated to chat and it was minimized, restore it
+      if (key === 'chat' && typeof teamsWindowState !== 'undefined') {
+        if (teamsWindowState === 'minimized') {
+          restoreTeamsWindow();
+        }
+      }
+
+      document.querySelectorAll('.tab-view').forEach(function(v) { 
+        if (v.id === 'view-chat' && typeof teamsWindowState !== 'undefined' && teamsWindowState === 'floating') {
+          return; // Keep floating chat visible on top
+        }
+        v.classList.remove('active'); 
+      });
       document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
       
       const targetView = document.getElementById('view-' + key);
@@ -9992,6 +10094,9 @@ Role: ${lastProvisionedCreds.role}`;
       input.value = '';
       playTeamsSound('send');
       renderTeamsMessages();
+
+      // Trigger automatic teammate response so you can test Teams sound & minimized notifications!
+      simulateColleagueReply(newMsg);
     }
 
     function promptInsertTicketRef() {
@@ -10261,6 +10366,19 @@ Role: ${lastProvisionedCreds.role}`;
           gain.connect(ctx.destination);
           osc.start();
           osc.stop(ctx.currentTime + 0.25);
+        } else if (soundType === 'receive' || soundType === 'chime') {
+          // Signature Microsoft Teams crystal ascending chime (F5 -> A5 -> C6)
+          const now = ctx.currentTime;
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(698.46, now); // F5
+          osc.frequency.setValueAtTime(880.00, now + 0.08); // A5
+          osc.frequency.setValueAtTime(1046.50, now + 0.16); // C6
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.48);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(now + 0.48);
         } else if (soundType === 'ring') {
           osc.type = 'triangle';
           osc.frequency.setValueAtTime(440, ctx.currentTime);
@@ -10283,6 +10401,314 @@ Role: ${lastProvisionedCreds.role}`;
           osc.stop(ctx.currentTime + 0.3);
         }
       } catch (e) {}
+    }
+
+    // =========================================================================
+    // FLEXITEAMS FLOATING WINDOW, DRAG & MINIMIZE/MAXIMIZE ENGINE
+    // =========================================================================
+    let teamsWindowState = 'full'; // 'full' | 'floating' | 'minimized'
+    let teamsUnreadCount = 0;
+    let teamsDragState = {
+      isDragging: false,
+      startX: 0,
+      startY: 0,
+      initialLeft: 0,
+      initialTop: 0
+    };
+
+    function startTeamsDrag(e) {
+      const chatEl = document.getElementById('view-chat');
+      if (!chatEl || !chatEl.classList.contains('teams-floating-mode')) return;
+      if (e.target.closest('button, input, select, a, textarea')) return;
+
+      const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0].clientX);
+      const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0].clientY);
+      if (clientX === undefined || clientY === undefined) return;
+
+      const rect = chatEl.getBoundingClientRect();
+      teamsDragState.isDragging = true;
+      teamsDragState.startX = clientX;
+      teamsDragState.startY = clientY;
+      teamsDragState.initialLeft = rect.left;
+      teamsDragState.initialTop = rect.top;
+
+      chatEl.style.bottom = 'auto';
+      chatEl.style.right = 'auto';
+      chatEl.style.left = rect.left + 'px';
+      chatEl.style.top = rect.top + 'px';
+
+      document.addEventListener('mousemove', onTeamsDragMove);
+      document.addEventListener('mouseup', endTeamsDrag);
+      document.addEventListener('touchmove', onTeamsDragMove, { passive: false });
+      document.addEventListener('touchend', endTeamsDrag);
+    }
+
+    function onTeamsDragMove(e) {
+      if (!teamsDragState.isDragging) return;
+      if (e.cancelable) e.preventDefault();
+
+      const chatEl = document.getElementById('view-chat');
+      if (!chatEl) return;
+
+      const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0].clientX);
+      const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0].clientY);
+
+      const dx = clientX - teamsDragState.startX;
+      const dy = clientY - teamsDragState.startY;
+
+      const maxLeft = window.innerWidth - chatEl.offsetWidth - 10;
+      const maxTop = window.innerHeight - chatEl.offsetHeight - 10;
+
+      const newLeft = Math.max(10, Math.min(maxLeft, teamsDragState.initialLeft + dx));
+      const newTop = Math.max(10, Math.min(maxTop, teamsDragState.initialTop + dy));
+
+      chatEl.style.left = newLeft + 'px';
+      chatEl.style.top = newTop + 'px';
+    }
+
+    function endTeamsDrag() {
+      teamsDragState.isDragging = false;
+      document.removeEventListener('mousemove', onTeamsDragMove);
+      document.removeEventListener('mouseup', endTeamsDrag);
+      document.removeEventListener('touchmove', onTeamsDragMove);
+      document.removeEventListener('touchend', endTeamsDrag);
+    }
+
+    function minimizeTeamsWindow() {
+      teamsWindowState = 'minimized';
+      const chatEl = document.getElementById('view-chat');
+      const pillEl = document.getElementById('teams-minimized-pill');
+      if (chatEl) chatEl.style.display = 'none';
+      if (pillEl) {
+        pillEl.style.display = 'flex';
+        const activeTitle = document.getElementById('teams-active-title')?.textContent || 'FlexiTeams';
+        document.getElementById('teams-min-title').textContent = activeTitle;
+        document.getElementById('teams-min-subtitle').textContent = currentActiveCall ? '🟢 Active Call In Progress' : 'Click to expand chat';
+        const callDot = document.getElementById('teams-min-call-dot');
+        if (callDot) callDot.style.display = currentActiveCall ? 'inline-block' : 'none';
+      }
+    }
+
+    function restoreTeamsWindow() {
+      const pillEl = document.getElementById('teams-minimized-pill');
+      const toastEl = document.getElementById('teams-chat-toast');
+      if (pillEl) {
+        pillEl.style.display = 'none';
+        pillEl.classList.remove('teams-pill-chime');
+      }
+      if (toastEl) toastEl.style.display = 'none';
+
+      teamsUnreadCount = 0;
+      updateTeamsUnreadBadge();
+      floatTeamsWindow();
+    }
+
+    function floatTeamsWindow() {
+      teamsWindowState = 'floating';
+      const chatEl = document.getElementById('view-chat');
+      const pillEl = document.getElementById('teams-minimized-pill');
+      if (pillEl) pillEl.style.display = 'none';
+      if (!chatEl) return;
+
+      chatEl.classList.add('teams-floating-mode');
+      chatEl.style.display = 'flex';
+
+      const dragInd = document.getElementById('teams-floating-drag-indicator');
+      if (dragInd) dragInd.style.display = 'inline-block';
+
+      const floatBtn = document.getElementById('teams-btn-float-toggle');
+      if (floatBtn) {
+        floatBtn.title = 'Dock back to full-page tab';
+        floatBtn.innerHTML = '⛶ Full';
+      }
+
+      const scrollContainer = document.getElementById('teams-messages-scroll');
+      if (scrollContainer) scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    }
+
+    function maximizeTeamsWindow() {
+      teamsWindowState = 'full';
+      const chatEl = document.getElementById('view-chat');
+      const pillEl = document.getElementById('teams-minimized-pill');
+      const toastEl = document.getElementById('teams-chat-toast');
+      if (pillEl) pillEl.style.display = 'none';
+      if (toastEl) toastEl.style.display = 'none';
+      if (!chatEl) return;
+
+      chatEl.classList.remove('teams-floating-mode');
+      chatEl.style.left = '';
+      chatEl.style.top = '';
+      chatEl.style.bottom = '';
+      chatEl.style.right = '';
+      chatEl.style.width = '';
+      chatEl.style.height = '';
+      chatEl.style.display = '';
+
+      const dragInd = document.getElementById('teams-floating-drag-indicator');
+      if (dragInd) dragInd.style.display = 'none';
+
+      const floatBtn = document.getElementById('teams-btn-float-toggle');
+      if (floatBtn) {
+        floatBtn.title = 'Float window across all tabs';
+        floatBtn.innerHTML = '🗗 Float';
+      }
+
+      switchNav('chat');
+    }
+
+    function toggleTeamsFloatingWindow() {
+      if (teamsWindowState === 'floating') {
+        maximizeTeamsWindow();
+      } else {
+        floatTeamsWindow();
+      }
+    }
+
+    function updateTeamsUnreadBadge() {
+      const badge = document.getElementById('teams-min-unread-badge');
+      const sbBadge = document.getElementById('team-chat-badge');
+      if (badge) {
+        if (teamsUnreadCount > 0) {
+          badge.style.display = 'inline-block';
+          badge.textContent = teamsUnreadCount;
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+      if (sbBadge) {
+        if (teamsUnreadCount > 0) {
+          sbBadge.textContent = `${teamsUnreadCount} New`;
+          sbBadge.style.background = 'rgba(239, 68, 68, 0.25)';
+          sbBadge.style.color = '#f87171';
+        } else {
+          sbBadge.textContent = 'Teams';
+          sbBadge.style.background = 'rgba(59, 130, 246, 0.2)';
+          sbBadge.style.color = '#60a5fa';
+        }
+      }
+    }
+
+    let teamsToastTimeout = null;
+    function showTeamsChatToast(senderName, messageText) {
+      const toast = document.getElementById('teams-chat-toast');
+      const senderEl = document.getElementById('teams-toast-sender');
+      const contentEl = document.getElementById('teams-toast-content');
+      if (!toast || !senderEl || !contentEl) return;
+
+      senderEl.textContent = senderName || 'Colleague';
+      contentEl.textContent = messageText || 'New message in Team Chat';
+      toast.style.display = 'block';
+
+      const pill = document.getElementById('teams-minimized-pill');
+      if (pill) {
+        pill.classList.remove('teams-pill-chime');
+        void pill.offsetWidth;
+        pill.classList.add('teams-pill-chime');
+      }
+
+      if (teamsToastTimeout) clearTimeout(teamsToastTimeout);
+      teamsToastTimeout = setTimeout(function() {
+        toast.style.display = 'none';
+      }, 4500);
+    }
+
+    function triggerTestIncomingMessage() {
+      const sampleSenders = ['Sarah (Support)', 'Alex (Lead Dev)', 'DevOps Desk', 'Marcus (QA)'];
+      const sampleReplies = [
+        'Hey! POS Terminal SQLite build passed smoke tests. All green!',
+        'Ticket #1042 customer just verified GCash gateway is operational 👍',
+        'Can you check the Sunmi Bluetooth printer telemetry on Channel #dev?',
+        'Online shift schedules for next week are published in Workforce!'
+      ];
+      const randomIdx = Math.floor(Math.random() * sampleSenders.length);
+      const sender = sampleSenders[randomIdx];
+      const text = sampleReplies[randomIdx];
+
+      const testMsg = {
+        id: 'msg-' + Date.now(),
+        channelId: activeTeamsChannelId || 'c-dev',
+        senderName: sender,
+        senderEmail: 'test.colleague@flexitapapp.com',
+        senderRole: 'dev',
+        content: text,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        reactions: ['🔔']
+      };
+
+      teamsMessages.push(testMsg);
+      try {
+        localStorage.setItem('flexitap_teams_messages', JSON.stringify(teamsMessages));
+      } catch (_) {}
+
+      renderTeamsMessages();
+
+      // Play signature Teams chime sound
+      playTeamsSound('receive');
+
+      const isChatFullActive = (teamsWindowState === 'full' && document.getElementById('view-chat')?.classList.contains('active'));
+      const isChatFloating = (teamsWindowState === 'floating');
+
+      if (teamsWindowState === 'minimized' || (!isChatFullActive && !isChatFloating)) {
+        teamsUnreadCount++;
+        updateTeamsUnreadBadge();
+        showTeamsChatToast(sender, text);
+      }
+    }
+
+    function simulateColleagueReply(userMsg) {
+      let replySender = 'Sarah (Support Lead)';
+      let replyEmail = 'sarah.support@flexitapapp.com';
+      let replyRole = 'support';
+
+      if (activeTeamsChannelId && activeTeamsChannelId.startsWith('dm-')) {
+        const targetEmail = activeTeamsChannelId.replace('dm-', '');
+        const staff = teamStaffMembers.find(m => m.email && m.email.toLowerCase() === targetEmail.toLowerCase());
+        if (staff) {
+          replySender = staff.full_name;
+          replyEmail = staff.email;
+          replyRole = staff.role || 'Specialist';
+        }
+      }
+
+      const responses = [
+        'Got it! Looking into the terminal logs for this right now 👍',
+        'On it! I will cross-reference this with the ticket status.',
+        'Thanks for the heads up, checking the telemetry now.',
+        'Confirmed. Hotfix is staging in sandbox, will update shortly!'
+      ];
+      const chosenReply = responses[Math.floor(Math.random() * responses.length)];
+
+      setTimeout(function() {
+        const replyMsg = {
+          id: 'msg-' + Date.now(),
+          channelId: userMsg.channelId,
+          senderName: replySender,
+          senderEmail: replyEmail,
+          senderRole: replyRole,
+          content: chosenReply,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          reactions: ['👍']
+        };
+
+        teamsMessages.push(replyMsg);
+        try {
+          localStorage.setItem('flexitap_teams_messages', JSON.stringify(teamsMessages));
+        } catch (_) {}
+
+        renderTeamsMessages();
+
+        const isChatFullActive = (teamsWindowState === 'full' && document.getElementById('view-chat')?.classList.contains('active'));
+        const isChatFloating = (teamsWindowState === 'floating');
+
+        if (teamsWindowState === 'minimized' || (!isChatFullActive && !isChatFloating)) {
+          playTeamsSound('receive');
+          teamsUnreadCount++;
+          updateTeamsUnreadBadge();
+          showTeamsChatToast(replySender, chosenReply);
+        } else {
+          playTeamsSound('receive');
+        }
+      }, 3000);
     }
 
     // =========================================================================
@@ -11580,8 +12006,14 @@ Role: ${lastProvisionedCreds.role}`;
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--card-border); padding-top: 14px;">
-          <button type="button" class="action-btn" onclick="closeAddShiftModal()">Cancel</button>
           <button type="submit" class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary); padding: 9px 18px;">
+            Assign Shift
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- ================= TEAMS CALLING MODALS ================= -->
   <!-- 1. Active Call Overlay (Audio/Video/Screen) -->
   <div id="teams-call-overlay" style="display: none; position: fixed; inset: 0; background: rgba(10, 15, 29, 0.95); z-index: 2200; backdrop-filter: blur(8px); flex-direction: column;">
@@ -11718,6 +12150,9 @@ Role: ${lastProvisionedCreds.role}`;
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
   <!-- Modal: Escalate Support Ticket to Core Dev Engineering -->
   <div id="crm-modal-ticket-escalate" class="crm-modal-backdrop" style="z-index: 2200;">
     <div class="crm-modal-box" style="max-width: 540px;">
@@ -11787,6 +12222,40 @@ Role: ${lastProvisionedCreds.role}`;
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       FLEXITEAMS FLOATING MINIMIZED PILL (MICROSOFT TEAMS STYLE)
+       ========================================================================= -->
+  <div id="teams-minimized-pill" onclick="restoreTeamsWindow()" style="display: none; position: fixed; bottom: 24px; right: 24px; z-index: 2600; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid #3b82f6; border-radius: 9999px; padding: 10px 18px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.75), 0 0 25px rgba(59, 130, 246, 0.35); cursor: pointer; align-items: center; gap: 12px; transition: transform 0.15s, box-shadow 0.15s; user-select: none;">
+    <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+      <span style="font-size: 20px;">💬</span>
+      <span id="teams-min-unread-badge" style="display: none; position: absolute; top: -6px; right: -8px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 5px; border-radius: 9999px; line-height: 1; border: 1.5px solid #0f172a;">1</span>
+    </div>
+    <div>
+      <div style="font-size: 13px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 6px;">
+        <span id="teams-min-title">FlexiTeams</span>
+        <span id="teams-min-call-dot" style="display: none; width: 8px; height: 8px; border-radius: 9999px; background: #10b981;"></span>
+      </div>
+      <div id="teams-min-subtitle" style="font-size: 11px; color: #94a3b8;">Click to expand chat</div>
+    </div>
+    <button type="button" onclick="event.stopPropagation(); restoreTeamsWindow();" style="background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: #60a5fa; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer;">
+      🗖 Expand
+    </button>
+  </div>
+
+  <!-- FLOATING PREVIEW TOAST (WHEN MINIMIZED AND A MESSAGE ARRIVES) -->
+  <div id="teams-chat-toast" onclick="restoreTeamsWindow()" style="display: none; position: fixed; bottom: 84px; right: 24px; z-index: 2605; background: #0f172a; border: 1px solid rgba(59, 130, 246, 0.5); border-radius: 12px; padding: 12px 16px; max-width: 320px; box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(59, 130, 246, 0.25); cursor: pointer; animation: teamsToastSlide 0.25s ease;">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span style="font-size: 14px;">💬</span>
+        <strong id="teams-toast-sender" style="font-size: 12px; color: #60a5fa;">Sarah (Support)</strong>
+      </div>
+      <span id="teams-toast-time" style="font-size: 10px; color: #94a3b8;">just now</span>
+    </div>
+    <div id="teams-toast-content" style="font-size: 12px; color: #cbd5e1; line-height: 1.4; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+      Hey, can you review Ticket #1042?
     </div>
   </div>
 </body>
