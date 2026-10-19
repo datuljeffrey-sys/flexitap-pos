@@ -2331,6 +2331,9 @@
                   <p id="timecard-report-subtitle" style="font-size: 0.78rem; color: var(--text-muted); margin: 4px 0 0 0;">Audited punch history, daily hours, breaks, and payroll verification</p>
                 </div>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                  <button class="action-btn" onclick="openManualShiftModal()" style="background: var(--primary); color: #fff; border-color: var(--primary);">
+                    ➕ Log / Adjust Shift
+                  </button>
                   <button class="action-btn" onclick="exportTimecardReportCsv()" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3);">
                     📥 Export CSV
                   </button>
@@ -2347,10 +2350,11 @@
               <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--card-border);">
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">Period:</span>
-                  <select id="timecard-period-select" class="crm-select" onchange="renderTimecardReportTable()" style="padding: 7px 12px; font-size: 0.82rem; min-width: 200px;">
-                    <option value="current">Current Pay Period (Oct 01 - Oct 15, 2026)</option>
-                    <option value="prev">Previous Pay Period (Sep 16 - Sep 30, 2026)</option>
+                  <select id="timecard-period-select" class="crm-select" onchange="renderTimecardReportTable()" style="padding: 7px 12px; font-size: 0.82rem; min-width: 230px;">
+                    <option value="current">Current Pay Period</option>
+                    <option value="today">Today's Shifts</option>
                     <option value="week">Past 7 Days</option>
+                    <option value="prev">Previous Pay Period</option>
                     <option value="all">All Available Records</option>
                   </select>
                 </div>
@@ -9052,6 +9056,88 @@ Role: ${lastProvisionedCreds.role}`;
       });
     }
 
+    // =========================================================================
+    // 10. WORKFORCE, ATTENDANCE & DYNAMIC TIMECARD ENGINE
+    // =========================================================================
+
+    function getPayrollCycleMeta() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth(); // 0-indexed (0=Jan..9=Oct)
+      const day = now.getDate();
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const lastDayOfCurMonth = new Date(year, month + 1, 0).getDate();
+
+      let curStart, curEnd, curLabel;
+      let prevStart, prevEnd, prevLabel;
+
+      if (day <= 15) {
+        // Current cycle: 1st to 15th of current month
+        curStart = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+        curEnd = `${year}-${String(month + 1).padStart(2, '0')}-15`;
+        curLabel = `${monthNames[month]} 01 – ${monthNames[month]} 15, ${year}`;
+
+        // Previous cycle: 16th to end of previous month
+        const prevMonthDate = new Date(year, month, 0);
+        const prevYear = prevMonthDate.getFullYear();
+        const prevMonth = prevMonthDate.getMonth();
+        const prevMonthLastDay = prevMonthDate.getDate();
+        prevStart = `${prevYear}-${String(prevMonth + 1).padStart(2, '0')}-16`;
+        prevEnd = `${prevYear}-${String(prevMonth + 1).padStart(2, '0')}-${String(prevMonthLastDay).padStart(2, '0')}`;
+        prevLabel = `${monthNames[prevMonth]} 16 – ${monthNames[prevMonth]} ${prevMonthLastDay}, ${prevYear}`;
+      } else {
+        // Current cycle: 16th to end of current month
+        curStart = `${year}-${String(month + 1).padStart(2, '0')}-16`;
+        curEnd = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDayOfCurMonth).padStart(2, '0')}`;
+        curLabel = `${monthNames[month]} 16 – ${monthNames[month]} ${lastDayOfCurMonth}, ${year}`;
+
+        // Previous cycle: 1st to 15th of current month
+        prevStart = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+        prevEnd = `${year}-${String(month + 1).padStart(2, '0')}-15`;
+        prevLabel = `${monthNames[month]} 01 – ${monthNames[month]} 15, ${year}`;
+      }
+
+      const todayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const weekStart = new Date(now.getTime() - 7 * 86400000).toISOString().split('T')[0];
+
+      return { curStart, curEnd, curLabel, prevStart, prevEnd, prevLabel, todayStr, weekStart };
+    }
+
+    function isDateInPeriod(dateStr, periodType) {
+      if (!dateStr || periodType === 'all') return true;
+      const cycle = getPayrollCycleMeta();
+
+      if (periodType === 'today') {
+        return dateStr === cycle.todayStr;
+      }
+      if (periodType === 'current') {
+        return dateStr >= cycle.curStart && dateStr <= cycle.curEnd;
+      }
+      if (periodType === 'prev') {
+        return dateStr >= cycle.prevStart && dateStr <= cycle.prevEnd;
+      }
+      if (periodType === 'week') {
+        return dateStr >= cycle.weekStart;
+      }
+      return true;
+    }
+
+    function updateTimecardPeriodLabels() {
+      const cycle = getPayrollCycleMeta();
+      const select = document.getElementById('timecard-period-select');
+      if (!select) return;
+
+      const currentVal = select.value || 'current';
+      select.innerHTML = `
+        <option value="current">Current Pay Period (${cycle.curLabel})</option>
+        <option value="today">Today's Shifts (${cycle.todayStr})</option>
+        <option value="week">Past 7 Days (Since ${cycle.weekStart})</option>
+        <option value="prev">Previous Pay Period (${cycle.prevLabel})</option>
+        <option value="all">All Available Records</option>
+      `;
+      select.value = currentVal;
+    }
+
     // Workforce Punch Clock
     function getWorkforceCurrentElapsedSeconds() {
       if (!workforcePunchState || !workforcePunchState.isClockedIn) {
@@ -9089,6 +9175,9 @@ Role: ${lastProvisionedCreds.role}`;
       if (workforcePunchState.isClockedIn) {
         startPunchTimer();
       }
+
+      // Initial cloud sync of team timecards
+      syncWorkforceCloudData();
     }
 
     function updatePunchWidgetUI() {
@@ -9139,6 +9228,10 @@ Role: ${lastProvisionedCreds.role}`;
     }
 
     function handlePunchToggle() {
+      const effEmail = getEffectiveUserEmail().toLowerCase();
+      const effName = getEffectiveUserDisplayName();
+      const effRole = getEffectiveRole();
+
       if (workforcePunchState.isClockedIn) {
         const finalElapsed = getWorkforceCurrentElapsedSeconds();
         workforcePunchState.isClockedIn = false;
@@ -9154,12 +9247,9 @@ Role: ${lastProvisionedCreds.role}`;
         const rawHrs = addedHours > 0 ? addedHours : 0.05;
         const regHrs = Math.min(8.0, rawHrs);
         const otHrs = +(Math.max(0, rawHrs - 8.0)).toFixed(2);
-        const effEmail = getEffectiveUserEmail();
-        const effName = getEffectiveUserDisplayName();
-        const effRole = getEffectiveRole();
 
         const newReportEntry = {
-          id: 'tc-' + Date.now(),
+          id: 'tc-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
           staff_name: effName,
           staff_email: effEmail,
           role: effRole,
@@ -9176,7 +9266,39 @@ Role: ${lastProvisionedCreds.role}`;
         };
 
         timecardReportLogs.unshift(newReportEntry);
-        localStorage.setItem('flexitap_timecard_report_logs', JSON.stringify(timecardReportLogs));
+        try {
+          localStorage.setItem('flexitap_timecard_report_logs', JSON.stringify(timecardReportLogs));
+        } catch (_) {}
+
+        // 1. Persist to Supabase cloud
+        try {
+          if (supabaseClient) {
+            supabaseClient.from('site_analytics').insert([{
+              event_type: 'timecard_log',
+              event_name: 'shift_completed',
+              page_path: newReportEntry.staff_email,
+              session_id: activeDevUser?.id || null,
+              metadata: newReportEntry
+            }]).then(() => {});
+          }
+        } catch (err) {
+          console.warn('Could not persist shift log to cloud:', err);
+        }
+
+        // 2. Broadcast punch-out to all connected colleagues
+        if (teamsRealtimeChannel) {
+          teamsRealtimeChannel.send({
+            type: 'broadcast',
+            event: 'WORKFORCE_PUNCH_UPDATE',
+            payload: {
+              action: 'clock_out',
+              email: effEmail,
+              name: effName,
+              shift: newReportEntry
+            }
+          });
+        }
+
         workforcePunchState.elapsedSeconds = 0;
         workforcePunchState.clockInTimestamp = null;
         workforcePunchState.accumulatedBreakSeconds = 0;
@@ -9192,6 +9314,20 @@ Role: ${lastProvisionedCreds.role}`;
         workforcePunchState.elapsedSeconds = 0;
         workforcePunchState.breakMinutes = 0;
         startPunchTimer();
+
+        // Broadcast clock-in to all connected colleagues
+        if (teamsRealtimeChannel) {
+          teamsRealtimeChannel.send({
+            type: 'broadcast',
+            event: 'WORKFORCE_PUNCH_UPDATE',
+            payload: {
+              action: 'clock_in',
+              email: effEmail,
+              name: effName,
+              clockInFormatted: workforcePunchState.clockInFormatted
+            }
+          });
+        }
       }
 
       localStorage.setItem('flexitap_punch_state', JSON.stringify(workforcePunchState));
@@ -9219,6 +9355,18 @@ Role: ${lastProvisionedCreds.role}`;
       }
       localStorage.setItem('flexitap_punch_state', JSON.stringify(workforcePunchState));
       updatePunchWidgetUI();
+
+      if (teamsRealtimeChannel) {
+        teamsRealtimeChannel.send({
+          type: 'broadcast',
+          event: 'WORKFORCE_PUNCH_UPDATE',
+          payload: {
+            action: 'break_toggle',
+            email: getEffectiveUserEmail().toLowerCase(),
+            onBreak: workforcePunchState.onBreak
+          }
+        });
+      }
     }
 
     function startPunchTimer() {
@@ -9289,7 +9437,7 @@ Role: ${lastProvisionedCreds.role}`;
         const isSelf = (m.email || '').toLowerCase() === effEmail;
         const isClocked = isSelf ? workforcePunchState.isClockedIn : (m.clock_status === 'clocked_in');
         const elapsed = isSelf 
-          ? (workforcePunchState.isClockedIn ? formatElapsedSeconds(workforcePunchState.elapsedSeconds) : '-') 
+          ? (workforcePunchState.isClockedIn ? formatElapsedSeconds(getWorkforceCurrentElapsedSeconds()) : '-') 
           : (m.shift_time || '03:45:00');
         const statusBadge = isClocked 
           ? `<span class="badge-pill badge-resolved">🟢 ON CLOCK</span>`
@@ -9302,7 +9450,7 @@ Role: ${lastProvisionedCreds.role}`;
               <div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(m.email)}</div>
             </td>
             <td>${getStaffRoleBadgeHtml(m.role)}</td>
-            <td style="font-family: monospace; color: #cbd5e1; font-size: 0.8rem;">${isClocked ? (isSelf ? (workforcePunchState.clockInFormatted || 'Today 08:30 AM') : 'Today 08:30 AM') : 'None'}</td>
+            <td style="font-family: monospace; color: #cbd5e1; font-size: 0.8rem;">${isClocked ? (isSelf ? (workforcePunchState.clockInFormatted || 'Today 08:30 AM') : (m.clock_in_time || 'Today 08:30 AM')) : 'None'}</td>
             <td style="font-family: monospace; color: #38bdf8; font-weight: 700;">${isClocked ? elapsed : '-'}</td>
             <td style="font-size: 0.82rem; color: #cbd5e1;">${escapeHtml(m.current_assignment || m.department || 'Customer Support Desk')}</td>
             <td>${statusBadge}</td>
@@ -9323,6 +9471,10 @@ Role: ${lastProvisionedCreds.role}`;
 
       const isAdmin = isUserAdmin();
       const effEmail = getEffectiveUserEmail().toLowerCase();
+      const cycle = getPayrollCycleMeta();
+
+      // Ensure Period Select displays dynamic payroll cycle labels
+      updateTimecardPeriodLabels();
 
       // Update titles
       const titleEl = document.getElementById('timecard-report-title');
@@ -9352,7 +9504,7 @@ Role: ${lastProvisionedCreds.role}`;
       const staffFilter = isAdmin ? (staffSelect?.value || 'all') : effEmail;
       const search = (document.getElementById('timecard-search-input')?.value || '').toLowerCase().trim();
 
-      // Filter logs
+      // Filter logs using dynamic pay period engine
       const filtered = timecardReportLogs.filter(r => {
         // Staff filter
         if (!isAdmin) {
@@ -9361,15 +9513,9 @@ Role: ${lastProvisionedCreds.role}`;
           if ((r.staff_email || '').toLowerCase() !== staffFilter.toLowerCase()) return false;
         }
 
-        // Period filter
-        if (period === 'current') {
-          // Current Pay Period: Oct 01 - Oct 15, 2026
-          if (r.date && (r.date < '2026-10-01' || r.date > '2026-10-15')) return false;
-        } else if (period === 'prev') {
-          // Previous Pay Period: Sep 16 - Sep 30, 2026
-          if (r.date && (r.date < '2026-09-16' || r.date > '2026-09-30')) return false;
-        } else if (period === 'week') {
-          if (r.date && r.date < '2026-10-05') return false;
+        // Dynamic Period filter
+        if (!isDateInPeriod(r.date, period)) {
+          return false;
         }
 
         // Search filter
@@ -9383,10 +9529,44 @@ Role: ${lastProvisionedCreds.role}`;
         return true;
       });
 
-      // Calculate KPIs on filtered records
-      const totalHrs = filtered.reduce((acc, r) => acc + (parseFloat(r.total_hours) || 0), 0);
-      const regHrs = filtered.reduce((acc, r) => acc + (parseFloat(r.regular_hours) || 0), 0);
-      const otHrs = filtered.reduce((acc, r) => acc + (parseFloat(r.overtime_hours) || 0), 0);
+      // Active live on-clock row (if current user or staff member is clocked in)
+      const isPeriodMatchingActive = (period === 'current' || period === 'today' || period === 'week' || period === 'all');
+      const isStaffMatchingActive = (!isAdmin || staffFilter === 'all' || staffFilter.toLowerCase() === effEmail);
+      let activeShiftRow = '';
+      let inProgHrs = 0;
+
+      if (workforcePunchState.isClockedIn && isPeriodMatchingActive && isStaffMatchingActive) {
+        const curSec = getWorkforceCurrentElapsedSeconds();
+        inProgHrs = +(curSec / 3600).toFixed(2);
+        const clockInStr = workforcePunchState.clockInFormatted || '08:30 AM';
+        const breakMins = workforcePunchState.breakMinutes || (workforcePunchState.accumulatedBreakSeconds ? Math.round(workforcePunchState.accumulatedBreakSeconds / 60) : 0);
+
+        activeShiftRow = `
+          <tr style="background: rgba(16, 185, 129, 0.08); border-left: 3px solid #10b981;">
+            <td style="font-weight: 800; color: #34d399; font-size: 0.82rem;">Today (Now)</td>
+            <td>
+              <div style="font-weight: 800; color: #fff;">${escapeHtml(getEffectiveUserDisplayName())} <span style="font-size: 0.7rem; color: #34d399; font-weight: 800;">(🟢 Live On-Clock)</span></div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(effEmail)}</div>
+            </td>
+            <td>${getStaffRoleBadgeHtml(getEffectiveRole())}</td>
+            <td style="font-family: monospace; font-size: 0.8rem; color: #34d399; font-weight: 800;">${escapeHtml(clockInStr)}</td>
+            <td style="font-family: monospace; font-size: 0.8rem; color: #fbbf24; font-weight: 700;"><em>In Progress...</em></td>
+            <td style="font-size: 0.8rem; color: #94a3b8;">${breakMins}m ${workforcePunchState.onBreak ? '<span style="color:#fbbf24;">(☕ break)</span>' : ''}</td>
+            <td style="font-family: monospace; font-weight: 700; color: #34d399;">${Math.min(8.0, inProgHrs).toFixed(1)}h</td>
+            <td style="font-family: monospace; font-weight: 700; color: ${inProgHrs > 8 ? '#fbbf24' : 'var(--text-muted)'};">${Math.max(0, inProgHrs - 8.0).toFixed(1)}h</td>
+            <td style="font-family: monospace; font-weight: 800; color: #38bdf8;">${inProgHrs.toFixed(1)}h</td>
+            <td style="font-size: 0.8rem; color: #cbd5e1;">Live Customer Support Desk &amp; Merchant Queue</td>
+            <td>
+              <span class="badge-pill badge-resolved" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">🟢 ACTIVE SHIFT</span>
+            </td>
+          </tr>
+        `;
+      }
+
+      // Calculate KPIs on filtered records (+ in-progress active hours)
+      const totalHrs = filtered.reduce((acc, r) => acc + (parseFloat(r.total_hours) || 0), inProgHrs);
+      const regHrs = filtered.reduce((acc, r) => acc + (parseFloat(r.regular_hours) || 0), Math.min(8.0, inProgHrs));
+      const otHrs = filtered.reduce((acc, r) => acc + (parseFloat(r.overtime_hours) || 0), Math.max(0, inProgHrs - 8.0));
 
       const kpiTotalEl = document.getElementById('timecard-kpi-total-hours');
       const kpiRegEl = document.getElementById('timecard-kpi-reg-hours');
@@ -9398,18 +9578,22 @@ Role: ${lastProvisionedCreds.role}`;
       if (kpiRegEl) kpiRegEl.textContent = regHrs.toFixed(1) + ' hrs';
       if (kpiOtEl) kpiOtEl.textContent = otHrs.toFixed(1) + ' hrs';
       if (kpiPeriodEl) {
-        kpiPeriodEl.textContent = period === 'prev' ? 'Sep 16 – Sep 30' : (period === 'week' ? 'Past 7 Days' : 'Oct 01 – Oct 15');
+        if (period === 'current') kpiPeriodEl.textContent = cycle.curLabel;
+        else if (period === 'prev') kpiPeriodEl.textContent = cycle.prevLabel;
+        else if (period === 'today') kpiPeriodEl.textContent = `Today (${cycle.todayStr})`;
+        else if (period === 'week') kpiPeriodEl.textContent = 'Past 7 Days';
+        else kpiPeriodEl.textContent = 'All Available Records';
       }
       if (kpiStaffCountEl) {
-        kpiStaffCountEl.textContent = `${filtered.length} Recorded Shifts`;
+        kpiStaffCountEl.textContent = `${filtered.length + (activeShiftRow ? 1 : 0)} Recorded Shifts`;
       }
 
-      if (filtered.length === 0) {
+      if (filtered.length === 0 && !activeShiftRow) {
         tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; color: var(--text-muted); padding: 24px;">No timesheet logs found matching the selected period and filters.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = filtered.map(r => {
+      const rowsHtml = filtered.map(r => {
         const isSelf = (r.staff_email || '').toLowerCase() === effEmail;
         const statusBadge = r.status === 'verified'
           ? `<span class="badge-pill badge-resolved">✅ VERIFIED</span>`
@@ -9445,13 +9629,40 @@ Role: ${lastProvisionedCreds.role}`;
           </tr>
         `;
       }).join('');
+
+      tbody.innerHTML = activeShiftRow + rowsHtml;
     }
 
     function approveTimecardRow(id) {
       const target = timecardReportLogs.find(l => l.id === id);
       if (target) {
         target.status = 'verified';
-        localStorage.setItem('flexitap_timecard_report_logs', JSON.stringify(timecardReportLogs));
+        try {
+          localStorage.setItem('flexitap_timecard_report_logs', JSON.stringify(timecardReportLogs));
+        } catch (_) {}
+
+        // Persist approval to Supabase Cloud
+        try {
+          if (supabaseClient) {
+            supabaseClient.from('site_analytics').insert([{
+              event_type: 'timecard_log',
+              event_name: 'timecard_approved',
+              page_path: target.staff_email,
+              session_id: activeDevUser?.id || null,
+              metadata: { ...target, status: 'verified', approved_at: new Date().toISOString() }
+            }]).then(() => {});
+          }
+        } catch (err) {}
+
+        // Broadcast verification to colleagues
+        if (teamsRealtimeChannel) {
+          teamsRealtimeChannel.send({
+            type: 'broadcast',
+            event: 'WORKFORCE_PUNCH_UPDATE',
+            payload: { action: 'timecard_approved', id }
+          });
+        }
+
         renderTimecardReportTable();
       }
     }
@@ -9468,10 +9679,7 @@ Role: ${lastProvisionedCreds.role}`;
         } else if (staffFilter !== 'all') {
           if ((r.staff_email || '').toLowerCase() !== staffFilter.toLowerCase()) return false;
         }
-        if (period === 'current' && r.date && (r.date < '2026-10-01' || r.date > '2026-10-15')) return false;
-        if (period === 'prev' && r.date && (r.date < '2026-09-16' || r.date > '2026-09-30')) return false;
-        if (period === 'week' && r.date && r.date < '2026-10-05') return false;
-        return true;
+        return isDateInPeriod(r.date, period);
       });
 
       let csv = 'Date,Staff Name,Email,Role,Clock In,Clock Out,Break (Min),Regular Hours,Overtime Hours,Total Hours,Assignment,Status\n';
@@ -9491,6 +9699,114 @@ Role: ${lastProvisionedCreds.role}`;
 
     function printTimecardReport() {
       window.print();
+    }
+
+    // Modal: Manual Shift Logging & Adjustments
+    function openManualShiftModal() {
+      populateStaffSelectors();
+      const effEmail = getEffectiveUserEmail();
+      const isAdmin = isUserAdmin();
+      const select = document.getElementById('manual-shift-staff-select');
+      if (select) {
+        if (!isAdmin) {
+          select.value = effEmail;
+          select.disabled = true;
+        } else {
+          select.disabled = false;
+        }
+      }
+      document.getElementById('manual-shift-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('manual-shift-clock-in').value = '08:30';
+      document.getElementById('manual-shift-clock-out').value = '17:00';
+      document.getElementById('manual-shift-break').value = '30';
+      document.getElementById('manual-shift-assignment').value = 'Customer Support Desk & Merchant Queue';
+      document.getElementById('manual-shift-reason').value = '';
+      document.getElementById('crm-modal-shift-manual').classList.add('open');
+    }
+
+    function closeManualShiftModal() {
+      document.getElementById('crm-modal-shift-manual').classList.remove('open');
+    }
+
+    function handleManualShiftSubmit(e) {
+      e.preventDefault();
+      const staffEmail = document.getElementById('manual-shift-staff-select').value;
+      const staff = teamStaffMembers.find(m => m.email === staffEmail);
+      const staffName = staff ? staff.full_name : getEffectiveUserDisplayName();
+      const staffRole = staff ? staff.role : getEffectiveRole();
+      const date = document.getElementById('manual-shift-date').value;
+      const clockInVal = document.getElementById('manual-shift-clock-in').value;
+      const clockOutVal = document.getElementById('manual-shift-clock-out').value;
+      const breakMins = parseInt(document.getElementById('manual-shift-break').value, 10) || 0;
+      const assignment = document.getElementById('manual-shift-assignment').value.trim();
+      const reason = document.getElementById('manual-shift-reason').value.trim();
+
+      // Calculate shift hours
+      const [inH, inM] = clockInVal.split(':').map(Number);
+      const [outH, outM] = clockOutVal.split(':').map(Number);
+      let totalMins = (outH * 60 + outM) - (inH * 60 + inM) - breakMins;
+      if (totalMins < 0) totalMins += 24 * 60;
+      const totalHrs = +(Math.max(0.1, totalMins / 60)).toFixed(2);
+      const regHrs = Math.min(8.0, totalHrs);
+      const otHrs = +(Math.max(0, totalHrs - 8.0)).toFixed(2);
+
+      function to12h(timeStr) {
+        const [h, m] = timeStr.split(':').map(Number);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        return `${String(h12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${ampm}`;
+      }
+
+      const dateObj = new Date(date + 'T12:00:00Z');
+      const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+      const newEntry = {
+        id: 'tc-man-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+        staff_name: staffName,
+        staff_email: staffEmail,
+        role: staffRole,
+        date: date,
+        date_formatted: formattedDate,
+        clock_in: to12h(clockInVal),
+        clock_out: to12h(clockOutVal),
+        break_minutes: breakMins,
+        regular_hours: regHrs,
+        overtime_hours: otHrs,
+        total_hours: totalHrs,
+        assignment: assignment + (reason ? ` [Adj: ${reason}]` : ' [Manual Adjustment]'),
+        status: isUserAdmin() ? 'verified' : 'pending'
+      };
+
+      timecardReportLogs.unshift(newEntry);
+      try {
+        localStorage.setItem('flexitap_timecard_report_logs', JSON.stringify(timecardReportLogs));
+      } catch (err) {}
+
+      // Persist to Supabase
+      try {
+        if (supabaseClient) {
+          supabaseClient.from('site_analytics').insert([{
+            event_type: 'timecard_log',
+            event_name: 'manual_shift_logged',
+            page_path: newEntry.staff_email,
+            session_id: activeDevUser?.id || null,
+            metadata: newEntry
+          }]).then(() => {});
+        }
+      } catch (err) {}
+
+      // Broadcast to colleagues
+      if (teamsRealtimeChannel) {
+        teamsRealtimeChannel.send({
+          type: 'broadcast',
+          event: 'WORKFORCE_PUNCH_UPDATE',
+          payload: { action: 'clock_out', email: staffEmail, name: staffName, shift: newEntry }
+        });
+      }
+
+      closeManualShiftModal();
+      renderTimecardReportTable();
+      alert('Shift successfully logged and synchronized!');
     }
 
     // SUB-TAB 3: PTO REQUESTS
@@ -9731,12 +10047,11 @@ Role: ${lastProvisionedCreds.role}`;
     function populateStaffSelectors() {
       const ptoSelect = document.getElementById('pto-staff-select');
       const shiftSelect = document.getElementById('shift-staff-select');
-      if (ptoSelect) {
-        ptoSelect.innerHTML = teamStaffMembers.map(m => `<option value="${m.email}">${escapeHtml(m.full_name)} (${m.role_title || m.role})</option>`).join('');
-      }
-      if (shiftSelect) {
-        shiftSelect.innerHTML = teamStaffMembers.map(m => `<option value="${m.email}">${escapeHtml(m.full_name)} (${m.role_title || m.role})</option>`).join('');
-      }
+      const manualSelect = document.getElementById('manual-shift-staff-select');
+      const options = teamStaffMembers.map(m => `<option value="${m.email}">${escapeHtml(m.full_name)} (${m.role_title || m.role})</option>`).join('');
+      if (ptoSelect) ptoSelect.innerHTML = options;
+      if (shiftSelect) shiftSelect.innerHTML = options;
+      if (manualSelect) manualSelect.innerHTML = options;
     }
 
     let activeWorkforceSubTab = 'punch';
@@ -9763,11 +10078,16 @@ Role: ${lastProvisionedCreds.role}`;
         await loadTeamData();
       }
       initWorkforcePunch();
+      syncWorkforceCloudData();
       renderAttendanceTable();
       renderTimecardReportTable();
       renderPtoTable();
       renderScheduleTable();
       updatePtoBadge();
+
+      if (!window.__workforceSyncInterval) {
+        window.__workforceSyncInterval = setInterval(syncWorkforceCloudData, 5000);
+      }
     }
 
     function updatePtoBadge() {
@@ -10441,6 +10761,10 @@ Role: ${lastProvisionedCreds.role}`;
           handleIncomingRealtimeMessage(payload.payload);
         });
 
+        teamsRealtimeChannel.on('broadcast', { event: 'WORKFORCE_PUNCH_UPDATE' }, payload => {
+          handleIncomingWorkforceRealtime(payload.payload);
+        });
+
         teamsRealtimeChannel.subscribe(status => {
           const badge = document.getElementById('teams-realtime-status-badge');
           if (badge) {
@@ -10457,6 +10781,105 @@ Role: ${lastProvisionedCreds.role}`;
         });
       } catch (err) {
         console.warn('Realtime channel init warning:', err);
+      }
+    }
+
+    function handleIncomingWorkforceRealtime(payload) {
+      if (!payload || !payload.action) return;
+      const myEmail = getEffectiveUserEmail().toLowerCase();
+      const payloadEmail = (payload.email || '').toLowerCase();
+
+      if (payload.action === 'clock_in') {
+        const staff = teamStaffMembers.find(m => (m.email || '').toLowerCase() === payloadEmail);
+        if (staff) {
+          staff.clock_status = 'clocked_in';
+          staff.clock_in_time = payload.clockInFormatted || 'Today 08:30 AM';
+        }
+        renderAttendanceTable();
+        if (typeof renderDashboardColleagues === 'function') renderDashboardColleagues();
+      } else if (payload.action === 'break_toggle') {
+        const staff = teamStaffMembers.find(m => (m.email || '').toLowerCase() === payloadEmail);
+        if (staff) {
+          staff.on_break = !!payload.onBreak;
+        }
+        renderAttendanceTable();
+      } else if (payload.action === 'clock_out') {
+        const staff = teamStaffMembers.find(m => (m.email || '').toLowerCase() === payloadEmail);
+        if (staff) {
+          staff.clock_status = 'clocked_out';
+          staff.on_break = false;
+        }
+        if (payload.shift && !timecardReportLogs.some(t => t.id === payload.shift.id)) {
+          timecardReportLogs.unshift(payload.shift);
+          try {
+            localStorage.setItem('flexitap_timecard_report_logs', JSON.stringify(timecardReportLogs));
+          } catch (_) {}
+        }
+        renderAttendanceTable();
+        renderTimecardReportTable();
+        if (typeof renderDashboardColleagues === 'function') renderDashboardColleagues();
+      } else if (payload.action === 'timecard_approved') {
+        const target = timecardReportLogs.find(l => l.id === payload.id);
+        if (target) {
+          target.status = 'verified';
+          try {
+            localStorage.setItem('flexitap_timecard_report_logs', JSON.stringify(timecardReportLogs));
+          } catch (_) {}
+          renderTimecardReportTable();
+        }
+      }
+    }
+
+    async function syncWorkforceCloudData() {
+      if (!supabaseClient) return;
+      try {
+        const { data, error } = await supabaseClient
+          .from('site_analytics')
+          .select('*')
+          .eq('event_type', 'timecard_log')
+          .order('created_at', { ascending: false })
+          .limit(300);
+
+        if (data && data.length > 0) {
+          let hasNew = false;
+          data.forEach(row => {
+            const shift = row.metadata || {};
+            const id = shift.id || row.id;
+            const existing = timecardReportLogs.find(t => t.id === id);
+            if (!existing) {
+              timecardReportLogs.push({
+                id: id,
+                staff_name: shift.staff_name || 'Staff Member',
+                staff_email: shift.staff_email || '',
+                role: shift.role || 'support',
+                date: shift.date || (row.created_at ? row.created_at.split('T')[0] : '2026-10-20'),
+                date_formatted: shift.date_formatted || new Date(row.created_at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+                clock_in: shift.clock_in || '08:30 AM',
+                clock_out: shift.clock_out || '17:00 PM',
+                break_minutes: shift.break_minutes || 0,
+                regular_hours: shift.regular_hours !== undefined ? shift.regular_hours : 8.0,
+                overtime_hours: shift.overtime_hours !== undefined ? shift.overtime_hours : 0.0,
+                total_hours: shift.total_hours !== undefined ? shift.total_hours : 8.0,
+                assignment: shift.assignment || 'Customer Support Desk',
+                status: shift.status || 'pending'
+              });
+              hasNew = true;
+            } else if (shift.status === 'verified' && existing.status !== 'verified') {
+              existing.status = 'verified';
+              hasNew = true;
+            }
+          });
+
+          if (hasNew) {
+            timecardReportLogs.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+            try {
+              localStorage.setItem('flexitap_timecard_report_logs', JSON.stringify(timecardReportLogs));
+            } catch (_) {}
+            renderTimecardReportTable();
+          }
+        }
+      } catch (err) {
+        console.warn('Workforce cloud sync notice:', err);
       }
     }
 
@@ -12495,6 +12918,10 @@ Role: ${lastProvisionedCreds.role}`;
     window.addEventListener('DOMContentLoaded', () => {
       checkDevSession();
       initWorkforcePunch();
+      syncWorkforceCloudData();
+      if (!window.__workforceSyncInterval) {
+        window.__workforceSyncInterval = setInterval(syncWorkforceCloudData, 5000);
+      }
       if (typeof updateSidebarNavVisibility === 'function') updateSidebarNavVisibility();
       initSlaDashboard();
       initTeamChat();
@@ -13138,6 +13565,67 @@ Role: ${lastProvisionedCreds.role}`;
         <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--card-border); padding-top: 14px;">
           <button type="submit" class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary); padding: 9px 18px;">
             Assign Shift
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Manual Shift Adjustment / Missed Punch -->
+  <div id="crm-modal-shift-manual" class="crm-modal-backdrop">
+    <div class="crm-modal-box" style="max-width: 520px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 16px;">
+        <div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0;">Log / Adjust Shift Timecard</h3>
+          <p style="font-size: 0.74rem; color: var(--text-muted); margin: 3px 0 0 0;">Record a completed or missed punch with audit justification</p>
+        </div>
+        <button onclick="closeManualShiftModal()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <form id="form-shift-manual" onsubmit="handleManualShiftSubmit(event)">
+        <div class="crm-form-group" style="margin-bottom: 14px;">
+          <label>Employee / Staff Member *</label>
+          <select id="manual-shift-staff-select" class="crm-select" required>
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <div class="crm-form-grid" style="margin-bottom: 14px;">
+          <div class="crm-form-group">
+            <label>Shift Date *</label>
+            <input type="date" id="manual-shift-date" class="crm-input" required />
+          </div>
+          <div class="crm-form-group">
+            <label>Break Deducted (Minutes) *</label>
+            <input type="number" id="manual-shift-break" class="crm-input" min="0" max="180" value="30" required />
+          </div>
+        </div>
+
+        <div class="crm-form-grid" style="margin-bottom: 14px;">
+          <div class="crm-form-group">
+            <label>Clock-In Time *</label>
+            <input type="time" id="manual-shift-clock-in" class="crm-input" value="08:30" required />
+          </div>
+          <div class="crm-form-group">
+            <label>Clock-Out Time *</label>
+            <input type="time" id="manual-shift-clock-out" class="crm-input" value="17:00" required />
+          </div>
+        </div>
+
+        <div class="crm-form-group" style="margin-bottom: 14px;">
+          <label>Shift Assignment / Station *</label>
+          <input type="text" id="manual-shift-assignment" class="crm-input" value="Customer Support Desk & Merchant Queue" required />
+        </div>
+
+        <div class="crm-form-group" style="margin-bottom: 18px;">
+          <label>Audit Reason / Justification</label>
+          <input type="text" id="manual-shift-reason" class="crm-input" placeholder="e.g. System offline during clock-out, manual correction approved by manager" />
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--card-border); padding-top: 14px;">
+          <button type="button" onclick="closeManualShiftModal()" class="action-btn" style="padding: 9px 16px;">Cancel</button>
+          <button type="submit" class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary); padding: 9px 18px; font-weight: 700;">
+            💾 Save Shift Log
           </button>
         </div>
       </form>
