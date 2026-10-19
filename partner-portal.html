@@ -194,7 +194,7 @@
       <form id="form-register" style="display: none;" onsubmit="handlePartnerRegister(event)">
         <div class="form-group">
           <label>Full Name / Business DBA *</label>
-          <input type="text" id="reg-name" required class="form-control" placeholder="e.g. Jeffrey Datul">
+          <input type="text" id="reg-name" required class="form-control" placeholder="e.g. Juan Dela Cruz">
         </div>
         <div class="form-group">
           <label>Email Address *</label>
@@ -209,7 +209,7 @@
           <input type="tel" id="reg-phone" required class="form-control" placeholder="09171234567 or +639...">
         </div>
         <div class="form-group">
-          <label>Custom Referral Code * (e.g. JEPOY or MANILABREW)</label>
+          <label>Custom Referral Code * (e.g. JDC or MANILABREW)</label>
           <div style="display: flex; align-items: center; background: #060a12; border: 1px solid var(--border-card); border-radius: 9px; padding-left: 12px;">
             <span class="mono" style="color: var(--text-muted); font-size: 13px;">?ref=</span>
             <input type="text" id="reg-code" required class="form-control mono" style="border: none; background: transparent; text-transform: uppercase; font-weight: 700; color: #38bdf8;" placeholder="CODE">
@@ -938,12 +938,12 @@
       if (!partner) {
         // Default session object
         partner = {
-          affiliate_code: 'JEPOY',
-          full_name: 'Jeffrey Datul',
+          affiliate_code: 'JDC',
+          full_name: 'Juan Dela Cruz',
           email: email,
           payout_type: 'gcash',
-          payout_account_name: 'Jeffrey Datul',
-          payout_account_number: '09920562526',
+          payout_account_name: 'Juan Dela Cruz',
+          payout_account_number: '09171234567',
           status: 'active'
         };
       }
