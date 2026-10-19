@@ -5039,13 +5039,20 @@
     }
 
     async function deleteCrmAsset(assetId) {
-      if (!confirm('Are you sure you want to remove this hardware asset?')) return;
+      if (!confirm('Are you sure you want to disconnect/deactivate this hardware device slot? This will release 1 device license for the store.')) return;
       if (crmAssetsMap[currentCrmAccountId]) {
         crmAssetsMap[currentCrmAccountId] = crmAssetsMap[currentCrmAccountId].filter(x => x.id !== assetId);
       }
       try {
+        try {
+          await supabaseClient.rpc('deactivate_store_device', { p_device_id: assetId });
+        } catch (_) {
+          await supabaseClient.from('devices').update({ is_active: false }).eq('id', assetId);
+        }
         await supabaseClient.from('merchant_crm_assets').delete().eq('id', assetId);
-      } catch (e) {}
+      } catch (e) {
+        console.error('Error deactivating device slot:', e);
+      }
       renderCrmAssets(currentCrmAccountId);
       renderSelectedCrmAccount();
     }

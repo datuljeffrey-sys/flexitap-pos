@@ -525,6 +525,19 @@
         termsCheckbox.addEventListener('change', syncModalState);
       }
       syncModalState();
+
+      // Handle in-app upgrade redirects from POS
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('action') === 'upgrade') {
+        const tier = (urlParams.get('tier') || 'plus').toLowerCase();
+        const email = urlParams.get('email') || '';
+        const priceId = (tier === 'pro') ? 'pri_01m1pb6ba15axyr7acv0hswynd' : 'pri_01m1pb8szpcf4vapm28yfzw9aq';
+        openSignupModalWithPlan(priceId);
+        if (email) {
+          const emailInput = document.getElementById('signup-email');
+          if (emailInput) emailInput.value = email;
+        }
+      }
     });
 
     function syncModalState() {
@@ -634,15 +647,20 @@
 
         if (profile && profile.payment_status === 'paid') {
           closeModal('signup-modal');
-          window.location.href = '/dashboard';
+          window.location.href = 'portal.html';
           return;
         }
+
+        // New accounts start on free tier until payment is confirmed via Paddle
+        const activeTierOnSignup = (tierName === 'free') ? 'free' : 'free';
+        const pendingTierOnSignup = (tierName === 'free') ? null : tierName;
 
         const { error: profileError } = await supabaseClient.from('profiles').upsert([
           { 
             id: userId, 
             store_name: businessName, 
-            subscription_tier: tierName, 
+            subscription_tier: activeTierOnSignup, 
+            pending_tier: pendingTierOnSignup,
             payment_status: paymentStatus, 
             role: 'owner', 
             onboarding_completed: false 
@@ -731,9 +749,29 @@
           business_name: businessName,
           supabase_user_id: userId,
           customer_email: email,
-          affiliate_code: activeAffCode
+          affiliate_code: activeAffCode,
+          target_tier: tierName
         },
-        successCallback: function(checkoutData) {
+        successCallback: async function(checkoutData) {
+          try {
+            // Activate the paid tier immediately upon successful checkout
+            await supabaseClient.from('profiles').update({
+              subscription_tier: tierName,
+              pending_tier: null,
+              payment_status: 'paid',
+              paddle_transaction_id: checkoutData?.transaction_id || checkoutData?.id || null
+            }).eq('id', userId);
+
+            // Also synchronize store record if one exists
+            await supabaseClient.from('stores').update({
+              subscription_tier: tierName,
+              payment_status: 'paid',
+              max_devices: (tierName === 'pro' ? 9999 : 10)
+            }).or(`owner_id.eq.${userId},user_id.eq.${userId}`);
+          } catch (activateErr) {
+            console.warn('Profile activation update notice:', activateErr);
+          }
+
           dispatchSignupWelcomeEmail({
             businessName: businessName,
             email: email,
@@ -1026,15 +1064,17 @@
             <ul class="pricing-list">
               <li><span class="check-sign">✓</span> <strong>1 Active Terminal Device</strong></li>
               <li><span class="check-sign">✓</span> <strong>1 Cashier / User Account</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Up to 300 Orders &amp; Bookings / mo</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Customer Loyalty &amp; Points Included</strong></li>
               <li><span class="check-sign">✓</span> <strong>Complete Offline Functionality</strong></li>
-              <li><span class="check-sign">✓</span> <strong>Local Device Sales & Daily Reports</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Local Device Sales &amp; Daily Reports</strong></li>
               <li><span class="check-sign">✓</span> Manual Backup (Google Drive or Local Storage)</li>
               <li><span class="check-sign">✓</span> Support &amp; Diagnostics PWA Access</li>
-              <li><span class="check-sign">✓</span> Community & FAQ Support</li>
+              <li><span class="check-sign">✓</span> Community &amp; FAQ Support</li>
               <li class="dimmed"><span class="dash-sign">✕</span> Cloud Multi-Device Sync</li>
               <li class="dimmed"><span class="dash-sign">✕</span> Cloud Merchant Back Office</li>
-              <li class="dimmed"><span class="dash-sign">✕</span> Kitchen Display System (KDS)</li>
-              <li class="dimmed"><span class="dash-sign">✕</span> Customer Loyalty Program</li>
+              <li class="dimmed"><span class="dash-sign">✕</span> Kitchen Display System (KDS, CDS, OSD)</li>
+              <li class="dimmed"><span class="dash-sign">✕</span> Visual Dining Floor Plan Editor</li>
             </ul>
           </div>
 
@@ -1058,9 +1098,11 @@
             </div>
 
             <ul class="pricing-list">
-              <li><span class="check-sign">✓</span> <strong>Up to 5 Devices per Store</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Up to 10 Devices per Store</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Unlimited Orders &amp; Bookings</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Visual Dining Floor Plan Editor</strong></li>
               <li><span class="check-sign">✓</span> <strong>Up to 5 Users</strong></li>
-              <li><span class="check-sign">✓</span> <strong>Local Device & Web Portal Analytics</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Local Device &amp; Web Portal Analytics</strong></li>
               <li><span class="check-sign">✓</span> <strong>Automated Cloud Backup Included</strong></li>
               <li><span class="check-sign">✓</span> <strong>Live Chat Technical Support</strong></li>
               <li><span class="check-sign">✓</span> <strong>KDS, CDS, OSD &amp; Digital Menu Boards</strong></li>
@@ -1091,10 +1133,11 @@
             <ul class="pricing-list">
               <li><span class="check-sign">✓</span> <strong>Unlimited Devices (9,999 Max)</strong></li>
               <li><span class="check-sign">✓</span> <strong>Unlimited Users (9,999 Max)</strong></li>
+              <li><span class="check-sign">✓</span> <strong>Table Mode (Table-Side / Guest Ordering)</strong></li>
               <li><span class="check-sign">✓</span> <strong>Local Device &amp; Web Analytics with AI Insights</strong></li>
               <li><span class="check-sign">✓</span> <strong>Automated Cloud Backup Included</strong></li>
               <li><span class="check-sign">✓</span> <strong>Phone, Chat &amp; Remote Desktop Access</strong></li>
-              <li><span class="check-sign">✓</span> Table Mode &amp; Visual Floor Plans</li>
+              <li><span class="check-sign">✓</span> Visual Dining Floor Plan Layouts</li>
               <li><span class="check-sign">✓</span> Advanced &amp; Recipe Inventory</li>
               <li><span class="check-sign">✓</span> AI Copilot &amp; Advanced Operations</li>
             </ul>
@@ -1161,13 +1204,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><strong>Max Devices</strong></td><td class="col-center"><strong>1</strong></td><td class="col-center" style="color: #60a5fa;"><strong>5</strong></td><td class="col-center" style="color: #a855f7;"><strong>Unlimited (9,999)</strong></td></tr>
+            <tr><td><strong>Max Devices</strong></td><td class="col-center"><strong>1</strong></td><td class="col-center" style="color: #60a5fa;"><strong>10</strong></td><td class="col-center" style="color: #a855f7;"><strong>Unlimited (9,999)</strong></td></tr>
+            <tr><td><strong>Monthly Order &amp; Booking Volume</strong></td><td class="col-center"><strong>Up to 300 / mo</strong></td><td class="col-center" style="color: #60a5fa;"><strong>Unlimited</strong></td><td class="col-center" style="color: #a855f7;"><strong>Unlimited</strong></td></tr>
             <tr><td><strong>Max Users</strong></td><td class="col-center"><strong>1</strong></td><td class="col-center" style="color: #60a5fa;"><strong>5</strong></td><td class="col-center" style="color: #a855f7;"><strong>Unlimited (9,999)</strong></td></tr>
             <tr><td>Local Device Sales Reporting</td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
             <tr><td>Web / Merchant Portal Back Office</td><td class="col-center"><span class="dash-icon">✕ Plus &amp; Pro Only</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
             <tr><td>Automated Cloud Backup</td><td class="col-center"><span class="dash-icon">✕ Manual / Google Drive</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
             <tr><td>Technical Support Channels</td><td class="col-center" style="font-size: 12px; color: var(--text-muted);">Community &amp; FAQ</td><td class="col-center" style="color: #60a5fa;"><strong>Chat Support Only</strong></td><td class="col-center" style="color: #a855f7;"><strong>Phone, Chat &amp; Remote Access</strong></td></tr>
-            <tr><td>Customer Loyalty Program</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>Customer Loyalty Program</td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
+            <tr><td>Visual Dining Floor Plan Editor</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td><td class="col-center"><span class="check-icon">✓ Included</span></td></tr>
             <tr><td>HR Features</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
             <tr><td>KDS (Kitchen Display System)</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
             <tr><td>CDS (Customer Display Screen)</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
@@ -1177,7 +1222,7 @@
             <tr><td>AI Copilot</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
             <tr><td>Advanced Inventory</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
             <tr><td>Recipe Inventory</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
-            <tr><td>Table Mode</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
+            <tr><td>Table Mode (Table-Side Ordering)</td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="dash-icon">✕</span></td><td class="col-center"><span class="check-icon">✓</span></td></tr>
           </tbody>
         </table>
       </div>
