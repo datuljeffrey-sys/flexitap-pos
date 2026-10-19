@@ -44,9 +44,10 @@ CREATE POLICY "Merchants can read own store devices"
 ON public.devices FOR SELECT
 TO authenticated
 USING (
-  user_id = auth.uid()
+  user_id::text = auth.uid()::text
   OR store_id IN (
-    SELECT id::text FROM public.stores WHERE owner_id = auth.uid() OR user_id = auth.uid()
+    SELECT id::text FROM public.stores 
+    WHERE (owner_id::text = auth.uid()::text OR user_id::text = auth.uid()::text)
   )
 );
 
@@ -56,15 +57,17 @@ CREATE POLICY "Merchants can upsert own store devices"
 ON public.devices FOR ALL
 TO authenticated
 USING (
-  user_id = auth.uid()
+  user_id::text = auth.uid()::text
   OR store_id IN (
-    SELECT id::text FROM public.stores WHERE owner_id = auth.uid() OR user_id = auth.uid()
+    SELECT id::text FROM public.stores 
+    WHERE (owner_id::text = auth.uid()::text OR user_id::text = auth.uid()::text)
   )
 )
 WITH CHECK (
-  user_id = auth.uid()
+  user_id::text = auth.uid()::text
   OR store_id IN (
-    SELECT id::text FROM public.stores WHERE owner_id = auth.uid() OR user_id = auth.uid()
+    SELECT id::text FROM public.stores 
+    WHERE (owner_id::text = auth.uid()::text OR user_id::text = auth.uid()::text)
   )
 );
 
@@ -87,9 +90,10 @@ BEGIN
   FROM public.devices
   WHERE id = p_device_id
     AND (
-      user_id = v_user_id
+      user_id::text = v_user_id::text
       OR store_id IN (
-        SELECT id::text FROM public.stores WHERE owner_id = v_user_id OR user_id = v_user_id
+        SELECT id::text FROM public.stores 
+        WHERE (owner_id::text = v_user_id::text OR user_id::text = v_user_id::text)
       )
     );
 
@@ -129,7 +133,7 @@ BEGIN
   END IF;
 
   -- Check if caller is dev or admin
-  SELECT role INTO v_caller_role FROM public.profiles WHERE id = v_caller_id;
+  SELECT role INTO v_caller_role FROM public.profiles WHERE id::text = v_caller_id::text;
   IF v_caller_role NOT IN ('dev', 'developer', 'admin', 'super_admin') THEN
     RETURN jsonb_build_object('success', false, 'error', 'Forbidden: Admin access required');
   END IF;
@@ -151,14 +155,14 @@ BEGIN
       payment_status = p_payment_status,
       subscription_valid_until = p_valid_until,
       max_devices_override = p_max_devices_override
-  WHERE id = p_target_user_id;
+  WHERE id::text = p_target_user_id::text;
 
   -- Sync stores table
   UPDATE public.stores
   SET subscription_tier = p_tier,
       payment_status = p_payment_status,
       max_devices = v_max_devices
-  WHERE owner_id = p_target_user_id OR user_id = p_target_user_id;
+  WHERE owner_id::text = p_target_user_id::text OR user_id::text = p_target_user_id::text;
 
   RETURN jsonb_build_object(
     'success', true,
