@@ -9053,13 +9053,36 @@ Role: ${lastProvisionedCreds.role}`;
     }
 
     // Workforce Punch Clock
+    function getWorkforceCurrentElapsedSeconds() {
+      if (!workforcePunchState || !workforcePunchState.isClockedIn) {
+        return 0;
+      }
+      const clockInMs = workforcePunchState.clockInTimestamp || (workforcePunchState.clockInTime ? new Date(workforcePunchState.clockInTime).getTime() : Date.now());
+      const now = Date.now();
+      const totalElapsedMs = Math.max(0, now - clockInMs);
+      
+      let breakMs = (workforcePunchState.accumulatedBreakSeconds || 0) * 1000;
+      if (workforcePunchState.onBreak && workforcePunchState.breakStartTimestamp) {
+        breakMs += Math.max(0, now - workforcePunchState.breakStartTimestamp);
+      }
+      return Math.max(0, Math.floor((totalElapsedMs - breakMs) / 1000));
+    }
+
     function initWorkforcePunch() {
       try {
         const saved = localStorage.getItem('flexitap_punch_state');
         if (saved) {
-          workforcePunchState = JSON.parse(saved);
+          const parsed = JSON.parse(saved);
+          if (parsed.isClockedIn && !parsed.clockInTimestamp && parsed.clockInTime) {
+            parsed.clockInTimestamp = new Date(parsed.clockInTime).getTime();
+          }
+          workforcePunchState = parsed;
         }
       } catch (e) {}
+
+      if (workforcePunchState.isClockedIn) {
+        workforcePunchState.elapsedSeconds = getWorkforceCurrentElapsedSeconds();
+      }
 
       updatePunchWidgetUI();
 
@@ -9076,6 +9099,8 @@ Role: ${lastProvisionedCreds.role}`;
       const breakBtn = document.getElementById('btn-punch-break');
 
       if (!indicator || !timerEl) return;
+
+      const currentElapsed = getWorkforceCurrentElapsedSeconds();
 
       if (workforcePunchState.isClockedIn) {
         if (workforcePunchState.onBreak) {
@@ -9104,8 +9129,9 @@ Role: ${lastProvisionedCreds.role}`;
         breakBtn.textContent = '☕ Take Break';
       }
 
-      if (hoursEl) hoursEl.textContent = (workforcePunchState.todayHours || 0.0).toFixed(1) + ' hrs';
-      timerEl.textContent = formatElapsedSeconds(workforcePunchState.elapsedSeconds);
+      const totalHoursToday = (workforcePunchState.todayHours || 0.0) + (workforcePunchState.isClockedIn ? +(currentElapsed / 3600).toFixed(2) : 0);
+      if (hoursEl) hoursEl.textContent = totalHoursToday.toFixed(1) + ' hrs';
+      timerEl.textContent = formatElapsedSeconds(currentElapsed);
 
       if (typeof updateDashboardPunchClockUI === 'function') {
         updateDashboardPunchClockUI();
@@ -9114,10 +9140,13 @@ Role: ${lastProvisionedCreds.role}`;
 
     function handlePunchToggle() {
       if (workforcePunchState.isClockedIn) {
+        const finalElapsed = getWorkforceCurrentElapsedSeconds();
         workforcePunchState.isClockedIn = false;
         workforcePunchState.onBreak = false;
+        workforcePunchState.breakStartTimestamp = null;
         clearInterval(workforcePunchTimer);
-        const addedHours = +((workforcePunchState.elapsedSeconds || 0) / 3600).toFixed(2);
+
+        const addedHours = +(finalElapsed / 3600).toFixed(2);
         workforcePunchState.todayHours = +((workforcePunchState.todayHours || 0) + addedHours).toFixed(2);
 
         // Record completed shift entry into timecardReportLogs
@@ -9138,7 +9167,7 @@ Role: ${lastProvisionedCreds.role}`;
           date_formatted: now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
           clock_in: workforcePunchState.clockInFormatted || '08:30 AM',
           clock_out: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          break_minutes: workforcePunchState.breakMinutes || (workforcePunchState.onBreak ? 15 : 0),
+          break_minutes: workforcePunchState.breakMinutes || (workforcePunchState.accumulatedBreakSeconds ? Math.round(workforcePunchState.accumulatedBreakSeconds / 60) : 0),
           regular_hours: regHrs,
           overtime_hours: otHrs,
           total_hours: rawHrs,
@@ -9149,12 +9178,17 @@ Role: ${lastProvisionedCreds.role}`;
         timecardReportLogs.unshift(newReportEntry);
         localStorage.setItem('flexitap_timecard_report_logs', JSON.stringify(timecardReportLogs));
         workforcePunchState.elapsedSeconds = 0;
+        workforcePunchState.clockInTimestamp = null;
+        workforcePunchState.accumulatedBreakSeconds = 0;
       } else {
         const now = new Date();
         workforcePunchState.isClockedIn = true;
+        workforcePunchState.clockInTimestamp = now.getTime();
         workforcePunchState.clockInTime = now.toISOString();
         workforcePunchState.clockInFormatted = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         workforcePunchState.onBreak = false;
+        workforcePunchState.breakStartTimestamp = null;
+        workforcePunchState.accumulatedBreakSeconds = 0;
         workforcePunchState.elapsedSeconds = 0;
         workforcePunchState.breakMinutes = 0;
         startPunchTimer();
@@ -9171,9 +9205,17 @@ Role: ${lastProvisionedCreds.role}`;
         alert('You must clock in before taking a break.');
         return;
       }
+      const now = Date.now();
       workforcePunchState.onBreak = !workforcePunchState.onBreak;
       if (workforcePunchState.onBreak) {
-        workforcePunchState.breakMinutes = (workforcePunchState.breakMinutes || 0) + 15;
+        workforcePunchState.breakStartTimestamp = now;
+      } else {
+        if (workforcePunchState.breakStartTimestamp) {
+          const duration = Math.floor((now - workforcePunchState.breakStartTimestamp) / 1000);
+          workforcePunchState.accumulatedBreakSeconds = (workforcePunchState.accumulatedBreakSeconds || 0) + duration;
+          workforcePunchState.breakMinutes = Math.round(workforcePunchState.accumulatedBreakSeconds / 60);
+          workforcePunchState.breakStartTimestamp = null;
+        }
       }
       localStorage.setItem('flexitap_punch_state', JSON.stringify(workforcePunchState));
       updatePunchWidgetUI();
@@ -9181,18 +9223,27 @@ Role: ${lastProvisionedCreds.role}`;
 
     function startPunchTimer() {
       clearInterval(workforcePunchTimer);
-      workforcePunchTimer = setInterval(() => {
-        if (!workforcePunchState.onBreak) {
-          workforcePunchState.elapsedSeconds = (workforcePunchState.elapsedSeconds || 0) + 1;
-          const timerEl = document.getElementById('punch-elapsed-timer');
-          if (timerEl) {
-            timerEl.textContent = formatElapsedSeconds(workforcePunchState.elapsedSeconds);
-          }
-          if (typeof updateDashboardPunchClockUI === 'function') {
-            updateDashboardPunchClockUI();
-          }
+
+      const tick = () => {
+        if (!workforcePunchState.isClockedIn) {
+          clearInterval(workforcePunchTimer);
+          return;
         }
-      }, 1000);
+
+        const currentElapsed = getWorkforceCurrentElapsedSeconds();
+        workforcePunchState.elapsedSeconds = currentElapsed;
+
+        const timerEl = document.getElementById('punch-elapsed-timer');
+        if (timerEl) {
+          timerEl.textContent = formatElapsedSeconds(currentElapsed);
+        }
+        if (typeof updateDashboardPunchClockUI === 'function') {
+          updateDashboardPunchClockUI();
+        }
+      };
+
+      tick();
+      workforcePunchTimer = setInterval(tick, 1000);
     }
 
     function formatElapsedSeconds(sec) {
@@ -12016,7 +12067,8 @@ Role: ${lastProvisionedCreds.role}`;
       if (!textEl || !btnEl) return;
 
       if (typeof workforcePunchState !== 'undefined' && workforcePunchState.isClockedIn) {
-        const elapsed = typeof formatElapsedSeconds === 'function' ? formatElapsedSeconds(workforcePunchState.elapsedSeconds) : '00:00:00';
+        const currentElapsed = typeof getWorkforceCurrentElapsedSeconds === 'function' ? getWorkforceCurrentElapsedSeconds() : (workforcePunchState.elapsedSeconds || 0);
+        const elapsed = typeof formatElapsedSeconds === 'function' ? formatElapsedSeconds(currentElapsed) : '00:00:00';
         if (workforcePunchState.onBreak) {
           if (dotEl) dotEl.style.background = '#fbbf24';
           textEl.innerHTML = `<span style="color: #fbbf24;">☕ On Break</span> · ${elapsed}`;
