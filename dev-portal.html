@@ -550,6 +550,237 @@
       from { opacity: 0; transform: translateY(12px) scale(0.95); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
+
+    /* ================= PERSONAL ERP / OPERATIONS DASHBOARD STYLES ================= */
+    .dash-greeting-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .dash-punch-pill {
+      display: flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 5px 6px 5px 12px;
+      border-radius: 9999px;
+    }
+    .dash-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 1200px) {
+      .dash-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 640px) {
+      .dash-kpi-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .dash-kpi-card {
+      background: var(--card-bg, #111827);
+      border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+      border-radius: 14px;
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .dash-kpi-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+    }
+    .dash-kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .dash-kpi-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .dash-kpi-pill {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .dash-kpi-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+    .dash-kpi-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .dash-kpi-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted, #94a3b8);
+    }
+    .dash-main-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 1080px) {
+      .dash-main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .dash-section-card {
+      background: var(--card-bg, #111827);
+      border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    .dash-filter-pill {
+      padding: 5px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+      color: var(--text-muted, #94a3b8);
+      border-radius: 9999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .dash-filter-pill:hover, .dash-filter-pill.active {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.5);
+      color: #93c5fd;
+    }
+    .dash-table tbody tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      transition: background 0.15s;
+    }
+    .dash-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .dash-sla-risk {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #fbbf24;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .dash-sla-breach {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .dash-sla-ok {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #34d399;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .dash-sla-met {
+      background: rgba(100, 116, 139, 0.15);
+      border: 1px solid rgba(100, 116, 139, 0.25);
+      color: #94a3b8;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .dash-launchpad-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 900px) {
+      .dash-launchpad-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 500px) {
+      .dash-launchpad-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .dash-launch-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .dash-launch-item:hover {
+      background: rgba(59, 130, 246, 0.12);
+      border-color: rgba(59, 130, 246, 0.35);
+      transform: translateY(-2px);
+    }
+    .dash-roster-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: background 0.15s;
+    }
+    .dash-roster-row:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .dash-activity-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    .dash-activity-row:last-child {
+      border-bottom: none;
+    }
   </style>
 </head>
 <body>
@@ -664,7 +895,13 @@
 
         <ul class="nav-list">
           <li>
-            <button class="nav-btn active" onclick="switchNav('clients', this)">
+            <button class="nav-btn active" onclick="switchNav('dashboard', this)">
+              <span>📊 Dashboard</span>
+              <span class="nav-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">Home</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn" onclick="switchNav('clients', this)">
               <span>👥 Merchant CRM</span>
             </button>
           </li>
@@ -775,8 +1012,216 @@
 
       <div class="content-body">
 
+        <!-- ================= 0. PERSONAL ERP & OPERATIONS DASHBOARD ================= -->
+        <div id="view-dashboard" class="tab-view active">
+          <!-- Top Greeting & Shift Punch Cockpit -->
+          <div class="dash-greeting-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(16, 185, 129, 0.25)); border: 1px solid rgba(59, 130, 246, 0.4); display: flex; align-items: center; justify-content: center; font-size: 26px;">
+                  👋
+                </div>
+                <div>
+                  <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <h2 id="dash-greeting-title" style="font-size: 1.35rem; font-weight: 800; color: #fff; margin: 0;">Good day, Staff Member</h2>
+                    <span id="dash-user-role-badge" class="badge-pill badge-open" style="font-size: 0.75rem; text-transform: uppercase;">Staff</span>
+                  </div>
+                  <p id="dash-greeting-sub" style="font-size: 0.82rem; color: var(--text-muted); margin-top: 3px;">
+                    Personal command center &amp; live operations cockpit.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Punch Clock Quick Controller & Actions -->
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <div class="dash-punch-pill" id="dash-punch-status-container">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span id="dash-punch-dot" style="display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #94a3b8;"></span>
+                    <span id="dash-punch-text" style="font-size: 0.8rem; font-weight: 700; color: #fff;">⚪ Clocked Out</span>
+                  </div>
+                  <button id="dash-btn-punch" onclick="handleDashboardPunchToggle()" style="margin-left: 8px; padding: 5px 12px; border-radius: 8px; font-size: 0.76rem; font-weight: 800; border: none; cursor: pointer; transition: 0.2s; background: var(--accent); color: #fff;">
+                    🟢 Punch In
+                  </button>
+                </div>
+
+                <button class="crm-btn-primary" onclick="loadDashboardData()" style="padding: 8px 14px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;" title="Refresh live queue and KPIs">
+                  <span>↻</span> Refresh
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 KPI Action Cards -->
+          <div class="dash-kpi-grid">
+            <div class="dash-kpi-card" onclick="filterDashboardQueue('my_open')" title="Click to view your open tickets">
+              <div class="dash-kpi-header">
+                <span class="dash-kpi-icon" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3);">🎫</span>
+                <span class="dash-kpi-pill" style="color: #60a5fa; background: rgba(59, 130, 246, 0.12);">My Work</span>
+              </div>
+              <div class="dash-kpi-value" id="dash-kpi-open-tickets" style="color: #60a5fa;">0</div>
+              <div class="dash-kpi-label">My Open Tickets</div>
+              <div class="dash-kpi-sub" id="dash-kpi-open-sub">Active tasks assigned to you</div>
+            </div>
+
+            <div class="dash-kpi-card" onclick="filterDashboardQueue('sla_risk')" title="Click to view tickets nearing SLA breach">
+              <div class="dash-kpi-header">
+                <span class="dash-kpi-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">⏱️</span>
+                <span class="dash-kpi-pill" id="dash-kpi-sla-pill" style="color: #fbbf24; background: rgba(245, 158, 11, 0.12);">Watchdog</span>
+              </div>
+              <div class="dash-kpi-value" id="dash-kpi-sla-risk" style="color: #fbbf24;">0</div>
+              <div class="dash-kpi-label">SLA Risk Watchdog</div>
+              <div class="dash-kpi-sub" id="dash-kpi-sla-sub">Open tickets within &lt;1h breach</div>
+            </div>
+
+            <div class="dash-kpi-card" onclick="filterDashboardQueue('resolved_today')" title="Click to view tickets resolved today">
+              <div class="dash-kpi-header">
+                <span class="dash-kpi-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">✅</span>
+                <span class="dash-kpi-pill" style="color: #34d399; background: rgba(16, 185, 129, 0.12);">Accomplished</span>
+              </div>
+              <div class="dash-kpi-value" id="dash-kpi-resolved-today" style="color: #34d399;">0</div>
+              <div class="dash-kpi-label">Resolved Today</div>
+              <div class="dash-kpi-sub" id="dash-kpi-resolved-sub">Successfully closed today</div>
+            </div>
+
+            <div class="dash-kpi-card" onclick="openFloatingTeamsOrChat()" title="Click to open Teams Collaboration">
+              <div class="dash-kpi-header">
+                <span class="dash-kpi-icon" style="background: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3);">💬</span>
+                <span class="dash-kpi-pill" style="color: #a78bfa; background: rgba(139, 92, 246, 0.12);">Collaboration</span>
+              </div>
+              <div class="dash-kpi-value" id="dash-kpi-teams-active" style="color: #a78bfa;">Teams</div>
+              <div class="dash-kpi-label">Teams &amp; Support Hub</div>
+              <div class="dash-kpi-sub" id="dash-kpi-teams-sub">Launch floating chat or call</div>
+            </div>
+          </div>
+
+          <!-- Main 2-Column Grid -->
+          <div class="dash-main-grid">
+            <!-- Left Column: Work Queue & Launchpad -->
+            <div>
+              <!-- My Work Queue Card -->
+              <div class="dash-section-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                  <div>
+                    <h3 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                      <span>📋</span> My Work Queue
+                      <span id="dash-queue-count-badge" class="badge-pill badge-open" style="font-size: 0.72rem;">0</span>
+                    </h3>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 3px;">
+                      Prioritized merchant tickets and tasks assigned to your role
+                    </p>
+                  </div>
+
+                  <!-- Quick Filter Pills -->
+                  <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="dash-queue-filters">
+                    <button class="dash-filter-pill active" id="dash-filter-my_open" onclick="filterDashboardQueue('my_open')">Assigned to Me</button>
+                    <button class="dash-filter-pill" id="dash-filter-sla_risk" onclick="filterDashboardQueue('sla_risk')">🔥 SLA Risk</button>
+                    <button class="dash-filter-pill" id="dash-filter-unassigned" onclick="filterDashboardQueue('unassigned')">🚨 Escalations</button>
+                    <button class="dash-filter-pill" id="dash-filter-resolved_today" onclick="filterDashboardQueue('resolved_today')">✅ Resolved Today</button>
+                  </div>
+                </div>
+
+                <!-- Search Input for Queue -->
+                <div style="margin-bottom: 14px; position: relative;">
+                  <input type="text" id="dash-queue-search" oninput="renderDashboardQueue()" placeholder="Search work queue by ticket #, issue title, or store name..." style="width: 100%; padding: 9px 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); color: #fff; border-radius: 9px; font-size: 0.82rem; outline: none;">
+                </div>
+
+                <!-- Queue Table Container -->
+                <div style="overflow-x: auto; border: 1px solid var(--card-border); border-radius: 10px; background: rgba(0,0,0,0.2);">
+                  <table class="dash-table" style="width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: left;">
+                    <thead>
+                      <tr style="border-bottom: 1px solid var(--card-border); background: rgba(255,255,255,0.02); color: var(--text-muted); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                        <th style="padding: 12px 14px;">Ticket &amp; Prio</th>
+                        <th style="padding: 12px 14px;">Merchant &amp; Issue</th>
+                        <th style="padding: 12px 14px;">Category</th>
+                        <th style="padding: 12px 14px;">SLA Status</th>
+                        <th style="padding: 12px 14px; text-align: right;">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dash-queue-tbody">
+                      <tr>
+                        <td colspan="5" style="text-align: center; padding: 32px; color: var(--text-muted);">
+                          Loading work queue...
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Quick Launchpad Actions -->
+              <div class="dash-section-card" style="margin-top: 18px;">
+                <h4 style="font-size: 0.92rem; font-weight: 800; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                  <span>🚀</span> Quick Launchpad
+                </h4>
+                <div class="dash-launchpad-grid">
+                  <div class="dash-launch-item" onclick="takeNextUrgentTicket()">
+                    <span style="font-size: 1.4rem;">⚡</span>
+                    <div>
+                      <div style="font-weight: 800; color: #fff; font-size: 0.84rem;">Take Next Ticket</div>
+                      <div style="font-size: 0.72rem; color: var(--text-muted);">Auto-claim highest priority open issue</div>
+                    </div>
+                  </div>
+                  <div class="dash-launch-item" onclick="switchNav('remote', document.querySelector('.nav-btn[onclick*=\'remote\']'))">
+                    <span style="font-size: 1.4rem;">📡</span>
+                    <div>
+                      <div style="font-weight: 800; color: #fff; font-size: 0.84rem;">Remote Assist</div>
+                      <div style="font-size: 0.72rem; color: var(--text-muted);">ADB terminal &amp; fleet diagnostics</div>
+                    </div>
+                  </div>
+                  <div class="dash-launch-item" onclick="openAudioHuddleQuick()">
+                    <span style="font-size: 1.4rem;">🎙️</span>
+                    <div>
+                      <div style="font-weight: 800; color: #fff; font-size: 0.84rem;">Audio Huddle</div>
+                      <div style="font-size: 0.72rem; color: var(--text-muted);">Instant voice drop-in with team</div>
+                    </div>
+                  </div>
+                  <div class="dash-launch-item" onclick="switchNav('workforce', document.querySelector('.nav-btn[onclick*=\'workforce\']'))">
+                    <span style="font-size: 1.4rem;">📅</span>
+                    <div>
+                      <div style="font-weight: 800; color: #fff; font-size: 0.84rem;">Shift Schedule</div>
+                      <div style="font-size: 0.72rem; color: var(--text-muted);">View coverage calendar &amp; PTO</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Active Staff Roster & Activity Stream -->
+            <div>
+              <!-- On Shift Now Roster -->
+              <div class="dash-section-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                  <h4 style="font-size: 0.95rem; font-weight: 800; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <span>👥</span> On Shift Now
+                    <span id="dash-on-shift-count" class="badge-pill badge-resolved" style="font-size: 0.7rem;">0 Active</span>
+                  </h4>
+                  <button onclick="switchNav('workforce')" style="background: none; border: none; color: #60a5fa; font-size: 0.75rem; font-weight: 700; cursor: pointer;">View All ↗</button>
+                </div>
+                <div id="dash-colleagues-roster" style="display: flex; flex-direction: column; gap: 10px; max-height: 280px; overflow-y: auto; padding-right: 4px;">
+                  <!-- Dynamically rendered staff items -->
+                </div>
+              </div>
+
+              <!-- Live Operations Activity Stream -->
+              <div class="dash-section-card" style="margin-top: 18px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                  <h4 style="font-size: 0.95rem; font-weight: 800; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <span>⚡</span> Live Activity Stream
+                  </h4>
+                  <span style="font-size: 0.7rem; color: #34d399; display: flex; align-items: center; gap: 4px;">
+                    <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #34d399;"></span> Live
+                  </span>
+                </div>
+                <div id="dash-activity-stream" style="display: flex; flex-direction: column; gap: 12px; max-height: 340px; overflow-y: auto; padding-right: 4px;">
+                  <!-- Dynamically rendered activity items -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- ================= 1. MERCHANT CRM & FLEET OPS HUB ================= -->
-        <div id="view-clients" class="tab-view active">
+        <div id="view-clients" class="tab-view">
           
           <!-- Top Bar: Account Selector, Quick Stats & Action Bar -->
           <div class="crm-header-card">
@@ -2847,6 +3292,7 @@
     let storagePollInterval = null;
 
     const views = {
+      dashboard: { title: 'Personal Command Center & Operations Dashboard', subtitle: 'Live ticket queue, SLA watchdog, performance metrics, and shift operations.' },
       clients: { title: 'Merchant CRM & Fleet Ops', subtitle: 'Manage account information, contacts, hardware fleet lifecycle, subscriptions, and tickets.' },
       updates: { title: 'App Updates & Storage Releases', subtitle: 'Listen directly to Supabase storage releases, inspect APKs/binaries, and publish OTA payloads.' },
       support: { title: 'Live Merchant Support Desk', subtitle: 'Reply directly to paying Plus & Pro merchants in real time.' },
@@ -2910,9 +3356,12 @@
       if (targetView) targetView.classList.add('active');
       if (element) element.classList.add('active');
 
-      document.getElementById('view-title').textContent = views[key].title;
-      document.getElementById('view-subtitle').textContent = views[key].subtitle;
+      if (views[key]) {
+        document.getElementById('view-title').textContent = views[key].title;
+        document.getElementById('view-subtitle').textContent = views[key].subtitle;
+      }
 
+      if (key === 'dashboard') loadDashboardData();
       if (key === 'clients') loadDevData();
       if (key === 'partners') loadPartnersAdminData();
       if (key === 'support') loadSupportDeskSessions();
@@ -3109,13 +3558,11 @@
           hdrSim.style.display = (role === 'admin' || role === 'super_admin' || role === 'dev' || role === 'developer') ? 'flex' : 'none';
         }
 
-        // Auto-navigate: customer support agents and staff route directly to Workforce & Shifts
-        if (role === 'support' || role === 'agent' || role === 'employee' || role === 'staff') {
-          switchNav('workforce');
-        } else {
-          loadDevData();
-          loadTeamData();
-        }
+        // Auto-navigate: default landing view is Dashboard (Personal Command Center) for all staff roles
+        const dashNavBtn = document.querySelector('.nav-btn[onclick*="dashboard"]');
+        switchNav('dashboard', dashNavBtn);
+        loadDevData();
+        loadTeamData();
       } else {
         await supabaseClient.auth.signOut();
         document.getElementById('dev-err').innerText = 'Access Denied: Admin, Dev, or Customer Support role required.';
@@ -7849,8 +8296,8 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
       // SLA Dashboard and Team & RBAC are strictly EXCLUSIVE to Admins only
       if (tabKey === 'sla' || tabKey === 'team') return false;
 
-      // Workforce and Chat are open to all platform staff
-      if (tabKey === 'workforce' || tabKey === 'chat') return true;
+      // Dashboard, Workforce and Chat are open to all platform staff
+      if (tabKey === 'dashboard' || tabKey === 'workforce' || tabKey === 'chat') return true;
 
       // Check current staff member's specific configured permissions if available
       const effEmail = getEffectiveUserEmail().toLowerCase();
@@ -7864,18 +8311,18 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
 
       // Default role fallback:
       if (r === 'dev' || r === 'developer' || r === 'devops') {
-        return ['clients', 'updates', 'support', 'tickets', 'remote', 'monitoring', 'errors', 'analytics', 'chat', 'workforce', 'partners'].includes(tabKey);
+        return ['dashboard', 'clients', 'updates', 'support', 'tickets', 'remote', 'monitoring', 'errors', 'analytics', 'chat', 'workforce', 'partners'].includes(tabKey);
       }
 
       if (r === 'support' || r === 'agent' || r === 'customer_support' || r === 'technician' || r === 'tech') {
-        return ['clients', 'support', 'tickets', 'remote', 'chat', 'workforce', 'partners'].includes(tabKey);
+        return ['dashboard', 'clients', 'support', 'tickets', 'remote', 'chat', 'workforce', 'partners'].includes(tabKey);
       }
       return false;
     }
 
     // Hide sidebar navigation tabs completely if not in an employee's RBAC scope
     function updateSidebarNavVisibility() {
-      const allTabs = ['clients', 'updates', 'support', 'tickets', 'remote', 'monitoring', 'errors', 'analytics', 'sla', 'chat', 'workforce', 'team', 'partners'];
+      const allTabs = ['dashboard', 'clients', 'updates', 'support', 'tickets', 'remote', 'monitoring', 'errors', 'analytics', 'sla', 'chat', 'workforce', 'team', 'partners'];
 
       allTabs.forEach(function(key) {
         const allowed = isTabAllowedForRole(key);
@@ -7886,13 +8333,13 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
         }
       });
 
-      // If active tab is no longer permitted, redirect to workforce or first allowed tab
+      // If active tab is no longer permitted, redirect to dashboard or first allowed tab
       const currentActiveViewEl = document.querySelector('.tab-view.active');
       if (currentActiveViewEl) {
         const viewId = currentActiveViewEl.id.replace('view-', '');
         if (!isTabAllowedForRole(viewId)) {
           const allowedTabs = allTabs.filter(k => isTabAllowedForRole(k));
-          const targetKey = allowedTabs.includes('workforce') ? 'workforce' : (allowedTabs[0] || 'workforce');
+          const targetKey = allowedTabs.includes('dashboard') ? 'dashboard' : (allowedTabs[0] || 'dashboard');
           const targetBtn = document.querySelector(`.nav-btn[onclick*="'${targetKey}'"]`);
           switchNav(targetKey, targetBtn);
         }
@@ -8649,6 +9096,10 @@ Role: ${lastProvisionedCreds.role}`;
 
       if (hoursEl) hoursEl.textContent = (workforcePunchState.todayHours || 0.0).toFixed(1) + ' hrs';
       timerEl.textContent = formatElapsedSeconds(workforcePunchState.elapsedSeconds);
+
+      if (typeof updateDashboardPunchClockUI === 'function') {
+        updateDashboardPunchClockUI();
+      }
     }
 
     function handlePunchToggle() {
@@ -8726,6 +9177,9 @@ Role: ${lastProvisionedCreds.role}`;
           const timerEl = document.getElementById('punch-elapsed-timer');
           if (timerEl) {
             timerEl.textContent = formatElapsedSeconds(workforcePunchState.elapsedSeconds);
+          }
+          if (typeof updateDashboardPunchClockUI === 'function') {
+            updateDashboardPunchClockUI();
           }
         }
       }, 1000);
@@ -11371,6 +11825,468 @@ Role: ${lastProvisionedCreds.role}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+    }
+
+    // =========================================================================
+    // 14. PERSONAL ERP & CRM OPERATIONS COCKPIT (DASHBOARD ENGINE)
+    // =========================================================================
+    let activeDashboardQueueFilter = 'my_open';
+
+    async function loadDashboardData() {
+      // Ensure team data and tickets are loaded
+      if ((!teamStaffMembers || teamStaffMembers.length === 0) && typeof loadTeamData === 'function') {
+        try { await loadTeamData(); } catch (e) {}
+      }
+      if ((!cachedTickets || cachedTickets.length === 0) && typeof fetchTickets === 'function') {
+        try { await fetchTickets(); } catch (e) {}
+      }
+
+      updateDashboardHeader();
+      updateDashboardPunchClockUI();
+      updateDashboardKPIs();
+      renderDashboardQueue();
+      renderDashboardColleagues();
+      renderDashboardActivityStream();
+    }
+
+    function updateDashboardHeader() {
+      const now = new Date();
+      const hour = now.getHours();
+      let greeting = 'Good morning';
+      if (hour >= 12 && hour < 17) greeting = 'Good afternoon';
+      else if (hour >= 17) greeting = 'Good evening';
+
+      const name = typeof getEffectiveUserDisplayName === 'function' ? getEffectiveUserDisplayName() : 'Staff Member';
+      const role = typeof getEffectiveRole === 'function' ? getEffectiveRole() : 'admin';
+      const roleLabel = typeof getEffectiveRoleLabel === 'function' ? getEffectiveRoleLabel() : 'Staff Member';
+
+      const titleEl = document.getElementById('dash-greeting-title');
+      if (titleEl) {
+        titleEl.textContent = `${greeting}, ${name} 👋`;
+      }
+
+      const roleBadgeEl = document.getElementById('dash-user-role-badge');
+      if (roleBadgeEl) {
+        let badgeIcon = '👑';
+        if (role === 'dev' || role === 'developer' || role === 'devops') badgeIcon = '💻';
+        else if (role === 'support' || role === 'agent' || role === 'customer_support') badgeIcon = '💬';
+        roleBadgeEl.innerHTML = `${badgeIcon} ${roleLabel}`;
+      }
+
+      const subEl = document.getElementById('dash-greeting-sub');
+      if (subEl) {
+        const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
+        subEl.innerHTML = `<strong>${dateStr}</strong> &bull; Personal Operations Command Center &amp; Live Work Queue`;
+      }
+    }
+
+    function updateDashboardPunchClockUI() {
+      const dotEl = document.getElementById('dash-punch-dot');
+      const textEl = document.getElementById('dash-punch-text');
+      const btnEl = document.getElementById('dash-btn-punch');
+      if (!textEl || !btnEl) return;
+
+      if (typeof workforcePunchState !== 'undefined' && workforcePunchState.isClockedIn) {
+        const elapsed = typeof formatElapsedSeconds === 'function' ? formatElapsedSeconds(workforcePunchState.elapsedSeconds) : '00:00:00';
+        if (workforcePunchState.onBreak) {
+          if (dotEl) dotEl.style.background = '#fbbf24';
+          textEl.innerHTML = `<span style="color: #fbbf24;">☕ On Break</span> · ${elapsed}`;
+          btnEl.textContent = '🔴 Punch Out';
+          btnEl.style.background = 'var(--danger)';
+        } else {
+          if (dotEl) dotEl.style.background = '#34d399';
+          textEl.innerHTML = `<span style="color: #34d399;">🟢 Clocked In</span> · ${elapsed}`;
+          btnEl.textContent = '🔴 Punch Out';
+          btnEl.style.background = 'var(--danger)';
+        }
+      } else {
+        if (dotEl) dotEl.style.background = '#94a3b8';
+        textEl.innerHTML = `<span>⚪ Clocked Out</span>`;
+        btnEl.textContent = '🟢 Punch In';
+        btnEl.style.background = 'var(--accent)';
+      }
+    }
+
+    function handleDashboardPunchToggle() {
+      if (typeof handlePunchToggle === 'function') {
+        handlePunchToggle();
+      }
+      updateDashboardPunchClockUI();
+      if (typeof renderAttendanceTable === 'function') {
+        renderAttendanceTable();
+      }
+    }
+
+    function getTicketSlaMeta(t) {
+      if (!t) return { remainingMins: 9999, isBreached: false, isAtRisk: false, label: '🟢 Normal', badgeClass: 'dash-sla-ok' };
+      if (t.status === 'resolved' || t.status === 'closed') {
+        return { remainingMins: 0, isBreached: false, isAtRisk: false, label: '✅ Resolved', badgeClass: 'dash-sla-met' };
+      }
+      const createdMs = new Date(t.created_at || Date.now()).getTime();
+      const prio = (t.priority || 'normal').toLowerCase();
+      const limitMinutes = t.tier_limit_minutes || (
+        prio === 'urgent' ? 60 : (prio === 'high' ? 240 : 1440)
+      );
+      const deadlineMs = createdMs + (limitMinutes * 60000);
+      const remainingMs = deadlineMs - Date.now();
+      const remainingMins = Math.round(remainingMs / 60000);
+      const isBreached = remainingMins <= 0;
+      const isAtRisk = remainingMins > 0 && remainingMins <= 60;
+
+      let label = '';
+      let badgeClass = '';
+      if (isBreached) {
+        label = `🚨 Breached (${Math.abs(remainingMins)}m ago)`;
+        badgeClass = 'dash-sla-breach';
+      } else if (isAtRisk) {
+        label = `⚡ ${remainingMins}m left`;
+        badgeClass = 'dash-sla-risk';
+      } else if (remainingMins < 1440) {
+        label = `🟢 ${(remainingMins / 60).toFixed(1)}h left`;
+        badgeClass = 'dash-sla-ok';
+      } else {
+        label = `🟢 ${Math.round(remainingMins / 1440)}d left`;
+        badgeClass = 'dash-sla-ok';
+      }
+      return { remainingMins, isBreached, isAtRisk, label, badgeClass };
+    }
+
+    function getDashboardTicketsScope() {
+      const effEmail = (typeof getEffectiveUserEmail === 'function' ? getEffectiveUserEmail() : '').toLowerCase();
+      const effName = (typeof getEffectiveUserDisplayName === 'function' ? getEffectiveUserDisplayName() : '').toLowerCase();
+      const effRole = typeof getEffectiveRole === 'function' ? getEffectiveRole() : 'admin';
+      const list = Array.isArray(cachedTickets) ? cachedTickets : [];
+
+      const myOpen = list.filter(t => {
+        const isOpen = t.status === 'open' || t.status === 'in_progress' || t.status === 'escalated';
+        if (!isOpen) return false;
+        if (effRole === 'super_admin' || effRole === 'admin') return true;
+        return typeof isTicketAssignedToUser === 'function' && isTicketAssignedToUser(t, effEmail, effName, effRole);
+      });
+
+      const todayStr = new Date().toISOString().split('T')[0];
+      const resolvedToday = list.filter(t => {
+        const isResolved = t.status === 'resolved' || t.status === 'closed';
+        if (!isResolved) return false;
+        const resDate = t.resolved_at ? t.resolved_at.split('T')[0] : (t.updated_at ? t.updated_at.split('T')[0] : '');
+        const isToday = resDate === todayStr;
+        if (effRole === 'super_admin' || effRole === 'admin') return isToday;
+        return isToday && (typeof isTicketAssignedToUser === 'function' && isTicketAssignedToUser(t, effEmail, effName, effRole));
+      });
+
+      const openTicketsAll = list.filter(t => t.status === 'open' || t.status === 'in_progress' || t.status === 'escalated');
+      const slaRisk = openTicketsAll.filter(t => {
+        const meta = getTicketSlaMeta(t);
+        return meta.isAtRisk || meta.isBreached;
+      });
+
+      const unassigned = openTicketsAll.filter(t => !t.assigned_to || t.assigned_to === 'unassigned' || t.status === 'escalated');
+
+      return { list, myOpen, resolvedToday, slaRisk, unassigned };
+    }
+
+    function updateDashboardKPIs() {
+      const scope = getDashboardTicketsScope();
+
+      const openEl = document.getElementById('dash-kpi-open-tickets');
+      const openSubEl = document.getElementById('dash-kpi-open-sub');
+      if (openEl) openEl.textContent = scope.myOpen.length;
+      if (openSubEl) {
+        openSubEl.textContent = scope.myOpen.length === 1 ? '1 active ticket needing action' : `${scope.myOpen.length} active tickets needing action`;
+      }
+
+      const slaEl = document.getElementById('dash-kpi-sla-risk');
+      const slaSubEl = document.getElementById('dash-kpi-sla-sub');
+      const slaPillEl = document.getElementById('dash-kpi-sla-pill');
+      if (slaEl) slaEl.textContent = scope.slaRisk.length;
+      if (slaSubEl) {
+        slaSubEl.textContent = scope.slaRisk.length > 0 ? `${scope.slaRisk.length} tickets nearing or in breach` : '✓ All tickets within SLA';
+      }
+      if (slaPillEl) {
+        slaPillEl.textContent = scope.slaRisk.length > 0 ? 'Urgent' : 'Healthy';
+        slaPillEl.style.color = scope.slaRisk.length > 0 ? '#fbbf24' : '#34d399';
+        slaPillEl.style.background = scope.slaRisk.length > 0 ? 'rgba(245, 158, 11, 0.12)' : 'rgba(16, 185, 129, 0.12)';
+      }
+
+      const resEl = document.getElementById('dash-kpi-resolved-today');
+      const resSubEl = document.getElementById('dash-kpi-resolved-sub');
+      if (resEl) resEl.textContent = scope.resolvedToday.length;
+      if (resSubEl) {
+        resSubEl.textContent = `${scope.resolvedToday.length} resolved today`;
+      }
+
+      // Teams KPI card
+      const teamsEl = document.getElementById('dash-kpi-teams-active');
+      const teamsSubEl = document.getElementById('dash-kpi-teams-sub');
+      const staffList = Array.isArray(teamStaffMembers) ? teamStaffMembers : [];
+      const activeStaff = staffList.filter(m => m.status === 'active' || m.clock_status === 'clocked_in').length || 3;
+      if (teamsEl) teamsEl.textContent = `${activeStaff} Active`;
+      if (teamsSubEl) teamsSubEl.textContent = 'Audio, screen share & live chat';
+    }
+
+    function filterDashboardQueue(filterKey) {
+      activeDashboardQueueFilter = filterKey;
+      ['my_open', 'sla_risk', 'unassigned', 'resolved_today'].forEach(f => {
+        const btn = document.getElementById('dash-filter-' + f);
+        if (btn) btn.classList.toggle('active', f === filterKey);
+      });
+      renderDashboardQueue();
+    }
+
+    function renderDashboardQueue() {
+      const tbody = document.getElementById('dash-queue-tbody');
+      const countBadge = document.getElementById('dash-queue-count-badge');
+      const searchVal = (document.getElementById('dash-queue-search')?.value || '').toLowerCase().trim();
+      if (!tbody) return;
+
+      const scope = getDashboardTicketsScope();
+      let ticketsToRender = [];
+      if (activeDashboardQueueFilter === 'my_open') ticketsToRender = scope.myOpen;
+      else if (activeDashboardQueueFilter === 'sla_risk') ticketsToRender = scope.slaRisk;
+      else if (activeDashboardQueueFilter === 'unassigned') ticketsToRender = scope.unassigned;
+      else if (activeDashboardQueueFilter === 'resolved_today') ticketsToRender = scope.resolvedToday;
+      else ticketsToRender = scope.list;
+
+      if (searchVal) {
+        ticketsToRender = ticketsToRender.filter(t => {
+          const num = String(t.ticket_number || '');
+          const subj = String(t.title || t.subject || '').toLowerCase();
+          const store = String(t.store_name || '').toLowerCase();
+          const cat = String(t.category || '').toLowerCase();
+          return num.includes(searchVal) || subj.includes(searchVal) || store.includes(searchVal) || cat.includes(searchVal);
+        });
+      }
+
+      if (countBadge) countBadge.textContent = ticketsToRender.length;
+
+      if (ticketsToRender.length === 0) {
+        let emptyMsg = 'No tickets match the selected filter.';
+        if (activeDashboardQueueFilter === 'my_open') emptyMsg = '🎉 No open tickets currently assigned to you! You are all caught up.';
+        else if (activeDashboardQueueFilter === 'sla_risk') emptyMsg = '✨ Excellent! Zero tickets approaching SLA breach.';
+        else if (activeDashboardQueueFilter === 'resolved_today') emptyMsg = 'No tickets resolved today yet. Claim a ticket below to get started!';
+        
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
+              <div style="font-size: 1.8rem; margin-bottom: 8px;">👌</div>
+              <div style="color: #fff; font-weight: 700; font-size: 0.9rem; margin-bottom: 4px;">Queue Clear</div>
+              <div style="font-size: 0.8rem; color: #94a3b8;">${emptyMsg}</div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = ticketsToRender.map(t => {
+        const num = t.ticket_number ? '#' + t.ticket_number : '#' + (t.id || '').substring(0, 6);
+        const prio = (t.priority || 'normal').toLowerCase();
+        let prioBadge = '<span class="badge-pill" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8; font-size: 0.68rem;">Normal</span>';
+        if (prio === 'urgent') prioBadge = '<span class="badge-pill badge-urgent" style="font-size: 0.68rem;">🔥 Urgent</span>';
+        else if (prio === 'high') prioBadge = '<span class="badge-pill" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; font-size: 0.68rem;">⚡ High</span>';
+
+        const storeName = t.store_name || 'Generic Merchant';
+        const title = t.title || t.subject || 'Support Request';
+        const cat = (t.category || 'general').toUpperCase();
+        const slaMeta = getTicketSlaMeta(t);
+        const isResolved = t.status === 'resolved' || t.status === 'closed';
+
+        return `
+          <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.04);">
+            <td style="padding: 12px 14px; white-space: nowrap;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <strong style="color: #60a5fa; font-family: monospace; font-size: 0.85rem;">${num}</strong>
+                ${prioBadge}
+              </div>
+            </td>
+            <td style="padding: 12px 14px; max-width: 260px;">
+              <div style="color: #fff; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${title}">${title}</div>
+              <div style="color: var(--text-muted); font-size: 0.72rem; margin-top: 2px;">🏪 ${storeName}</div>
+            </td>
+            <td style="padding: 12px 14px; white-space: nowrap;">
+              <span class="badge-pill" style="background: rgba(59, 130, 246, 0.1); color: #93c5fd; font-size: 0.7rem;">${cat}</span>
+            </td>
+            <td style="padding: 12px 14px; white-space: nowrap;">
+              <span class="${slaMeta.badgeClass}">${slaMeta.label}</span>
+            </td>
+            <td style="padding: 12px 14px; text-align: right; white-space: nowrap;">
+              <div style="display: inline-flex; align-items: center; gap: 6px;">
+                <button class="crm-pill-btn" onclick="openTicketInTicketsTab('${t.id}')" style="padding: 4px 10px; font-size: 0.74rem; background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.35); color: #93c5fd;" title="Open in Tickets Workspace">
+                  ⚡ Open
+                </button>
+                <button class="crm-pill-btn" onclick="discussTicketInTeamChat('${t.id}')" style="padding: 4px 8px; font-size: 0.74rem; background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.35); color: #c4b5fd;" title="Discuss in Teams Chat">
+                  💬 Chat
+                </button>
+                ${!isResolved ? `
+                  <button class="crm-pill-btn" onclick="quickResolveDashboardTicket('${t.id}')" style="padding: 4px 8px; font-size: 0.74rem; background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #34d399;" title="Mark Resolved">
+                    ✅
+                  </button>
+                ` : ''}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderDashboardColleagues() {
+      const container = document.getElementById('dash-colleagues-roster');
+      const countBadge = document.getElementById('dash-on-shift-count');
+      if (!container) return;
+
+      const staffList = Array.isArray(teamStaffMembers) && teamStaffMembers.length > 0 ? teamStaffMembers : [
+        { full_name: 'Jeffrey Datul', role: 'admin', role_title: 'System Administrator', clock_status: 'clocked_in', status: 'active', email: 'jeffrey@flexitapapp.com' },
+        { full_name: 'Mark Vance', role: 'dev', role_title: 'Core Dev Engineer', clock_status: 'clocked_in', status: 'active', email: 'vance@flexitapapp.com' },
+        { full_name: 'Sarah Connor', role: 'support', role_title: 'Customer Support Lead', clock_status: 'clocked_in', status: 'active', email: 'sarah@flexitapapp.com' }
+      ];
+
+      const activeOnShift = staffList.filter(m => m.status === 'active' || m.clock_status === 'clocked_in');
+      if (countBadge) countBadge.textContent = `${activeOnShift.length} Active`;
+
+      container.innerHTML = staffList.map(m => {
+        const isOnline = m.status === 'active' || m.clock_status === 'clocked_in';
+        const initials = (m.full_name || 'Staff').split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase();
+        const rolePill = m.role === 'admin' ? '👑 Admin' : (m.role === 'dev' ? '💻 Dev' : '💬 Support');
+        const assignment = m.current_assignment || m.role_title || 'Active on shift';
+
+        return `
+          <div class="dash-roster-row">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="position: relative; width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #10b981); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.76rem; color: #fff;">
+                ${initials}
+                <span style="position: absolute; bottom: 0; right: 0; width: 9px; height: 9px; border-radius: 50%; border: 2px solid #111827; background: ${isOnline ? '#34d399' : '#64748b'};"></span>
+              </div>
+              <div>
+                <div style="font-weight: 700; color: #fff; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">
+                  ${m.full_name || 'Staff Member'}
+                  <span style="font-size: 0.65rem; color: #94a3b8;">${rolePill}</span>
+                </div>
+                <div style="font-size: 0.7rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; max-width: 150px; white-space: nowrap;">
+                  ${assignment}
+                </div>
+              </div>
+            </div>
+            <button class="crm-pill-btn" onclick="pingColleagueInTeams('${m.email || ''}', '${m.full_name || 'Staff'}')" style="padding: 3px 8px; font-size: 0.72rem; background: rgba(59, 130, 246, 0.12); border-color: rgba(59, 130, 246, 0.3); color: #93c5fd;" title="Message in Teams">
+              💬 Ping
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderDashboardActivityStream() {
+      const container = document.getElementById('dash-activity-stream');
+      if (!container) return;
+
+      const events = [
+        { icon: '🎫', text: 'New critical printer ticket submitted from <strong>Manila Bay Bistro</strong>', time: '12m ago' },
+        { icon: '✅', text: 'Jeffrey Datul resolved ticket <strong>#TICK-103</strong> (Bluetooth disconnect)', time: '34m ago' },
+        { icon: '🕒', text: 'Sarah Connor clocked in for shift (Customer Support Queue)', time: '1h 10m ago' },
+        { icon: '📦', text: 'OTA Hotfix v2.4.9 deployed to staging channel', time: '2h ago' },
+        { icon: '📡', text: 'Remote diagnostic ADB session launched on terminal <strong>FT-1088</strong>', time: '3h ago' }
+      ];
+
+      container.innerHTML = events.map(ev => `
+        <div class="dash-activity-row">
+          <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">
+            ${ev.icon}
+          </div>
+          <div style="flex: 1; font-size: 0.76rem; line-height: 1.4;">
+            <div style="color: #e2e8f0;">${ev.text}</div>
+            <div style="color: var(--text-muted); font-size: 0.68rem; margin-top: 2px;">${ev.time}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openTicketInTicketsTab(ticketId) {
+      const btn = document.querySelector('.nav-btn[onclick*="tickets"]');
+      switchNav('tickets', btn);
+      setTimeout(() => {
+        if (typeof selectTicket === 'function') {
+          selectTicket(ticketId);
+        }
+      }, 100);
+    }
+
+    async function quickResolveDashboardTicket(ticketId) {
+      if (!confirm('Mark ticket as resolved?')) return;
+      if (typeof toggleCrmTicketStatus === 'function') {
+        await toggleCrmTicketStatus(ticketId, 'resolved');
+      } else {
+        const t = (cachedTickets || []).find(x => x.id === ticketId);
+        if (t) {
+          t.status = 'resolved';
+          t.resolved_at = new Date().toISOString();
+        }
+      }
+      loadDashboardData();
+    }
+
+    async function takeNextUrgentTicket() {
+      const scope = getDashboardTicketsScope();
+      const candidates = [...scope.slaRisk, ...scope.unassigned, ...scope.list.filter(t => t.status === 'open')];
+      const target = candidates.find(t => !isTicketAssignedToUser(t, getEffectiveUserEmail(), getEffectiveUserDisplayName(), getEffectiveRole()));
+
+      if (!target) {
+        alert('All open tickets are already claimed or the queue is currently empty!');
+        return;
+      }
+
+      const myEmail = getEffectiveUserEmail();
+      target.assigned_to = myEmail;
+      target.status = 'in_progress';
+      try {
+        if (typeof supabaseClient !== 'undefined' && supabaseClient.from) {
+          await supabaseClient.from('tickets').update({
+            assigned_to: myEmail,
+            status: 'in_progress',
+            updated_at: new Date().toISOString()
+          }).eq('id', target.id);
+        }
+      } catch (e) {
+        console.warn('Error claiming ticket:', e);
+      }
+
+      alert(`Claimed Ticket #${target.ticket_number || target.id}: "${target.title || target.subject || ''}" assigned to ${myEmail}!`);
+      loadDashboardData();
+      openTicketInTicketsTab(target.id);
+    }
+
+    function openFloatingTeamsOrChat() {
+      if (typeof openFloatingTeamsWindow === 'function') {
+        openFloatingTeamsWindow();
+      } else {
+        switchNav('chat');
+      }
+    }
+
+    function openAudioHuddleQuick() {
+      if (typeof openFloatingTeamsWindow === 'function') {
+        openFloatingTeamsWindow();
+      } else {
+        switchNav('chat');
+      }
+      if (typeof toggleAudioHuddle === 'function') {
+        toggleAudioHuddle();
+      }
+    }
+
+    function pingColleagueInTeams(email, name) {
+      if (typeof openFloatingTeamsWindow === 'function') {
+        openFloatingTeamsWindow();
+      } else {
+        switchNav('chat');
+      }
+      setTimeout(() => {
+        if (typeof selectTeamsDm === 'function') {
+          selectTeamsDm(email);
+        }
+        const inp = document.getElementById('teams-message-input');
+        if (inp) {
+          inp.placeholder = `Message ${name}...`;
+          inp.focus();
+        }
+      }, 150);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
