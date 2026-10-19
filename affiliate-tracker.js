@@ -155,37 +155,60 @@
     if (window.location.pathname.includes('partner-portal') || window.location.pathname.includes('dev-portal') || window.location.pathname.includes('portal.html')) return;
     if (document.getElementById('flexitap-partner-pill')) return;
 
+    function injectPill() {
+      if (document.getElementById('flexitap-partner-pill')) return;
+      try {
+        var pill = document.createElement('div');
+        pill.id = 'flexitap-partner-pill';
+        pill.style.position = 'fixed';
+        pill.style.bottom = '20px';
+        pill.style.left = '20px';
+        pill.style.zIndex = '99990';
+        pill.style.display = 'flex';
+        pill.style.alignItems = 'center';
+        pill.style.gap = '8px';
+        pill.style.padding = '8px 14px';
+        pill.style.background = 'rgba(15, 23, 42, 0.94)';
+        pill.style.backdropFilter = 'blur(10px)';
+        pill.style.webkitBackdropFilter = 'blur(10px)';
+        pill.style.border = '1px solid rgba(16, 185, 129, 0.45)';
+        pill.style.borderRadius = '30px';
+        pill.style.boxShadow = '0 10px 25px rgba(0,0,0,0.4), 0 0 15px rgba(16,185,129,0.15)';
+        pill.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        pill.style.fontSize = '12px';
+        pill.style.color = '#ffffff';
+        pill.style.lineHeight = '1';
+
+        pill.innerHTML = [
+          '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;"></span>',
+          '<span style="color:#94a3b8;font-size:11.5px;">Partner Pass:</span>',
+          '<strong style="color:#34d399;font-family:monospace;font-size:12.5px;letter-spacing:0.5px;">' + code + '</strong>',
+          '<button onclick="this.parentElement.style.display=\'none\'" style="background:none;border:none;color:#64748b;margin-left:4px;cursor:pointer;font-size:14px;padding:0;line-height:1;" title="Dismiss">&times;</button>'
+        ].join(' ');
+
+        document.body.appendChild(pill);
+      } catch (e) {}
+    }
+
     try {
-      var pill = document.createElement('div');
-      pill.id = 'flexitap-partner-pill';
-      pill.style.position = 'fixed';
-      pill.style.bottom = '20px';
-      pill.style.left = '20px';
-      pill.style.zIndex = '99990';
-      pill.style.display = 'flex';
-      pill.style.alignItems = 'center';
-      pill.style.gap = '8px';
-      pill.style.padding = '8px 14px';
-      pill.style.background = 'rgba(15, 23, 42, 0.94)';
-      pill.style.backdropFilter = 'blur(10px)';
-      pill.style.webkitBackdropFilter = 'blur(10px)';
-      pill.style.border = '1px solid rgba(16, 185, 129, 0.45)';
-      pill.style.borderRadius = '30px';
-      pill.style.boxShadow = '0 10px 25px rgba(0,0,0,0.4), 0 0 15px rgba(16,185,129,0.15)';
-      pill.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      pill.style.fontSize = '12px';
-      pill.style.color = '#ffffff';
-      pill.style.lineHeight = '1';
-
-      pill.innerHTML = [
-        '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;"></span>',
-        '<span style="color:#94a3b8;font-size:11.5px;">Partner Pass:</span>',
-        '<strong style="color:#34d399;font-family:monospace;font-size:12.5px;letter-spacing:0.5px;">' + code + '</strong>',
-        '<button onclick="this.parentElement.style.display=\'none\'" style="background:none;border:none;color:#64748b;margin-left:4px;cursor:pointer;font-size:14px;padding:0;line-height:1;" title="Dismiss">&times;</button>'
-      ].join(' ');
-
-      document.body.appendChild(pill);
-    } catch (e) {}
+      var client = window.supabaseClient;
+      if (client && client.from) {
+        client.from('affiliates').select('status').ilike('affiliate_code', code).maybeSingle()
+          .then(function(res) {
+            if (res.data && (res.data.status === 'suspended' || res.data.status === 'frozen')) {
+              // Account is suspended — do not show partner badge
+              return;
+            }
+            injectPill();
+          }).catch(function() {
+            injectPill();
+          });
+      } else {
+        injectPill();
+      }
+    } catch (e) {
+      injectPill();
+    }
   }
 
   // 8. Initialize, Persist & Decorate Across All Subpages

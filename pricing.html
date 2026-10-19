@@ -685,11 +685,11 @@
         try {
           const { data: affData } = await supabaseClient
             .from('affiliates')
-            .select('id, affiliate_code, full_name')
+            .select('id, affiliate_code, full_name, status')
             .ilike('affiliate_code', activeAffCode)
             .maybeSingle();
 
-          if (affData && affData.id) {
+          if (affData && affData.id && affData.status === 'active') {
             const referralRecord = {
               affiliate_id: affData.id,
               referred_email: email,

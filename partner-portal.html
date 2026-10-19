@@ -299,6 +299,20 @@
   <!-- ======================================================== -->
   <main id="dashboard-view" class="container">
 
+    <!-- SUSPENSION NOTICE BANNER -->
+    <div id="dash-partner-suspension-banner" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; align-items: flex-start; gap: 14px;">
+      <span style="font-size: 26px; line-height: 1;">⛔</span>
+      <div style="flex: 1;">
+        <div style="font-size: 14px; font-weight: 800; color: #f87171; display: flex; align-items: center; gap: 8px;">
+          <span>Partner Account Suspended / Frozen</span>
+          <span style="font-size: 10px; background: rgba(239, 68, 68, 0.25); color: #fca5a5; padding: 2px 8px; border-radius: 9999px; font-weight: 800;">ADMIN HOLD</span>
+        </div>
+        <p style="font-size: 12.5px; color: #cbd5e1; margin: 6px 0 0; line-height: 1.5;">
+          Your partner account is currently suspended. New café referral tracking, cookie locks, and bounty disbursements are paused. If you believe this is in error or wish to appeal, please contact compliance at <a href="mailto:info@flexitapapp.com" style="color: #38bdf8; text-decoration: underline; font-weight: 600;">info@flexitapapp.com</a>.
+        </p>
+      </div>
+    </div>
+
     <!-- Top Partner Banner & Share Card -->
     <div class="card" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; padding-bottom: 20px; border-bottom: 1px solid var(--border-card);">
@@ -310,7 +324,7 @@
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
               <h2 id="dash-partner-name" style="font-size: 20px; font-weight: 800; color: #fff;">Partner</h2>
               <span id="dash-code-badge" class="mono" style="font-size: 12px; font-weight: 800; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; padding: 2px 8px; border-radius: 6px;">CODE: —</span>
-              <span class="badge badge-green">● Active Verified</span>
+              <span id="dash-status-badge" class="badge badge-green">● Active Verified</span>
             </div>
             <p id="dash-payout-info" style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px;">
               Payout Rail: Loading...
@@ -318,7 +332,7 @@
           </div>
         </div>
 
-        <button onclick="openPayoutSettingsModal()" style="background: var(--bg-card-sub); border: 1px solid var(--border-card); color: #fff; padding: 8px 16px; border-radius: 9px; font-size: 12px; font-weight: 700; cursor: pointer;">
+        <button id="dash-edit-payout-btn" onclick="openPayoutSettingsModal()" style="background: var(--bg-card-sub); border: 1px solid var(--border-card); color: #fff; padding: 8px 16px; border-radius: 9px; font-size: 12px; font-weight: 700; cursor: pointer;">
           ✏️ Edit Payout Info
         </button>
       </div>
@@ -821,10 +835,16 @@
 
       try {
         if (supabaseClient) {
-          // 1. Create auth user
+          // 1. Create auth user with explicit affiliate role metadata
           const { data: authData, error: authErr } = await supabaseClient.auth.signUp({
             email,
-            password
+            password,
+            options: {
+              data: {
+                role: 'affiliate',
+                full_name: name
+              }
+            }
           });
 
           if (authErr && !authErr.message.includes('already registered')) {
@@ -833,6 +853,17 @@
 
           const userId = authData?.user?.id || null;
           partnerData.user_id = userId;
+
+          // 1b. Upsert profile with explicit affiliate role
+          if (userId) {
+            await supabaseClient.from('profiles').upsert([{
+              id: userId,
+              email: email,
+              full_name: name,
+              role: 'affiliate',
+              subscription_tier: 'free'
+            }]).catch(function(pErr) { console.warn('Profile sync note:', pErr); });
+          }
 
           // 2. Insert into affiliates table
           const { error: dbErr } = await supabaseClient.from('affiliates').insert([partnerData]);
@@ -1139,6 +1170,58 @@
       const code = partner.affiliate_code || partner.code || 'PARTNER';
       document.getElementById('dash-partner-name').innerText = partner.full_name || 'Partner';
       document.getElementById('dash-code-badge').innerText = `CODE: ${code}`;
+
+      // Dynamic Partner Status Handling (Active vs Suspended)
+      const isSuspended = (partner.status === 'suspended' || partner.status === 'frozen' || partner.status === 'inactive');
+      const statusBadge = document.getElementById('dash-status-badge');
+      const suspBanner = document.getElementById('dash-partner-suspension-banner');
+      const copyBtn = document.getElementById('dash-copy-btn');
+      const shareUrlInput = document.getElementById('dash-share-url');
+      const editPayoutBtn = document.getElementById('dash-edit-payout-btn');
+
+      if (isSuspended) {
+        if (statusBadge) {
+          statusBadge.className = 'badge';
+          statusBadge.style.background = 'rgba(239, 68, 68, 0.2)';
+          statusBadge.style.color = '#f87171';
+          statusBadge.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+          statusBadge.innerText = '⛔ Suspended';
+        }
+        if (suspBanner) suspBanner.style.display = 'flex';
+        if (shareUrlInput) shareUrlInput.style.opacity = '0.5';
+        if (copyBtn) {
+          copyBtn.disabled = true;
+          copyBtn.style.opacity = '0.5';
+          copyBtn.style.cursor = 'not-allowed';
+          copyBtn.title = 'Account suspended. Referral tracking is paused.';
+        }
+        if (editPayoutBtn) {
+          editPayoutBtn.disabled = true;
+          editPayoutBtn.style.opacity = '0.5';
+          editPayoutBtn.style.cursor = 'not-allowed';
+          editPayoutBtn.title = 'Payout changes are locked while account is suspended.';
+        }
+      } else {
+        if (statusBadge) {
+          statusBadge.className = 'badge badge-green';
+          statusBadge.style.background = '';
+          statusBadge.style.color = '';
+          statusBadge.style.border = '';
+          statusBadge.innerText = '● Active Verified';
+        }
+        if (suspBanner) suspBanner.style.display = 'none';
+        if (shareUrlInput) shareUrlInput.style.opacity = '1';
+        if (copyBtn) {
+          copyBtn.disabled = false;
+          copyBtn.style.opacity = '1';
+          copyBtn.style.cursor = 'pointer';
+        }
+        if (editPayoutBtn) {
+          editPayoutBtn.disabled = false;
+          editPayoutBtn.style.opacity = '1';
+          editPayoutBtn.style.cursor = 'pointer';
+        }
+      }
       
       const pType = (partner.payout_type || partner.payout_method || 'gcash').toUpperCase();
       const pAcct = partner.payout_account_number || partner.payout_details?.account_number || '';

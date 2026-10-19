@@ -2861,6 +2861,34 @@
     }
 
     async function verifyDevRole(user) {
+      if (!user || !user.email) {
+        await supabaseClient.auth.signOut();
+        document.getElementById('dev-err').innerText = 'Access Denied: Valid staff account required.';
+        document.getElementById('dev-auth-view').style.display = 'flex';
+        document.getElementById('dev-app-layout').style.display = 'none';
+        return;
+      }
+
+      // 1. HARD SECURITY GATE: Reject any account registered in the affiliates table
+      try {
+        const { data: affCheck } = await supabaseClient
+          .from('affiliates')
+          .select('id, affiliate_code, status')
+          .ilike('email', user.email)
+          .maybeSingle();
+
+        if (affCheck && affCheck.id) {
+          console.warn('Security Gate: Blocked affiliate from accessing internal dev portal:', user.email);
+          await supabaseClient.auth.signOut();
+          document.getElementById('dev-err').innerText = 'Access Denied: Partner/Affiliate accounts cannot access internal engineering operations.';
+          document.getElementById('dev-auth-view').style.display = 'flex';
+          document.getElementById('dev-app-layout').style.display = 'none';
+          return;
+        }
+      } catch (affCheckErr) {
+        console.warn('Affiliate security gate check note:', affCheckErr);
+      }
+
       let profile = null;
       try {
         const profileResponse = await supabaseClient
@@ -2873,72 +2901,57 @@
         console.warn('Profile fetch note:', err);
       }
 
-      // 1. Resolve role from profile if present
+      // 2. Reject explicit non-staff roles
       let role = (profile && profile.role ? String(profile.role) : '').toLowerCase();
+      if (role === 'affiliate' || role === 'partner' || role === 'customer' || role === 'owner') {
+        console.warn('Security Gate: Blocked non-staff role from dev portal:', role);
+        await supabaseClient.auth.signOut();
+        document.getElementById('dev-err').innerText = 'Access Denied: Authorized engineering or operations role required.';
+        document.getElementById('dev-auth-view').style.display = 'flex';
+        document.getElementById('dev-app-layout').style.display = 'none';
+        return;
+      }
 
-      // 2. Resolve role from user auth metadata if not in profile
+      // 3. Resolve role from user auth metadata if not in profile
       if (!role && user.user_metadata && user.user_metadata.role) {
-        role = String(user.user_metadata.role).toLowerCase();
+        const metaRole = String(user.user_metadata.role).toLowerCase();
+        if (metaRole === 'affiliate' || metaRole === 'partner' || metaRole === 'customer') {
+          await supabaseClient.auth.signOut();
+          document.getElementById('dev-err').innerText = 'Access Denied: Partner/Affiliate accounts cannot access internal operations.';
+          document.getElementById('dev-auth-view').style.display = 'flex';
+          document.getElementById('dev-app-layout').style.display = 'none';
+          return;
+        }
+        role = metaRole;
       }
 
-      // 3. Resolve role from local staff directory
-      let localStaff = [];
-      try {
-        const saved = localStorage.getItem('flexitap_staff_team_members');
-        if (saved) localStaff = JSON.parse(saved);
-      } catch (e) {}
-
-      const localMember = localStaff.find(m => m.email && user.email && m.email.toLowerCase() === user.email.toLowerCase());
-      if (!role && localMember && localMember.role) {
-        role = String(localMember.role).toLowerCase();
-      }
-
-      // 4. Resolve role from internal company email (@flexitapapp.com, @flexitap.io, or containing employee/tech/dev/support/dispatch)
+      // 4. Resolve role strictly from official company email domain (@flexitapapp.com or @flexitap.io)
       const emailLower = (user.email || '').toLowerCase();
-      const isOfficialStaffEmail = emailLower.endsWith('@flexitapapp.com') ||
-                                   emailLower.endsWith('@flexitap.io') ||
-                                   emailLower.includes('employee') ||
-                                   emailLower.includes('technician') ||
-                                   emailLower.includes('tech') ||
-                                   emailLower.includes('support') ||
-                                   emailLower.includes('dev') ||
-                                   emailLower.includes('admin') ||
-                                   emailLower.includes('dispatch') ||
-                                   emailLower.includes('staff');
+      const isOfficialStaffDomain = emailLower.endsWith('@flexitapapp.com') || emailLower.endsWith('@flexitap.io');
 
-      if (!role && isOfficialStaffEmail) {
-        if (emailLower.includes('admin')) role = 'admin';
-        else if (emailLower.includes('dev')) role = 'dev';
-        else if (emailLower.includes('support')) role = 'support';
-        else role = 'support'; // Default employee to Customer Support role
+      if (!role && isOfficialStaffDomain) {
+        if (emailLower.startsWith('admin@') || emailLower.includes('.admin@')) role = 'admin';
+        else if (emailLower.startsWith('dev@') || emailLower.startsWith('qsr@') || emailLower.includes('.dev@')) role = 'dev';
+        else role = 'support';
       }
 
+      // Allowed internal roles
       const backendRoles = [
         'dev', 'developer', 'admin', 'super_admin', 'devops',
-        'support', 'agent', 'staff', 'employee', 'ops', 'technician', 'tech'
+        'support', 'agent', 'staff', 'ops'
       ];
 
-      const isBackendStaff = backendRoles.includes(role) || isOfficialStaffEmail;
+      const isBackendStaff = backendRoles.includes(role);
 
       if (isBackendStaff) {
-        if (!role || role === 'employee' || role === 'technician' || role === 'tech' || role === 'dispatch') role = 'support';
+        // Resolve local staff member info if available without auto-upserting unverified permissions
+        let localStaff = [];
+        try {
+          const saved = localStorage.getItem('flexitap_staff_team_members');
+          if (saved) localStaff = JSON.parse(saved);
+        } catch (e) {}
 
-        // Auto-provision or update profile in Supabase profiles table
-        if (!profile || !profile.role) {
-          const profileUpsertData = {
-            id: user.id,
-            email: user.email,
-            full_name: (profile && profile.full_name) || (user.user_metadata && user.user_metadata.full_name) || (localMember && localMember.full_name) || user.email.split('@')[0],
-            role: role,
-            subscription_tier: 'pro'
-          };
-          try {
-            await supabaseClient.from('profiles').upsert([profileUpsertData]);
-            profile = { ...(profile || {}), ...profileUpsertData };
-          } catch (upsertErr) {
-            console.warn('Auto-upsert profile note:', upsertErr);
-          }
-        }
+        const localMember = localStaff.find(m => m.email && user.email && m.email.toLowerCase() === user.email.toLowerCase());
 
         activeDevUser = user;
         activeDevProfile = profile || { id: user.id, email: user.email, role: role, full_name: user.email.split('@')[0] };
