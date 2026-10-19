@@ -45,7 +45,7 @@ ON public.devices FOR SELECT
 TO authenticated
 USING (
   user_id::text = auth.uid()::text
-  OR store_id IN (
+  OR store_id::text IN (
     SELECT id::text FROM public.stores 
     WHERE (owner_id::text = auth.uid()::text OR user_id::text = auth.uid()::text)
   )
@@ -58,14 +58,14 @@ ON public.devices FOR ALL
 TO authenticated
 USING (
   user_id::text = auth.uid()::text
-  OR store_id IN (
+  OR store_id::text IN (
     SELECT id::text FROM public.stores 
     WHERE (owner_id::text = auth.uid()::text OR user_id::text = auth.uid()::text)
   )
 )
 WITH CHECK (
   user_id::text = auth.uid()::text
-  OR store_id IN (
+  OR store_id::text IN (
     SELECT id::text FROM public.stores 
     WHERE (owner_id::text = auth.uid()::text OR user_id::text = auth.uid()::text)
   )
@@ -85,13 +85,13 @@ BEGIN
     RETURN jsonb_build_object('success', false, 'error', 'Unauthorized');
   END IF;
 
-  -- Verify device belongs to this user or their store
-  SELECT store_id INTO v_store_id
+  -- Verify device belongs to this user or their store (handling uuid or text columns)
+  SELECT store_id::text INTO v_store_id
   FROM public.devices
-  WHERE id = p_device_id
+  WHERE id::text = p_device_id::text
     AND (
       user_id::text = v_user_id::text
-      OR store_id IN (
+      OR store_id::text IN (
         SELECT id::text FROM public.stores 
         WHERE (owner_id::text = v_user_id::text OR user_id::text = v_user_id::text)
       )
@@ -105,7 +105,7 @@ BEGIN
   UPDATE public.devices
   SET is_active = false,
       last_seen = now()
-  WHERE id = p_device_id;
+  WHERE id::text = p_device_id::text;
 
   RETURN jsonb_build_object('success', true, 'device_id', p_device_id);
 END;
