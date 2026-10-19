@@ -2746,6 +2746,9 @@
 
               <!-- Quick Actions & Window Controls (Teams Style) -->
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <div id="teams-realtime-status-badge" style="display: flex; align-items: center; gap: 6px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; color: #34d399;">
+                  <span style="display: inline-block; width: 6px; height: 6px; border-radius: 9999px; background: #34d399;"></span> Live Sync
+                </div>
                 <div id="teams-user-status-pill" style="display: flex; align-items: center; gap: 6px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; color: #34d399;">
                   <span style="display: inline-block; width: 7px; height: 7px; border-radius: 9999px; background: #34d399;"></span> Available
                 </div>
@@ -10340,22 +10343,171 @@ Role: ${lastProvisionedCreds.role}`;
     ];
 
     let activeTeamsChannelId = 'c-general';
+    let activeTeamsDmStaffEmail = null;
     let activeTeamsCall = null;
     let callTimerInterval = null;
     let localMediaStream = null;
     let currentCallType = 'audio';
+    let teamsRealtimeChannel = null;
 
-    function initTeamChat() {
+    function getDmThreadId(email1, email2) {
+      const e1 = (email1 || '').toLowerCase().trim();
+      const e2 = (email2 || '').toLowerCase().trim();
+      const sorted = [e1, e2].sort();
+      return 'dm_' + sorted[0] + '__' + sorted[1];
+    }
+
+    function isMessageInCurrentThread(msg, currentChannelId) {
+      if (!msg || !currentChannelId) return false;
+      if (msg.channelId === currentChannelId) return true;
+
+      // Handle direct message thread matching across different user orientations
+      if (activeTeamsDmStaffEmail) {
+        const myEmail = getEffectiveUserEmail().toLowerCase();
+        const otherEmail = activeTeamsDmStaffEmail.toLowerCase();
+        const normalized = getDmThreadId(myEmail, otherEmail);
+
+        if (msg.channelId === normalized) return true;
+
+        // Legacy single-email dm- format:
+        if (msg.channelId === 'dm-' + otherEmail || msg.channelId === 'dm-' + myEmail) {
+          const sEmail = (msg.senderEmail || '').toLowerCase();
+          if (sEmail === myEmail || sEmail === otherEmail) return true;
+        }
+      }
+      return false;
+    }
+
+    function initTeamsRealtime() {
+      if (!supabaseClient || teamsRealtimeChannel) return;
+
+      try {
+        teamsRealtimeChannel = supabaseClient.channel('flexitap_teams_global', {
+          config: { broadcast: { self: false } }
+        });
+
+        teamsRealtimeChannel.on('broadcast', { event: 'TEAMS_MSG' }, payload => {
+          handleIncomingRealtimeMessage(payload.payload);
+        });
+
+        teamsRealtimeChannel.subscribe(status => {
+          const badge = document.getElementById('teams-realtime-status-badge');
+          if (badge) {
+            if (status === 'SUBSCRIBED') {
+              badge.innerHTML = '<span style="display: inline-block; width: 6px; height: 6px; border-radius: 9999px; background: #34d399;"></span> Live Sync';
+              badge.style.color = '#34d399';
+              badge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+              badge.style.background = 'rgba(16, 185, 129, 0.12)';
+            } else {
+              badge.innerHTML = '<span style="display: inline-block; width: 6px; height: 6px; border-radius: 9999px; background: #fbbf24;"></span> Connecting...';
+              badge.style.color = '#fbbf24';
+            }
+          }
+        });
+      } catch (err) {
+        console.warn('Realtime channel init warning:', err);
+      }
+    }
+
+    function handleIncomingRealtimeMessage(msg) {
+      if (!msg || !msg.id) return;
+      if (teamsMessages.some(m => m.id === msg.id)) return;
+
+      teamsMessages.push(msg);
+      try {
+        localStorage.setItem('flexitap_teams_messages', JSON.stringify(teamsMessages));
+      } catch (_) {}
+
+      const isCurrent = isMessageInCurrentThread(msg, activeTeamsChannelId);
+      if (isCurrent) {
+        renderTeamsMessages();
+      }
+
+      playTeamsSound('receive');
+
+      const isChatFullActive = (teamsWindowState === 'full' && document.getElementById('view-chat')?.classList.contains('active'));
+      const isChatFloating = (teamsWindowState === 'floating');
+
+      if (teamsWindowState === 'minimized' || (!isChatFullActive && !isChatFloating) || !isCurrent) {
+        teamsUnreadCount++;
+        updateTeamsUnreadBadge();
+        showTeamsChatToast(msg.senderName, msg.content);
+      }
+    }
+
+    async function syncTeamsCloudHistory() {
+      if (!supabaseClient) return;
+      try {
+        const { data, error } = await supabaseClient
+          .from('site_analytics')
+          .select('*')
+          .eq('event_type', 'teams_chat')
+          .order('created_at', { ascending: true })
+          .limit(300);
+
+        if (data && data.length > 0) {
+          let hasNew = false;
+          data.forEach(row => {
+            const meta = row.metadata || {};
+            const id = meta.id || row.id;
+            if (!teamsMessages.some(m => m.id === id)) {
+              teamsMessages.push({
+                id: id,
+                channelId: meta.channelId || row.page_path,
+                senderName: meta.senderName || 'Staff',
+                senderEmail: (meta.senderEmail || '').toLowerCase(),
+                senderRole: meta.senderRole || 'staff',
+                content: meta.content || '',
+                attachment: meta.attachment || null,
+                reactions: meta.reactions || [],
+                timestamp: meta.timestamp || new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              });
+              hasNew = true;
+            }
+          });
+
+          if (hasNew) {
+            try {
+              localStorage.setItem('flexitap_teams_messages', JSON.stringify(teamsMessages));
+            } catch (_) {}
+            renderTeamsMessages();
+          }
+        }
+      } catch (err) {
+        console.warn('Teams cloud sync warning:', err);
+      }
+    }
+
+    async function initTeamChat() {
+      // 1. Purge any leftover fake canned responses from previous tests
+      const cannedSamples = [
+        'Confirmed. Hotfix is staging in sandbox',
+        'On it! I will cross-reference this with the ticket status',
+        'Got it! Looking into the terminal logs',
+        'Thanks for the heads up, checking the telemetry now'
+      ];
+
       try {
         const savedCh = localStorage.getItem('flexitap_teams_channels');
         if (savedCh) teamsChannels = JSON.parse(savedCh);
         const savedMsg = localStorage.getItem('flexitap_teams_messages');
-        if (savedMsg) teamsMessages = JSON.parse(savedMsg);
+        if (savedMsg) {
+          let parsed = JSON.parse(savedMsg);
+          parsed = parsed.filter(m => !cannedSamples.some(s => m.content && m.content.includes(s)));
+          teamsMessages = parsed;
+          localStorage.setItem('flexitap_teams_messages', JSON.stringify(teamsMessages));
+        }
       } catch (e) {}
 
       updateMyTeamsProfileUI();
       renderTeamsSidebar();
       renderTeamsMessages();
+
+      // 2. Initialize Realtime WebSocket Broadcast
+      initTeamsRealtime();
+
+      // 3. Sync Cloud History from Supabase
+      syncTeamsCloudHistory();
     }
 
     function loadTeamChatData() {
@@ -10405,8 +10557,9 @@ Role: ${lastProvisionedCreds.role}`;
         if (searchQuery) staffList = staffList.filter(m => (m.full_name || '').toLowerCase().includes(searchQuery));
 
         dmListEl.innerHTML = staffList.map(m => {
-          const dmId = 'dm-' + m.email;
-          const isActive = activeTeamsChannelId === dmId;
+          const targetEmail = (m.email || '').toLowerCase();
+          const dmNormalized = getDmThreadId(effEmail, targetEmail);
+          const isActive = (activeTeamsChannelId === dmNormalized) || (activeTeamsDmStaffEmail === targetEmail);
           const isOnline = m.clock_status === 'clocked_in';
           const initials = (m.full_name || 'Staff').split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
 
@@ -10436,6 +10589,7 @@ Role: ${lastProvisionedCreds.role}`;
 
     function selectTeamsChannel(channelId) {
       activeTeamsChannelId = channelId;
+      activeTeamsDmStaffEmail = null;
       const target = teamsChannels.find(c => c.id === channelId);
       if (target) {
         target.unread = 0;
@@ -10449,9 +10603,11 @@ Role: ${lastProvisionedCreds.role}`;
     }
 
     function selectTeamsDm(staffEmail) {
-      const dmId = 'dm-' + staffEmail;
-      activeTeamsChannelId = dmId;
-      const staff = teamStaffMembers.find(m => m.email && m.email.toLowerCase() === staffEmail.toLowerCase());
+      const myEmail = getEffectiveUserEmail().toLowerCase();
+      activeTeamsDmStaffEmail = (staffEmail || '').toLowerCase();
+      activeTeamsChannelId = getDmThreadId(myEmail, activeTeamsDmStaffEmail);
+
+      const staff = teamStaffMembers.find(m => m.email && m.email.toLowerCase() === activeTeamsDmStaffEmail);
       if (staff) {
         document.getElementById('teams-active-icon').textContent = '👤';
         document.getElementById('teams-active-title').textContent = staff.full_name;
@@ -10467,7 +10623,7 @@ Role: ${lastProvisionedCreds.role}`;
       if (!container) return;
 
       const myEmail = getEffectiveUserEmail().toLowerCase();
-      const currentMessages = teamsMessages.filter(m => m.channelId === activeTeamsChannelId);
+      const currentMessages = teamsMessages.filter(m => isMessageInCurrentThread(m, activeTeamsChannelId));
 
       if (currentMessages.length === 0) {
         container.innerHTML = `
@@ -10534,11 +10690,12 @@ Role: ${lastProvisionedCreds.role}`;
       const text = (input?.value || '').trim();
       if (!text) return;
 
+      const myEmail = getEffectiveUserEmail().toLowerCase();
       const newMsg = {
-        id: 'msg-' + Date.now(),
+        id: 'msg-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
         channelId: activeTeamsChannelId,
         senderName: getEffectiveUserDisplayName(),
-        senderEmail: getEffectiveUserEmail(),
+        senderEmail: myEmail,
         senderRole: getEffectiveRole(),
         content: text,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -10562,8 +10719,29 @@ Role: ${lastProvisionedCreds.role}`;
       playTeamsSound('send');
       renderTeamsMessages();
 
-      // Trigger automatic teammate response so you can test Teams sound & minimized notifications!
-      simulateColleagueReply(newMsg);
+      // 1. Broadcast immediately to all online team members via Supabase Realtime
+      if (teamsRealtimeChannel) {
+        teamsRealtimeChannel.send({
+          type: 'broadcast',
+          event: 'TEAMS_MSG',
+          payload: newMsg
+        });
+      }
+
+      // 2. Persist to cloud via site_analytics so offline members or refreshed browsers get it
+      try {
+        if (supabaseClient) {
+          supabaseClient.from('site_analytics').insert([{
+            event_type: 'teams_chat',
+            event_name: 'teams_msg',
+            page_path: newMsg.channelId,
+            session_id: activeDevUser?.id || null,
+            metadata: newMsg
+          }]).then(() => {});
+        }
+      } catch (err) {
+        console.warn('Could not persist message to cloud:', err);
+      }
     }
 
     function promptInsertTicketRef() {
@@ -11125,62 +11303,6 @@ Role: ${lastProvisionedCreds.role}`;
         updateTeamsUnreadBadge();
         showTeamsChatToast(sender, text);
       }
-    }
-
-    function simulateColleagueReply(userMsg) {
-      let replySender = 'Sarah (Support Lead)';
-      let replyEmail = 'sarah.support@flexitapapp.com';
-      let replyRole = 'support';
-
-      if (activeTeamsChannelId && activeTeamsChannelId.startsWith('dm-')) {
-        const targetEmail = activeTeamsChannelId.replace('dm-', '');
-        const staff = teamStaffMembers.find(m => m.email && m.email.toLowerCase() === targetEmail.toLowerCase());
-        if (staff) {
-          replySender = staff.full_name;
-          replyEmail = staff.email;
-          replyRole = staff.role || 'Specialist';
-        }
-      }
-
-      const responses = [
-        'Got it! Looking into the terminal logs for this right now 👍',
-        'On it! I will cross-reference this with the ticket status.',
-        'Thanks for the heads up, checking the telemetry now.',
-        'Confirmed. Hotfix is staging in sandbox, will update shortly!'
-      ];
-      const chosenReply = responses[Math.floor(Math.random() * responses.length)];
-
-      setTimeout(function() {
-        const replyMsg = {
-          id: 'msg-' + Date.now(),
-          channelId: userMsg.channelId,
-          senderName: replySender,
-          senderEmail: replyEmail,
-          senderRole: replyRole,
-          content: chosenReply,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          reactions: ['👍']
-        };
-
-        teamsMessages.push(replyMsg);
-        try {
-          localStorage.setItem('flexitap_teams_messages', JSON.stringify(teamsMessages));
-        } catch (_) {}
-
-        renderTeamsMessages();
-
-        const isChatFullActive = (teamsWindowState === 'full' && document.getElementById('view-chat')?.classList.contains('active'));
-        const isChatFloating = (teamsWindowState === 'floating');
-
-        if (teamsWindowState === 'minimized' || (!isChatFullActive && !isChatFloating)) {
-          playTeamsSound('receive');
-          teamsUnreadCount++;
-          updateTeamsUnreadBadge();
-          showTeamsChatToast(replySender, chosenReply);
-        } else {
-          playTeamsSound('receive');
-        }
-      }, 3000);
     }
 
     // =========================================================================
