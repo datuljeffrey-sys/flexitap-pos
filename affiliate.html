@@ -422,6 +422,18 @@
       // Always persist locally so partner link & QR work instantly without blocking
       localStorage.setItem('flexitap_partner_code', code);
       localStorage.setItem('flexitap_partner_profile_' + code, JSON.stringify(partnerPayload));
+
+      // Dispatch welcome email to affiliate & alert email to info@flexitapapp.com (strictly NO PWA link)
+      try {
+        if (typeof window.dispatchAffiliateSignupEmails === 'function') {
+          window.dispatchAffiliateSignupEmails(partnerPayload);
+        } else if (window.FlexiTapAffiliate && typeof window.FlexiTapAffiliate.dispatchSignupEmails === 'function') {
+          window.FlexiTapAffiliate.dispatchSignupEmails(partnerPayload);
+        }
+      } catch (mailErr) {
+        console.warn('Affiliate email dispatch note:', mailErr);
+      }
+
       loadPartnerDashboard(code);
     }
 

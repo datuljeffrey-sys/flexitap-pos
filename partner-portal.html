@@ -798,6 +798,17 @@
         localStorage.setItem('flexitap_partner_active_email', email);
         localStorage.setItem('flexitap_partner_code', code);
 
+        // Dispatch welcome email to affiliate & alert email to info@flexitapapp.com (strictly NO PWA link)
+        try {
+          if (typeof window.dispatchAffiliateSignupEmails === 'function') {
+            window.dispatchAffiliateSignupEmails(partnerData);
+          } else if (window.FlexiTapAffiliate && typeof window.FlexiTapAffiliate.dispatchSignupEmails === 'function') {
+            window.FlexiTapAffiliate.dispatchSignupEmails(partnerData);
+          }
+        } catch (mailErr) {
+          console.warn('Affiliate email dispatch note:', mailErr);
+        }
+
         pendingOtpEmail = email;
         openOtpModal(email);
       } catch (ex) {
