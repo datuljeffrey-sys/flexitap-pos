@@ -10498,11 +10498,14 @@ Role: ${lastProvisionedCreds.role}`;
 
         if (data && data.length > 0) {
           let hasNew = false;
+          let latestIncoming = null;
+          const myEmail = getEffectiveUserEmail().toLowerCase();
+
           data.forEach(row => {
             const meta = row.metadata || {};
             const id = meta.id || row.id;
             if (!teamsMessages.some(m => m.id === id)) {
-              teamsMessages.push({
+              const incomingMsg = {
                 id: id,
                 channelId: meta.channelId || row.page_path,
                 senderName: meta.senderName || 'Staff',
@@ -10512,8 +10515,12 @@ Role: ${lastProvisionedCreds.role}`;
                 attachment: meta.attachment || null,
                 reactions: meta.reactions || [],
                 timestamp: meta.timestamp || new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-              });
+              };
+              teamsMessages.push(incomingMsg);
               hasNew = true;
+              if (incomingMsg.senderEmail !== myEmail) {
+                latestIncoming = incomingMsg;
+              }
             }
           });
 
@@ -10522,6 +10529,18 @@ Role: ${lastProvisionedCreds.role}`;
               localStorage.setItem('flexitap_teams_messages', JSON.stringify(teamsMessages));
             } catch (_) {}
             renderTeamsMessages();
+
+            if (latestIncoming) {
+              playTeamsSound('receive');
+              const isChatFullActive = (teamsWindowState === 'full' && document.getElementById('view-chat')?.classList.contains('active'));
+              const isChatFloating = (teamsWindowState === 'floating');
+              const isCurrent = isMessageInCurrentThread(latestIncoming, activeTeamsChannelId);
+              if (teamsWindowState === 'minimized' || (!isChatFullActive && !isChatFloating) || !isCurrent) {
+                teamsUnreadCount++;
+                updateTeamsUnreadBadge();
+                showTeamsChatToast(latestIncoming.senderName, latestIncoming.content);
+              }
+            }
           }
         }
       } catch (err) {
@@ -10557,8 +10576,11 @@ Role: ${lastProvisionedCreds.role}`;
       // 2. Initialize Realtime WebSocket Broadcast
       initTeamsRealtime();
 
-      // 3. Sync Cloud History from Supabase
+      // 3. Sync Cloud History from Supabase (initial + continuous fallback poll every 3.5s)
       syncTeamsCloudHistory();
+      if (!window.__teamsSyncInterval) {
+        window.__teamsSyncInterval = setInterval(syncTeamsCloudHistory, 3500);
+      }
     }
 
     function loadTeamChatData() {
