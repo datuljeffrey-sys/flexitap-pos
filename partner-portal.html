@@ -181,7 +181,10 @@
           <input type="email" id="login-email" required class="form-control" placeholder="partner@domain.com">
         </div>
         <div class="form-group">
-          <label>Password</label>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label style="margin-bottom: 0;">Password</label>
+            <a href="javascript:void(0)" onclick="openForgotPasswordModal()" style="font-size: 11.5px; color: #38bdf8; text-decoration: none; font-weight: 600;">Forgot Password?</a>
+          </div>
           <input type="password" id="login-password" required class="form-control" placeholder="••••••••••••">
         </div>
         <button type="submit" class="btn-submit" id="btn-login-submit">
@@ -525,7 +528,61 @@
   </div>
 
   <!-- ======================================================== -->
-  <!-- 5. PROGRAM TERMS & ANTI-FRAUD AGREEMENT MODAL            -->
+  <!-- 5. FORGOT PASSWORD MODAL                                 -->
+  <!-- ======================================================== -->
+  <div id="forgot-password-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); z-index: 1060; justify-content: center; align-items: center; padding: 20px;">
+    <div class="auth-card" style="max-width: 440px; position: relative;">
+      <button onclick="closeForgotPasswordModal()" style="position: absolute; top: 16px; right: 18px; background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer;">&times;</button>
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="font-size: 32px; margin-bottom: 6px;">🔐</div>
+        <h3 style="font-size: 20px; font-weight: 800; color: #fff;">Reset Partner Password</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Enter your registered partner email to receive a secure password recovery link.</p>
+      </div>
+
+      <form id="form-forgot-password" onsubmit="handlePartnerForgotPassword(event)">
+        <div class="form-group">
+          <label>Registered Partner Email *</label>
+          <input type="email" id="forgot-email" required class="form-control" placeholder="partner@domain.com">
+        </div>
+        <button type="submit" class="btn-submit" id="btn-forgot-submit">
+          <span>Send Recovery Link</span> &rarr;
+        </button>
+        <div id="forgot-status-msg" style="margin-top: 14px; font-size: 13px; text-align: center; line-height: 1.5;"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 6. NEW PASSWORD MODAL (AFTER RECOVERY LINK CLICK)        -->
+  <!-- ======================================================== -->
+  <div id="new-password-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); z-index: 1060; justify-content: center; align-items: center; padding: 20px;">
+    <div class="auth-card" style="max-width: 440px; position: relative;">
+      <button onclick="closeNewPasswordModal()" style="position: absolute; top: 16px; right: 18px; background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer;">&times;</button>
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="font-size: 32px; margin-bottom: 6px;">✨</div>
+        <h3 style="font-size: 20px; font-weight: 800; color: #fff;">Set New Password</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Enter a new secure password for your FlexiTap Partner account.</p>
+      </div>
+
+      <form id="form-new-password" onsubmit="handlePartnerSetNewPassword(event)">
+        <div class="form-group">
+          <label>New Password * (Min 8 characters)</label>
+          <input type="password" id="new-password-input" minlength="8" required class="form-control" placeholder="Create new password">
+        </div>
+        <div class="form-group">
+          <label>Confirm New Password *</label>
+          <input type="password" id="new-password-confirm" minlength="8" required class="form-control" placeholder="Re-type new password">
+        </div>
+        <button type="submit" class="btn-submit" id="btn-new-password-submit">
+          <span>Update Password &amp; Enter Portal</span> &rarr;
+        </button>
+        <div id="new-password-status-msg" style="margin-top: 14px; font-size: 13px; text-align: center; line-height: 1.5;"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 7. PROGRAM TERMS & ANTI-FRAUD AGREEMENT MODAL            -->
   <!-- ======================================================== -->
   <div id="terms-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); z-index: 1060; justify-content: center; align-items: center; padding: 20px;">
     <div class="auth-card" style="max-width: 680px; max-height: 88vh; display: flex; flex-direction: column; text-align: left; padding: 0; overflow: hidden; border: 1px solid rgba(56, 189, 248, 0.3); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);">
@@ -845,6 +902,120 @@
       if (modal) modal.style.display = 'none';
     }
 
+    // --- FORGOT PASSWORD MODAL LOGIC ---
+    function openForgotPasswordModal() {
+      const loginEmail = document.getElementById('login-email')?.value || '';
+      const forgotInp = document.getElementById('forgot-email');
+      if (forgotInp && loginEmail) forgotInp.value = loginEmail;
+      const msg = document.getElementById('forgot-status-msg');
+      if (msg) msg.innerText = '';
+      const btn = document.getElementById('btn-forgot-submit');
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Send Recovery Link</span> &rarr;';
+      }
+      const modal = document.getElementById('forgot-password-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeForgotPasswordModal() {
+      const modal = document.getElementById('forgot-password-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    async function handlePartnerForgotPassword(e) {
+      e.preventDefault();
+      const email = document.getElementById('forgot-email').value.trim().toLowerCase();
+      const btn = document.getElementById('btn-forgot-submit');
+      const msg = document.getElementById('forgot-status-msg');
+      if (!email) return;
+
+      btn.disabled = true;
+      btn.innerHTML = 'Sending recovery link...';
+      msg.innerText = '';
+
+      try {
+        if (supabaseClient) {
+          const redirectUrl = window.location.origin + window.location.pathname;
+          const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: redirectUrl
+          });
+          if (error) throw error;
+        }
+        msg.style.color = '#34d399';
+        msg.innerHTML = '✅ <strong>Recovery link dispatched!</strong> Please check your inbox and spam folder for instructions to reset your password.';
+        btn.innerHTML = 'Link Sent ✓';
+      } catch (err) {
+        msg.style.color = '#f87171';
+        msg.innerText = err.message || 'Failed to send recovery email. Please check your address.';
+        btn.disabled = false;
+        btn.innerHTML = '<span>Send Recovery Link</span> &rarr;';
+      }
+    }
+
+    // --- NEW PASSWORD MODAL (AFTER RECOVERY LINK) ---
+    function openNewPasswordModal() {
+      const modal = document.getElementById('new-password-modal');
+      if (modal) modal.style.display = 'flex';
+      const msg = document.getElementById('new-password-status-msg');
+      if (msg) msg.innerText = '';
+    }
+
+    function closeNewPasswordModal() {
+      const modal = document.getElementById('new-password-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    async function handlePartnerSetNewPassword(e) {
+      e.preventDefault();
+      const pw1 = document.getElementById('new-password-input').value;
+      const pw2 = document.getElementById('new-password-confirm').value;
+      const btn = document.getElementById('btn-new-password-submit');
+      const msg = document.getElementById('new-password-status-msg');
+      msg.innerText = '';
+
+      if (pw1 !== pw2) {
+        msg.style.color = '#f87171';
+        msg.innerText = 'Passwords do not match. Please re-enter.';
+        return;
+      }
+      if (pw1.length < 8) {
+        msg.style.color = '#f87171';
+        msg.innerText = 'Password must be at least 8 characters long.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = 'Updating password...';
+
+      try {
+        if (supabaseClient) {
+          const { data, error } = await supabaseClient.auth.updateUser({ password: pw1 });
+          if (error) throw error;
+          const userEmail = data?.user?.email;
+          if (userEmail) {
+            localStorage.setItem('flexitap_partner_verified_session', userEmail);
+          }
+        }
+        msg.style.color = '#34d399';
+        msg.innerHTML = '✅ <strong>Password updated successfully!</strong> Entering partner portal...';
+        setTimeout(() => {
+          closeNewPasswordModal();
+          const sessionEmail = localStorage.getItem('flexitap_partner_verified_session');
+          if (sessionEmail) {
+            loadPartnerDashboardData(sessionEmail);
+          } else {
+            window.location.reload();
+          }
+        }, 1500);
+      } catch (err) {
+        msg.style.color = '#f87171';
+        msg.innerText = err.message || 'Failed to update password. Recovery link may have expired.';
+        btn.disabled = false;
+        btn.innerHTML = '<span>Update Password &amp; Enter Portal</span> &rarr;';
+      }
+    }
+
     function startResendCountdown(seconds) {
       const btn = document.getElementById('btn-resend-otp');
       btn.disabled = true;
@@ -900,10 +1071,7 @@
           });
 
           if (error) {
-            // Check if mock bypass code 794102 for testing
-            if (code !== '794102') {
-              throw error;
-            }
+            throw error;
           }
         }
 
@@ -1027,45 +1195,10 @@
         }
       } catch (cErr) {}
 
-      // Only populate sample demonstration records for unauthenticated preview or DEMO code
-      const isDemoAccount = (code === 'DEMO' || code === 'SAMPLE' || (!partner.id && !partner.email && code === 'PARTNER'));
-      if (isDemoAccount && commissions.length === 0 && referrals.length === 0) {
-        commissions = [
-          {
-            id: 'c1',
-            paddle_transaction_id: 'PAD-TX-89104',
-            commission_amount_php: 6000,
-            plan_tier: 'pro',
-            created_at: new Date(Date.now() - 35 * 86400000).toISOString(),
-            hold_until: new Date(Date.now() - 5 * 86400000).toISOString(),
-            status: 'approved'
-          },
-          {
-            id: 'c2',
-            paddle_transaction_id: 'PAD-TX-91244',
-            commission_amount_php: 3000,
-            plan_tier: 'plus',
-            created_at: new Date(Date.now() - 12 * 86400000).toISOString(),
-            hold_until: new Date(Date.now() + 18 * 86400000).toISOString(),
-            status: 'pending'
-          }
-        ];
-        referrals = [
-          {
-            store_name: 'Davao Specialty Brew Café',
-            plan_tier: 'pro',
-            created_at: new Date(Date.now() - 35 * 86400000).toISOString(),
-            status: 'verified'
-          },
-          {
-            store_name: 'Manila Roast Roastery',
-            plan_tier: 'plus',
-            created_at: new Date(Date.now() - 12 * 86400000).toISOString(),
-            status: 'verified'
-          }
-        ];
-        clicksCount = clicksCount || 142;
-      }
+      // Strictly reflect real verified telemetry with zero mocks
+      clicksCount = clicksCount || 0;
+      referrals = referrals || [];
+      commissions = commissions || [];
 
       // 30-DAY ELAPSE ENGINE CALCULATION
       const now = new Date();
@@ -1284,6 +1417,11 @@
       const urlParams = new URLSearchParams(window.location.search);
       if (window.location.hash === '#register' || urlParams.get('tab') === 'register' || urlParams.get('action') === 'register') {
         switchAuthTab('register');
+      }
+
+      // Check if arriving via password recovery link
+      if (window.location.hash && (window.location.hash.includes('type=recovery') || window.location.hash.includes('access_token'))) {
+        openNewPasswordModal();
       }
 
       // Check if session verified
