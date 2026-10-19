@@ -483,9 +483,9 @@
       position: fixed !important;
       bottom: 24px;
       right: 24px;
-      width: 540px;
+      width: clamp(380px, 62vw, 860px);
       max-width: calc(100vw - 32px);
-      height: 680px;
+      height: 640px;
       max-height: calc(100vh - 48px);
       z-index: 2500 !important;
       display: flex !important;
@@ -497,6 +497,10 @@
       overflow: hidden !important;
       resize: both;
       animation: teamsWindowPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #view-chat.teams-minimized {
+      display: none !important;
     }
 
     #view-chat.teams-floating-mode .crm-header-card {
@@ -2309,14 +2313,14 @@
 
                 <!-- Teams Window Controls -->
                 <div style="display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.3); padding: 2px 4px; border-radius: 8px; border: 1px solid var(--card-border);">
-                  <button type="button" class="action-btn" onclick="minimizeTeamsWindow()" style="padding: 4px 8px; font-size: 0.72rem; line-height: 1;" title="Minimize to floating corner pill">
+                  <button type="button" class="action-btn" onclick="minimizeTeamsWindow()" style="padding: 4px 8px; font-size: 0.72rem; line-height: 1;" title="Minimize to floating pill">
                     —
                   </button>
-                  <button type="button" class="action-btn" id="teams-btn-float-toggle" onclick="toggleTeamsFloatingWindow()" style="padding: 4px 9px; font-size: 0.72rem; line-height: 1;" title="Float window across all tabs">
+                  <button type="button" class="action-btn" id="teams-btn-float-toggle" onclick="toggleTeamsFloatingWindow()" style="padding: 4px 9px; font-size: 0.72rem; line-height: 1;" title="Toggle floating window mode">
                     🗗 Float
                   </button>
-                  <button type="button" class="action-btn" onclick="maximizeTeamsWindow()" style="padding: 4px 8px; font-size: 0.72rem; line-height: 1;" title="Full-page tab view">
-                    ⛶ Full
+                  <button type="button" class="action-btn" onclick="minimizeTeamsWindow()" style="padding: 4px 8px; font-size: 0.72rem; line-height: 1; color: var(--text-muted);" title="Close chat to pill">
+                    ✕
                   </button>
                 </div>
               </div>
@@ -2885,9 +2889,11 @@
         return;
       }
 
-      // If user navigated to chat and it was minimized, restore it
-      if (key === 'chat' && typeof teamsWindowState !== 'undefined') {
-        if (teamsWindowState === 'minimized') {
+      // If user navigated to chat, ensure minimized pill is hidden and restore if minimized
+      if (key === 'chat') {
+        const pillEl = document.getElementById('teams-minimized-pill');
+        if (pillEl) pillEl.style.display = 'none';
+        if (typeof teamsWindowState !== 'undefined' && teamsWindowState === 'minimized') {
           restoreTeamsWindow();
         }
       }
@@ -10478,7 +10484,10 @@ Role: ${lastProvisionedCreds.role}`;
       teamsWindowState = 'minimized';
       const chatEl = document.getElementById('view-chat');
       const pillEl = document.getElementById('teams-minimized-pill');
-      if (chatEl) chatEl.style.display = 'none';
+      if (chatEl) {
+        chatEl.classList.add('teams-minimized');
+        chatEl.style.setProperty('display', 'none', 'important');
+      }
       if (pillEl) {
         pillEl.style.display = 'flex';
         const activeTitle = document.getElementById('teams-active-title')?.textContent || 'FlexiTeams';
@@ -10510,8 +10519,9 @@ Role: ${lastProvisionedCreds.role}`;
       if (pillEl) pillEl.style.display = 'none';
       if (!chatEl) return;
 
+      chatEl.classList.remove('teams-minimized');
       chatEl.classList.add('teams-floating-mode');
-      chatEl.style.display = 'flex';
+      chatEl.style.setProperty('display', 'flex', 'important');
 
       const dragInd = document.getElementById('teams-floating-drag-indicator');
       if (dragInd) dragInd.style.display = 'inline-block';
@@ -10519,7 +10529,7 @@ Role: ${lastProvisionedCreds.role}`;
       const floatBtn = document.getElementById('teams-btn-float-toggle');
       if (floatBtn) {
         floatBtn.title = 'Dock back to full-page tab';
-        floatBtn.innerHTML = '⛶ Full';
+        floatBtn.innerHTML = '⛶ Full View';
       }
 
       const scrollContainer = document.getElementById('teams-messages-scroll');
@@ -10535,6 +10545,7 @@ Role: ${lastProvisionedCreds.role}`;
       if (toastEl) toastEl.style.display = 'none';
       if (!chatEl) return;
 
+      chatEl.classList.remove('teams-minimized');
       chatEl.classList.remove('teams-floating-mode');
       chatEl.style.left = '';
       chatEl.style.top = '';
