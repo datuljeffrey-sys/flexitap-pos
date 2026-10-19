@@ -1014,16 +1014,29 @@
         console.warn('Dashboard query note:', err);
       }
 
-      // If no live DB commissions yet, populate initial demonstration records
-      if (commissions.length === 0 && (!supabaseClient || referrals.length === 0)) {
-        // Sample demonstration records showcasing the 30-day elapse engine
+      // Check local cache for newly registered referrals
+      try {
+        const cacheKey = 'flexitap_referrals_cache_' + (code || '').toUpperCase();
+        const cachedRefs = JSON.parse(localStorage.getItem(cacheKey) || '[]');
+        if (cachedRefs.length > 0) {
+          cachedRefs.forEach(cr => {
+            if (!referrals.some(r => r.referred_email === cr.referred_email || (r.store_name && r.store_name === cr.store_name))) {
+              referrals.unshift(cr);
+            }
+          });
+        }
+      } catch (cErr) {}
+
+      // Only populate sample demonstration records for unauthenticated preview or DEMO code
+      const isDemoAccount = (code === 'DEMO' || code === 'SAMPLE' || (!partner.id && !partner.email && code === 'PARTNER'));
+      if (isDemoAccount && commissions.length === 0 && referrals.length === 0) {
         commissions = [
           {
             id: 'c1',
             paddle_transaction_id: 'PAD-TX-89104',
             commission_amount_php: 6000,
             plan_tier: 'pro',
-            created_at: new Date(Date.now() - 35 * 86400000).toISOString(), // 35 days ago (Elapsed!)
+            created_at: new Date(Date.now() - 35 * 86400000).toISOString(),
             hold_until: new Date(Date.now() - 5 * 86400000).toISOString(),
             status: 'approved'
           },
@@ -1032,7 +1045,7 @@
             paddle_transaction_id: 'PAD-TX-91244',
             commission_amount_php: 3000,
             plan_tier: 'plus',
-            created_at: new Date(Date.now() - 12 * 86400000).toISOString(), // 12 days ago (18 days left in hold)
+            created_at: new Date(Date.now() - 12 * 86400000).toISOString(),
             hold_until: new Date(Date.now() + 18 * 86400000).toISOString(),
             status: 'pending'
           }
@@ -1096,12 +1109,19 @@
       } else {
         refTbody.innerHTML = referrals.map(r => {
           const dStr = r.created_at ? new Date(r.created_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
-          const tierPill = (r.plan_tier && r.plan_tier.toLowerCase().includes('pro'))
-            ? '<span class="badge badge-blue">Pro VIP (₱6k)</span>'
-            : '<span class="badge badge-green">Plus VIP (₱3k)</span>';
-          const statusPill = r.status === 'cancelled'
-            ? '<span class="badge badge-red">Refunded</span>'
-            : '<span class="badge badge-green">Activated</span>';
+          let tierPill = '<span class="badge badge-green">Plus VIP (₱3k)</span>';
+          if (r.plan_tier && r.plan_tier.toLowerCase().includes('pro')) {
+            tierPill = '<span class="badge badge-blue">Pro VIP (₱6k)</span>';
+          } else if (r.plan_tier && r.plan_tier.toLowerCase().includes('free')) {
+            tierPill = '<span class="badge" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);">Free Waitlist</span>';
+          }
+
+          let statusPill = '<span class="badge badge-green">Activated</span>';
+          if (r.status === 'cancelled') {
+            statusPill = '<span class="badge badge-red">Refunded</span>';
+          } else if (r.status === 'pending_activation' || (r.plan_tier && r.plan_tier.toLowerCase().includes('free'))) {
+            statusPill = '<span class="badge badge-amber">Registered (Free)</span>';
+          }
 
           return `
             <tr>

@@ -95,29 +95,155 @@
     } catch (e) {}
   }
 
-  // 7. Initialize & Persist
-  var incomingCode = getRefFromUrl();
-  if (incomingCode) {
+  // 7. Automatic Link Decoration & URL Preservation Helpers
+  function syncCurrentPageUrl(code) {
+    if (!code || !window.history || !window.history.replaceState) return;
     try {
-      localStorage.setItem(STORAGE_KEY, incomingCode);
+      if (window.location.pathname.includes('dev-portal') || window.location.pathname.includes('dev_portal')) return;
+      var urlParams = new URLSearchParams(window.location.search);
+      if (!urlParams.get('ref') && !urlParams.get('aff') && !urlParams.get('referral')) {
+        urlParams.set('ref', code);
+        var newSearch = urlParams.toString();
+        var newUrl = window.location.pathname + (newSearch ? '?' + newSearch : '') + window.location.hash;
+        window.history.replaceState({ ref: code }, '', newUrl);
+      }
     } catch (e) {}
-    setCookie(COOKIE_NAME, incomingCode, COOKIE_DAYS);
+  }
 
-    // Wait until Supabase client is ready or DOM loads
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      logClickToSupabase(incomingCode);
-    } else {
-      window.addEventListener('DOMContentLoaded', function () {
-        logClickToSupabase(incomingCode);
-      });
+  function decorateUrl(rawUrl, code) {
+    if (!rawUrl || !code) return rawUrl;
+    try {
+      if (/^(mailto:|tel:|javascript:|#)/i.test(rawUrl)) return rawUrl;
+      var parsed = new URL(rawUrl, window.location.href);
+      // Only decorate same-origin links
+      if (parsed.hostname !== window.location.hostname && parsed.hostname !== 'flexitapapp.com' && parsed.hostname !== 'www.flexitapapp.com') {
+        return rawUrl;
+      }
+      if (parsed.pathname.includes('dev-portal') || parsed.pathname.includes('dev_portal')) {
+        return rawUrl;
+      }
+      if (!parsed.searchParams.get('ref') && !parsed.searchParams.get('aff') && !parsed.searchParams.get('referral')) {
+        parsed.searchParams.set('ref', code);
+      }
+      if (!/^https?:\/\//i.test(rawUrl)) {
+        return parsed.pathname + parsed.search + parsed.hash;
+      }
+      return parsed.toString();
+    } catch (e) {
+      return rawUrl;
     }
   }
 
-  // 8. Public API for Global Access
+  function decorateAllLinks(code) {
+    if (!code) return;
+    try {
+      var links = document.querySelectorAll('a[href]');
+      for (var i = 0; i < links.length; i++) {
+        var a = links[i];
+        var href = a.getAttribute('href');
+        if (!href) continue;
+        var decorated = decorateUrl(href, code);
+        if (decorated && decorated !== href) {
+          a.setAttribute('href', decorated);
+        }
+      }
+    } catch (e) {}
+  }
+
+  function renderPartnerBadge(code) {
+    if (!code) return;
+    if (window.location.pathname.includes('partner-portal') || window.location.pathname.includes('dev-portal') || window.location.pathname.includes('portal.html')) return;
+    if (document.getElementById('flexitap-partner-pill')) return;
+
+    try {
+      var pill = document.createElement('div');
+      pill.id = 'flexitap-partner-pill';
+      pill.style.position = 'fixed';
+      pill.style.bottom = '20px';
+      pill.style.left = '20px';
+      pill.style.zIndex = '99990';
+      pill.style.display = 'flex';
+      pill.style.alignItems = 'center';
+      pill.style.gap = '8px';
+      pill.style.padding = '8px 14px';
+      pill.style.background = 'rgba(15, 23, 42, 0.94)';
+      pill.style.backdropFilter = 'blur(10px)';
+      pill.style.webkitBackdropFilter = 'blur(10px)';
+      pill.style.border = '1px solid rgba(16, 185, 129, 0.45)';
+      pill.style.borderRadius = '30px';
+      pill.style.boxShadow = '0 10px 25px rgba(0,0,0,0.4), 0 0 15px rgba(16,185,129,0.15)';
+      pill.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      pill.style.fontSize = '12px';
+      pill.style.color = '#ffffff';
+      pill.style.lineHeight = '1';
+
+      pill.innerHTML = [
+        '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;"></span>',
+        '<span style="color:#94a3b8;font-size:11.5px;">Partner Pass:</span>',
+        '<strong style="color:#34d399;font-family:monospace;font-size:12.5px;letter-spacing:0.5px;">' + code + '</strong>',
+        '<button onclick="this.parentElement.style.display=\'none\'" style="background:none;border:none;color:#64748b;margin-left:4px;cursor:pointer;font-size:14px;padding:0;line-height:1;" title="Dismiss">&times;</button>'
+      ].join(' ');
+
+      document.body.appendChild(pill);
+    } catch (e) {}
+  }
+
+  // 8. Initialize, Persist & Decorate Across All Subpages
+  var incomingCode = getRefFromUrl();
+  var activeCode = incomingCode || getActiveReferralCode();
+
+  if (activeCode) {
+    try {
+      localStorage.setItem(STORAGE_KEY, activeCode);
+      sessionStorage.setItem(STORAGE_KEY, activeCode);
+    } catch (e) {}
+    setCookie(COOKIE_NAME, activeCode, COOKIE_DAYS);
+
+    // Keep address bar synchronized with ?ref=CODE across subpages
+    syncCurrentPageUrl(activeCode);
+
+    // Record click if fresh incoming code
+    if (incomingCode) {
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        logClickToSupabase(incomingCode);
+      } else {
+        window.addEventListener('DOMContentLoaded', function () {
+          logClickToSupabase(incomingCode);
+        });
+      }
+    }
+
+    // Decorate internal navigation links so clicking any link retains ?ref=CODE
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () {
+        decorateAllLinks(activeCode);
+        renderPartnerBadge(activeCode);
+      });
+    } else {
+      decorateAllLinks(activeCode);
+      renderPartnerBadge(activeCode);
+    }
+
+    // Global click listener to ensure dynamically added links retain ?ref=CODE
+    document.addEventListener('click', function (e) {
+      var target = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+      if (target) {
+        var href = target.getAttribute('href');
+        if (href) {
+          var updated = decorateUrl(href, activeCode);
+          if (updated && updated !== href) {
+            target.setAttribute('href', updated);
+          }
+        }
+      }
+    }, true);
+  }
+
+  // 9. Public API for Global Access
   window.FlexiTapAffiliate = {
     getCode: getActiveReferralCode,
     clearCode: function () {
-      try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+      try { localStorage.removeItem(STORAGE_KEY); sessionStorage.removeItem(STORAGE_KEY); } catch (e) {}
       setCookie(COOKIE_NAME, '', -1);
     },
     enrichPaddleCheckout: function (checkoutPayload) {
@@ -127,6 +253,10 @@
       checkoutPayload.customData = checkoutPayload.customData || {};
       checkoutPayload.customData.affiliate_code = code;
       return checkoutPayload;
+    },
+    decorateLinks: function() {
+      var c = getActiveReferralCode();
+      if (c) decorateAllLinks(c);
     },
     dispatchSignupEmails: dispatchAffiliateSignupEmails
   };

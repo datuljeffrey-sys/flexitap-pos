@@ -13,6 +13,8 @@
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
   <!-- FlexiTap Hybrid Analytics Engine -->
   <script src="analytics.js"></script>
+  <!-- In-House Philippine Affiliate & Referral Tracker -->
+  <script src="affiliate-tracker.js"></script>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -679,24 +681,35 @@
 
       // Check and bind affiliate referral if visitor arrived via partner link
       const activeAffCode = (window.FlexiTapAffiliate ? window.FlexiTapAffiliate.getCode() : '') || localStorage.getItem('flexitap_ref') || '';
-      if (activeAffCode) {
+      if (activeAffCode && supabaseClient) {
         try {
-          supabaseClient
+          const { data: affData } = await supabaseClient
             .from('affiliates')
-            .select('id')
+            .select('id, affiliate_code, full_name')
             .ilike('affiliate_code', activeAffCode)
-            .eq('status', 'active')
-            .maybeSingle()
-            .then(({ data: affData }) => {
-              if (affData && affData.id) {
-                supabaseClient.from('affiliate_referrals').insert([{
-                  affiliate_id: affData.id,
-                  referred_email: email,
-                  store_id: userId,
-                  store_name: businessName
-                }]).then(() => {}).catch(err => console.warn('Affiliate referral bind note:', err));
-              }
-            });
+            .maybeSingle();
+
+          if (affData && affData.id) {
+            const referralRecord = {
+              affiliate_id: affData.id,
+              referred_email: email,
+              store_id: userId,
+              store_name: businessName,
+              plan_tier: tierName || 'free',
+              status: (tierName === 'pro' || tierName === 'plus') ? 'activated' : 'pending_activation',
+              created_at: new Date().toISOString()
+            };
+
+            await supabaseClient.from('affiliate_referrals').insert([referralRecord]);
+
+            // Cache locally under partner code so partner dashboard reflects it immediately
+            try {
+              const cacheKey = 'flexitap_referrals_cache_' + (affData.affiliate_code || activeAffCode).toUpperCase();
+              const existing = JSON.parse(localStorage.getItem(cacheKey) || '[]');
+              existing.unshift(referralRecord);
+              localStorage.setItem(cacheKey, JSON.stringify(existing));
+            } catch (cErr) {}
+          }
         } catch (affErr) {
           console.warn('Affiliate attribution note:', affErr);
         }

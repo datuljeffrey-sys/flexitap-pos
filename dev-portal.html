@@ -767,6 +767,10 @@
                   <span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block;">Support Tickets</span>
                   <span id="crm-strip-tickets" style="font-weight: 800; color: var(--accent);">0 Open</span>
                 </div>
+                <div style="border-left: 1px solid var(--card-border); padding-left: 16px;">
+                  <span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block;">Partner Attribution</span>
+                  <span id="crm-strip-partner" style="font-weight: 800; color: #34d399;">Direct Organic</span>
+                </div>
               </div>
             </div>
           </div>
@@ -4044,6 +4048,29 @@
       const openCount = tickets.filter(t => t.status !== 'resolved' && t.status !== 'closed').length;
       const stripTickets = document.getElementById('crm-strip-tickets');
       if (stripTickets) stripTickets.innerText = openCount + ' Open';
+
+      // Partner Attribution Pill
+      const stripPartner = document.getElementById('crm-strip-partner');
+      if (stripPartner) {
+        let partnerLabel = 'Direct Organic';
+        let partnerColor = 'var(--text-muted)';
+        const refMatch = (typeof cachedPartnerReferrals !== 'undefined' ? cachedPartnerReferrals : []).find(r => 
+          (r.store_id && r.store_id === acc.id) || 
+          (r.referred_email && acc.email && r.referred_email.toLowerCase() === acc.email.toLowerCase()) || 
+          (r.store_name && acc.store_name && r.store_name.toLowerCase() === acc.store_name.toLowerCase())
+        );
+        if (refMatch) {
+          const partnerMatch = (typeof cachedPartners !== 'undefined' ? cachedPartners : []).find(p => p.id === refMatch.affiliate_id);
+          const pName = partnerMatch ? `${partnerMatch.full_name} (${partnerMatch.affiliate_code})` : (refMatch.affiliate_code || 'Partner Referral');
+          partnerLabel = '🤝 ' + pName;
+          partnerColor = '#34d399';
+        } else if (acc.affiliate_code || acc.referred_by) {
+          partnerLabel = '🤝 ' + (acc.affiliate_code || acc.referred_by);
+          partnerColor = '#34d399';
+        }
+        stripPartner.innerText = partnerLabel;
+        stripPartner.style.color = partnerColor;
+      }
 
       // Select Dropdown alignment
       const select = document.getElementById('crm-account-select');
