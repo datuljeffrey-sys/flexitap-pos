@@ -4,56 +4,19 @@
 -- =============================================================================
 
 -- 1. Ensure columns exist on public.profiles
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = 'subscription_tier') THEN
-    ALTER TABLE public.profiles ADD COLUMN subscription_tier text NOT NULL DEFAULT 'free';
-  END IF;
-
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = 'pending_tier') THEN
-    ALTER TABLE public.profiles ADD COLUMN pending_tier text DEFAULT NULL;
-  END IF;
-
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = 'payment_status') THEN
-    ALTER TABLE public.profiles ADD COLUMN payment_status text NOT NULL DEFAULT 'free';
-  END IF;
-
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = 'subscription_valid_until') THEN
-    ALTER TABLE public.profiles ADD COLUMN subscription_valid_until timestamptz DEFAULT NULL;
-  END IF;
-
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = 'max_devices_override') THEN
-    ALTER TABLE public.profiles ADD COLUMN max_devices_override integer DEFAULT NULL;
-  END IF;
-
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = 'paddle_customer_id') THEN
-    ALTER TABLE public.profiles ADD COLUMN paddle_customer_id text DEFAULT NULL;
-  END IF;
-
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = 'paddle_subscription_id') THEN
-    ALTER TABLE public.profiles ADD COLUMN paddle_subscription_id text DEFAULT NULL;
-  END IF;
-
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = 'paddle_transaction_id') THEN
-    ALTER TABLE public.profiles ADD COLUMN paddle_transaction_id text DEFAULT NULL;
-  END IF;
-END $$;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS subscription_tier text NOT NULL DEFAULT 'free';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS pending_tier text DEFAULT NULL;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS payment_status text NOT NULL DEFAULT 'free';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS subscription_valid_until timestamptz DEFAULT NULL;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS max_devices_override integer DEFAULT NULL;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS paddle_customer_id text DEFAULT NULL;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS paddle_subscription_id text DEFAULT NULL;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS paddle_transaction_id text DEFAULT NULL;
 
 -- 2. Ensure columns exist on public.stores
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'stores' AND column_name = 'subscription_tier') THEN
-    ALTER TABLE public.stores ADD COLUMN subscription_tier text NOT NULL DEFAULT 'free';
-  END IF;
-
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'stores' AND column_name = 'payment_status') THEN
-    ALTER TABLE public.stores ADD COLUMN payment_status text NOT NULL DEFAULT 'free';
-  END IF;
-
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'stores' AND column_name = 'max_devices') THEN
-    ALTER TABLE public.stores ADD COLUMN max_devices integer NOT NULL DEFAULT 1;
-  END IF;
-END $$;
+ALTER TABLE public.stores ADD COLUMN IF NOT EXISTS subscription_tier text NOT NULL DEFAULT 'free';
+ALTER TABLE public.stores ADD COLUMN IF NOT EXISTS payment_status text NOT NULL DEFAULT 'free';
+ALTER TABLE public.stores ADD COLUMN IF NOT EXISTS max_devices integer NOT NULL DEFAULT 1;
 
 -- 3. Ensure public.devices table exists with proper indexes
 CREATE TABLE IF NOT EXISTS public.devices (
@@ -110,11 +73,10 @@ CREATE OR REPLACE FUNCTION public.deactivate_store_device(p_device_id text)
 RETURNS jsonb
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $$
+AS $function$
 DECLARE
   v_user_id uuid := auth.uid();
   v_store_id text;
-  v_device_exists boolean;
 BEGIN
   IF v_user_id IS NULL THEN
     RETURN jsonb_build_object('success', false, 'error', 'Unauthorized');
@@ -143,7 +105,7 @@ BEGIN
 
   RETURN jsonb_build_object('success', true, 'device_id', p_device_id);
 END;
-$$;
+$function$;
 
 -- 5. Secure RPC for Admin / Dev Portal Overriding Merchant Subscription
 CREATE OR REPLACE FUNCTION public.admin_set_merchant_subscription(
@@ -156,7 +118,7 @@ CREATE OR REPLACE FUNCTION public.admin_set_merchant_subscription(
 RETURNS jsonb
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $$
+AS $function$
 DECLARE
   v_caller_id uuid := auth.uid();
   v_caller_role text;
@@ -205,4 +167,4 @@ BEGIN
     'max_devices', v_max_devices
   );
 END;
-$$;
+$function$;
