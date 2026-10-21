@@ -1522,8 +1522,39 @@
                         <option value="cancelled">CANCELLED — Revoked / Expired</option>
                       </select>
                     </div>
+                    <div class="crm-form-group">
+                      <label style="font-weight: 700; color: #94a3b8;">Billing Mode / Provider</label>
+                      <select id="crm-sel-billing-mode" class="crm-input" onchange="onBillingModeChange()" style="background: #0f172a; color: #fff; border-color: rgba(255,255,255,0.15);">
+                        <option value="manual">Hardware Bundle / Direct Deployment (Uses Expiration Date)</option>
+                        <option value="paddle">Paddle Recurring Billing (Auto-Renew / Null Expiration)</option>
+                      </select>
+                    </div>
+                    <div class="crm-form-group">
+                      <label style="font-weight: 700; color: #94a3b8;">License Expiration Date</label>
+                      <input type="date" id="crm-inp-subscription-expiry" class="crm-input" style="background: #0f172a; color: #fff; border-color: rgba(255,255,255,0.15);">
+                      <div id="crm-expiry-presets" style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;">
+                        <button type="button" class="action-btn" onclick="setCrmExpiryPreset(30)" style="font-size: 0.72rem; padding: 3px 8px;">+30 Days</button>
+                        <button type="button" class="action-btn" onclick="setCrmExpiryPreset(90)" style="font-size: 0.72rem; padding: 3px 8px;">+90 Days</button>
+                        <button type="button" class="action-btn" onclick="setCrmExpiryPreset(365)" style="font-size: 0.72rem; padding: 3px 8px;">+1 Year</button>
+                        <button type="button" class="action-btn" onclick="setCrmExpiryPreset(null)" style="font-size: 0.72rem; padding: 3px 8px; color: var(--accent);">Lifetime (No Expiry)</button>
+                      </div>
+                      <div id="crm-paddle-expiry-hint" style="display: none; font-size: 0.72rem; color: #38bdf8; margin-top: 4px;">
+                        ⚡ Paddle mode active: Expiration date is null. Paddle webhooks auto-manage license validity.
+                      </div>
+                    </div>
+                    <div class="crm-form-group">
+                      <label style="font-weight: 700; color: #94a3b8;">Account Status (Store Kill-Switch)</label>
+                      <select id="crm-sel-account-status" class="crm-input" style="background: #0f172a; color: #fff; border-color: rgba(255,255,255,0.15);">
+                        <option value="active">ACTIVE — Store in Good Standing</option>
+                        <option value="suspended">SUSPENDED — Hard Lockout All Devices</option>
+                      </select>
+                      <input type="text" id="crm-inp-suspension-reason" class="crm-input" placeholder="Suspension reason (e.g. Overdue balance / Admin hold)" style="background: #0f172a; color: #fff; border-color: rgba(255,255,255,0.15); margin-top: 6px; font-size: 0.78rem;">
+                    </div>
                   </div>
-                  <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                  <div style="display: flex; gap: 12px; justify-content: flex-end; align-items: center; flex-wrap: wrap;">
+                    <button type="button" class="action-btn" id="btn-send-crm-expiry-email" onclick="sendCrmExpiryNoticeEmail()" style="color: #60a5fa; border-color: rgba(96,165,250,0.3); font-weight: 600; padding: 10px 16px;">
+                      ✉️ Send Renewal Notice Email
+                    </button>
                     <button class="action-btn" id="btn-save-crm-subscription" onclick="saveCrmSubscriptionOverride()" style="background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 800; padding: 10px 22px;">
                       Save &amp; Update Supabase License
                     </button>
@@ -4110,11 +4141,15 @@
           };
         });
 
-        // Map live subscription from Supabase profile tier
+        // Map live subscription from Supabase profile tier & expiry
         const tier = (p.subscription_tier || 'free').toLowerCase();
         const isPro = tier === 'pro';
         const isPlus = tier === 'plus';
         const monthlyRate = isPro ? (currency === 'PHP' ? 4999.00 : 99.00) : (isPlus ? (currency === 'PHP' ? 2499.00 : 49.00) : 0.00);
+
+        const expiryDate = p.subscription_expires_at || (matchedStore ? matchedStore.subscription_expires_at : null) || p.subscription_valid_until || null;
+        const isSuspended = p.is_account_suspended === true || (matchedStore && matchedStore.is_account_suspended === true) || false;
+        const suspReason = p.suspension_reason || (matchedStore ? matchedStore.suspension_reason : '') || '';
 
         crmSubscriptionsMap[p.id] = {
           plan_name: isPro ? 'Pro POS Tier' : (isPlus ? 'Plus POS Tier' : 'Free / Community Tier'),
@@ -4122,8 +4157,11 @@
           price_monthly: monthlyRate,
           currency: currency,
           billing_status: (p.payment_status || (tier === 'free' ? 'free' : 'unpaid')).toLowerCase(),
-          next_billing_date: '2026-11-15',
-          payment_method: (p.payment_status || '').toLowerCase() === 'paid' ? (currency + ' Card Payment (Active)') : (tier === 'free' ? 'Free Community Tier' : 'Pending Activation'),
+          next_billing_date: expiryDate ? expiryDate.substring(0, 10) : '2026-11-15',
+          expires_at: expiryDate,
+          is_suspended: isSuspended,
+          suspension_reason: suspReason,
+          payment_method: (p.payment_status || '').toLowerCase() === 'paid' ? (currency + ' License (Active & Verified)') : (tier === 'free' ? 'Free Community Tier' : 'Pending Activation'),
           paddle_subscription_id: 'sub_live_' + p.id.substring(0, 12),
           paddle_customer_id: 'ctm_live_' + (matchedStore ? matchedStore.id.substring(0, 12) : p.id.substring(0, 12))
         };
@@ -4867,8 +4905,50 @@
         statusVal.style.color = sub.billing_status === 'past_due' ? 'var(--danger)' : (sub.billing_status === 'paid' || sub.billing_status === 'active' ? 'var(--accent)' : 'var(--text-muted)');
       }
 
+      const isPaddle = !!(sub.billing_provider === 'paddle' || (sub.paddle_subscription_id && sub.paddle_subscription_id.startsWith('sub_live_') && !sub.expires_at));
+
+      const billingModeSel = document.getElementById('crm-sel-billing-mode');
+      if (billingModeSel) billingModeSel.value = isPaddle ? 'paddle' : 'manual';
+
+      const expiryInp = document.getElementById('crm-inp-subscription-expiry');
+      if (expiryInp) {
+        expiryInp.value = sub.expires_at ? sub.expires_at.substring(0, 10) : '';
+        expiryInp.disabled = isPaddle;
+      }
+
+      const presetsDiv = document.getElementById('crm-expiry-presets');
+      if (presetsDiv) presetsDiv.style.display = isPaddle ? 'none' : 'flex';
+
+      const paddleHint = document.getElementById('crm-paddle-expiry-hint');
+      if (paddleHint) paddleHint.style.display = isPaddle ? 'block' : 'none';
+
+      const accStatusSel = document.getElementById('crm-sel-account-status');
+      if (accStatusSel) accStatusSel.value = sub.is_suspended ? 'suspended' : 'active';
+
+      const suspReasonInp = document.getElementById('crm-inp-suspension-reason');
+      if (suspReasonInp) suspReasonInp.value = sub.suspension_reason || '';
+
       const renewalVal = document.getElementById('crm-sub-renewal-val');
-      if (renewalVal) renewalVal.innerText = sub.price_monthly > 0 ? ('Renews: ' + (sub.next_billing_date || 'Next cycle')) : 'No renewal charge';
+      if (renewalVal) {
+        if (sub.is_suspended) {
+          renewalVal.innerHTML = '<strong style="color: var(--danger);">ACCOUNT SUSPENDED</strong>';
+        } else if (isPaddle) {
+          renewalVal.innerHTML = '<span style="color: #38bdf8;">Paddle Auto-Renewing</span>';
+        } else if (sub.expires_at) {
+          const expDate = new Date(sub.expires_at);
+          const diffDays = Math.ceil((expDate - new Date()) / (1000 * 60 * 60 * 24));
+          const dateStr = sub.expires_at.substring(0, 10);
+          if (diffDays < 0) {
+            renewalVal.innerHTML = '<strong style="color: var(--danger);">EXPIRED (' + Math.abs(diffDays) + 'd ago on ' + dateStr + ')</strong>';
+          } else if (diffDays <= 7) {
+            renewalVal.innerHTML = '<strong style="color: var(--warning);">Expires in ' + diffDays + 'd (' + dateStr + ')</strong>';
+          } else {
+            renewalVal.innerHTML = '<span style="color: #94a3b8;">Expires in ' + diffDays + 'd (' + dateStr + ')</span>';
+          }
+        } else {
+          renewalVal.innerText = sub.price_monthly > 0 ? 'Permanent / Lifetime' : 'No renewal charge (Free)';
+        }
+      }
 
       const payVal = document.getElementById('crm-sub-paymethod-val');
       if (payVal) payVal.innerText = sub.payment_method || 'Free Community Tier';
@@ -4904,6 +4984,87 @@
       }
     }
 
+    function onBillingModeChange() {
+      const mode = document.getElementById('crm-sel-billing-mode')?.value;
+      const expiryInp = document.getElementById('crm-inp-subscription-expiry');
+      const presetsDiv = document.getElementById('crm-expiry-presets');
+      const paddleHint = document.getElementById('crm-paddle-expiry-hint');
+
+      if (mode === 'paddle') {
+        if (expiryInp) {
+          expiryInp.value = '';
+          expiryInp.disabled = true;
+        }
+        if (presetsDiv) presetsDiv.style.display = 'none';
+        if (paddleHint) paddleHint.style.display = 'block';
+      } else {
+        if (expiryInp) expiryInp.disabled = false;
+        if (presetsDiv) presetsDiv.style.display = 'flex';
+        if (paddleHint) paddleHint.style.display = 'none';
+        if (expiryInp && !expiryInp.value) {
+          setCrmExpiryPreset(365);
+        }
+      }
+    }
+
+    function setCrmExpiryPreset(days) {
+      const inp = document.getElementById('crm-inp-subscription-expiry');
+      if (!inp) return;
+      if (days === null) {
+        inp.value = '';
+        return;
+      }
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      inp.value = yyyy + '-' + mm + '-' + dd;
+    }
+
+    async function sendCrmExpiryNoticeEmail() {
+      if (!currentCrmAccountId) return alert('Please select an account first.');
+      const acc = crmAccounts.find(function(a) { return a.id === currentCrmAccountId; });
+      if (!acc) return alert('Account not found.');
+      const email = acc.email || (crmContactsMap[currentCrmAccountId] && crmContactsMap[currentCrmAccountId][0] ? crmContactsMap[currentCrmAccountId][0].email : null);
+      if (!email || !email.includes('@')) return alert('No valid email found for this merchant account.');
+
+      const sub = crmSubscriptionsMap[currentCrmAccountId] || {};
+      const expDate = sub.expires_at ? sub.expires_at.substring(0, 10) : (document.getElementById('crm-inp-subscription-expiry')?.value || 'Upcoming Renewal');
+      const planName = sub.plan_name || 'FlexiTap POS';
+
+      const confirmSend = confirm('Send subscription renewal notice to ' + email + ' for ' + planName + '?');
+      if (!confirmSend) return;
+
+      const subject = 'Important: Your FlexiTap POS Subscription Status & Renewal Notice';
+      const details = 'Dear ' + (acc.store_name || 'Merchant Partner') + ',\n\n' +
+        'This is a notification regarding your ' + planName + ' license on FlexiTap POS.\n' +
+        'Your current subscription is scheduled to expire on ' + expDate + '.\n\n' +
+        'To ensure uninterrupted access to your POS terminals, kitchen monitors, and cloud reporting, please get in touch with our Support Engineering team to renew your plan.\n\n' +
+        'Contact Support Engineering:\n' +
+        '• Email: support@flexitapapp.com\n' +
+        '• Support Ticket: Open directly via your Merchant Portal\n\n' +
+        'Thank you for partnering with FlexiTap POS.\n' +
+        '— DevBrew Support Engineering';
+
+      try {
+        await supabaseClient.from('ticket_notifications').insert({
+          ticket_id: 'SUB-RENEWAL-' + currentCrmAccountId.substring(0, 8),
+          ticket_number: 1000 + Math.floor(Math.random() * 9000),
+          recipient_email: email,
+          notification_type: 'resolution_notice',
+          subject: subject,
+          store_name: acc.store_name,
+          details: details,
+          status: 'delivered'
+        });
+        alert('Renewal notification queued and sent to ' + email + '!\n\nMerchant instructed to get in touch with Support Engineering to renew plan.');
+      } catch (e) {
+        console.error('Error sending renewal notification:', e);
+        alert('Could not dispatch notice: ' + (e.message || e));
+      }
+    }
+
     async function saveCrmSubscriptionOverride() {
       if (!currentCrmAccountId) {
         alert('Please select an account first.');
@@ -4912,6 +5073,14 @@
       const btn = document.getElementById('btn-save-crm-subscription');
       const tier = (document.getElementById('crm-sel-plan-tier')?.value || 'free').toLowerCase();
       const paymentStatus = (document.getElementById('crm-sel-payment-status')?.value || 'unpaid').toLowerCase();
+      const billingMode = document.getElementById('crm-sel-billing-mode')?.value || 'manual';
+      const isPaddle = billingMode === 'paddle';
+      const expiryDateStr = isPaddle ? null : (document.getElementById('crm-inp-subscription-expiry')?.value || null);
+      const expiryIso = expiryDateStr ? new Date(expiryDateStr + 'T23:59:59Z').toISOString() : null;
+
+      const accountStatus = document.getElementById('crm-sel-account-status')?.value || 'active';
+      const isSuspended = accountStatus === 'suspended';
+      const suspensionReason = document.getElementById('crm-inp-suspension-reason')?.value?.trim() || (isSuspended ? 'Account suspended by administrator' : null);
 
       if (btn) {
         btn.disabled = true;
@@ -4920,12 +5089,18 @@
 
       try {
         // 1. Update profiles table
+        const profileUpdate = {
+          subscription_tier: tier,
+          payment_status: paymentStatus,
+          subscription_expires_at: expiryIso,
+          subscription_valid_until: expiryIso,
+          is_account_suspended: isSuspended,
+          suspension_reason: suspensionReason
+        };
+
         const { error: profileError } = await supabaseClient
           .from('profiles')
-          .update({
-            subscription_tier: tier,
-            payment_status: paymentStatus
-          })
+          .update(profileUpdate)
           .eq('id', currentCrmAccountId);
 
         if (profileError) throw profileError;
@@ -4938,15 +5113,20 @@
             .from('stores')
             .update({
               subscription_tier: tier,
-              payment_status: paymentStatus
+              payment_status: paymentStatus,
+              subscription_expires_at: expiryIso,
+              is_account_suspended: isSuspended,
+              suspension_reason: suspensionReason
             })
             .eq('id', storeCode);
         }
 
-        alert('Subscription license updated successfully in Supabase!\n\nMerchant: ' + (matchedAccount ? matchedAccount.name : currentCrmAccountId) + '\nTier: ' + tier.toUpperCase() + '\nPayment Status: ' + paymentStatus.toUpperCase() + '\n\nThe user can now tap "Verify License" or restart the Flutter app to immediately apply.');
+        const expiryMsg = isPaddle ? 'Paddle Auto-Billing (Null Expiry)' : (expiryDateStr ? 'Expires: ' + expiryDateStr : 'Lifetime (No Expiry)');
+        alert('Subscription license updated successfully in Supabase!\n\nMerchant: ' + (matchedAccount ? matchedAccount.store_name : currentCrmAccountId) + '\nTier: ' + tier.toUpperCase() + '\nPayment Status: ' + paymentStatus.toUpperCase() + '\nValidity: ' + expiryMsg + '\nAccount: ' + (isSuspended ? 'SUSPENDED (All Devices Locked)' : 'ACTIVE') + '\n\nThe user can now tap "Verify License" or restart the Flutter app to immediately apply.');
 
         // Refresh live CRM data
-        await initCrmData();
+        await loadDevData();
+        renderSelectedCrmAccount();
       } catch (err) {
         console.error('Error saving subscription override:', err);
         alert('Failed to update subscription in Supabase: ' + (err.message || err));
