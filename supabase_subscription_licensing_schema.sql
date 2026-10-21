@@ -8,6 +8,10 @@ ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS subscription_tier text NOT 
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS pending_tier text DEFAULT NULL;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS payment_status text NOT NULL DEFAULT 'free';
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS subscription_valid_until timestamptz DEFAULT NULL;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS subscription_expires_at timestamptz DEFAULT NULL;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS billing_provider text DEFAULT 'paddle';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS is_account_suspended boolean NOT NULL DEFAULT false;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS suspension_reason text DEFAULT NULL;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS max_devices_override integer DEFAULT NULL;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS paddle_customer_id text DEFAULT NULL;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS paddle_subscription_id text DEFAULT NULL;
@@ -17,6 +21,10 @@ ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS paddle_transaction_id text 
 ALTER TABLE public.stores ADD COLUMN IF NOT EXISTS subscription_tier text NOT NULL DEFAULT 'free';
 ALTER TABLE public.stores ADD COLUMN IF NOT EXISTS payment_status text NOT NULL DEFAULT 'free';
 ALTER TABLE public.stores ADD COLUMN IF NOT EXISTS max_devices integer NOT NULL DEFAULT 1;
+ALTER TABLE public.stores ADD COLUMN IF NOT EXISTS subscription_expires_at timestamptz DEFAULT NULL;
+ALTER TABLE public.stores ADD COLUMN IF NOT EXISTS billing_provider text DEFAULT 'paddle';
+ALTER TABLE public.stores ADD COLUMN IF NOT EXISTS is_account_suspended boolean NOT NULL DEFAULT false;
+ALTER TABLE public.stores ADD COLUMN IF NOT EXISTS suspension_reason text DEFAULT NULL;
 
 -- 3. Ensure public.devices table exists with proper indexes
 CREATE TABLE IF NOT EXISTS public.devices (
