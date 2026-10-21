@@ -382,8 +382,8 @@
     .crm-sub-panel { display: none; }
     .crm-sub-panel.active { display: block; animation: fadeIn 0.2s ease; }
     .crm-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-    .crm-form-group { display: flex; flex-direction: column; gap: 6px; }
-    .crm-form-group label { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .crm-form-group { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .crm-form-group label { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .crm-input, .crm-select {
       width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--card-border);
       border-radius: 10px; color: var(--text); font-size: 0.85rem; outline: none; transition: border-color 0.2s;
@@ -4148,8 +4148,13 @@
         const monthlyRate = isPro ? (currency === 'PHP' ? 4999.00 : 99.00) : (isPlus ? (currency === 'PHP' ? 2499.00 : 49.00) : 0.00);
 
         const expiryDate = p.subscription_expires_at || (matchedStore ? matchedStore.subscription_expires_at : null) || p.subscription_valid_until || null;
-        const isSuspended = p.is_account_suspended === true || (matchedStore && matchedStore.is_account_suspended === true) || false;
+        const isSuspended = p.is_account_suspended === true || 
+                            (matchedStore && matchedStore.is_account_suspended === true) || 
+                            p.payment_status === 'suspended' || 
+                            (matchedStore && matchedStore.payment_status === 'suspended') || 
+                            false;
         const suspReason = p.suspension_reason || (matchedStore ? matchedStore.suspension_reason : '') || '';
+        const billingProvider = p.billing_provider || (matchedStore ? matchedStore.billing_provider : null) || (expiryDate ? 'manual' : 'paddle');
 
         crmSubscriptionsMap[p.id] = {
           plan_name: isPro ? 'Pro POS Tier' : (isPlus ? 'Plus POS Tier' : 'Free / Community Tier'),
@@ -4157,11 +4162,12 @@
           price_monthly: monthlyRate,
           currency: currency,
           billing_status: (p.payment_status || (tier === 'free' ? 'free' : 'unpaid')).toLowerCase(),
+          billing_provider: billingProvider,
           next_billing_date: expiryDate ? expiryDate.substring(0, 10) : '2026-11-15',
           expires_at: expiryDate,
           is_suspended: isSuspended,
           suspension_reason: suspReason,
-          payment_method: (p.payment_status || '').toLowerCase() === 'paid' ? (currency + ' License (Active & Verified)') : (tier === 'free' ? 'Free Community Tier' : 'Pending Activation'),
+          payment_method: (p.payment_status || '').toLowerCase() === 'paid' ? (currency + ' License (Active & Verified)') : (isSuspended ? 'Account Suspended' : (tier === 'free' ? 'Free Community Tier' : 'Pending Activation')),
           paddle_subscription_id: 'sub_live_' + p.id.substring(0, 12),
           paddle_customer_id: 'ctm_live_' + (matchedStore ? matchedStore.id.substring(0, 12) : p.id.substring(0, 12))
         };
@@ -5048,17 +5054,23 @@
         '— DevBrew Support Engineering';
 
       try {
-        await supabaseClient.from('ticket_notifications').insert({
-          ticket_id: 'SUB-RENEWAL-' + currentCrmAccountId.substring(0, 8),
+        await supabaseClient.from('tickets').insert({
           ticket_number: 1000 + Math.floor(Math.random() * 9000),
-          recipient_email: email,
-          notification_type: 'resolution_notice',
+          merchant_id: currentCrmAccountId,
+          store_name: acc.store_name || 'Merchant Account',
+          contact_email: email,
           subject: subject,
-          store_name: acc.store_name,
-          details: details,
-          status: 'delivered'
+          description: details,
+          category: 'billing',
+          priority: 'high',
+          status: 'open',
+          assigned_to: 'support@flexitapapp.com'
         });
-        alert('Renewal notification queued and sent to ' + email + '!\n\nMerchant instructed to get in touch with Support Engineering to renew plan.');
+        alert('Renewal notification queued and recorded as Ticket for ' + email + '!\n\nMerchant instructed to get in touch with Support Engineering to renew plan.');
+        if (typeof renderCrmTickets === 'function') {
+          await loadDevData();
+          renderCrmTickets(currentCrmAccountId);
+        }
       } catch (e) {
         console.error('Error sending renewal notification:', e);
         alert('Could not dispatch notice: ' + (e.message || e));
@@ -5082,47 +5094,108 @@
       const isSuspended = accountStatus === 'suspended';
       const suspensionReason = document.getElementById('crm-inp-suspension-reason')?.value?.trim() || (isSuspended ? 'Account suspended by administrator' : null);
 
+      const effectivePaymentStatus = isSuspended ? 'suspended' : paymentStatus;
+
       if (btn) {
         btn.disabled = true;
         btn.innerText = 'Updating Supabase...';
       }
 
       try {
-        // 1. Update profiles table
-        const profileUpdate = {
-          subscription_tier: tier,
-          payment_status: paymentStatus,
-          subscription_expires_at: expiryIso,
-          subscription_valid_until: expiryIso,
-          is_account_suspended: isSuspended,
-          suspension_reason: suspensionReason
-        };
+        // 1. Try updating profiles table with full columns first
+        let profileSaved = false;
+        try {
+          const fullProfileUpdate = {
+            subscription_tier: tier,
+            payment_status: effectivePaymentStatus,
+            subscription_expires_at: expiryIso,
+            subscription_valid_until: expiryIso,
+            billing_provider: billingMode,
+            is_account_suspended: isSuspended,
+            suspension_reason: suspensionReason
+          };
+          const { error: fullError } = await supabaseClient
+            .from('profiles')
+            .update(fullProfileUpdate)
+            .eq('id', currentCrmAccountId);
 
-        const { error: profileError } = await supabaseClient
-          .from('profiles')
-          .update(profileUpdate)
-          .eq('id', currentCrmAccountId);
+          if (!fullError) {
+            profileSaved = true;
+          } else {
+            console.warn('Full profile update notice (will attempt core update):', fullError.message);
+          }
+        } catch (e) {
+          console.warn('Full profile update caught:', e);
+        }
 
-        if (profileError) throw profileError;
+        // Fallback for profiles if optional columns are not yet in Supabase schema cache
+        if (!profileSaved) {
+          const coreProfileUpdate = {
+            subscription_tier: tier,
+            payment_status: effectivePaymentStatus,
+            subscription_valid_until: expiryIso
+          };
+          const { error: coreError } = await supabaseClient
+            .from('profiles')
+            .update(coreProfileUpdate)
+            .eq('id', currentCrmAccountId);
+
+          if (coreError) throw coreError;
+        }
 
         // 2. Also update stores table if store is associated
         const matchedAccount = crmAccounts.find(function(a) { return a.id === currentCrmAccountId; });
         const storeCode = matchedAccount ? matchedAccount.store_code : null;
         if (storeCode && storeCode !== '—') {
-          await supabaseClient
-            .from('stores')
-            .update({
-              subscription_tier: tier,
-              payment_status: paymentStatus,
-              subscription_expires_at: expiryIso,
-              is_account_suspended: isSuspended,
-              suspension_reason: suspensionReason
-            })
-            .eq('id', storeCode);
+          let storeSaved = false;
+          try {
+            const { error: storeFullErr } = await supabaseClient
+              .from('stores')
+              .update({
+                subscription_tier: tier,
+                payment_status: effectivePaymentStatus,
+                subscription_expires_at: expiryIso,
+                billing_provider: billingMode,
+                is_account_suspended: isSuspended,
+                suspension_reason: suspensionReason
+              })
+              .eq('id', storeCode);
+            if (!storeFullErr) storeSaved = true;
+          } catch (_) {}
+
+          if (!storeSaved) {
+            try {
+              await supabaseClient
+                .from('stores')
+                .update({
+                  subscription_tier: tier,
+                  payment_status: effectivePaymentStatus
+                })
+                .eq('id', storeCode);
+            } catch (_) {}
+          }
+
+          // 3. Hardware kill-switch: Synchronize device active statuses
+          if (isSuspended) {
+            try {
+              await supabaseClient
+                .from('devices')
+                .update({ is_active: false })
+                .eq('store_id', storeCode);
+            } catch (_) {}
+          } else if (accountStatus === 'active') {
+            try {
+              await supabaseClient
+                .from('devices')
+                .update({ is_active: true })
+                .eq('store_id', storeCode)
+                .in('role', ['master', 'register', 'server']);
+            } catch (_) {}
+          }
         }
 
         const expiryMsg = isPaddle ? 'Paddle Auto-Billing (Null Expiry)' : (expiryDateStr ? 'Expires: ' + expiryDateStr : 'Lifetime (No Expiry)');
-        alert('Subscription license updated successfully in Supabase!\n\nMerchant: ' + (matchedAccount ? matchedAccount.store_name : currentCrmAccountId) + '\nTier: ' + tier.toUpperCase() + '\nPayment Status: ' + paymentStatus.toUpperCase() + '\nValidity: ' + expiryMsg + '\nAccount: ' + (isSuspended ? 'SUSPENDED (All Devices Locked)' : 'ACTIVE') + '\n\nThe user can now tap "Verify License" or restart the Flutter app to immediately apply.');
+        alert('Subscription license updated successfully in Supabase!\n\nMerchant: ' + (matchedAccount ? matchedAccount.store_name : currentCrmAccountId) + '\nTier: ' + tier.toUpperCase() + '\nPayment Status: ' + effectivePaymentStatus.toUpperCase() + '\nValidity: ' + expiryMsg + '\nAccount: ' + (isSuspended ? 'SUSPENDED (All Devices Locked)' : 'ACTIVE') + '\n\nThe user can now tap "Verify License" or restart the Flutter app to immediately apply.');
 
         // Refresh live CRM data
         await loadDevData();
