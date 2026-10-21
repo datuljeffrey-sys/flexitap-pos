@@ -104,7 +104,7 @@
       position: relative;
     }
     .screen > .card { width: 100%; }
-    #screen-form.active, #screen-review.active, #screen-landing.active, #screen-reports.active, #screen-tickets.active, #screen-referrals.active { align-items: flex-start; padding-block: 12px; }
+    #screen-form.active, #screen-review.active, #screen-landing.active, #screen-reports.active, #screen-tickets.active { align-items: flex-start; padding-block: 12px; }
 
     /* Card Shell */
     .card {
@@ -1095,7 +1095,7 @@
         <span style="font-size: 1.4rem;">🎫</span>
       </button>
 
-      <button class="btn btn-outline" onclick="switchPwaTab('chat')" style="margin-bottom: 10px; border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.05);">
+      <button class="btn btn-outline" onclick="switchPwaTab('chat')" style="margin-bottom: 4px; border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.05);">
         <div>
           <div style="font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             <span>🤖 Chat with AI &amp; Support</span>
@@ -1104,14 +1104,6 @@
           <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Instant Gemini AI trained on 42 POS guides + voice input</div>
         </div>
         <span style="font-size: 1.4rem;">💬</span>
-      </button>
-
-      <button class="btn btn-outline" onclick="switchPwaTab('referrals')" style="margin-bottom: 4px; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.05);">
-        <div>
-          <div style="font-weight: 700; color: #34d399;">Earn ₱3,000 – ₱6,000 GCash</div>
-          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Philippine Partner Program &bull; Refer any café or retail</div>
-        </div>
-        <span style="font-size: 1.4rem;">🤝</span>
       </button>
     </div>
   </div>
@@ -1298,69 +1290,6 @@
       <!-- Ticket Cards List -->
       <div id="pwa-tickets-list-container" style="display: flex; flex-direction: column; min-height: 200px;">
         <div style="text-align: center; color: var(--muted); font-size: 12.5px; padding: 30px 0;">Loading tickets from Operations Desk...</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= SCREEN: REFERRAL & PARTNER HUB ================= -->
-  <div class="screen" id="screen-referrals">
-    <div class="card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <button onclick="switchPwaTab('landing')" style="background: none; border: none; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer;">&larr; Back to Hub</button>
-        <span class="badge-pill badge-open" style="color: #34d399; border-color: rgba(52, 211, 153, 0.4); background: rgba(52, 211, 153, 0.1);">🇵🇭 FlexiTap Partner</span>
-      </div>
-
-      <h1 style="font-size: 19px; margin-bottom: 3px;">Philippine Partner Program</h1>
-      <p class="subtitle" style="margin-bottom: 14px;">Earn ₱3,000 to ₱6,000 direct to your GCash or Maya for every restaurant, café, or store you refer.</p>
-
-      <!-- Banner Image -->
-      <div style="border-radius: 16px; overflow: hidden; margin-bottom: 16px; border: 1px solid var(--border); box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
-        <img src="./flexitap_referral_banner.png" alt="FlexiTap Partner Banner" style="width: 100%; height: auto; display: block;" onerror="this.onerror=null; this.src='./flexitap_referral_banner.jpg';">
-      </div>
-
-      <!-- Reward Highlights -->
-      <div class="kpi-grid-2" style="margin-bottom: 14px;">
-        <div class="kpi-card-mini" style="background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.3);">
-          <div class="kpi-label" style="color: #34d399;">Cash Commission</div>
-          <div class="kpi-val" style="color: #34d399;">₱6,000</div>
-          <div class="kpi-sub" style="color: #6ee7b7;">Per Active Store</div>
-        </div>
-        <div class="kpi-card-mini">
-          <div class="kpi-label">Payout Channel</div>
-          <div class="kpi-val" style="font-size: 15px; margin-top: 6px;">GCash / Maya</div>
-          <div class="kpi-sub" style="color: #94a3b8;">Direct Bank Transfer</div>
-        </div>
-      </div>
-
-      <!-- Referral Link Box -->
-      <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 14px;">
-        <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; display: block; margin-bottom: 6px;">Your Dedicated Referral Link</label>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" id="pwaReferralLinkInput" readonly value="https://flexitap.app/register?ref=partner" style="flex: 1; font-size: 12px; font-family: monospace; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; color: #60a5fa;" />
-          <button onclick="copyPwaReferralLink()" class="btn btn-primary" id="copyRefBtn" style="width: auto; padding: 0 14px; font-size: 12px; margin: 0; font-weight: 700;">Copy</button>
-        </div>
-      </div>
-
-      <!-- Share Buttons -->
-      <div style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">Instant Share</div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;">
-        <button class="btn btn-secondary" onclick="sharePwaReferral('viber')" style="font-size: 12px; padding: 10px; font-weight: 700;">
-          💜 Viber Share
-        </button>
-        <button class="btn btn-secondary" onclick="sharePwaReferral('whatsapp')" style="font-size: 12px; padding: 10px; font-weight: 700;">
-          💚 WhatsApp
-        </button>
-        <button class="btn btn-secondary" onclick="sharePwaReferral('messenger')" style="font-size: 12px; padding: 10px; font-weight: 700; grid-column: span 2;">
-          💙 Facebook / Messenger
-        </button>
-      </div>
-
-      <!-- 3 Steps -->
-      <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; font-size: 12px; line-height: 1.6; color: #cbd5e1;">
-        <div style="font-weight: 800; color: #fff; margin-bottom: 6px;">How the Partner Program Works:</div>
-        <div><strong>1. Share your link:</strong> Send to café, restaurant, bakery, or retail owners in the Philippines.</div>
-        <div><strong>2. Free Demo &amp; Setup:</strong> FlexiTap POS installs and trains their cashier team.</div>
-        <div><strong>3. Cash Reward:</strong> Receive ₱6,000 cash bonus directly into your GCash or Maya upon store onboarding.</div>
       </div>
     </div>
   </div>
@@ -1683,7 +1612,7 @@
       const nav = document.getElementById('pwa-bottom-nav');
       if (!nav) return;
 
-      const authScreens = ['landing', 'reports', 'tickets', 'chat', 'referrals', 'form', 'review', 'recent'];
+      const authScreens = ['landing', 'reports', 'tickets', 'chat', 'form', 'review', 'recent'];
       if (authScreens.includes(activeId)) {
         nav.style.display = 'flex';
         document.body.classList.add('has-bottom-nav');
@@ -1722,8 +1651,6 @@
         renderPwaReports();
       } else if (tab === 'tickets') {
         renderPwaTicketsList();
-      } else if (tab === 'referrals') {
-        renderPwaReferrals();
       }
     }
 
@@ -2051,9 +1978,11 @@
       syncLatestTicketNumber();
       if (currentAuthUser) {
         await populateAuthenticatedMerchantInfo();
+        initGlobalTicketsSubscription();
         const disclaimerSeen = localStorage.getItem('flexitap_disclaimer_accepted');
         if (disclaimerSeen) {
           goTo('landing');
+          renderPwaDashboard();
         } else {
           goTo('disclaimer');
         }
@@ -3161,13 +3090,14 @@
           }));
           const seen = new Set();
           const combined = [];
-          for (const item of [...localList, ...dbTickets]) {
+          for (const item of [...dbTickets, ...localList]) {
             const key = String(item.ticketNumber || item.id);
             if (!seen.has(key)) {
               seen.add(key);
               combined.push(item);
             }
           }
+          localStorage.setItem('flexitap_pwa_tickets', JSON.stringify(combined.slice(0, 25)));
           return combined;
         }
       } catch (err) {
@@ -3623,36 +3553,15 @@
             });
           }
         });
-      } else {
-        openingBank = 2000;
       }
 
       const cashSales = payments['Cash'] || payments['CASH'] || payments['cash'] || 0;
       const expectedCash = openingBank + cashSales + paidIn - paidOut;
 
       let productMixList = Object.values(productMixMap);
-      if (productMixList.length === 0) {
-        productMixList = [
-          { name: 'Iced Spanish Latte', units: 48, sales: 7200, category: 'Beverage' },
-          { name: 'Caramel Macchiato', units: 36, sales: 5760, category: 'Beverage' },
-          { name: 'Matcha Green Tea Latte', units: 27, sales: 4320, category: 'Beverage' },
-          { name: 'Pain au Chocolat', units: 24, sales: 2880, category: 'Pastry' },
-          { name: 'Ham & Triple Cheese Croissant', units: 19, sales: 3040, category: 'Pastry' }
-        ];
-      } else {
-        productMixList.sort((a, b) => b.sales - a.sales);
-      }
+      productMixList.sort((a, b) => b.sales - a.sales);
 
       let inventoryList = Object.values(inventoryMap);
-      if (inventoryList.length === 0) {
-        inventoryList = [
-          { name: 'Arabica Espresso Beans (1kg)', current: 12, par: 10, unit: 'bags' },
-          { name: 'Full Cream Milk (1L)', current: 6, par: 20, unit: 'cartons' },
-          { name: 'Oat Milk Barista Blend (1L)', current: 18, par: 12, unit: 'cartons' },
-          { name: 'Caramel Flavor Syrup (750ml)', current: 3, par: 6, unit: 'bottles' },
-          { name: 'Takeout Cups 16oz w/ Lid', current: 140, par: 100, unit: 'sets' }
-        ];
-      }
 
       currentPwaReportData = {
         grossSales: gross,
@@ -3770,9 +3679,9 @@
       const cardEl = document.getElementById('dash-tender-card');
       if (cardEl) cardEl.innerText = formatPwaMoney(card);
 
-      const cashPct = totalTender > 0 ? Math.round((cash / totalTender) * 100) : 50;
-      const ewalletPct = totalTender > 0 ? Math.round((ewallet / totalTender) * 100) : 35;
-      const cardPct = totalTender > 0 ? Math.max(0, 100 - cashPct - ewalletPct) : 15;
+      const cashPct = totalTender > 0 ? Math.round((cash / totalTender) * 100) : 0;
+      const ewalletPct = totalTender > 0 ? Math.round((ewallet / totalTender) * 100) : 0;
+      const cardPct = totalTender > 0 ? Math.max(0, 100 - cashPct - ewalletPct) : 0;
 
       const barCash = document.getElementById('dash-bar-cash');
       const barEwallet = document.getElementById('dash-bar-ewallet');
@@ -4022,44 +3931,21 @@
       renderPwaTicketsList(filter);
     }
 
-    function renderPwaReferrals() {
-      const input = document.getElementById('pwaReferralLinkInput');
-      if (input) {
-        const handle = (currentAuthUser?.storeName || currentAuthUser?.email || 'partner').toLowerCase().replace(/[^a-z0-9]/g, '');
-        input.value = `https://flexitap.app/register?ref=${handle || 'merchant'}`;
-      }
-    }
-
-    function copyPwaReferralLink() {
-      const input = document.getElementById('pwaReferralLinkInput');
-      const btn = document.getElementById('copyRefBtn');
-      if (!input) return;
-      input.select();
-      navigator.clipboard.writeText(input.value).then(() => {
-        if (btn) {
-          btn.innerText = 'Copied!';
-          setTimeout(() => { btn.innerText = 'Copy'; }, 2000);
-        }
-      }).catch(() => {
-        document.execCommand('copy');
-        if (btn) {
-          btn.innerText = 'Copied!';
-          setTimeout(() => { btn.innerText = 'Copy'; }, 2000);
-        }
-      });
-    }
-
-    function sharePwaReferral(channel) {
-      const input = document.getElementById('pwaReferralLinkInput');
-      const link = input ? input.value : 'https://flexitap.app/register?ref=partner';
-      const text = encodeURIComponent(`Hey! Check out FlexiTap POS for café and retail stores in the Philippines. Use my referral link for free setup and training: ${link}`);
-
-      if (channel === 'viber') {
-        window.open(`viber://forward?text=${text}`, '_blank');
-      } else if (channel === 'whatsapp') {
-        window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
-      } else if (channel === 'messenger') {
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`, '_blank');
+    function initGlobalTicketsSubscription() {
+      if (!supabaseClient) return;
+      try {
+        supabaseClient
+          .channel('pwa-global-tickets')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'tickets' }, () => {
+            renderPwaDashboard();
+            const ticketsScreen = document.getElementById('screen-tickets');
+            if (ticketsScreen && ticketsScreen.classList.contains('active')) {
+              renderPwaTicketsList();
+            }
+          })
+          .subscribe();
+      } catch (e) {
+        console.warn('Global ticket subscription note:', e);
       }
     }
 
@@ -4085,10 +3971,6 @@
     <button class="pwa-nav-item" id="pwa-nav-chat" onclick="switchPwaTab('chat')">
       <div class="pwa-nav-icon">💬</div>
       <div class="pwa-nav-label">Chat</div>
-    </button>
-    <button class="pwa-nav-item" id="pwa-nav-referrals" onclick="switchPwaTab('referrals')">
-      <div class="pwa-nav-icon">🤝</div>
-      <div class="pwa-nav-label">Earn ₱6k</div>
     </button>
   </nav>
 </body>
