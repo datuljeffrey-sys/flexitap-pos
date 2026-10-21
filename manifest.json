@@ -1,7 +1,7 @@
 {
-  "name": "FlexiTap POS Support & Diagnostics",
-  "short_name": "FlexiSupport",
-  "description": "Instant ticket submission, live diagnostic tracking, and merchant technical care for FlexiTap POS.",
+  "name": "FlexiTap POS - Merchant Hub & Reports",
+  "short_name": "FlexiTap Hub",
+  "description": "Unified merchant operations app: real-time sales reports, Z-read, inventory, ticket submission, and live support for FlexiTap POS.",
   "start_url": "./flexi-app.html",
   "scope": "./",
   "display": "standalone",

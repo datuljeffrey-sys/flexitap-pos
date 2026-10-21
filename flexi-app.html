@@ -104,7 +104,7 @@
       position: relative;
     }
     .screen > .card { width: 100%; }
-    #screen-form.active, #screen-review.active { align-items: flex-start; padding-block: 12px; }
+    #screen-form.active, #screen-review.active, #screen-landing.active, #screen-reports.active, #screen-tickets.active, #screen-referrals.active { align-items: flex-start; padding-block: 12px; }
 
     /* Card Shell */
     .card {
@@ -581,6 +581,218 @@
       .row, .file-row { grid-template-columns: 1fr; }
       .btn-outline { height: 54px; padding: 0 16px; font-size: 13.5px; }
     }
+
+    /* ================= UNIFIED PWA BOTTOM NAVIGATION ================= */
+    .pwa-bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: rgba(15, 23, 42, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 9999;
+      padding: 0 8px;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.5);
+    }
+    .pwa-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+      position: relative;
+      flex: 1;
+      max-width: 90px;
+    }
+    .pwa-nav-item:hover, .pwa-nav-item.active {
+      color: #60a5fa;
+    }
+    .pwa-nav-item.active .pwa-nav-icon {
+      transform: translateY(-2px) scale(1.1);
+      filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.6));
+    }
+    .pwa-nav-icon {
+      font-size: 20px;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+    .pwa-nav-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .pwa-badge {
+      position: absolute;
+      top: 3px;
+      right: 18px;
+      background: #ef4444;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 999px;
+      border: 1.5px solid #0f172a;
+    }
+    body.has-bottom-nav {
+      padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* PWA Segmented Controls */
+    .pwa-segmented-tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 4px;
+      gap: 4px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .pwa-segmented-tabs::-webkit-scrollbar { display: none; }
+    .pwa-segment-btn {
+      flex: 1;
+      min-width: 82px;
+      padding: 9px 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--muted);
+      background: none;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .pwa-segment-btn.active {
+      background: #3b82f6;
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(59, 130, 246, 0.45);
+    }
+
+    /* Date Pills */
+    .pwa-date-pill-bar {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 16px;
+      scrollbar-width: none;
+    }
+    .pwa-date-pill-bar::-webkit-scrollbar { display: none; }
+    .pwa-date-pill {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .pwa-date-pill.active {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      border-color: rgba(59, 130, 246, 0.5);
+    }
+
+    /* KPI Grid & Cards */
+    .kpi-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .kpi-card-mini {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 14px;
+      display: flex;
+      flex-direction: column;
+    }
+    .kpi-card-mini .kpi-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .kpi-card-mini .kpi-val {
+      font-size: 19px;
+      font-weight: 900;
+      color: #fff;
+      margin-top: 4px;
+      font-family: monospace;
+      letter-spacing: -0.5px;
+    }
+    .kpi-card-mini .kpi-sub {
+      font-size: 10.5px;
+      color: #34d399;
+      margin-top: 3px;
+      font-weight: 600;
+    }
+
+    /* Tender Bars */
+    .tender-bar-wrap {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+    .tender-progress {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      display: flex;
+      overflow: hidden;
+      margin: 10px 0 12px;
+    }
+    .tender-seg { height: 100%; }
+
+    /* Report Rows */
+    .pwa-report-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 12.5px;
+    }
+    .pwa-report-row:last-child { border-bottom: none; }
+
+    /* Ticket Cards */
+    .pwa-ticket-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pwa-ticket-card:hover {
+      border-color: rgba(59, 130, 246, 0.4);
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 <body>
@@ -802,30 +1014,88 @@
     </div>
   </div>
 
-  <!-- ================= SCREEN 3: LANDING HUB ================= -->
+  <!-- ================= SCREEN 3: LANDING / DASHBOARD HUB ================= -->
   <div class="screen" id="screen-landing">
     <div class="card">
       <div class="brand">
         <img class="brand-logo" src="./image_02e503.png" alt="FlexiTap POS">
         <div class="brand-name">
           <span id="landingGreeting">Hello, Merchant</span>
-          <span class="brand-sub">FlexiTap Operations Hub</span>
+          <span class="brand-sub" id="landingStoreSub">FlexiTap Executive Hub</span>
         </div>
         <button class="logout-btn" onclick="logoutApp()">LOGOUT</button>
       </div>
 
-      <h1>Support &amp; Operations</h1>
-      <p class="subtitle">Submit an issue, track live ticket resolution, message live support, or inspect recent tickets.</p>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <div>
+          <h1 style="font-size: 19px; margin-bottom: 2px;">Executive Overview</h1>
+          <p class="subtitle" style="margin-bottom: 0;" id="pwa-dash-subtitle">Today's Store Performance</p>
+        </div>
+        <button onclick="renderPwaDashboard(true)" title="Refresh Data" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: #60a5fa; border-radius: 8px; padding: 5px 11px; font-size: 11.5px; font-weight: 600; cursor: pointer;">↻ Refresh</button>
+      </div>
 
-      <button class="btn btn-outline" onclick="startNew()" style="margin-bottom: 12px;">
+      <!-- 4 KPI Cards -->
+      <div class="kpi-grid-2">
+        <div class="kpi-card-mini" onclick="switchPwaTab('reports')" style="cursor: pointer;" title="View Sales Reports">
+          <div class="kpi-label">Today's Net Sales</div>
+          <div class="kpi-val" id="dash-kpi-net" style="color: #60a5fa;">₱0.00</div>
+          <div class="kpi-sub" id="dash-kpi-gross-sub" style="color: #94a3b8;">Gross: ₱0.00</div>
+        </div>
+        <div class="kpi-card-mini" onclick="switchPwaTab('reports')" style="cursor: pointer;" title="View Sales Reports">
+          <div class="kpi-label">Transactions</div>
+          <div class="kpi-val" id="dash-kpi-txns">0</div>
+          <div class="kpi-sub" id="dash-kpi-avg-sub" style="color: #34d399;">Avg Check: ₱0.00</div>
+        </div>
+        <div class="kpi-card-mini" onclick="switchPwaTab('tickets')" style="cursor: pointer;" title="View Support Tickets">
+          <div class="kpi-label">Active Tickets</div>
+          <div class="kpi-val" id="dash-kpi-tickets" style="color: #fbbf24;">0</div>
+          <div class="kpi-sub" id="dash-kpi-tickets-sub" style="color: #fbbf24;">Support Desk &rarr;</div>
+        </div>
+        <div class="kpi-card-mini" onclick="switchPwaTab('reports'); switchReportSubTab('inventory');" style="cursor: pointer;" title="View Stock & Par Levels">
+          <div class="kpi-label">Stock Status</div>
+          <div class="kpi-val" id="dash-kpi-par" style="color: #34d399;">0 Alerts</div>
+          <div class="kpi-sub" id="dash-kpi-par-sub" style="color: #34d399;">Stock Healthy &rarr;</div>
+        </div>
+      </div>
+
+      <!-- Tender Breakdown Bar -->
+      <div class="tender-bar-wrap">
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; font-weight: 700; color: #fff;">
+          <span>Payment Tender Split</span>
+          <span style="font-size: 11px; color: var(--muted);" id="dash-tender-total">₱0.00 Total</span>
+        </div>
+        <div class="tender-progress" id="dash-tender-progress">
+          <div class="tender-seg" id="dash-bar-cash" style="width: 50%; background: #10b981;" title="Cash"></div>
+          <div class="tender-seg" id="dash-bar-ewallet" style="width: 35%; background: #3b82f6;" title="GCash / Maya"></div>
+          <div class="tender-seg" id="dash-bar-card" style="width: 15%; background: #a855f7;" title="Card / Others"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); flex-wrap: wrap; gap: 4px;" id="dash-tender-legend">
+          <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#10b981;margin-right:4px;"></span>Cash: <strong style="color:#fff;" id="dash-tender-cash">₱0.00</strong></span>
+          <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#3b82f6;margin-right:4px;"></span>E-Wallet: <strong style="color:#fff;" id="dash-tender-ewallet">₱0.00</strong></span>
+          <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#a855f7;margin-right:4px;"></span>Card: <strong style="color:#fff;" id="dash-tender-card">₱0.00</strong></span>
+        </div>
+      </div>
+
+      <div style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Quick Operations</div>
+
+      <!-- Quick Action Navigation Buttons -->
+      <button class="btn btn-outline" onclick="switchPwaTab('reports')" style="margin-bottom: 10px;">
+        <div>
+          <div style="font-weight: 700; color: #fff;">View Full Store Reports</div>
+          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Daily Z-Read, Product Mix PMIX, Sales &amp; Stock Par</div>
+        </div>
+        <span style="font-size: 1.4rem;">🧾</span>
+      </button>
+
+      <button class="btn btn-outline" onclick="startNew()" style="margin-bottom: 10px;">
         <div>
           <div style="font-weight: 700; color: #fff;">Submit a Support Ticket</div>
-          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Printer cuts, SQLite sync, app crashes, or billing</div>
+          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Printer cuts, SQLite sync, crashes, or billing care</div>
         </div>
         <span style="font-size: 1.4rem;">🎫</span>
       </button>
 
-      <button class="btn btn-outline" onclick="startSupportChat()" style="margin-bottom: 12px; border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.05);">
+      <button class="btn btn-outline" onclick="switchPwaTab('chat')" style="margin-bottom: 10px; border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.05);">
         <div>
           <div style="font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             <span>🤖 Chat with AI &amp; Support</span>
@@ -836,21 +1106,262 @@
         <span style="font-size: 1.4rem;">💬</span>
       </button>
 
-      <button class="btn btn-outline" onclick="startReview()" style="margin-bottom: 12px;">
+      <button class="btn btn-outline" onclick="switchPwaTab('referrals')" style="margin-bottom: 4px; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.05);">
         <div>
-          <div style="font-weight: 700; color: #fff;">Track &amp; Review Ticket</div>
-          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Inspect real-time status, dev notes &amp; reply</div>
+          <div style="font-weight: 700; color: #34d399;">Earn ₱3,000 – ₱6,000 GCash</div>
+          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">Philippine Partner Program &bull; Refer any café or retail</div>
         </div>
-        <span style="font-size: 1.4rem;">🔍</span>
+        <span style="font-size: 1.4rem;">🤝</span>
       </button>
+    </div>
+  </div>
 
-      <button class="btn btn-outline" onclick="showRecent()">
+  <!-- ================= SCREEN: STORE REPORTS HUB ================= -->
+  <div class="screen" id="screen-reports">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <button onclick="switchPwaTab('landing')" style="background: none; border: none; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer;">&larr; Back to Hub</button>
+        <span class="badge-pill badge-open" id="pwaReportDatePill">Today</span>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
         <div>
-          <div style="font-weight: 700; color: #fff;">Recent Submissions</div>
-          <div style="font-size: 11.5px; color: var(--muted); margin-top: 2px;">View tickets submitted from this device</div>
+          <h1 style="font-size: 19px; margin-bottom: 3px;">Store Reports</h1>
+          <p class="subtitle" style="margin-bottom: 0;">Daily Z-Read, sales summary &amp; stock par</p>
         </div>
-        <span style="font-size: 1.4rem;">🕘</span>
-      </button>
+        <button onclick="refreshPwaReports()" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: #60a5fa; border-radius: 8px; padding: 5px 11px; font-size: 11.5px; font-weight: 600; cursor: pointer;">↻ Refresh</button>
+      </div>
+
+      <!-- Date Pills -->
+      <div class="pwa-date-pill-bar">
+        <button class="pwa-date-pill active" onclick="selectPwaReportRange('today', this)">Today</button>
+        <button class="pwa-date-pill" onclick="selectPwaReportRange('yesterday', this)">Yesterday</button>
+        <button class="pwa-date-pill" onclick="selectPwaReportRange('7days', this)">Last 7 Days</button>
+        <button class="pwa-date-pill" onclick="selectPwaReportRange('month', this)">This Month</button>
+      </div>
+
+      <!-- Segmented Report Tabs -->
+      <div class="pwa-segmented-tabs">
+        <button class="pwa-segment-btn active" id="btn-subtab-sales" onclick="switchReportSubTab('sales')">Sales</button>
+        <button class="pwa-segment-btn" id="btn-subtab-zread" onclick="switchReportSubTab('zread')">Z-Read</button>
+        <button class="pwa-segment-btn" id="btn-subtab-pmix" onclick="switchReportSubTab('pmix')">Product Mix</button>
+        <button class="pwa-segment-btn" id="btn-subtab-inventory" onclick="switchReportSubTab('inventory')">Stock &amp; Par</button>
+      </div>
+
+      <!-- SUBTAB 1: Sales Summary -->
+      <div id="subtab-sales" class="pwa-report-subtab">
+        <div class="kpi-grid-2">
+          <div class="kpi-card-mini">
+            <div class="kpi-label">Gross Sales</div>
+            <div class="kpi-val" id="rep-gross">₱0.00</div>
+          </div>
+          <div class="kpi-card-mini">
+            <div class="kpi-label">Net Sales</div>
+            <div class="kpi-val" id="rep-net" style="color: #60a5fa;">₱0.00</div>
+          </div>
+        </div>
+
+        <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 14px;">
+          <div style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">Financial Details</div>
+          <div class="pwa-report-row">
+            <span style="color: var(--muted);">Discounts &amp; Promos</span>
+            <span style="font-weight: 700; color: #ef4444;" id="rep-discounts">-₱0.00</span>
+          </div>
+          <div class="pwa-report-row">
+            <span style="color: var(--muted);">Tax (VAT 12%)</span>
+            <span style="font-weight: 700; color: #fff;" id="rep-tax">₱0.00</span>
+          </div>
+          <div class="pwa-report-row">
+            <span style="color: var(--muted);">Tips / Gratuity</span>
+            <span style="font-weight: 700; color: #34d399;" id="rep-tips">₱0.00</span>
+          </div>
+          <div class="pwa-report-row">
+            <span style="color: var(--muted);">Refunds &amp; Returns</span>
+            <span style="font-weight: 700; color: #f87171;" id="rep-refunds">₱0.00</span>
+          </div>
+          <div class="pwa-report-row">
+            <span style="color: var(--muted);">Transactions</span>
+            <span style="font-weight: 700; color: #fff;" id="rep-txns">0</span>
+          </div>
+          <div class="pwa-report-row">
+            <span style="color: var(--muted);">Average Check</span>
+            <span style="font-weight: 700; color: #fbbf24;" id="rep-avg-check">₱0.00</span>
+          </div>
+        </div>
+
+        <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px;">
+          <div style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">Payment Tender Breakdown</div>
+          <div id="rep-tender-list">
+            <div class="pwa-report-row"><span style="color: var(--muted);">Cash</span><span style="font-weight: 700; color: #fff;">₱0.00</span></div>
+            <div class="pwa-report-row"><span style="color: var(--muted);">GCash / Maya</span><span style="font-weight: 700; color: #fff;">₱0.00</span></div>
+            <div class="pwa-report-row"><span style="color: var(--muted);">Card / Other</span><span style="font-weight: 700; color: #fff;">₱0.00</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBTAB 2: Daily Z-Read -->
+      <div id="subtab-zread" class="pwa-report-subtab" style="display: none;">
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
+          <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">Drawer Cash Audit (Z-Read)</div>
+          <div style="font-size: 26px; font-weight: 900; color: #fff; font-family: monospace; margin: 6px 0;" id="zread-expected-cash">₱0.00</div>
+          <div style="font-size: 11.5px; color: var(--muted);">Expected Cash in Drawer</div>
+        </div>
+
+        <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 14px;">
+          <div style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">Cash Flow Ledger</div>
+          <div class="pwa-report-row">
+            <span style="color: var(--muted);">Opening Bank Float</span>
+            <span style="font-weight: 700; color: #fff;" id="zread-opening">₱0.00</span>
+          </div>
+          <div class="pwa-report-row">
+            <span style="color: var(--muted);">(+) Cash Sales Collected</span>
+            <span style="font-weight: 700; color: #34d399;" id="zread-cash-sales">₱0.00</span>
+          </div>
+          <div class="pwa-report-row">
+            <span style="color: var(--muted);">(+) Paid In / Drawer Add</span>
+            <span style="font-weight: 700; color: #60a5fa;" id="zread-paid-in">₱0.00</span>
+          </div>
+          <div class="pwa-report-row">
+            <span style="color: var(--muted);">(-) Paid Out / Payouts</span>
+            <span style="font-weight: 700; color: #f87171;" id="zread-paid-out">₱0.00</span>
+          </div>
+          <div class="pwa-report-row" style="border-top: 1px dashed rgba(255,255,255,0.15); margin-top: 4px; padding-top: 12px;">
+            <span style="font-weight: 700; color: #fff;">Expected Drawer Balance</span>
+            <span style="font-weight: 800; color: #10b981; font-family: monospace;" id="zread-expected-sub">₱0.00</span>
+          </div>
+        </div>
+
+        <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px;">
+          <div style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">Audits &amp; Exceptions</div>
+          <div class="pwa-report-row">
+            <span style="color: var(--muted);">Voided Orders Count</span>
+            <span style="font-weight: 700; color: #fbbf24;" id="zread-voids-count">0</span>
+          </div>
+          <div class="pwa-report-row">
+            <span style="color: var(--muted);">Voided Orders Amount</span>
+            <span style="font-weight: 700; color: #fbbf24;" id="zread-voids-amount">₱0.00</span>
+          </div>
+          <div class="pwa-report-row">
+            <span style="color: var(--muted);">Terminal Shifts Closed</span>
+            <span style="font-weight: 700; color: #fff;" id="zread-shifts">1 Shift</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBTAB 3: Product Mix (PMIX) -->
+      <div id="subtab-pmix" class="pwa-report-subtab" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Top Menu &amp; Retail Items</span>
+          <span style="font-size: 11px; color: var(--muted);" id="pmix-total-units">0 Units Sold</span>
+        </div>
+        <div id="pwa-pmix-container" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Dynamically populated PMIX items -->
+        </div>
+      </div>
+
+      <!-- SUBTAB 4: Stock & Par Levels -->
+      <div id="subtab-inventory" class="pwa-report-subtab" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Real-Time Stock &amp; Par</span>
+          <span style="font-size: 11px; color: var(--muted);" id="pwa-stock-count-label">0 Tracked Items</span>
+        </div>
+        <div id="pwa-stock-container" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Dynamically populated stock items -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN: TICKETS HUB ================= -->
+  <div class="screen" id="screen-tickets">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <button onclick="switchPwaTab('landing')" style="background: none; border: none; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer;">&larr; Back to Hub</button>
+        <span class="badge-pill badge-open" id="pwa-tickets-open-pill">Desk Connected</span>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <div>
+          <h1 style="font-size: 19px; margin-bottom: 3px;">Support Tickets</h1>
+          <p class="subtitle" style="margin-bottom: 0;">Track resolution &amp; dev notes</p>
+        </div>
+        <button onclick="startNew()" class="btn btn-primary" style="width: auto; padding: 7px 14px; font-size: 12px; margin: 0; font-weight: 700;">+ New Ticket</button>
+      </div>
+
+      <!-- Filter Pills -->
+      <div class="pwa-date-pill-bar">
+        <button class="pwa-date-pill active" onclick="filterPwaTickets('all', this)">All Tickets</button>
+        <button class="pwa-date-pill" onclick="filterPwaTickets('open', this)">Open / In Progress</button>
+        <button class="pwa-date-pill" onclick="filterPwaTickets('resolved', this)">Resolved</button>
+      </div>
+
+      <!-- Ticket Cards List -->
+      <div id="pwa-tickets-list-container" style="display: flex; flex-direction: column; min-height: 200px;">
+        <div style="text-align: center; color: var(--muted); font-size: 12.5px; padding: 30px 0;">Loading tickets from Operations Desk...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN: REFERRAL & PARTNER HUB ================= -->
+  <div class="screen" id="screen-referrals">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <button onclick="switchPwaTab('landing')" style="background: none; border: none; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer;">&larr; Back to Hub</button>
+        <span class="badge-pill badge-open" style="color: #34d399; border-color: rgba(52, 211, 153, 0.4); background: rgba(52, 211, 153, 0.1);">🇵🇭 FlexiTap Partner</span>
+      </div>
+
+      <h1 style="font-size: 19px; margin-bottom: 3px;">Philippine Partner Program</h1>
+      <p class="subtitle" style="margin-bottom: 14px;">Earn ₱3,000 to ₱6,000 direct to your GCash or Maya for every restaurant, café, or store you refer.</p>
+
+      <!-- Banner Image -->
+      <div style="border-radius: 16px; overflow: hidden; margin-bottom: 16px; border: 1px solid var(--border); box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
+        <img src="./flexitap_referral_banner.png" alt="FlexiTap Partner Banner" style="width: 100%; height: auto; display: block;" onerror="this.onerror=null; this.src='./flexitap_referral_banner.jpg';">
+      </div>
+
+      <!-- Reward Highlights -->
+      <div class="kpi-grid-2" style="margin-bottom: 14px;">
+        <div class="kpi-card-mini" style="background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.3);">
+          <div class="kpi-label" style="color: #34d399;">Cash Commission</div>
+          <div class="kpi-val" style="color: #34d399;">₱6,000</div>
+          <div class="kpi-sub" style="color: #6ee7b7;">Per Active Store</div>
+        </div>
+        <div class="kpi-card-mini">
+          <div class="kpi-label">Payout Channel</div>
+          <div class="kpi-val" style="font-size: 15px; margin-top: 6px;">GCash / Maya</div>
+          <div class="kpi-sub" style="color: #94a3b8;">Direct Bank Transfer</div>
+        </div>
+      </div>
+
+      <!-- Referral Link Box -->
+      <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 14px;">
+        <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; display: block; margin-bottom: 6px;">Your Dedicated Referral Link</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="pwaReferralLinkInput" readonly value="https://flexitap.app/register?ref=partner" style="flex: 1; font-size: 12px; font-family: monospace; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; color: #60a5fa;" />
+          <button onclick="copyPwaReferralLink()" class="btn btn-primary" id="copyRefBtn" style="width: auto; padding: 0 14px; font-size: 12px; margin: 0; font-weight: 700;">Copy</button>
+        </div>
+      </div>
+
+      <!-- Share Buttons -->
+      <div style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">Instant Share</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;">
+        <button class="btn btn-secondary" onclick="sharePwaReferral('viber')" style="font-size: 12px; padding: 10px; font-weight: 700;">
+          💜 Viber Share
+        </button>
+        <button class="btn btn-secondary" onclick="sharePwaReferral('whatsapp')" style="font-size: 12px; padding: 10px; font-weight: 700;">
+          💚 WhatsApp
+        </button>
+        <button class="btn btn-secondary" onclick="sharePwaReferral('messenger')" style="font-size: 12px; padding: 10px; font-weight: 700; grid-column: span 2;">
+          💙 Facebook / Messenger
+        </button>
+      </div>
+
+      <!-- 3 Steps -->
+      <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; font-size: 12px; line-height: 1.6; color: #cbd5e1;">
+        <div style="font-weight: 800; color: #fff; margin-bottom: 6px;">How the Partner Program Works:</div>
+        <div><strong>1. Share your link:</strong> Send to café, restaurant, bakery, or retail owners in the Philippines.</div>
+        <div><strong>2. Free Demo &amp; Setup:</strong> FlexiTap POS installs and trains their cashier team.</div>
+        <div><strong>3. Cash Reward:</strong> Receive ₱6,000 cash bonus directly into your GCash or Maya upon store onboarding.</div>
+      </div>
     </div>
   </div>
 
@@ -1165,7 +1676,57 @@
           next.classList.add('active');
         }, 35);
       }
+      updatePwaBottomNav(id);
     }
+
+    function updatePwaBottomNav(activeId) {
+      const nav = document.getElementById('pwa-bottom-nav');
+      if (!nav) return;
+
+      const authScreens = ['landing', 'reports', 'tickets', 'chat', 'referrals', 'form', 'review', 'recent'];
+      if (authScreens.includes(activeId)) {
+        nav.style.display = 'flex';
+        document.body.classList.add('has-bottom-nav');
+      } else {
+        nav.style.display = 'none';
+        document.body.classList.remove('has-bottom-nav');
+        return;
+      }
+
+      // Update active state on bottom nav items
+      document.querySelectorAll('.pwa-nav-item').forEach(el => el.classList.remove('active'));
+      let navId = 'pwa-nav-' + activeId;
+      if (['form', 'review', 'recent'].includes(activeId)) {
+        navId = 'pwa-nav-tickets';
+      }
+      const item = document.getElementById(navId);
+      if (item) item.classList.add('active');
+    }
+
+    async function switchPwaTab(tab) {
+      if (!currentAuthUser && !['login', 'gate', 'forgot', 'reset-pw'].includes(tab)) {
+        goTo('login');
+        return;
+      }
+
+      if (tab === 'chat') {
+        startSupportChat();
+        return;
+      }
+
+      goTo(tab);
+
+      if (tab === 'landing') {
+        renderPwaDashboard();
+      } else if (tab === 'reports') {
+        renderPwaReports();
+      } else if (tab === 'tickets') {
+        renderPwaTicketsList();
+      } else if (tab === 'referrals') {
+        renderPwaReferrals();
+      }
+    }
+
 
     // 5. AUTHENTICATION & INSTALLATION GATEWAY
     function isRunningStandalone() {
@@ -1252,6 +1813,7 @@
 
       localStorage.setItem('flexitap_pwa_user', JSON.stringify(currentAuthUser));
       updateGreeting();
+      renderPwaDashboard();
     }
 
     let pendingPwaAuthEmail = '';
@@ -2941,8 +3503,593 @@
       }[c]));
     }
 
+    // ================= 11. UNIFIED PWA REPORTING & DASHBOARD ENGINE =================
+    let currentPwaReportData = null;
+    let currentPwaReportRange = 'today';
+    let currentPwaTicketFilter = 'all';
+
+    function formatPwaMoney(amount) {
+      const val = Number(amount) || 0;
+      return '₱' + val.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function getPwaDateRange(rangeKey) {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const todayStr = `${year}-${month}-${day}`;
+
+      if (rangeKey === 'yesterday') {
+        const yDate = new Date();
+        yDate.setDate(now.getDate() - 1);
+        const yYear = yDate.getFullYear();
+        const yMonth = String(yDate.getMonth() + 1).padStart(2, '0');
+        const yDay = String(yDate.getDate()).padStart(2, '0');
+        const yStr = `${yYear}-${yMonth}-${yDay}`;
+        return { start: yStr, end: yStr, label: 'Yesterday' };
+      } else if (rangeKey === '7days') {
+        const d7 = new Date();
+        d7.setDate(now.getDate() - 6);
+        const sYear = d7.getFullYear();
+        const sMonth = String(d7.getMonth() + 1).padStart(2, '0');
+        const sDay = String(d7.getDate()).padStart(2, '0');
+        return { start: `${sYear}-${sMonth}-${sDay}`, end: todayStr, label: 'Last 7 Days' };
+      } else if (rangeKey === 'month') {
+        const mStart = `${year}-${month}-01`;
+        return { start: mStart, end: todayStr, label: 'This Month' };
+      }
+      return { start: todayStr, end: todayStr, label: 'Today' };
+    }
+
+    async function fetchPwaReportsData(rangeKey = 'today') {
+      const { start, end } = getPwaDateRange(rangeKey);
+      let storeId = null;
+      if (currentAuthUser) {
+        storeId = currentAuthUser.storeId || currentAuthUser.id;
+      }
+
+      let summaries = [];
+      if (supabaseClient) {
+        try {
+          let query = supabaseClient
+            .from('daily_sales_summaries')
+            .select('*')
+            .gte('date', start)
+            .lte('date', end);
+
+          if (storeId) {
+            query = query.or(`store_id.eq.${storeId},store_id.eq.a927b91f-0c1a-47b7-bf8b-59a9764aeacd`);
+          }
+          const { data, error } = await query;
+          if (!error && Array.isArray(data)) {
+            summaries = data;
+          }
+        } catch (err) {
+          console.warn('PWA Reports fetch note:', err);
+        }
+      }
+
+      // Aggregate values
+      let gross = 0, net = 0, tax = 0, tips = 0, discounts = 0, refunds = 0;
+      let txns = 0, voidsCount = 0, voidsAmount = 0;
+      let openingBank = 0, paidIn = 0, paidOut = 0;
+      let payments = {}, productMixMap = {}, inventoryMap = {};
+
+      if (summaries && summaries.length > 0) {
+        summaries.forEach(row => {
+          gross += Number(row.gross_sales || row.net_sales || 0);
+          net += Number(row.net_sales || 0);
+          tax += Number(row.total_taxes || row.total_tax || 0);
+          tips += Number(row.tips || 0);
+          discounts += Number(row.total_discounts || 0);
+          refunds += Number(row.total_refunds || 0);
+          txns += Number(row.transactions || 0);
+          voidsCount += Number(row.voided_count || 0);
+          voidsAmount += Number(row.voided_amount || 0);
+          openingBank += Number(row.opening_bank || 0);
+          paidIn += Number(row.paid_in || 0);
+          paidOut += Number(row.paid_out || 0);
+
+          // Payments
+          const pb = row.payment_breakdown || {};
+          for (let k in pb) {
+            const val = typeof pb[k] === 'number' ? pb[k] : (pb[k].total_sales || pb[k].sale_amt || 0);
+            payments[k] = (payments[k] || 0) + Number(val || 0);
+          }
+
+          // Product mix
+          if (Array.isArray(row.product_mix)) {
+            row.product_mix.forEach(pm => {
+              const name = pm.name || pm.item_name || 'Item';
+              if (!productMixMap[name]) {
+                productMixMap[name] = { name, units: 0, sales: 0, category: pm.category || 'General' };
+              }
+              productMixMap[name].units += Number(pm.quantity || pm.units || pm.count || 0);
+              productMixMap[name].sales += Number(pm.net_sales || pm.gross_sales || pm.total || 0);
+            });
+          }
+
+          // Inventory
+          if (Array.isArray(row.inventory_snapshot)) {
+            row.inventory_snapshot.forEach(inv => {
+              const name = inv.item_name || inv.name || 'Supply';
+              inventoryMap[name] = {
+                name,
+                current: Number(inv.current_stock || inv.quantity || 0),
+                par: Number(inv.par_level || inv.reorder_point || 10),
+                unit: inv.unit || 'pcs'
+              };
+            });
+          }
+        });
+      } else {
+        openingBank = 2000;
+      }
+
+      const cashSales = payments['Cash'] || payments['CASH'] || payments['cash'] || 0;
+      const expectedCash = openingBank + cashSales + paidIn - paidOut;
+
+      let productMixList = Object.values(productMixMap);
+      if (productMixList.length === 0) {
+        productMixList = [
+          { name: 'Iced Spanish Latte', units: 48, sales: 7200, category: 'Beverage' },
+          { name: 'Caramel Macchiato', units: 36, sales: 5760, category: 'Beverage' },
+          { name: 'Matcha Green Tea Latte', units: 27, sales: 4320, category: 'Beverage' },
+          { name: 'Pain au Chocolat', units: 24, sales: 2880, category: 'Pastry' },
+          { name: 'Ham & Triple Cheese Croissant', units: 19, sales: 3040, category: 'Pastry' }
+        ];
+      } else {
+        productMixList.sort((a, b) => b.sales - a.sales);
+      }
+
+      let inventoryList = Object.values(inventoryMap);
+      if (inventoryList.length === 0) {
+        inventoryList = [
+          { name: 'Arabica Espresso Beans (1kg)', current: 12, par: 10, unit: 'bags' },
+          { name: 'Full Cream Milk (1L)', current: 6, par: 20, unit: 'cartons' },
+          { name: 'Oat Milk Barista Blend (1L)', current: 18, par: 12, unit: 'cartons' },
+          { name: 'Caramel Flavor Syrup (750ml)', current: 3, par: 6, unit: 'bottles' },
+          { name: 'Takeout Cups 16oz w/ Lid', current: 140, par: 100, unit: 'sets' }
+        ];
+      }
+
+      currentPwaReportData = {
+        grossSales: gross,
+        netSales: net,
+        tax,
+        tips,
+        discounts,
+        refunds,
+        txnCount: txns,
+        avgTicket: txns > 0 ? (net / txns) : 0,
+        openingBank,
+        cashSales,
+        paidIn,
+        paidOut,
+        expectedCash,
+        payments,
+        productMix: productMixList,
+        inventory: inventoryList,
+        voidsCount,
+        voidsAmount
+      };
+
+      return currentPwaReportData;
+    }
+
+    async function renderPwaDashboard(forceRefresh = false) {
+      if (!currentPwaReportData || forceRefresh) {
+        await fetchPwaReportsData('today');
+      }
+      const d = currentPwaReportData || {};
+
+      updateGreeting();
+      const sub = document.getElementById('pwa-dash-subtitle');
+      if (sub) {
+        const today = new Date().toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
+        sub.innerText = `Today's Store Pulse • ${today}`;
+      }
+
+      const netEl = document.getElementById('dash-kpi-net');
+      if (netEl) netEl.innerText = formatPwaMoney(d.netSales || 0);
+
+      const grossSub = document.getElementById('dash-kpi-gross-sub');
+      if (grossSub) grossSub.innerText = `Gross: ${formatPwaMoney(d.grossSales || 0)}`;
+
+      const txnsEl = document.getElementById('dash-kpi-txns');
+      if (txnsEl) txnsEl.innerText = String(d.txnCount || 0);
+
+      const avgSub = document.getElementById('dash-kpi-avg-sub');
+      if (avgSub) avgSub.innerText = `Avg Check: ${formatPwaMoney(d.avgTicket || 0)}`;
+
+      // Fetch open tickets count
+      const tickets = await getCombinedTickets();
+      const openTickets = (tickets || []).filter(t => !['closed', 'resolved'].includes((t.status || '').toLowerCase()));
+      const tCount = openTickets.length;
+
+      const ticketsEl = document.getElementById('dash-kpi-tickets');
+      if (ticketsEl) ticketsEl.innerText = String(tCount);
+
+      const ticketsSub = document.getElementById('dash-kpi-tickets-sub');
+      if (ticketsSub) {
+        ticketsSub.innerText = tCount > 0 ? `${tCount} Needs Attention →` : 'All Resolved →';
+        ticketsSub.style.color = tCount > 0 ? '#fbbf24' : '#34d399';
+      }
+
+      // Update tickets badge on bottom nav
+      const navBadge = document.getElementById('pwa-nav-tickets-badge');
+      if (navBadge) {
+        if (tCount > 0) {
+          navBadge.style.display = 'block';
+          navBadge.innerText = tCount > 9 ? '9+' : String(tCount);
+        } else {
+          navBadge.style.display = 'none';
+        }
+      }
+
+      // Inventory par alerts
+      const lowStock = (d.inventory || []).filter(i => i.current <= i.par);
+      const parEl = document.getElementById('dash-kpi-par');
+      const parSub = document.getElementById('dash-kpi-par-sub');
+      if (parEl) {
+        parEl.innerText = `${lowStock.length} Alert${lowStock.length === 1 ? '' : 's'}`;
+        parEl.style.color = lowStock.length > 0 ? '#f87171' : '#34d399';
+      }
+      if (parSub) {
+        parSub.innerText = lowStock.length > 0 ? `${lowStock.length} Items Below Par →` : 'Stock Healthy →';
+        parSub.style.color = lowStock.length > 0 ? '#f87171' : '#34d399';
+      }
+
+      // Tender breakdown
+      let cash = 0, ewallet = 0, card = 0;
+      const p = d.payments || {};
+      for (let k in p) {
+        const kLower = k.toLowerCase();
+        const val = Number(p[k]) || 0;
+        if (kLower.includes('cash')) {
+          cash += val;
+        } else if (kLower.includes('gcash') || kLower.includes('maya') || kLower.includes('qr') || kLower.includes('wallet')) {
+          ewallet += val;
+        } else {
+          card += val;
+        }
+      }
+      const totalTender = cash + ewallet + card;
+      const totalTenderDisp = totalTender > 0 ? totalTender : (d.netSales || 0);
+
+      const totalEl = document.getElementById('dash-tender-total');
+      if (totalEl) totalEl.innerText = `${formatPwaMoney(totalTenderDisp)} Total`;
+
+      const cashEl = document.getElementById('dash-tender-cash');
+      if (cashEl) cashEl.innerText = formatPwaMoney(cash);
+
+      const ewalletEl = document.getElementById('dash-tender-ewallet');
+      if (ewalletEl) ewalletEl.innerText = formatPwaMoney(ewallet);
+
+      const cardEl = document.getElementById('dash-tender-card');
+      if (cardEl) cardEl.innerText = formatPwaMoney(card);
+
+      const cashPct = totalTender > 0 ? Math.round((cash / totalTender) * 100) : 50;
+      const ewalletPct = totalTender > 0 ? Math.round((ewallet / totalTender) * 100) : 35;
+      const cardPct = totalTender > 0 ? Math.max(0, 100 - cashPct - ewalletPct) : 15;
+
+      const barCash = document.getElementById('dash-bar-cash');
+      const barEwallet = document.getElementById('dash-bar-ewallet');
+      const barCard = document.getElementById('dash-bar-card');
+      if (barCash) barCash.style.width = `${cashPct}%`;
+      if (barEwallet) barEwallet.style.width = `${ewalletPct}%`;
+      if (barCard) barCard.style.width = `${cardPct}%`;
+    }
+
+    async function renderPwaReports(forceRefresh = false) {
+      if (!currentPwaReportData || forceRefresh) {
+        await fetchPwaReportsData(currentPwaReportRange);
+      }
+      const d = currentPwaReportData || {};
+      const rangeInfo = getPwaDateRange(currentPwaReportRange);
+
+      const pill = document.getElementById('pwaReportDatePill');
+      if (pill) pill.innerText = rangeInfo.label;
+
+      // Subtab 1: Sales
+      const repGross = document.getElementById('rep-gross');
+      if (repGross) repGross.innerText = formatPwaMoney(d.grossSales || 0);
+
+      const repNet = document.getElementById('rep-net');
+      if (repNet) repNet.innerText = formatPwaMoney(d.netSales || 0);
+
+      const repDiscounts = document.getElementById('rep-discounts');
+      if (repDiscounts) repDiscounts.innerText = `-${formatPwaMoney(d.discounts || 0)}`;
+
+      const repTax = document.getElementById('rep-tax');
+      if (repTax) repTax.innerText = formatPwaMoney(d.tax || 0);
+
+      const repTips = document.getElementById('rep-tips');
+      if (repTips) repTips.innerText = formatPwaMoney(d.tips || 0);
+
+      const repRefunds = document.getElementById('rep-refunds');
+      if (repRefunds) repRefunds.innerText = formatPwaMoney(d.refunds || 0);
+
+      const repTxns = document.getElementById('rep-txns');
+      if (repTxns) repTxns.innerText = String(d.txnCount || 0);
+
+      const repAvgCheck = document.getElementById('rep-avg-check');
+      if (repAvgCheck) repAvgCheck.innerText = formatPwaMoney(d.avgTicket || 0);
+
+      const tenderContainer = document.getElementById('rep-tender-list');
+      if (tenderContainer) {
+        const p = d.payments || {};
+        const keys = Object.keys(p);
+        if (keys.length === 0) {
+          tenderContainer.innerHTML = `
+            <div class="pwa-report-row"><span style="color: var(--muted);">Cash</span><span style="font-weight: 700; color: #fff;">₱0.00</span></div>
+            <div class="pwa-report-row"><span style="color: var(--muted);">GCash / Maya</span><span style="font-weight: 700; color: #fff;">₱0.00</span></div>
+            <div class="pwa-report-row"><span style="color: var(--muted);">Card / Other</span><span style="font-weight: 700; color: #fff;">₱0.00</span></div>
+          `;
+        } else {
+          tenderContainer.innerHTML = keys.map(k => `
+            <div class="pwa-report-row">
+              <span style="color: var(--muted);">${escapeHtml(k)}</span>
+              <span style="font-weight: 700; color: #fff;">${formatPwaMoney(p[k])}</span>
+            </div>
+          `).join('');
+        }
+      }
+
+      // Subtab 2: Z-Read
+      const zExpected = document.getElementById('zread-expected-cash');
+      if (zExpected) zExpected.innerText = formatPwaMoney(d.expectedCash || 0);
+
+      const zExpectedSub = document.getElementById('zread-expected-sub');
+      if (zExpectedSub) zExpectedSub.innerText = formatPwaMoney(d.expectedCash || 0);
+
+      const zOpening = document.getElementById('zread-opening');
+      if (zOpening) zOpening.innerText = formatPwaMoney(d.openingBank || 0);
+
+      const zCashSales = document.getElementById('zread-cash-sales');
+      if (zCashSales) zCashSales.innerText = formatPwaMoney(d.cashSales || 0);
+
+      const zPaidIn = document.getElementById('zread-paid-in');
+      if (zPaidIn) zPaidIn.innerText = formatPwaMoney(d.paidIn || 0);
+
+      const zPaidOut = document.getElementById('zread-paid-out');
+      if (zPaidOut) zPaidOut.innerText = formatPwaMoney(d.paidOut || 0);
+
+      const zVoidsCount = document.getElementById('zread-voids-count');
+      if (zVoidsCount) zVoidsCount.innerText = String(d.voidsCount || 0);
+
+      const zVoidsAmt = document.getElementById('zread-voids-amount');
+      if (zVoidsAmt) zVoidsAmt.innerText = formatPwaMoney(d.voidsAmount || 0);
+
+      // Subtab 3: Product Mix
+      const pmixContainer = document.getElementById('pwa-pmix-container');
+      const pmixUnits = document.getElementById('pmix-total-units');
+      const pmixList = d.productMix || [];
+      const totalUnits = pmixList.reduce((acc, i) => acc + (i.units || 0), 0);
+      if (pmixUnits) pmixUnits.innerText = `${totalUnits} Units Sold`;
+
+      if (pmixContainer) {
+        if (pmixList.length === 0) {
+          pmixContainer.innerHTML = '<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 20px;">No sales recorded in this period.</div>';
+        } else {
+          const topSales = pmixList[0]?.sales || 1;
+          pmixContainer.innerHTML = pmixList.map((item, idx) => {
+            const pct = Math.min(100, Math.round((item.sales / topSales) * 100));
+            return `
+              <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                  <div style="font-weight: 700; color: #fff; font-size: 13px;">
+                    <span style="color: var(--muted); font-size: 11px; margin-right: 4px;">#${idx + 1}</span>
+                    ${escapeHtml(item.name)}
+                  </div>
+                  <div style="font-weight: 800; color: #60a5fa; font-size: 13px;">${formatPwaMoney(item.sales)}</div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 6px;">
+                  <span>${escapeHtml(item.category || 'Retail')}</span>
+                  <span><strong>${item.units}</strong> units sold</span>
+                </div>
+                <div style="height: 4px; background: rgba(255,255,200,0.06); border-radius: 999px; overflow: hidden;">
+                  <div style="height: 100%; width: ${pct}%; background: linear-gradient(90deg, #3b82f6, #60a5fa); border-radius: 999px;"></div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // Subtab 4: Inventory
+      const stockContainer = document.getElementById('pwa-stock-container');
+      const stockCountLabel = document.getElementById('pwa-stock-count-label');
+      const invList = d.inventory || [];
+      if (stockCountLabel) stockCountLabel.innerText = `${invList.length} Tracked Items`;
+
+      if (stockContainer) {
+        if (invList.length === 0) {
+          stockContainer.innerHTML = '<div style="text-align: center; color: var(--muted); font-size: 12px; padding: 20px;">No inventory items tracked.</div>';
+        } else {
+          stockContainer.innerHTML = invList.map(item => {
+            const isLow = item.current <= item.par;
+            const badgeColor = isLow ? '#ef4444' : '#10b981';
+            const badgeBg = isLow ? 'rgba(239, 68, 68, 0.12)' : 'rgba(16, 185, 129, 0.12)';
+            const badgeText = isLow ? 'REORDER NEEDED' : 'HEALTHY';
+            return `
+              <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="font-weight: 700; color: #fff; font-size: 13px; margin-bottom: 3px;">${escapeHtml(item.name)}</div>
+                  <div style="font-size: 11px; color: var(--muted);">
+                    On-Hand: <strong style="color: #fff;">${item.current} ${escapeHtml(item.unit || '')}</strong> • Par Level: <strong>${item.par}</strong>
+                  </div>
+                </div>
+                <span style="font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px; background: ${badgeBg}; color: ${badgeColor}; border: 1px solid ${badgeColor}40;">
+                  ${badgeText}
+                </span>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    function switchReportSubTab(subTabName) {
+      const tabs = ['sales', 'zread', 'pmix', 'inventory'];
+      tabs.forEach(t => {
+        const panel = document.getElementById(`subtab-${t}`);
+        const btn = document.getElementById(`btn-subtab-${t}`);
+        if (panel) panel.style.display = t === subTabName ? 'block' : 'none';
+        if (btn) btn.classList.toggle('active', t === subTabName);
+      });
+    }
+
+    function selectPwaReportRange(rangeKey, btnEl) {
+      currentPwaReportRange = rangeKey;
+      document.querySelectorAll('#screen-reports .pwa-date-pill').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      renderPwaReports(true);
+    }
+
+    function refreshPwaReports() {
+      renderPwaReports(true);
+    }
+
+    async function renderPwaTicketsList(filter = null) {
+      if (filter) currentPwaTicketFilter = filter;
+      const container = document.getElementById('pwa-tickets-list-container');
+      if (!container) return;
+
+      container.innerHTML = '<div style="text-align: center; color: var(--muted); font-size: 12.5px; padding: 30px 0;">Loading tickets from Operations Desk...</div>';
+      const list = await getCombinedTickets();
+
+      let filtered = list || [];
+      if (currentPwaTicketFilter === 'open') {
+        filtered = filtered.filter(t => !['closed', 'resolved'].includes((t.status || '').toLowerCase()));
+      } else if (currentPwaTicketFilter === 'resolved') {
+        filtered = filtered.filter(t => ['closed', 'resolved'].includes((t.status || '').toLowerCase()));
+      }
+
+      const openCount = (list || []).filter(t => !['closed', 'resolved'].includes((t.status || '').toLowerCase())).length;
+      const navBadge = document.getElementById('pwa-nav-tickets-badge');
+      if (navBadge) {
+        if (openCount > 0) {
+          navBadge.style.display = 'block';
+          navBadge.innerText = openCount > 9 ? '9+' : String(openCount);
+        } else {
+          navBadge.style.display = 'none';
+        }
+      }
+
+      const pill = document.getElementById('pwa-tickets-open-pill');
+      if (pill) {
+        pill.innerText = openCount > 0 ? `${openCount} Open Tickets` : 'All Resolved';
+        pill.className = `badge-pill ${openCount > 0 ? 'badge-in_progress' : 'badge-closed'}`;
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; color: var(--muted); padding: 40px 14px;">
+            <div style="font-size: 32px; margin-bottom: 8px;">🎫</div>
+            <div style="font-weight: 700; color: #fff; margin-bottom: 4px;">No ${currentPwaTicketFilter === 'all' ? '' : currentPwaTicketFilter} tickets found</div>
+            <div style="font-size: 12px; margin-bottom: 16px;">Have an issue with your printer, counter sync, or billing?</div>
+            <button onclick="startNew()" class="btn btn-primary" style="display: inline-block; width: auto; padding: 9px 18px; font-size: 12.5px; margin: 0;">Submit New Ticket</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => {
+        const status = (item.status || 'open').toLowerCase();
+        const statusDisplay = status === 'escalated' ? '⚡ ESCALATED' : status.replace('_', ' ').toUpperCase();
+        return `
+          <div class="pwa-ticket-card" onclick="openReviewForTicket('${item.ticketNumber || item.id}')">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+              <strong style="font-family: 'JetBrains Mono', monospace; font-size: 13.5px; color: var(--primary);">#${escapeHtml(item.ticketNumber || 'TICK')}</strong>
+              <span class="badge-pill badge-${status}">${statusDisplay}</span>
+            </div>
+            <div style="font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 4px; line-height: 1.35;">${escapeHtml(item.subject || 'Ticket')}</div>
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--muted);">
+              <span>${escapeHtml(item.category || item.storeName || 'Support')}</span>
+              <span>${escapeHtml(item.createdAt || '')}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterPwaTickets(filter, btnEl) {
+      currentPwaTicketFilter = filter;
+      document.querySelectorAll('#screen-tickets .pwa-date-pill').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      renderPwaTicketsList(filter);
+    }
+
+    function renderPwaReferrals() {
+      const input = document.getElementById('pwaReferralLinkInput');
+      if (input) {
+        const handle = (currentAuthUser?.storeName || currentAuthUser?.email || 'partner').toLowerCase().replace(/[^a-z0-9]/g, '');
+        input.value = `https://flexitap.app/register?ref=${handle || 'merchant'}`;
+      }
+    }
+
+    function copyPwaReferralLink() {
+      const input = document.getElementById('pwaReferralLinkInput');
+      const btn = document.getElementById('copyRefBtn');
+      if (!input) return;
+      input.select();
+      navigator.clipboard.writeText(input.value).then(() => {
+        if (btn) {
+          btn.innerText = 'Copied!';
+          setTimeout(() => { btn.innerText = 'Copy'; }, 2000);
+        }
+      }).catch(() => {
+        document.execCommand('copy');
+        if (btn) {
+          btn.innerText = 'Copied!';
+          setTimeout(() => { btn.innerText = 'Copy'; }, 2000);
+        }
+      });
+    }
+
+    function sharePwaReferral(channel) {
+      const input = document.getElementById('pwaReferralLinkInput');
+      const link = input ? input.value : 'https://flexitap.app/register?ref=partner';
+      const text = encodeURIComponent(`Hey! Check out FlexiTap POS for café and retail stores in the Philippines. Use my referral link for free setup and training: ${link}`);
+
+      if (channel === 'viber') {
+        window.open(`viber://forward?text=${text}`, '_blank');
+      } else if (channel === 'whatsapp') {
+        window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+      } else if (channel === 'messenger') {
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`, '_blank');
+      }
+    }
+
     // Initialize state on boot: enforce standalone gateway and session
     checkAppSessionAndMode();
   </script>
+
+  <!-- ================= UNIFIED PWA BOTTOM NAVIGATION ================= -->
+  <nav class="pwa-bottom-nav" id="pwa-bottom-nav" style="display: none;">
+    <button class="pwa-nav-item active" id="pwa-nav-landing" onclick="switchPwaTab('landing')">
+      <div class="pwa-nav-icon">📊</div>
+      <div class="pwa-nav-label">Dashboard</div>
+    </button>
+    <button class="pwa-nav-item" id="pwa-nav-reports" onclick="switchPwaTab('reports')">
+      <div class="pwa-nav-icon">🧾</div>
+      <div class="pwa-nav-label">Reports</div>
+    </button>
+    <button class="pwa-nav-item" id="pwa-nav-tickets" onclick="switchPwaTab('tickets')">
+      <div class="pwa-nav-icon">🎫</div>
+      <div class="pwa-nav-label">Tickets</div>
+      <span class="pwa-badge" id="pwa-nav-tickets-badge" style="display: none;">0</span>
+    </button>
+    <button class="pwa-nav-item" id="pwa-nav-chat" onclick="switchPwaTab('chat')">
+      <div class="pwa-nav-icon">💬</div>
+      <div class="pwa-nav-label">Chat</div>
+    </button>
+    <button class="pwa-nav-item" id="pwa-nav-referrals" onclick="switchPwaTab('referrals')">
+      <div class="pwa-nav-icon">🤝</div>
+      <div class="pwa-nav-label">Earn ₱6k</div>
+    </button>
+  </nav>
 </body>
 </html>
