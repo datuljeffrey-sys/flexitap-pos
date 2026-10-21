@@ -4104,7 +4104,9 @@
             purchase_date: purchaseDate,
             deployment_date: deployDate,
             expiry_date: expDate,
-            status: d.is_active ? 'online' : 'offline'
+            role: d.role,
+            is_active: d.is_active !== false,
+            status: (d.is_active !== false) ? 'online' : 'offline'
           };
         });
 
@@ -4788,9 +4790,14 @@
             expiryTag = '<div><strong style="color: ' + expColor + ';">' + ast.expiry_date + '</strong><div style="font-size: 0.68rem; color: var(--text-muted);">' + (isExpiringSoon ? 'Expiring Soon' : 'Warranty Active') + '</div></div>';
           }
 
-          const statusBadge = ast.status === 'offline' 
-            ? '<span class="badge-pill badge-urgent">OFFLINE</span>'
-            : '<span class="badge-pill badge-resolved">ONLINE</span>';
+          const isSuspended = ast.is_active === false || ast.status === 'suspended';
+          const statusBadge = isSuspended 
+            ? '<span class="badge-pill badge-urgent" style="background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);">SUSPENDED</span>'
+            : '<span class="badge-pill badge-resolved" style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);">ACTIVE</span>';
+
+          const suspendBtn = isSuspended
+            ? '<button class="action-btn" onclick="toggleDeviceSuspension(\'' + ast.id + '\', true)" style="color: var(--accent); margin-right: 6px; font-weight: 600;">Reactivate</button>'
+            : '<button class="action-btn" onclick="toggleDeviceSuspension(\'' + ast.id + '\', false)" style="color: var(--warning); margin-right: 6px;">Suspend</button>';
 
           return '<tr>' +
             '<td><strong style="color: #fff;">' + icon + ' ' + ast.asset_name + '</strong></td>' +
@@ -4803,6 +4810,7 @@
             '<td>' + statusBadge + '</td>' +
             '<td style="text-align: right;">' +
               '<button class="action-btn" onclick="alert(\'Ping diagnostics dispatched to ' + ast.asset_name + ': Response 42ms OK\')" style="margin-right: 6px;">Ping</button>' +
+              suspendBtn +
               '<button class="action-btn" onclick="openEditAssetModal(\'' + ast.id + '\')" style="margin-right: 6px;">Edit</button>' +
               '<button class="action-btn" onclick="deleteCrmAsset(\'' + ast.id + '\')" style="color: var(--danger);">Delete</button>' +
             '</td>' +
@@ -5142,6 +5150,34 @@
       renderCrmAssets(currentCrmAccountId);
       renderSelectedCrmAccount();
       alert('Hardware asset "' + newAsset.asset_name + '" saved with Purchase, Deployment, and Expiry dates!');
+    }
+
+    async function toggleDeviceSuspension(assetId, shouldActivate) {
+      const actionLabel = shouldActivate ? 'reactivate' : 'suspend';
+      const promptMsg = shouldActivate
+        ? 'Reactivate this terminal? It will regain immediate access to checkouts and cloud/local synchronization.'
+        : 'Suspend this terminal? The POS tablet will be locked out immediately with a lockout barrier and all ring-ups disabled.';
+      
+      if (!confirm(promptMsg)) return;
+
+      try {
+        const { error } = await supabaseClient.from('devices').update({ is_active: shouldActivate }).eq('id', assetId);
+        if (error) throw error;
+
+        // Update local memory asset state
+        if (crmAssetsMap[currentCrmAccountId]) {
+          const target = crmAssetsMap[currentCrmAccountId].find(x => x.id === assetId);
+          if (target) {
+            target.is_active = shouldActivate;
+            target.status = shouldActivate ? 'online' : 'suspended';
+          }
+        }
+        renderCrmAssets(currentCrmAccountId);
+        alert('Terminal successfully ' + (shouldActivate ? 'reactivated' : 'suspended') + '!');
+      } catch (e) {
+        console.error('Error toggling device suspension:', e);
+        alert('Failed to update terminal status: ' + (e.message || e));
+      }
     }
 
     async function deleteCrmAsset(assetId) {
