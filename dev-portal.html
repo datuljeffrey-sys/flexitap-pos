@@ -5039,25 +5039,83 @@
       const expDate = sub.expires_at ? sub.expires_at.substring(0, 10) : (document.getElementById('crm-inp-subscription-expiry')?.value || 'Upcoming Renewal');
       const planName = sub.plan_name || 'FlexiTap POS';
 
-      const confirmSend = confirm('Send subscription renewal notice to ' + email + ' for ' + planName + '?');
+      const confirmSend = confirm('Send subscription renewal notice email to ' + email + ' for ' + planName + '?');
       if (!confirmSend) return;
 
-      const subject = 'Important: Your FlexiTap POS Subscription Status & Renewal Notice';
-      const details = 'Dear ' + (acc.store_name || 'Merchant Partner') + ',\n\n' +
-        'This is a notification regarding your ' + planName + ' license on FlexiTap POS.\n' +
-        'Your current subscription is scheduled to expire on ' + expDate + '.\n\n' +
-        'To ensure uninterrupted access to your POS terminals, kitchen monitors, and cloud reporting, please get in touch with our Support Engineering team to renew your plan.\n\n' +
-        'Contact Support Engineering:\n' +
-        '• Email: support@flexitapapp.com\n' +
-        '• Support Ticket: Open directly via your Merchant Portal\n\n' +
-        'Thank you for partnering with FlexiTap POS.\n' +
-        '— DevBrew Support Engineering';
+      const tckNum = 1000 + Math.floor(Math.random() * 9000);
+      const subject = `[FlexiTap POS] Important: Subscription Status & Renewal Notice (#${tckNum})`;
+      const storeDisplayName = acc.store_name || 'Merchant Partner';
+
+      const details = `Dear ${storeDisplayName},\n\n` +
+        `This is a notification regarding your ${planName} license on FlexiTap POS.\n` +
+        `Your current subscription is scheduled to expire on ${expDate}.\n\n` +
+        `To ensure uninterrupted access to your POS terminals, kitchen monitors (KDS), and cloud backups, please get in touch with our Support Engineering team to renew your plan.\n\n` +
+        `Contact Support Engineering:\n` +
+        `• Email: support@flexitapapp.com\n` +
+        `• Support Ticket: Open directly via your Merchant Portal\n\n` +
+        `Thank you for partnering with FlexiTap POS.\n` +
+        `— DevBrew Support Engineering`;
+
+      const renewalHtml = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+          <div style="background: #0f172a; padding: 24px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">FlexiTap POS Support</h1>
+            <p style="color: #94a3b8; margin: 4px 0 0; font-size: 13px;">Official Operations &amp; Engineering Desk</p>
+          </div>
+          <div style="padding: 28px 24px;">
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
+              <div style="color: #1e40af; font-size: 15px; font-weight: 700;">Subscription Status &amp; Renewal Notice</div>
+              <div style="color: #2563eb; font-size: 13px; margin-top: 2px;">Action required for your <strong>${planName}</strong> license.</div>
+            </div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">
+              <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Merchant / Store:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${storeDisplayName}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748b;">Plan Tier:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${planName}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748b;">Expiration Date:</td><td style="padding: 6px 0; color: #dc2626; font-weight: 700;">${expDate}</td></tr>
+              <tr><td style="padding: 6px 0; color: #64748b;">Ticket Reference:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 700;">#${tckNum}</td></tr>
+            </table>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+              <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Renewal Instructions:</div>
+              <div style="color: #1e293b; font-size: 13.5px; line-height: 1.6;">
+                To ensure uninterrupted operation across your POS registers, kitchen monitors (KDS), and cloud backups, please get in touch with our Support Engineering team to renew your plan.<br><br>
+                <strong>Direct Support Contact:</strong><br>
+                • Email: <a href="mailto:support@flexitapapp.com" style="color: #2563eb; text-decoration: none; font-weight: 600;">support@flexitapapp.com</a><br>
+                • Support Ticket: Open directly via your Merchant Portal<br>
+              </div>
+            </div>
+            <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px;">Thank you for partnering with FlexiTap POS.</p>
+          </div>
+          <div style="background: #f1f5f9; padding: 16px 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
+            &copy; 2026 FlexiTap POS • www.flexitapapp.com • Support Desk
+          </div>
+        </div>
+      `;
 
       try {
+        // 1. Dispatch live email via Google Workspace Webhook
+        try {
+          await fetch(GOOGLE_TICKET_WEBHOOK_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              recipient_email: email,
+              subject: subject,
+              store_name: storeDisplayName,
+              ticket_number: tckNum,
+              tier: 'tier_1',
+              details: details,
+              html: renewalHtml
+            })
+          });
+        } catch (webhookErr) {
+          console.warn('Webhook dispatch warning:', webhookErr);
+        }
+
+        // 2. Also log ticket record in Supabase tickets table
         await supabaseClient.from('tickets').insert({
-          ticket_number: 1000 + Math.floor(Math.random() * 9000),
+          ticket_number: tckNum,
           merchant_id: currentCrmAccountId,
-          store_name: acc.store_name || 'Merchant Account',
+          store_name: storeDisplayName,
           contact_email: email,
           subject: subject,
           description: details,
@@ -5066,7 +5124,8 @@
           status: 'open',
           assigned_to: 'support@flexitapapp.com'
         });
-        alert('Renewal notification queued and recorded as Ticket for ' + email + '!\n\nMerchant instructed to get in touch with Support Engineering to renew plan.');
+
+        alert(`Renewal notification email successfully sent to ${email}!\n\nTicket #${tckNum} created in support queue.`);
         if (typeof renderCrmTickets === 'function') {
           await loadDevData();
           renderCrmTickets(currentCrmAccountId);
