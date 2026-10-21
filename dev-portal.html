@@ -1492,6 +1492,44 @@
                   </div>
                 </div>
 
+                <!-- Live Admin Subscription Management -->
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(59,130,246,0.3); border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <div>
+                      <h4 style="margin: 0; font-size: 0.95rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px;">
+                        <span>⚙️</span> Manage License &amp; Payment Status (Admin Cloud Control)
+                      </h4>
+                      <p style="margin: 4px 0 0 0; font-size: 0.75rem; color: var(--text-muted);">
+                        Directly override the merchant's SaaS license tier and payment status in Supabase. The Flutter POS app will immediately reflect this upon tapping "Verify License" or starting up.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="crm-form-grid" style="margin-bottom: 16px;">
+                    <div class="crm-form-group">
+                      <label style="font-weight: 700; color: #94a3b8;">Plan Tier</label>
+                      <select id="crm-sel-plan-tier" class="crm-input" style="background: #0f172a; color: #fff; border-color: rgba(255,255,255,0.15);">
+                        <option value="free">Free Community Tier (1 Device, Basic)</option>
+                        <option value="plus">Plus POS Tier (10 Devices, $290/yr or $49/mo)</option>
+                        <option value="pro">Pro POS Tier (Unlimited Devices, $590/yr or $99/mo)</option>
+                      </select>
+                    </div>
+                    <div class="crm-form-group">
+                      <label style="font-weight: 700; color: #94a3b8;">Payment / License Status</label>
+                      <select id="crm-sel-payment-status" class="crm-input" style="background: #0f172a; color: #fff; border-color: rgba(255,255,255,0.15);">
+                        <option value="paid">PAID — License Active &amp; Verified</option>
+                        <option value="unpaid">UNPAID — Pending Checkout (Gated to Free)</option>
+                        <option value="trialing">TRIALING — Active Trial</option>
+                        <option value="cancelled">CANCELLED — Revoked / Expired</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button class="action-btn" id="btn-save-crm-subscription" onclick="saveCrmSubscriptionOverride()" style="background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 800; padding: 10px 22px;">
+                      Save &amp; Update Supabase License
+                    </button>
+                  </div>
+                </div>
+
                 <div>
                   <h4 style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 12px;">Recent Billing Invoices</h4>
                   <table class="data-table">
@@ -4078,11 +4116,12 @@
 
         crmSubscriptionsMap[p.id] = {
           plan_name: isPro ? 'Pro POS Tier' : (isPlus ? 'Plus POS Tier' : 'Free / Community Tier'),
+          raw_tier: tier,
           price_monthly: monthlyRate,
           currency: currency,
-          billing_status: p.payment_status || (tier === 'free' ? 'free' : 'active'),
+          billing_status: (p.payment_status || (tier === 'free' ? 'free' : 'unpaid')).toLowerCase(),
           next_billing_date: '2026-11-15',
-          payment_method: p.payment_status === 'paid' ? (currency + ' Card Payment (Active)') : (tier === 'free' ? 'Free Community Tier' : 'Pending Activation'),
+          payment_method: (p.payment_status || '').toLowerCase() === 'paid' ? (currency + ' Card Payment (Active)') : (tier === 'free' ? 'Free Community Tier' : 'Pending Activation'),
           paddle_subscription_id: 'sub_live_' + p.id.substring(0, 12),
           paddle_customer_id: 'ctm_live_' + (matchedStore ? matchedStore.id.substring(0, 12) : p.id.substring(0, 12))
         };
@@ -4832,6 +4871,12 @@
       const ctmIdInp = document.getElementById('crm-inp-paddle-ctm');
       if (ctmIdInp) ctmIdInp.value = sub.paddle_customer_id || 'ctm_pending';
 
+      const planTierSel = document.getElementById('crm-sel-plan-tier');
+      if (planTierSel) planTierSel.value = (sub.raw_tier || 'free').toLowerCase();
+
+      const payStatusSel = document.getElementById('crm-sel-payment-status');
+      if (payStatusSel) payStatusSel.value = (sub.billing_status || 'unpaid').toLowerCase();
+
       // Dynamically render invoices
       const invoicesTbody = document.getElementById('crm-invoices-tbody');
       if (invoicesTbody) {
@@ -4847,6 +4892,60 @@
           '</tr>';
         } else {
           invoicesTbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">No paid billing invoices recorded for this plan tier.</td></tr>';
+        }
+      }
+    }
+
+    async function saveCrmSubscriptionOverride() {
+      if (!currentCrmAccountId) {
+        alert('Please select an account first.');
+        return;
+      }
+      const btn = document.getElementById('btn-save-crm-subscription');
+      const tier = (document.getElementById('crm-sel-plan-tier')?.value || 'free').toLowerCase();
+      const paymentStatus = (document.getElementById('crm-sel-payment-status')?.value || 'unpaid').toLowerCase();
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Updating Supabase...';
+      }
+
+      try {
+        // 1. Update profiles table
+        const { error: profileError } = await supabaseClient
+          .from('profiles')
+          .update({
+            subscription_tier: tier,
+            payment_status: paymentStatus
+          })
+          .eq('id', currentCrmAccountId);
+
+        if (profileError) throw profileError;
+
+        // 2. Also update stores table if store is associated
+        const matchedAccount = crmAccounts.find(function(a) { return a.id === currentCrmAccountId; });
+        const storeCode = matchedAccount ? matchedAccount.store_code : null;
+        if (storeCode && storeCode !== '—') {
+          await supabaseClient
+            .from('stores')
+            .update({
+              subscription_tier: tier,
+              payment_status: paymentStatus
+            })
+            .eq('id', storeCode);
+        }
+
+        alert('Subscription license updated successfully in Supabase!\n\nMerchant: ' + (matchedAccount ? matchedAccount.name : currentCrmAccountId) + '\nTier: ' + tier.toUpperCase() + '\nPayment Status: ' + paymentStatus.toUpperCase() + '\n\nThe user can now tap "Verify License" or restart the Flutter app to immediately apply.');
+
+        // Refresh live CRM data
+        await initCrmData();
+      } catch (err) {
+        console.error('Error saving subscription override:', err);
+        alert('Failed to update subscription in Supabase: ' + (err.message || err));
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = 'Save & Update Supabase License';
         }
       }
     }
