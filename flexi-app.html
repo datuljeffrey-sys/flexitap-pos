@@ -555,6 +555,10 @@
       0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); transform: scale(1); }
       50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); transform: scale(1.06); }
     }
+    @keyframes pwaSlideUp {
+      from { opacity: 0; transform: translateY(16px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
 
     .error-text {
       color: #f87171;
@@ -1116,149 +1120,179 @@
         <span class="badge-pill badge-open" id="pwaReportDatePill">Today</span>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+      <!-- FREE TIER UPGRADE GATE FOR REPORTS -->
+      <div id="reports-upgrade-gate" style="display: none; text-align: center; padding: 12px 4px 6px;">
+        <div style="width: 54px; height: 54px; border-radius: 16px; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); color: #60a5fa; font-size: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;">
+          🔒
+        </div>
+        <div class="badge-pill badge-open" style="display: inline-block; margin-bottom: 8px;">Plus &amp; Pro Plan Feature</div>
+        <h1 style="font-size: 20px; color: #fff; margin-bottom: 6px;">Online Reports &amp; Z-Read</h1>
+        <p class="subtitle" style="margin-bottom: 18px; font-size: 12.5px;">Cloud financial reporting, daily drawer Z-read, PMIX, and stock par levels are exclusive to FlexiTap Plus and Pro subscribers.</p>
+
+        <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; text-align: left; font-size: 12px; line-height: 1.6; color: #cbd5e1; margin-bottom: 18px;">
+          <div style="font-weight: 800; color: #60a5fa; margin-bottom: 6px; font-size: 12.5px;">Unlocked on Plus &amp; Pro:</div>
+          <div style="margin-bottom: 6px;">🧾 <strong>Daily Z-Read Drawer Audits:</strong> Float, cash collected, paid in/out, and drawer variance.</div>
+          <div style="margin-bottom: 6px;">📊 <strong>Multi-Terminal Sales Summaries:</strong> Real-time net sales, VAT 12%, tips, and discounts.</div>
+          <div style="margin-bottom: 6px;">🍕 <strong>Product Mix (PMIX):</strong> Top revenue items, units sold, and contribution shares.</div>
+          <div>📦 <strong>Stock &amp; Par Levels:</strong> Proactive reorder point alerts before running out of supplies.</div>
+        </div>
+
+        <button class="btn btn-primary" onclick="showPwaUpgradeModal('reports')" style="padding: 12px 18px; font-size: 13.5px; font-weight: 700; margin-bottom: 10px;">
+          ⚡ Upgrade Store Plan &rarr;
+        </button>
         <div>
-          <h1 style="font-size: 19px; margin-bottom: 3px;">Store Reports</h1>
-          <p class="subtitle" style="margin-bottom: 0;">Daily Z-Read, sales summary &amp; stock par</p>
-        </div>
-        <button onclick="refreshPwaReports()" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: #60a5fa; border-radius: 8px; padding: 5px 11px; font-size: 11.5px; font-weight: 600; cursor: pointer;">↻ Refresh</button>
-      </div>
-
-      <!-- Date Pills -->
-      <div class="pwa-date-pill-bar">
-        <button class="pwa-date-pill active" onclick="selectPwaReportRange('today', this)">Today</button>
-        <button class="pwa-date-pill" onclick="selectPwaReportRange('yesterday', this)">Yesterday</button>
-        <button class="pwa-date-pill" onclick="selectPwaReportRange('7days', this)">Last 7 Days</button>
-        <button class="pwa-date-pill" onclick="selectPwaReportRange('month', this)">This Month</button>
-      </div>
-
-      <!-- Segmented Report Tabs -->
-      <div class="pwa-segmented-tabs">
-        <button class="pwa-segment-btn active" id="btn-subtab-sales" onclick="switchReportSubTab('sales')">Sales</button>
-        <button class="pwa-segment-btn" id="btn-subtab-zread" onclick="switchReportSubTab('zread')">Z-Read</button>
-        <button class="pwa-segment-btn" id="btn-subtab-pmix" onclick="switchReportSubTab('pmix')">Product Mix</button>
-        <button class="pwa-segment-btn" id="btn-subtab-inventory" onclick="switchReportSubTab('inventory')">Stock &amp; Par</button>
-      </div>
-
-      <!-- SUBTAB 1: Sales Summary -->
-      <div id="subtab-sales" class="pwa-report-subtab">
-        <div class="kpi-grid-2">
-          <div class="kpi-card-mini">
-            <div class="kpi-label">Gross Sales</div>
-            <div class="kpi-val" id="rep-gross">₱0.00</div>
-          </div>
-          <div class="kpi-card-mini">
-            <div class="kpi-label">Net Sales</div>
-            <div class="kpi-val" id="rep-net" style="color: #60a5fa;">₱0.00</div>
-          </div>
-        </div>
-
-        <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 14px;">
-          <div style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">Financial Details</div>
-          <div class="pwa-report-row">
-            <span style="color: var(--muted);">Discounts &amp; Promos</span>
-            <span style="font-weight: 700; color: #ef4444;" id="rep-discounts">-₱0.00</span>
-          </div>
-          <div class="pwa-report-row">
-            <span style="color: var(--muted);">Tax (VAT 12%)</span>
-            <span style="font-weight: 700; color: #fff;" id="rep-tax">₱0.00</span>
-          </div>
-          <div class="pwa-report-row">
-            <span style="color: var(--muted);">Tips / Gratuity</span>
-            <span style="font-weight: 700; color: #34d399;" id="rep-tips">₱0.00</span>
-          </div>
-          <div class="pwa-report-row">
-            <span style="color: var(--muted);">Refunds &amp; Returns</span>
-            <span style="font-weight: 700; color: #f87171;" id="rep-refunds">₱0.00</span>
-          </div>
-          <div class="pwa-report-row">
-            <span style="color: var(--muted);">Transactions</span>
-            <span style="font-weight: 700; color: #fff;" id="rep-txns">0</span>
-          </div>
-          <div class="pwa-report-row">
-            <span style="color: var(--muted);">Average Check</span>
-            <span style="font-weight: 700; color: #fbbf24;" id="rep-avg-check">₱0.00</span>
-          </div>
-        </div>
-
-        <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px;">
-          <div style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">Payment Tender Breakdown</div>
-          <div id="rep-tender-list">
-            <div class="pwa-report-row"><span style="color: var(--muted);">Cash</span><span style="font-weight: 700; color: #fff;">₱0.00</span></div>
-            <div class="pwa-report-row"><span style="color: var(--muted);">GCash / Maya</span><span style="font-weight: 700; color: #fff;">₱0.00</span></div>
-            <div class="pwa-report-row"><span style="color: var(--muted);">Card / Other</span><span style="font-weight: 700; color: #fff;">₱0.00</span></div>
-          </div>
+          <button onclick="goTo('tickets')" style="background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; text-decoration: underline;">
+            &larr; Go to Support Tickets Desk (Included in Free)
+          </button>
         </div>
       </div>
 
-      <!-- SUBTAB 2: Daily Z-Read -->
-      <div id="subtab-zread" class="pwa-report-subtab" style="display: none;">
-        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
-          <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">Drawer Cash Audit (Z-Read)</div>
-          <div style="font-size: 26px; font-weight: 900; color: #fff; font-family: monospace; margin: 6px 0;" id="zread-expected-cash">₱0.00</div>
-          <div style="font-size: 11.5px; color: var(--muted);">Expected Cash in Drawer</div>
+      <!-- PAID TIER ACTIVE REPORTS CONTENT -->
+      <div id="reports-paid-content">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+          <div>
+            <h1 style="font-size: 19px; margin-bottom: 3px;">Store Reports</h1>
+            <p class="subtitle" style="margin-bottom: 0;">Daily Z-Read, sales summary &amp; stock par</p>
+          </div>
+          <button onclick="refreshPwaReports()" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: #60a5fa; border-radius: 8px; padding: 5px 11px; font-size: 11.5px; font-weight: 600; cursor: pointer;">↻ Refresh</button>
         </div>
 
-        <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 14px;">
-          <div style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">Cash Flow Ledger</div>
-          <div class="pwa-report-row">
-            <span style="color: var(--muted);">Opening Bank Float</span>
-            <span style="font-weight: 700; color: #fff;" id="zread-opening">₱0.00</span>
+        <!-- Date Pills -->
+        <div class="pwa-date-pill-bar">
+          <button class="pwa-date-pill active" onclick="selectPwaReportRange('today', this)">Today</button>
+          <button class="pwa-date-pill" onclick="selectPwaReportRange('yesterday', this)">Yesterday</button>
+          <button class="pwa-date-pill" onclick="selectPwaReportRange('7days', this)">Last 7 Days</button>
+          <button class="pwa-date-pill" onclick="selectPwaReportRange('month', this)">This Month</button>
+        </div>
+
+        <!-- Segmented Report Tabs -->
+        <div class="pwa-segmented-tabs">
+          <button class="pwa-segment-btn active" id="btn-subtab-sales" onclick="switchReportSubTab('sales')">Sales</button>
+          <button class="pwa-segment-btn" id="btn-subtab-zread" onclick="switchReportSubTab('zread')">Z-Read</button>
+          <button class="pwa-segment-btn" id="btn-subtab-pmix" onclick="switchReportSubTab('pmix')">Product Mix</button>
+          <button class="pwa-segment-btn" id="btn-subtab-inventory" onclick="switchReportSubTab('inventory')">Stock &amp; Par</button>
+        </div>
+
+        <!-- SUBTAB 1: Sales Summary -->
+        <div id="subtab-sales" class="pwa-report-subtab">
+          <div class="kpi-grid-2">
+            <div class="kpi-card-mini">
+              <div class="kpi-label">Gross Sales</div>
+              <div class="kpi-val" id="rep-gross">₱0.00</div>
+            </div>
+            <div class="kpi-card-mini">
+              <div class="kpi-label">Net Sales</div>
+              <div class="kpi-val" id="rep-net" style="color: #60a5fa;">₱0.00</div>
+            </div>
           </div>
-          <div class="pwa-report-row">
-            <span style="color: var(--muted);">(+) Cash Sales Collected</span>
-            <span style="font-weight: 700; color: #34d399;" id="zread-cash-sales">₱0.00</span>
+
+          <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 14px;">
+            <div style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">Financial Details</div>
+            <div class="pwa-report-row">
+              <span style="color: var(--muted);">Discounts &amp; Promos</span>
+              <span style="font-weight: 700; color: #ef4444;" id="rep-discounts">-₱0.00</span>
+            </div>
+            <div class="pwa-report-row">
+              <span style="color: var(--muted);">Tax (VAT 12%)</span>
+              <span style="font-weight: 700; color: #fff;" id="rep-tax">₱0.00</span>
+            </div>
+            <div class="pwa-report-row">
+              <span style="color: var(--muted);">Tips / Gratuity</span>
+              <span style="font-weight: 700; color: #34d399;" id="rep-tips">₱0.00</span>
+            </div>
+            <div class="pwa-report-row">
+              <span style="color: var(--muted);">Refunds &amp; Returns</span>
+              <span style="font-weight: 700; color: #f87171;" id="rep-refunds">₱0.00</span>
+            </div>
+            <div class="pwa-report-row">
+              <span style="color: var(--muted);">Transactions</span>
+              <span style="font-weight: 700; color: #fff;" id="rep-txns">0</span>
+            </div>
+            <div class="pwa-report-row">
+              <span style="color: var(--muted);">Average Check</span>
+              <span style="font-weight: 700; color: #fbbf24;" id="rep-avg-check">₱0.00</span>
+            </div>
           </div>
-          <div class="pwa-report-row">
-            <span style="color: var(--muted);">(+) Paid In / Drawer Add</span>
-            <span style="font-weight: 700; color: #60a5fa;" id="zread-paid-in">₱0.00</span>
-          </div>
-          <div class="pwa-report-row">
-            <span style="color: var(--muted);">(-) Paid Out / Payouts</span>
-            <span style="font-weight: 700; color: #f87171;" id="zread-paid-out">₱0.00</span>
-          </div>
-          <div class="pwa-report-row" style="border-top: 1px dashed rgba(255,255,255,0.15); margin-top: 4px; padding-top: 12px;">
-            <span style="font-weight: 700; color: #fff;">Expected Drawer Balance</span>
-            <span style="font-weight: 800; color: #10b981; font-family: monospace;" id="zread-expected-sub">₱0.00</span>
+
+          <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px;">
+            <div style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">Payment Tender Breakdown</div>
+            <div id="rep-tender-list">
+              <div class="pwa-report-row"><span style="color: var(--muted);">Cash</span><span style="font-weight: 700; color: #fff;">₱0.00</span></div>
+              <div class="pwa-report-row"><span style="color: var(--muted);">GCash / Maya</span><span style="font-weight: 700; color: #fff;">₱0.00</span></div>
+              <div class="pwa-report-row"><span style="color: var(--muted);">Card / Other</span><span style="font-weight: 700; color: #fff;">₱0.00</span></div>
+            </div>
           </div>
         </div>
 
-        <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px;">
-          <div style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">Audits &amp; Exceptions</div>
-          <div class="pwa-report-row">
-            <span style="color: var(--muted);">Voided Orders Count</span>
-            <span style="font-weight: 700; color: #fbbf24;" id="zread-voids-count">0</span>
+        <!-- SUBTAB 2: Daily Z-Read -->
+        <div id="subtab-zread" class="pwa-report-subtab" style="display: none;">
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
+            <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">Drawer Cash Audit (Z-Read)</div>
+            <div style="font-size: 26px; font-weight: 900; color: #fff; font-family: monospace; margin: 6px 0;" id="zread-expected-cash">₱0.00</div>
+            <div style="font-size: 11.5px; color: var(--muted);">Expected Cash in Drawer</div>
           </div>
-          <div class="pwa-report-row">
-            <span style="color: var(--muted);">Voided Orders Amount</span>
-            <span style="font-weight: 700; color: #fbbf24;" id="zread-voids-amount">₱0.00</span>
-          </div>
-          <div class="pwa-report-row">
-            <span style="color: var(--muted);">Terminal Shifts Closed</span>
-            <span style="font-weight: 700; color: #fff;" id="zread-shifts">1 Shift</span>
-          </div>
-        </div>
-      </div>
 
-      <!-- SUBTAB 3: Product Mix (PMIX) -->
-      <div id="subtab-pmix" class="pwa-report-subtab" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <span style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Top Menu &amp; Retail Items</span>
-          <span style="font-size: 11px; color: var(--muted);" id="pmix-total-units">0 Units Sold</span>
-        </div>
-        <div id="pwa-pmix-container" style="display: flex; flex-direction: column; gap: 8px;">
-          <!-- Dynamically populated PMIX items -->
-        </div>
-      </div>
+          <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 14px;">
+            <div style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">Cash Flow Ledger</div>
+            <div class="pwa-report-row">
+              <span style="color: var(--muted);">Opening Bank Float</span>
+              <span style="font-weight: 700; color: #fff;" id="zread-opening">₱0.00</span>
+            </div>
+            <div class="pwa-report-row">
+              <span style="color: var(--muted);">(+) Cash Sales Collected</span>
+              <span style="font-weight: 700; color: #34d399;" id="zread-cash-sales">₱0.00</span>
+            </div>
+            <div class="pwa-report-row">
+              <span style="color: var(--muted);">(+) Paid In / Drawer Add</span>
+              <span style="font-weight: 700; color: #60a5fa;" id="zread-paid-in">₱0.00</span>
+            </div>
+            <div class="pwa-report-row">
+              <span style="color: var(--muted);">(-) Paid Out / Payouts</span>
+              <span style="font-weight: 700; color: #f87171;" id="zread-paid-out">₱0.00</span>
+            </div>
+            <div class="pwa-report-row" style="border-top: 1px dashed rgba(255,255,255,0.15); margin-top: 4px; padding-top: 12px;">
+              <span style="font-weight: 700; color: #fff;">Expected Drawer Balance</span>
+              <span style="font-weight: 800; color: #10b981; font-family: monospace;" id="zread-expected-sub">₱0.00</span>
+            </div>
+          </div>
 
-      <!-- SUBTAB 4: Stock & Par Levels -->
-      <div id="subtab-inventory" class="pwa-report-subtab" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <span style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Real-Time Stock &amp; Par</span>
-          <span style="font-size: 11px; color: var(--muted);" id="pwa-stock-count-label">0 Tracked Items</span>
+          <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px;">
+            <div style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">Audits &amp; Exceptions</div>
+            <div class="pwa-report-row">
+              <span style="color: var(--muted);">Voided Orders Count</span>
+              <span style="font-weight: 700; color: #fbbf24;" id="zread-voids-count">0</span>
+            </div>
+            <div class="pwa-report-row">
+              <span style="color: var(--muted);">Voided Orders Amount</span>
+              <span style="font-weight: 700; color: #fbbf24;" id="zread-voids-amount">₱0.00</span>
+            </div>
+            <div class="pwa-report-row">
+              <span style="color: var(--muted);">Terminal Shifts Closed</span>
+              <span style="font-weight: 700; color: #fff;" id="zread-shifts">1 Shift</span>
+            </div>
+          </div>
         </div>
-        <div id="pwa-stock-container" style="display: flex; flex-direction: column; gap: 8px;">
-          <!-- Dynamically populated stock items -->
+
+        <!-- SUBTAB 3: Product Mix (PMIX) -->
+        <div id="subtab-pmix" class="pwa-report-subtab" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Top Menu &amp; Retail Items</span>
+            <span style="font-size: 11px; color: var(--muted);" id="pmix-total-units">0 Units Sold</span>
+          </div>
+          <div id="pwa-pmix-container" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Dynamically populated PMIX items -->
+          </div>
+        </div>
+
+        <!-- SUBTAB 4: Stock & Par Levels -->
+        <div id="subtab-inventory" class="pwa-report-subtab" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span style="font-size: 11.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Real-Time Stock &amp; Par</span>
+            <span style="font-size: 11px; color: var(--muted);" id="pwa-stock-count-label">0 Tracked Items</span>
+          </div>
+          <div id="pwa-stock-container" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Dynamically populated stock items -->
+          </div>
         </div>
       </div>
     </div>
@@ -1510,38 +1544,115 @@
         </div>
       </div>
 
-      <!-- Security / Auth Gate Banner -->
-      <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;">
-        <div>
-          <div id="pwa-chat-banner-title" style="font-size: 11.5px; font-weight: 700; color: #10b981; display: flex; align-items: center; gap: 6px;">
-            <span>🤖 FlexiTap AI Support • Verified Store Session</span>
+      <!-- FREE TIER UPGRADE GATE FOR GEMINI AI CHAT -->
+      <div id="chat-upgrade-gate" style="display: none; text-align: center; padding: 20px 4px 10px;">
+        <div style="width: 54px; height: 54px; border-radius: 16px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); color: #10b981; font-size: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;">
+          🤖
+        </div>
+        <div class="badge-pill badge-open" style="display: inline-block; margin-bottom: 8px; color: #10b981; border-color: rgba(16, 185, 129, 0.35); background: rgba(16, 185, 129, 0.1);">Plus &amp; Pro Plan Feature</div>
+        <h1 style="font-size: 20px; color: #fff; margin-bottom: 6px;">Gemini AI POS Assistant</h1>
+        <p class="subtitle" style="margin-bottom: 18px; font-size: 12.5px;">24/7 instant AI troubleshooting trained on 42 POS guides and hands-free voice input is exclusively available on FlexiTap Plus and Pro plans.</p>
+
+        <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; text-align: left; font-size: 12px; line-height: 1.6; color: #cbd5e1; margin-bottom: 18px;">
+          <div style="font-weight: 800; color: #10b981; margin-bottom: 6px; font-size: 12.5px;">AI Assistant Capabilities:</div>
+          <div style="margin-bottom: 6px;">🎙️ <strong>Hands-Free Voice Input:</strong> Speak your questions directly from the cash register counter.</div>
+          <div style="margin-bottom: 6px;">🔧 <strong>Instant Troubleshooting:</strong> Thermal printer cutter errors, Bluetooth pairing, and SQLite sync.</div>
+          <div>⚡ <strong>Smart Diagnostic Context:</strong> Automatically pulls device hardware telemetry for instant triage.</div>
+        </div>
+
+        <button class="btn btn-primary" onclick="showPwaUpgradeModal('chat')" style="padding: 12px 18px; font-size: 13.5px; font-weight: 700; margin-bottom: 10px;">
+          ⚡ Upgrade Store Plan &rarr;
+        </button>
+        <button class="btn btn-outline" onclick="startNew()" style="margin-bottom: 12px; border-color: rgba(255,255,255,0.15);">
+          🎫 Submit Standard Support Ticket (Included in Free)
+        </button>
+      </div>
+
+      <!-- PAID TIER ACTIVE CHAT CONTENT -->
+      <div id="chat-paid-content" style="display: flex; flex-direction: column; flex: 1; min-height: 0;">
+        <!-- Security / Auth Gate Banner -->
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div id="pwa-chat-banner-title" style="font-size: 11.5px; font-weight: 700; color: #10b981; display: flex; align-items: center; gap: 6px;">
+              <span>🤖 FlexiTap AI Support • Verified Store Session</span>
+            </div>
+            <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">
+              Store: <strong id="chat-store-name" style="color: #fff;">-</strong> &bull; <span id="chat-store-email">-</span>
+            </div>
           </div>
-          <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">
-            Store: <strong id="chat-store-name" style="color: #fff;">-</strong> &bull; <span id="chat-store-email">-</span>
+          <span style="font-size: 10px; background: rgba(59, 130, 246, 0.15); color: #93c5fd; padding: 3px 8px; border-radius: 6px; font-family: monospace;">GEMINI AI</span>
+        </div>
+
+        <!-- Chat Messages Container -->
+        <div id="pwa-chat-body" style="flex: 1; overflow-y: auto; background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; min-height: 340px;">
+          <div style="text-align: center; color: var(--muted); font-size: 12px; margin: auto;">Initializing FlexiTap AI Support Assistant...</div>
+        </div>
+
+        <!-- AI Typing Indicator -->
+        <div id="pwa-chat-typing" class="pwa-chat-typing">
+          <span>AI Assistant thinking</span>
+          <span class="pwa-chat-dot"></span>
+          <span class="pwa-chat-dot"></span>
+          <span class="pwa-chat-dot"></span>
+        </div>
+
+        <!-- Message Input Form with Voice Recognition -->
+        <form id="pwa-chat-form" onsubmit="handleSendSupportMessage(event)" style="display: flex; gap: 8px; flex-shrink: 0; align-items: stretch;">
+          <input type="text" id="pwaChatInput" maxlength="350" placeholder="Ask a question about your FlexiTap POS..." autocomplete="off" required style="flex: 1; padding: 12px 14px; font-size: 13.5px; min-width: 0;" />
+          <button type="button" id="pwaChatMicBtn" class="pwa-mic-btn" onclick="togglePwaVoiceInput()" title="Speak your question (Voice Input)" aria-label="Voice Input">🎙️</button>
+          <button type="submit" id="pwaChatSendBtn" class="btn btn-primary" style="width: auto; padding: 0 18px; margin: 0; font-size: 13.5px; font-weight: 700;">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= UPGRADE PROMPT MODAL ================= -->
+  <div id="pwa-upgrade-modal" style="display: none; position: fixed; inset: 0; background: rgba(9, 13, 22, 0.85); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+    <div style="background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 20px; max-width: 440px; width: 100%; padding: 22px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); position: relative; animation: pwaSlideUp 0.25s ease-out;">
+      <button type="button" onclick="closePwaUpgradeModal()" style="position: absolute; top: 16px; right: 16px; background: rgba(255, 255, 255, 0.08); border: none; color: #94a3b8; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
+      
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+        <span style="font-size: 24px;">🚀</span>
+        <div>
+          <h2 style="font-size: 17px; font-weight: 800; color: #fff; margin: 0;" id="pwa-upgrade-modal-title">Upgrade to Plus or Pro</h2>
+          <p style="font-size: 11.5px; color: var(--muted); margin: 0;">Unlock full real-time capabilities</p>
+        </div>
+      </div>
+
+      <div id="pwa-upgrade-modal-desc" style="font-size: 12.5px; color: #cbd5e1; line-height: 1.5; margin-bottom: 16px;">
+        Empower your business with real-time back office analytics, live Z-Reads, automated product mix PMIX, and 24/7 Gemini AI support.
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px;">
+        <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <strong style="color: #60a5fa; font-size: 13.5px;">FlexiTap Plus</strong>
+            <span style="font-size: 12px; font-weight: 700; color: #fff;">$290 / year</span>
+          </div>
+          <div style="font-size: 11.5px; color: #94a3b8; line-height: 1.4;">
+            ✓ Up to 10 POS terminals<br>
+            ✓ Live sales dashboard &amp; cloud reports<br>
+            ✓ 24/7 Gemini AI Support Chat with Voice
           </div>
         </div>
-        <span style="font-size: 10px; background: rgba(59, 130, 246, 0.15); color: #93c5fd; padding: 3px 8px; border-radius: 6px; font-family: monospace;">GEMINI AI</span>
+
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <strong style="color: #34d399; font-size: 13.5px;">FlexiTap Pro</strong>
+            <span style="font-size: 12px; font-weight: 700; color: #fff;">$590 / year</span>
+          </div>
+          <div style="font-size: 11.5px; color: #94a3b8; line-height: 1.4;">
+            ✓ Everything in Plus + unlimited terminals<br>
+            ✓ Live RustDesk Remote Desktop Support<br>
+            ✓ Recipe costing, COGS &amp; multi-store inventory
+          </div>
+        </div>
       </div>
 
-      <!-- Chat Messages Container -->
-      <div id="pwa-chat-body" style="flex: 1; overflow-y: auto; background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; min-height: 340px;">
-        <div style="text-align: center; color: var(--muted); font-size: 12px; margin: auto;">Initializing FlexiTap AI Support Assistant...</div>
+      <div style="display: flex; gap: 8px;">
+        <button type="button" class="btn btn-primary" onclick="openPricingPage()" style="flex: 1; font-weight: 700; padding: 12px; font-size: 13px;">View Plans &amp; Subscribe &rarr;</button>
+        <button type="button" class="btn btn-outline" onclick="closePwaUpgradeModal()" style="width: auto; padding: 12px 16px; font-size: 13px;">Cancel</button>
       </div>
-
-      <!-- AI Typing Indicator -->
-      <div id="pwa-chat-typing" class="pwa-chat-typing">
-        <span>AI Assistant thinking</span>
-        <span class="pwa-chat-dot"></span>
-        <span class="pwa-chat-dot"></span>
-        <span class="pwa-chat-dot"></span>
-      </div>
-
-      <!-- Message Input Form with Voice Recognition -->
-      <form id="pwa-chat-form" onsubmit="handleSendSupportMessage(event)" style="display: flex; gap: 8px; flex-shrink: 0; align-items: stretch;">
-        <input type="text" id="pwaChatInput" maxlength="350" placeholder="Ask a question about your FlexiTap POS..." autocomplete="off" required style="flex: 1; padding: 12px 14px; font-size: 13.5px; min-width: 0;" />
-        <button type="button" id="pwaChatMicBtn" class="pwa-mic-btn" onclick="togglePwaVoiceInput()" title="Speak your question (Voice Input)" aria-label="Voice Input">🎙️</button>
-        <button type="submit" id="pwaChatSendBtn" class="btn btn-primary" style="width: auto; padding: 0 18px; margin: 0; font-size: 13.5px; font-weight: 700;">Send</button>
-      </form>
     </div>
   </div>
 
@@ -1704,13 +1815,16 @@
         if (supabaseClient && currentAuthUser.id) {
           const { data: profile } = await supabaseClient
             .from('profiles')
-            .select('store_name, full_name, email, business_category')
+            .select('store_name, full_name, email, business_category, subscription_tier, payment_status, role')
             .eq('id', currentAuthUser.id)
             .maybeSingle();
 
           if (profile) {
             if (profile.store_name) currentAuthUser.storeName = profile.store_name;
             if (profile.full_name) currentAuthUser.fullName = profile.full_name;
+            currentAuthUser.subscriptionTier = (profile.subscription_tier || 'free').toLowerCase();
+            currentAuthUser.paymentStatus = (profile.payment_status || 'free').toLowerCase();
+            currentAuthUser.role = (profile.role || 'merchant').toLowerCase();
           }
 
           if (!currentAuthUser.storeName) {
@@ -1741,6 +1855,45 @@
       localStorage.setItem('flexitap_pwa_user', JSON.stringify(currentAuthUser));
       updateGreeting();
       renderPwaDashboard();
+    }
+
+    function isPwaPayingTier() {
+      if (!currentAuthUser) return false;
+      const role = (currentAuthUser.role || '').toLowerCase();
+      if (['admin', 'support', 'developer', 'owner'].includes(role)) return true;
+      const payment = (currentAuthUser.paymentStatus || 'free').toLowerCase();
+      if (payment === 'unpaid') return false;
+      const tier = (currentAuthUser.subscriptionTier || 'free').toLowerCase();
+      return ['plus', 'pro', 'enterprise'].some(t => tier.includes(t));
+    }
+
+    function showPwaUpgradeModal(source) {
+      const modal = document.getElementById('pwa-upgrade-modal');
+      const title = document.getElementById('pwa-upgrade-modal-title');
+      const desc = document.getElementById('pwa-upgrade-modal-desc');
+      if (title && desc) {
+        if (source === 'chat') {
+          title.innerText = 'Unlock Gemini AI POS Support';
+          desc.innerHTML = 'Instant AI troubleshooting trained on 42 POS guides, device hardware diagnostics, and hands-free voice input are unlocked on <strong>FlexiTap Plus</strong> and <strong>Pro</strong> plans.';
+        } else if (source === 'reports') {
+          title.innerText = 'Unlock Real-Time Cloud Reports';
+          desc.innerHTML = 'Live daily Z-Reads, Product Mix (PMIX), net sales analytics, and stock par monitoring are available on <strong>FlexiTap Plus</strong> and <strong>Pro</strong> plans.';
+        } else {
+          title.innerText = 'Upgrade to Plus or Pro';
+          desc.innerHTML = 'Upgrade your FlexiTap store plan to unlock real-time financial analytics, cloud Z-Reads, and 24/7 Gemini AI support.';
+        }
+      }
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closePwaUpgradeModal() {
+      const modal = document.getElementById('pwa-upgrade-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function openPricingPage() {
+      closePwaUpgradeModal();
+      window.open('pricing.html', '_blank');
     }
 
     let pendingPwaAuthEmail = '';
@@ -1950,8 +2103,21 @@
 
     function updateGreeting() {
       const g = document.getElementById('landingGreeting');
+      const sub = document.getElementById('landingStoreSub');
       if (g) {
-        g.innerText = currentAuthUser ? `Hello, ${currentAuthUser.storeName || currentAuthUser.displayName}` : 'Hello, Merchant';
+        g.innerText = currentAuthUser ? `Hello, ${currentAuthUser.storeName || currentAuthUser.displayName || 'Merchant'}` : 'Hello, Merchant';
+      }
+      if (sub && currentAuthUser) {
+        const isPaid = isPwaPayingTier();
+        const tierName = (currentAuthUser.subscriptionTier || 'free').toLowerCase();
+        let tierLabel = 'Free Community Edition';
+        if (isPaid) {
+          if (tierName.includes('pro')) tierLabel = 'Pro Edition • Active';
+          else if (tierName.includes('plus')) tierLabel = 'Plus Edition • Active';
+          else if (['admin', 'support', 'developer', 'owner'].includes((currentAuthUser.role || '').toLowerCase())) tierLabel = 'Staff Access • Pro Active';
+          else tierLabel = 'Premium Tier • Active';
+        }
+        sub.innerHTML = `${escapeHtml(currentAuthUser.fullName || currentAuthUser.email || 'Store Operator')} &bull; <span style="color:${isPaid ? '#34d399' : '#94a3b8'}; font-weight:600;">${tierLabel}</span>`;
       }
     }
 
@@ -2536,6 +2702,33 @@
       if (emailEl) emailEl.innerText = currentAuthUser.email || '';
 
       goTo('chat');
+
+      const isPaid = isPwaPayingTier();
+      const chatGate = document.getElementById('chat-upgrade-gate');
+      const chatPaid = document.getElementById('chat-paid-content');
+      const statusPill = document.getElementById('chat-status-pill');
+
+      if (!isPaid) {
+        if (chatGate) chatGate.style.display = 'block';
+        if (chatPaid) chatPaid.style.display = 'none';
+        if (statusPill) {
+          statusPill.className = 'badge-pill';
+          statusPill.style.color = '#eab308';
+          statusPill.style.borderColor = 'rgba(234, 179, 8, 0.35)';
+          statusPill.style.background = 'rgba(234, 179, 8, 0.1)';
+          statusPill.innerText = '🔒 Plus / Pro Feature';
+        }
+        return;
+      }
+
+      if (chatGate) chatGate.style.display = 'none';
+      if (chatPaid) chatPaid.style.display = 'flex';
+      if (statusPill) {
+        statusPill.className = 'badge-pill badge-open';
+        statusPill.style = '';
+        statusPill.innerText = '🤖 AI Assistant Online';
+      }
+
       const container = document.getElementById('pwa-chat-body');
       if (container && (!container.children.length || container.innerText.includes('Initializing FlexiTap AI'))) {
         resetPwaSupportChat();
@@ -3588,10 +3781,12 @@
     }
 
     async function renderPwaDashboard(forceRefresh = false) {
-      if (!currentPwaReportData || forceRefresh) {
+      const isPaid = isPwaPayingTier();
+
+      if (isPaid && (!currentPwaReportData || forceRefresh)) {
         await fetchPwaReportsData('today');
       }
-      const d = currentPwaReportData || {};
+      const d = isPaid ? (currentPwaReportData || {}) : {};
 
       updateGreeting();
       const sub = document.getElementById('pwa-dash-subtitle');
@@ -3601,18 +3796,34 @@
       }
 
       const netEl = document.getElementById('dash-kpi-net');
-      if (netEl) netEl.innerText = formatPwaMoney(d.netSales || 0);
+      if (netEl) {
+        if (!isPaid) {
+          netEl.innerHTML = '<span style="color: #94a3b8; font-size: 17px; letter-spacing: 2px;">₱ ••••••</span>';
+        } else {
+          netEl.innerText = formatPwaMoney(d.netSales || 0);
+        }
+      }
 
       const grossSub = document.getElementById('dash-kpi-gross-sub');
-      if (grossSub) grossSub.innerText = `Gross: ${formatPwaMoney(d.grossSales || 0)}`;
+      if (grossSub) {
+        grossSub.innerText = !isPaid ? '🔒 Plus / Pro Feature' : `Gross: ${formatPwaMoney(d.grossSales || 0)}`;
+      }
 
       const txnsEl = document.getElementById('dash-kpi-txns');
-      if (txnsEl) txnsEl.innerText = String(d.txnCount || 0);
+      if (txnsEl) {
+        if (!isPaid) {
+          txnsEl.innerHTML = '<span style="color: #94a3b8; font-size: 16px;">• • •</span>';
+        } else {
+          txnsEl.innerText = String(d.txnCount || 0);
+        }
+      }
 
       const avgSub = document.getElementById('dash-kpi-avg-sub');
-      if (avgSub) avgSub.innerText = `Avg Check: ${formatPwaMoney(d.avgTicket || 0)}`;
+      if (avgSub) {
+        avgSub.innerText = !isPaid ? 'Avg Check: 🔒' : `Avg Check: ${formatPwaMoney(d.avgTicket || 0)}`;
+      }
 
-      // Fetch open tickets count
+      // Fetch open tickets count (Always active on all tiers)
       const tickets = await getCombinedTickets();
       const openTickets = (tickets || []).filter(t => !['closed', 'resolved'].includes((t.status || '').toLowerCase()));
       const tCount = openTickets.length;
@@ -3642,63 +3853,94 @@
       const parEl = document.getElementById('dash-kpi-par');
       const parSub = document.getElementById('dash-kpi-par-sub');
       if (parEl) {
-        parEl.innerText = `${lowStock.length} Alert${lowStock.length === 1 ? '' : 's'}`;
-        parEl.style.color = lowStock.length > 0 ? '#f87171' : '#34d399';
+        if (!isPaid) {
+          parEl.innerHTML = '<span style="color: #94a3b8; font-size: 15px;">🔒 Plus/Pro</span>';
+        } else {
+          parEl.innerText = `${lowStock.length} Alert${lowStock.length === 1 ? '' : 's'}`;
+          parEl.style.color = lowStock.length > 0 ? '#f87171' : '#34d399';
+        }
       }
       if (parSub) {
-        parSub.innerText = lowStock.length > 0 ? `${lowStock.length} Items Below Par →` : 'Stock Healthy →';
-        parSub.style.color = lowStock.length > 0 ? '#f87171' : '#34d399';
+        if (!isPaid) {
+          parSub.innerText = 'Stock Par: 🔒';
+          parSub.style.color = '#94a3b8';
+        } else {
+          parSub.innerText = lowStock.length > 0 ? `${lowStock.length} Items Below Par →` : 'Stock Healthy →';
+          parSub.style.color = lowStock.length > 0 ? '#f87171' : '#34d399';
+        }
       }
 
       // Tender breakdown
-      let cash = 0, ewallet = 0, card = 0;
-      const p = d.payments || {};
-      for (let k in p) {
-        const kLower = k.toLowerCase();
-        const val = Number(p[k]) || 0;
-        if (kLower.includes('cash')) {
-          cash += val;
-        } else if (kLower.includes('gcash') || kLower.includes('maya') || kLower.includes('qr') || kLower.includes('wallet')) {
-          ewallet += val;
-        } else {
-          card += val;
-        }
-      }
-      const totalTender = cash + ewallet + card;
-      const totalTenderDisp = totalTender > 0 ? totalTender : (d.netSales || 0);
-
       const totalEl = document.getElementById('dash-tender-total');
-      if (totalEl) totalEl.innerText = `${formatPwaMoney(totalTenderDisp)} Total`;
-
       const cashEl = document.getElementById('dash-tender-cash');
-      if (cashEl) cashEl.innerText = formatPwaMoney(cash);
-
       const ewalletEl = document.getElementById('dash-tender-ewallet');
-      if (ewalletEl) ewalletEl.innerText = formatPwaMoney(ewallet);
-
       const cardEl = document.getElementById('dash-tender-card');
-      if (cardEl) cardEl.innerText = formatPwaMoney(card);
-
-      const cashPct = totalTender > 0 ? Math.round((cash / totalTender) * 100) : 0;
-      const ewalletPct = totalTender > 0 ? Math.round((ewallet / totalTender) * 100) : 0;
-      const cardPct = totalTender > 0 ? Math.max(0, 100 - cashPct - ewalletPct) : 0;
-
       const barCash = document.getElementById('dash-bar-cash');
       const barEwallet = document.getElementById('dash-bar-ewallet');
       const barCard = document.getElementById('dash-bar-card');
-      if (barCash) barCash.style.width = `${cashPct}%`;
-      if (barEwallet) barEwallet.style.width = `${ewalletPct}%`;
-      if (barCard) barCard.style.width = `${cardPct}%`;
+
+      if (!isPaid) {
+        if (totalEl) totalEl.innerText = '🔒 Plus & Pro Only';
+        if (cashEl) cashEl.innerText = '••••';
+        if (ewalletEl) ewalletEl.innerText = '••••';
+        if (cardEl) cardEl.innerText = '••••';
+        if (barCash) barCash.style.width = '33%';
+        if (barEwallet) barEwallet.style.width = '33%';
+        if (barCard) barCard.style.width = '34%';
+      } else {
+        let cash = 0, ewallet = 0, card = 0;
+        const p = d.payments || {};
+        for (let k in p) {
+          const kLower = k.toLowerCase();
+          const val = Number(p[k]) || 0;
+          if (kLower.includes('cash')) {
+            cash += val;
+          } else if (kLower.includes('gcash') || kLower.includes('maya') || kLower.includes('qr') || kLower.includes('wallet')) {
+            ewallet += val;
+          } else {
+            card += val;
+          }
+        }
+        const totalTender = cash + ewallet + card;
+        const totalTenderDisp = totalTender > 0 ? totalTender : (d.netSales || 0);
+
+        if (totalEl) totalEl.innerText = `${formatPwaMoney(totalTenderDisp)} Total`;
+        if (cashEl) cashEl.innerText = formatPwaMoney(cash);
+        if (ewalletEl) ewalletEl.innerText = formatPwaMoney(ewallet);
+        if (cardEl) cardEl.innerText = formatPwaMoney(card);
+
+        const cashPct = totalTender > 0 ? Math.round((cash / totalTender) * 100) : 0;
+        const ewalletPct = totalTender > 0 ? Math.round((ewallet / totalTender) * 100) : 0;
+        const cardPct = totalTender > 0 ? Math.max(0, 100 - cashPct - ewalletPct) : 0;
+
+        if (barCash) barCash.style.width = `${cashPct}%`;
+        if (barEwallet) barEwallet.style.width = `${ewalletPct}%`;
+        if (barCard) barCard.style.width = `${cardPct}%`;
+      }
     }
 
     async function renderPwaReports(forceRefresh = false) {
+      const isPaid = isPwaPayingTier();
+      const repGate = document.getElementById('reports-upgrade-gate');
+      const repPaid = document.getElementById('reports-paid-content');
+      const pill = document.getElementById('pwaReportDatePill');
+
+      if (!isPaid) {
+        if (repGate) repGate.style.display = 'block';
+        if (repPaid) repPaid.style.display = 'none';
+        if (pill) pill.innerText = 'Plus / Pro Required';
+        return;
+      }
+
+      if (repGate) repGate.style.display = 'none';
+      if (repPaid) repPaid.style.display = 'block';
+
       if (!currentPwaReportData || forceRefresh) {
         await fetchPwaReportsData(currentPwaReportRange);
       }
       const d = currentPwaReportData || {};
       const rangeInfo = getPwaDateRange(currentPwaReportRange);
 
-      const pill = document.getElementById('pwaReportDatePill');
       if (pill) pill.innerText = rangeInfo.label;
 
       // Subtab 1: Sales
