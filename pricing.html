@@ -318,6 +318,151 @@
       .mobile-only-login { display: inline-flex; width: 100%; justify-content: center; margin-top: 8px; }
       .modal-card { padding: 24px 18px; }
     }
+  
+    /* CURRENCY SWITCHER (PHP / USD) */
+    .currency-switch-wrap {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      border-radius: 9999px;
+      padding: 3px;
+      gap: 3px;
+    }
+    .currency-pill {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .currency-pill.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+    }
+    .currency-pill:hover:not(.active) {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* BILLING CYCLE TOGGLE (Monthly / Annual) */
+    .billing-cycle-switch {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(22, 30, 49, 0.85);
+      border: 1px solid var(--card-border);
+      border-radius: 9999px;
+      padding: 4px;
+      margin: 10px 0 24px;
+    }
+    .cycle-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cycle-btn.active {
+      background: #2563eb;
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.35);
+    }
+    .cycle-badge-save {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    /* GEOLOCATION TAG */
+    .geo-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+      animation: fadeInTag 0.3s ease-out;
+    }
+    @keyframes fadeInTag {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* PHILIPPINE GCASH CHECKOUT MODAL */
+    .gcash-modal-card {
+      background: #0f172a !important;
+      border: 1px solid rgba(59, 130, 246, 0.3) !important;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(37, 99, 235, 0.2) !important;
+      max-width: 520px !important;
+      text-align: left !important;
+    }
+    .gcash-header-banner {
+      background: linear-gradient(135deg, #005ce6 0%, #003399 100%);
+      margin: -36px -28px 20px;
+      padding: 22px 28px;
+      border-radius: 20px 20px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+    }
+    .gcash-order-summary {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+    }
+    .gcash-pay-box {
+      background: rgba(0, 92, 230, 0.08);
+      border: 1px dashed rgba(59, 130, 246, 0.4);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 20px;
+    }
+    .copy-pill-btn {
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .copy-pill-btn:hover {
+      background: #2563eb;
+      color: #fff;
+    }
+
   </style>
 
   <script>
@@ -325,6 +470,482 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
     const GOOGLE_TICKET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzJu1CEi1qhT-k7Qc_tisMN7vXbbCuGymgiMMk_K6PGIMnrUHkIrYEuQFMCviZfaYvoQw/exec';
     let supabaseClient;
+
+    // =========================================================================
+    // FLEXITAP DYNAMIC PRICING & LOCALIZED PH GCASH ENGINE
+    // =========================================================================
+    let currentCurrency = 'PHP'; // Default to PHP for local market, verified dynamically
+    let currentBillingCycle = 'monthly'; // 'monthly' or 'annual'
+    let activeGcashPayment = null;
+
+    const PRICING_CONFIG = {
+      PHP: {
+        symbol: '₱',
+        badgeText: '🇵🇭 Local Rate Active',
+        free: {
+          price: '₱0',
+          period: '/ mo',
+          original: '',
+          note: 'Walang bayad habang-buhay • No card required',
+          btnText: 'Join Free Launch Waitlist'
+        },
+        monthly: {
+          plus: {
+            price: '₱1,299',
+            period: '/ mo',
+            original: '₱2,490',
+            note: '🔒 Fixed lock-in rate • Direct GCash or Card',
+            btnText: 'Get Founders Plus (₱1,299/mo)',
+            planId: 'php_plus_monthly',
+            amount: 1299
+          },
+          pro: {
+            price: '₱2,499',
+            period: '/ mo',
+            original: '₱4,990',
+            note: '🔒 Fixed lock-in rate • Dedicated Standby Included',
+            btnText: 'Get Founders Pro (₱2,499/mo)',
+            planId: 'php_pro_monthly',
+            amount: 2499
+          }
+        },
+        annual: {
+          plus: {
+            price: '₱14,990',
+            period: '/ year fixed',
+            original: '₱24,900',
+            note: '🔒 Lifetime rate lock • Save ~₱3,500 vs standard',
+            btnText: 'Lock In Plus Annual (₱14,990)',
+            planId: 'php_plus_annual',
+            amount: 14990
+          },
+          pro: {
+            price: '₱28,990',
+            period: '/ year fixed',
+            original: '₱49,900',
+            note: '🔒 Lifetime rate lock • White-Glove Migration Included',
+            btnText: 'Lock In Pro Annual (₱28,990)',
+            planId: 'php_pro_annual',
+            amount: 28990
+          }
+        }
+      },
+      USD: {
+        symbol: '$',
+        badgeText: '🌐 International (Paddle)',
+        free: {
+          price: '$0',
+          period: '/ mo',
+          original: '',
+          note: 'No credit card required to reserve',
+          btnText: 'Join Free Launch Waitlist'
+        },
+        monthly: {
+          plus: {
+            price: '$29',
+            period: '/ mo',
+            original: '$49',
+            note: '🔒 Fixed rate lock • Automated Paddle billing',
+            btnText: 'Claim Founders Plus ($29/mo)',
+            planId: 'pri_01m1pb8szpcf4vapm28yfzw9aq',
+            amount: 29
+          },
+          pro: {
+            price: '$59',
+            period: '/ mo',
+            original: '$99',
+            note: '🔒 Fixed rate lock • White-Glove Setup Included',
+            btnText: 'Claim Founders Pro ($59/mo)',
+            planId: 'pri_01m1pb6ba15axyr7acv0hswynd',
+            amount: 59
+          }
+        },
+        annual: {
+          plus: {
+            price: '$290',
+            period: '/ year fixed',
+            original: '$490',
+            note: '🔒 Lifetime rate lock • VAT calculated at checkout',
+            btnText: 'Claim Founders Plus ($290)',
+            planId: 'pri_01m1pb8szpcf4vapm28yfzw9aq',
+            amount: 290
+          },
+          pro: {
+            price: '$590',
+            period: '/ year fixed',
+            original: '$990',
+            note: '🔒 Lifetime rate lock • White-Glove Setup Included',
+            btnText: 'Claim Founders Pro ($590)',
+            planId: 'pri_01m1pb6ba15axyr7acv0hswynd',
+            amount: 590
+          }
+        }
+      }
+    };
+
+    async function detectVisitorCountry() {
+      const saved = localStorage.getItem('flexitap_currency');
+      if (saved === 'PHP' || saved === 'USD') {
+        setCurrency(saved, false, false);
+        return;
+      }
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1600);
+        const res = await fetch('https://api.country.is', { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.country === 'PH') {
+            setCurrency('PHP', false, true);
+            return;
+          }
+        }
+      } catch (e) {
+        try {
+          const lang = navigator.language || navigator.userLanguage || '';
+          if (lang.includes('PH') || lang.includes('fil') || lang.includes('tl')) {
+            setCurrency('PHP', false, true);
+            return;
+          }
+        } catch (_) {}
+      }
+
+      // Default international visitors to USD
+      setCurrency('USD', false, false);
+    }
+
+    function setCurrency(currency, isManual = true, isAutoDetected = false) {
+      currentCurrency = (currency === 'USD') ? 'USD' : 'PHP';
+      if (isManual) {
+        localStorage.setItem('flexitap_currency', currentCurrency);
+      }
+
+      // Update pills
+      const phBtn = document.getElementById('btn-currency-ph');
+      const usBtn = document.getElementById('btn-currency-us');
+      if (phBtn && usBtn) {
+        phBtn.classList.toggle('active', currentCurrency === 'PHP');
+        usBtn.classList.toggle('active', currentCurrency === 'USD');
+      }
+
+      // Update geo tag
+      const geoTag = document.getElementById('geo-location-tag');
+      if (geoTag) {
+        if (currentCurrency === 'PHP') {
+          geoTag.style.display = 'inline-flex';
+          geoTag.innerHTML = isAutoDetected 
+            ? '📍 Detected Location: <strong>Philippines</strong> — Local Rates (₱) &amp; GCash Active'
+            : '🇵🇭 Selected Currency: <strong>Philippine Peso (PHP)</strong> — Local Rates &amp; GCash Active';
+        } else {
+          geoTag.style.display = isAutoDetected ? 'none' : 'inline-flex';
+          geoTag.innerHTML = '🌐 Selected Currency: <strong>US Dollar (USD)</strong> — Automated Paddle Checkout';
+        }
+      }
+
+      updatePricingDisplay();
+      populateSignupSelect();
+    }
+
+    function setBillingCycle(cycle) {
+      currentBillingCycle = (cycle === 'annual') ? 'annual' : 'monthly';
+
+      const mBtn = document.getElementById('btn-cycle-monthly');
+      const aBtn = document.getElementById('btn-cycle-annual');
+      if (mBtn && aBtn) {
+        mBtn.classList.toggle('active', currentBillingCycle === 'monthly');
+        aBtn.classList.toggle('active', currentBillingCycle === 'annual');
+      }
+
+      updatePricingDisplay();
+      populateSignupSelect();
+    }
+
+    function updatePricingDisplay() {
+      const cfg = PRICING_CONFIG[currentCurrency];
+      const cycleCfg = cfg[currentBillingCycle];
+
+      // Free
+      const pFree = document.getElementById('price-display-free');
+      const vFree = document.getElementById('vat-note-free');
+      const bFree = document.getElementById('btn-action-free');
+      if (pFree) pFree.innerHTML = `${cfg.free.price} <span>${cfg.free.period}</span>`;
+      if (vFree) vFree.innerText = cfg.free.note;
+      if (bFree) bFree.innerText = cfg.free.btnText;
+
+      // Plus
+      const oPlus = document.getElementById('original-price-plus');
+      const pPlus = document.getElementById('price-display-plus');
+      const vPlus = document.getElementById('vat-note-plus');
+      const bPlus = document.getElementById('btn-action-plus');
+      if (oPlus) oPlus.innerText = cycleCfg.plus.original;
+      if (pPlus) pPlus.innerHTML = `${cycleCfg.plus.price} <span>${cycleCfg.plus.period}</span>`;
+      if (vPlus) vPlus.innerText = cycleCfg.plus.note;
+      if (bPlus) bPlus.innerText = cycleCfg.plus.btnText;
+
+      // Pro
+      const oPro = document.getElementById('original-price-pro');
+      const pPro = document.getElementById('price-display-pro');
+      const vPro = document.getElementById('vat-note-pro');
+      const bPro = document.getElementById('btn-action-pro');
+      if (oPro) oPro.innerText = cycleCfg.pro.original;
+      if (pPro) pPro.innerHTML = `${cycleCfg.pro.price} <span>${cycleCfg.pro.period}</span>`;
+      if (vPro) vPro.innerText = cycleCfg.pro.note;
+      if (bPro) bPro.innerText = cycleCfg.pro.btnText;
+
+      // Matrix Table Headers
+      const thFree = document.getElementById('th-tier-free');
+      const thPlus = document.getElementById('th-tier-plus');
+      const thPro = document.getElementById('th-tier-pro');
+      if (thFree) thFree.innerText = `Free (${cfg.free.price})`;
+      if (thPlus) thPlus.innerText = `Plus (${cycleCfg.plus.price}${currentBillingCycle === 'annual' ? '/yr' : '/mo'})`;
+      if (thPro) thPro.innerText = `Pro (${cycleCfg.pro.price}${currentBillingCycle === 'annual' ? '/yr' : '/mo'})`;
+    }
+
+    function populateSignupSelect(selectedKey) {
+      const selectEl = document.getElementById('signup-tier');
+      if (!selectEl) return;
+
+      const previousVal = selectedKey || selectEl.value;
+
+      if (currentCurrency === 'PHP') {
+        selectEl.innerHTML = `
+          <option value="free">Free Launch Waitlist (₱0 / mo)</option>
+          <option value="php_plus_monthly">Plus Plan (₱1,299 / month via GCash)</option>
+          <option value="php_plus_annual">Plus Founders Annual (₱14,990 / year via GCash)</option>
+          <option value="php_pro_monthly">Pro Plan (₱2,499 / month via GCash)</option>
+          <option value="php_pro_annual">Pro Founders Annual (₱28,990 / year via GCash)</option>
+        `;
+      } else {
+        selectEl.innerHTML = `
+          <option value="free">Free Launch Waitlist ($0 / mo)</option>
+          <option value="pri_01m1pb8szpcf4vapm28yfzw9aq">Plus Founders VIP ($290 / year fixed)</option>
+          <option value="pri_01m1pb6ba15axyr7acv0hswynd">Pro Founders VIP ($590 / year fixed)</option>
+        `;
+      }
+
+      if (previousVal) {
+        if (previousVal.includes('pro')) {
+          selectEl.value = (currentCurrency === 'PHP') 
+            ? (currentBillingCycle === 'annual' ? 'php_pro_annual' : 'php_pro_monthly') 
+            : 'pri_01m1pb6ba15axyr7acv0hswynd';
+        } else if (previousVal.includes('plus')) {
+          selectEl.value = (currentCurrency === 'PHP') 
+            ? (currentBillingCycle === 'annual' ? 'php_plus_annual' : 'php_plus_monthly') 
+            : 'pri_01m1pb8szpcf4vapm28yfzw9aq';
+        } else {
+          selectEl.value = 'free';
+        }
+      }
+      syncModalState();
+    }
+
+    function syncModalState() {
+      const selectEl = document.getElementById('signup-tier');
+      const btnText = document.getElementById('signup-btn-text');
+      const helper = document.getElementById('modal-intent-helper');
+      const termsCheckbox = document.getElementById('signup-terms');
+      if (!selectEl || !btnText) return;
+
+      const val = selectEl.value;
+
+      if (val === 'free') {
+        btnText.innerText = 'Join Free Launch Waitlist';
+        helper.innerText = 'No credit card required. You will receive access on November 13, 2026.';
+      } else if (val.includes('plus')) {
+        if (currentCurrency === 'PHP') {
+          const isAnnual = val.includes('annual');
+          btnText.innerText = isAnnual ? 'Lock In Plus Annual (₱14,990)' : 'Lock In Plus Plan (₱1,299/mo)';
+          helper.innerText = 'Includes 7-day shift guarantee. Pay securely via GCash with instant manual verification.';
+        } else {
+          btnText.innerText = 'Lock In Plus VIP Pass ($290/yr)';
+          helper.innerText = 'Includes 100% money-back guarantee after your first live week via Paddle.';
+        }
+      } else if (val.includes('pro')) {
+        if (currentCurrency === 'PHP') {
+          const isAnnual = val.includes('annual');
+          btnText.innerText = isAnnual ? 'Lock In Pro Annual (₱28,990)' : 'Lock In Pro Plan (₱2,499/mo)';
+          helper.innerText = 'Includes white-glove menu migration and direct engineer standby via GCash.';
+        } else {
+          btnText.innerText = 'Lock In Pro VIP Pass ($590/yr)';
+          helper.innerText = 'Includes full menu migration and phone/remote standby access via Paddle.';
+        }
+      }
+
+      if (termsCheckbox) {
+        btnText.disabled = !termsCheckbox.checked;
+      }
+    }
+
+    function openSignupModalWithPlan(planKey) {
+      let targetVal = 'free';
+      if (planKey === 'plus' || planKey.includes('plus') || planKey.includes('pri_01m1pb8szpcf4vapm28yfzw9aq')) {
+        targetVal = (currentCurrency === 'PHP') 
+          ? (currentBillingCycle === 'annual' ? 'php_plus_annual' : 'php_plus_monthly') 
+          : 'pri_01m1pb8szpcf4vapm28yfzw9aq';
+      } else if (planKey === 'pro' || planKey.includes('pro') || planKey.includes('pri_01m1pb6ba15axyr7acv0hswynd')) {
+        targetVal = (currentCurrency === 'PHP') 
+          ? (currentBillingCycle === 'annual' ? 'php_pro_annual' : 'php_pro_monthly') 
+          : 'pri_01m1pb6ba15axyr7acv0hswynd';
+      }
+
+      populateSignupSelect(targetVal);
+      const selectEl = document.getElementById('signup-tier');
+      if (selectEl) selectEl.value = targetVal;
+      syncModalState();
+      openModal('signup-modal');
+    }
+
+    function openGcashPaymentModal({ userId, businessName, email, tierName, billingCycle, amount }) {
+      activeGcashPayment = { userId, businessName, email, tierName, billingCycle, amount };
+
+      const planDisplay = document.getElementById('gcash-summary-plan');
+      const amountDisplay = document.getElementById('gcash-summary-amount');
+      const submitSec = document.getElementById('gcash-submit-section');
+      const confirmedSec = document.getElementById('gcash-confirmed-section');
+      const errorDiv = document.getElementById('gcash-modal-error');
+
+      if (planDisplay) {
+        planDisplay.innerText = `FlexiTap ${tierName.toUpperCase()} (${billingCycle === 'annual' ? 'Annual VIP Pass' : 'Monthly'})`;
+      }
+      if (amountDisplay) {
+        amountDisplay.innerText = `₱${amount.toLocaleString()}.00`;
+      }
+      if (submitSec) submitSec.style.display = 'block';
+      if (confirmedSec) confirmedSec.style.display = 'none';
+      if (errorDiv) errorDiv.innerText = '';
+
+      openModal('gcash-payment-modal');
+    }
+
+    function copyGcashNumber() {
+      const num = '09662248178';
+      navigator.clipboard.writeText(num).then(() => {
+        const btn = document.getElementById('copy-gcash-btn');
+        if (btn) {
+          const orig = btn.innerHTML;
+          btn.innerHTML = '✓ Copied!';
+          btn.style.background = '#059669';
+          btn.style.color = '#fff';
+          setTimeout(() => {
+            btn.innerHTML = orig;
+            btn.style.background = '';
+            btn.style.color = '';
+          }, 2000);
+        }
+      }).catch(() => {
+        prompt('Copy GCash Number:', '09662248178');
+      });
+    }
+
+    async function handleGcashVerificationSubmit(event) {
+      event.preventDefault();
+      if (!activeGcashPayment) return;
+
+      const refInput = document.getElementById('gcash-ref-input');
+      const senderInput = document.getElementById('gcash-sender-input');
+      const errorDiv = document.getElementById('gcash-modal-error');
+      const submitBtn = document.getElementById('gcash-submit-btn');
+
+      const refNo = refInput ? refInput.value.trim() : '';
+      const sender = senderInput ? senderInput.value.trim() : '';
+
+      if (!refNo || refNo.length < 8) {
+        if (errorDiv) errorDiv.innerText = 'Please enter a valid GCash Reference Number (at least 8-13 digits).';
+        return;
+      }
+
+      if (errorDiv) errorDiv.innerText = '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Submitting payment proof...';
+      }
+
+      try {
+        // 1. Update Profile in Supabase
+        await supabaseClient.from('profiles').update({
+          payment_status: 'pending_verification',
+          pending_tier: activeGcashPayment.tierName,
+          billing_provider: 'gcash',
+          gcash_ref_number: refNo,
+          updated_at: new Date().toISOString()
+        }).eq('id', activeGcashPayment.userId);
+
+        // 2. Insert Support / Payment Verification Ticket in Supabase
+        const ticketDesc = [
+          `### GCash Payment Verification Submitted`,
+          `- **Store / Business:** ${activeGcashPayment.businessName}`,
+          `- **Owner Email:** ${activeGcashPayment.email}`,
+          `- **Selected Plan:** ${activeGcashPayment.tierName.toUpperCase()} (${activeGcashPayment.billingCycle.toUpperCase()})`,
+          `- **Amount Due:** ₱${activeGcashPayment.amount.toLocaleString()}.00`,
+          `- **GCash Reference No.:** ${refNo}`,
+          `- **Sender Name / Mobile:** ${sender}`,
+          `- **Submission Date:** ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' })} (PHT)`,
+          ``,
+          `*Action Required:* Verify receipt in GCash app. In Dev Portal, approve subscription and set expiration date.`
+        ].join('\n');
+
+        await supabaseClient.from('tickets').insert([{
+          merchant_id: activeGcashPayment.userId,
+          store_name: activeGcashPayment.businessName,
+          contact_email: activeGcashPayment.email,
+          subject: `[GCash Payment] ${activeGcashPayment.businessName} - ${activeGcashPayment.tierName.toUpperCase()} (Ref #${refNo})`,
+          description: ticketDesc,
+          category: 'payment',
+          priority: 'high',
+          status: 'open'
+        }]);
+
+        // 3. Dispatch Notification Webhook
+        try {
+          fetch(GOOGLE_TICKET_WEBHOOK_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              notification_type: 'merchant_gcash_payment_submitted',
+              recipient_email: activeGcashPayment.email,
+              subject: `[FlexiTap Payment Received] Verifying GCash Ref #${refNo} - ${activeGcashPayment.businessName}`,
+              store_name: activeGcashPayment.businessName,
+              details: `GCash payment of ₱${activeGcashPayment.amount.toLocaleString()} received for ${activeGcashPayment.tierName.toUpperCase()}. Ref: ${refNo}`,
+              html: `
+                <div style="font-family: sans-serif; max-width: 580px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                  <h2 style="color: #005ce6; margin-top: 0;">Salamat! We Received Your GCash Submission</h2>
+                  <p>Hi <strong>${activeGcashPayment.businessName}</strong>,</p>
+                  <p>Your GCash payment reference has been logged into our engineering verification queue:</p>
+                  <table style="width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px;">
+                    <tr><td style="padding: 6px 0; color: #64748b;">Plan:</td><td style="font-weight: 700;">FlexiTap ${activeGcashPayment.tierName.toUpperCase()} (${activeGcashPayment.billingCycle})</td></tr>
+                    <tr><td style="padding: 6px 0; color: #64748b;">Amount:</td><td style="font-weight: 700; color: #059669;">₱${activeGcashPayment.amount.toLocaleString()}.00</td></tr>
+                    <tr><td style="padding: 6px 0; color: #64748b;">GCash Ref #:</td><td style="font-weight: 700; color: #005ce6;">${refNo}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #64748b;">Sender:</td><td style="font-weight: 700;">${sender}</td></tr>
+                  </table>
+                  <p style="background: #f8fafc; border-left: 4px solid #005ce6; padding: 12px; font-size: 13px; color: #334155;">
+                    ⏱️ Our team verifies GCash payments within <strong>15–30 minutes</strong>. Once confirmed, your Cloud Back Office and license are activated automatically.
+                  </p>
+                </div>
+              `
+            })
+          }).catch(() => {});
+        } catch (_) {}
+
+        // 4. Switch to Confirmed Screen in Modal
+        const submitSec = document.getElementById('gcash-submit-section');
+        const confirmedSec = document.getElementById('gcash-confirmed-section');
+        const confirmedRefDisplay = document.getElementById('gcash-confirmed-ref');
+        if (submitSec) submitSec.style.display = 'none';
+        if (confirmedSec) confirmedSec.style.display = 'block';
+        if (confirmedRefDisplay) confirmedRefDisplay.innerText = `#${refNo}`;
+
+      } catch (err) {
+        if (errorDiv) errorDiv.innerText = 'Submission error: ' + (err.message || 'Please try again.');
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = 'Submit Payment for Instant Verification ⚡';
+        }
+      }
+    }
+
 
     function escapeHtml(str) {
       if (!str) return '';
@@ -506,6 +1127,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", function() {
+      detectVisitorCountry();
       supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
       if (typeof Paddle !== 'undefined') {
@@ -737,7 +1359,29 @@
       document.getElementById('portal-signup-form').reset();
       syncModalState();
 
-      if (tierName === 'free' || typeof Paddle === 'undefined') {
+      if (tierName === 'free') {
+        showRegistrationSuccess(email);
+        return;
+      }
+
+      if (currentCurrency === 'PHP') {
+        const isAnnual = (priceId && priceId.includes('annual')) || currentBillingCycle === 'annual';
+        const amt = (tierName === 'plus') 
+          ? (isAnnual ? 14990 : 1299) 
+          : (isAnnual ? 28990 : 2499);
+
+        openGcashPaymentModal({
+          userId: userId,
+          businessName: businessName,
+          email: email,
+          tierName: tierName,
+          billingCycle: isAnnual ? 'annual' : 'monthly',
+          amount: amt
+        });
+        return;
+      }
+
+      if (typeof Paddle === 'undefined') {
         showRegistrationSuccess(email);
         return;
       }
@@ -1021,7 +1665,11 @@
       </div>
 
       <div class="nav-actions">
-        <button class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
+        <div class="currency-switch-wrap" title="Switch Billing Currency">
+          <button type="button" class="currency-pill active" id="btn-currency-ph" onclick="setCurrency('PHP')">🇵🇭 PHP (₱)</button>
+          <button type="button" class="currency-pill" id="btn-currency-us" onclick="setCurrency('USD')">🌐 USD ($)</button>
+        </div>
+        <button class="btn-login"  onclick="openModal('login-modal')">Merchant Login</button>
         <button class="btn-signup" onclick="openSignupModalWithPlan('free')">Join Waitlist</button>
       </div>
     </div>
@@ -1037,6 +1685,22 @@
       
       <h1 class="section-title">Resilient Offline POS.<br>Zero Proprietary Terminal Fees.</h1>
       <p class="section-subtitle">Run your counter on standard tablets and PCs. Lock in guaranteed lifetime pricing with our Founders VIP Pass before public retail billing begins.</p>
+      
+      <!-- GEOLOCATION TAG & BILLING CYCLE TOGGLE -->
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 10px auto 30px;">
+        <div id="geo-location-tag" class="geo-tag" style="display: none;">
+          📍 Detected Location: <strong>Philippines</strong> — Local Rates (₱) &amp; GCash Checkout Active
+        </div>
+
+        <div class="billing-cycle-switch" id="billing-cycle-wrapper">
+          <button type="button" class="cycle-btn active" id="btn-cycle-monthly" onclick="setBillingCycle('monthly')">
+            Monthly Billing
+          </button>
+          <button type="button" class="cycle-btn" id="btn-cycle-annual" onclick="setBillingCycle('annual')">
+            Annual VIP Pass <span class="cycle-badge-save" id="cycle-save-badge">Save Up to 20%</span>
+          </button>
+        </div>
+      </div>
       
       <!-- RISK-REVERSAL BANNER -->
       <div class="risk-reversal-card">
@@ -1057,8 +1721,8 @@
             <p class="tier-target">For solo pop-ups, markets & kiosks</p>
             
             <div class="price-container">
-              <div class="price">$0 <span>/ mo</span></div>
-              <div class="vat-note">No credit card required to reserve</div>
+              <div class="price" id="price-display-free">₱0 <span>/ mo</span></div>
+              <div class="vat-note" id="vat-note-free">Walang bayad habang-buhay • No card required</div>
             </div>
 
             <ul class="pricing-list">
@@ -1079,7 +1743,7 @@
           </div>
 
           <div>
-            <button class="btn-card-action secondary" onclick="openSignupModalWithPlan('free')">Join Free Launch Waitlist</button>
+            <button class="btn-card-action secondary" id="btn-action-free" onclick="openSignupModalWithPlan('free')">Join Free Launch Waitlist</button>
             <div class="guarantee-micro">Instant confirmation • App access sent on Nov 13</div>
           </div>
         </div>
@@ -1092,9 +1756,9 @@
             <p class="tier-target">For growing cafes & food trucks</p>
             
             <div class="price-container">
-              <span class="original-price">$490</span>
-              <div class="price">$290 <span>/ year fixed</span></div>
-              <div class="vat-note">🔒 Lifetime rate lock • VAT calculated at checkout</div>
+              <span class="original-price" id="original-price-plus">₱2,490</span>
+              <div class="price" id="price-display-plus">₱1,299 <span>/ mo</span></div>
+              <div class="vat-note" id="vat-note-plus">🔒 Fixed lock-in rate • Direct GCash or Card</div>
             </div>
 
             <ul class="pricing-list">
@@ -1113,7 +1777,7 @@
           </div>
 
           <div>
-            <button class="btn-card-action primary" onclick="openSignupModalWithPlan('pri_01m1pb8szpcf4vapm28yfzw9aq')">Claim Founders Plus ($290)</button>
+            <button class="btn-card-action primary" id="btn-action-plus" onclick="openSignupModalWithPlan('plus')">Get Founders Plus (₱1,299/mo)</button>
             <div class="guarantee-micro">Backed by 7-Day Live Shift Money-Back Guarantee</div>
           </div>
         </div>
@@ -1126,9 +1790,9 @@
             <p class="tier-target">For multi-station restaurants</p>
             
             <div class="price-container">
-              <span class="original-price">$990</span>
-              <div class="price" style="color: var(--accent-purple);">$590 <span>/ year fixed</span></div>
-              <div class="vat-note">🔒 Lifetime rate lock • VAT calculated at checkout</div>
+              <span class="original-price" id="original-price-pro">₱4,990</span>
+              <div class="price" style="color: var(--accent-purple);" id="price-display-pro">₱2,499 <span>/ mo</span></div>
+              <div class="vat-note" id="vat-note-pro">🔒 Fixed lock-in rate • Dedicated Standby</div>
             </div>
 
             <ul class="pricing-list">
@@ -1145,7 +1809,7 @@
           </div>
 
           <div>
-            <button class="btn-card-action purple" onclick="openSignupModalWithPlan('pri_01m1pb6ba15axyr7acv0hswynd')">Claim Founders Pro ($590)</button>
+            <button class="btn-card-action purple" id="btn-action-pro" onclick="openSignupModalWithPlan('pro')">Get Founders Pro (₱2,499/mo)</button>
             <div class="guarantee-micro">Priority onboarding &amp; direct engineer standby</div>
           </div>
         </div>
@@ -1199,9 +1863,9 @@
           <thead>
             <tr>
               <th style="width: 40%;">Core Feature / Capability</th>
-              <th class="col-center" style="width: 20%;">Free ($0)</th>
-              <th class="col-center" style="width: 20%; color: #60a5fa;">Plus (VIP $290/yr)</th>
-              <th class="col-center" style="width: 20%; color: #a855f7;">Pro (VIP $590/yr)</th>
+              <th class="col-center" style="width: 20%;" id="th-tier-free">Free (₱0)</th>
+              <th class="col-center" style="width: 20%; color: #60a5fa;" id="th-tier-plus">Plus (₱1,299/mo)</th>
+              <th class="col-center" style="width: 20%; color: #a855f7;" id="th-tier-pro">Pro (₱2,499/mo)</th>
             </tr>
           </thead>
           <tbody>
@@ -1310,6 +1974,141 @@
         <button type="submit" class="submit-btn" id="signup-btn-text" style="margin-top: 10px;">Join Free Launch Waitlist</button>
       </form>
       <div id="signup-modal-error" class="error-msg"></div>
+    </div>
+  </div>
+
+  
+  <!-- GCASH PAYMENT VERIFICATION MODAL -->
+  <div class="modal-overlay" id="gcash-payment-modal">
+    <div class="modal-card gcash-modal-card">
+      <button class="close-btn" onclick="closeModal('gcash-payment-modal')">&times;</button>
+      
+      <div class="gcash-header-banner">
+        <div>
+          <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.85; font-weight: 800;">Official Philippine Payment</div>
+          <h2 style="font-size: 20px; font-weight: 800; margin: 2px 0 0; color: #fff;">Direct GCash Checkout 🇵🇭</h2>
+        </div>
+        <div style="background: rgba(255,255,255,0.2); border-radius: 8px; padding: 6px 10px; font-size: 12px; font-weight: 800;">
+          Zero Processing Fees
+        </div>
+      </div>
+
+      <!-- ORDER SUMMARY PILL -->
+      <div class="gcash-order-summary">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Selected Plan</span>
+          <span style="font-size: 13.5px; font-weight: 800; color: #60a5fa;" id="gcash-summary-plan">Plus Plan (Monthly)</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 13px; color: #cbd5e1;">Amount to Send:</span>
+          <span style="font-size: 22px; font-weight: 800; color: #34d399;" id="gcash-summary-amount">₱1,299.00</span>
+        </div>
+      </div>
+
+      <!-- STEP 1: GCASH PAYMENT INSTRUCTIONS -->
+      <div class="gcash-pay-box">
+        <div style="font-size: 12.5px; font-weight: 800; color: #93c5fd; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">
+          Step 1: Send Payment via GCash
+        </div>
+        
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+          <!-- QR Code Graphic -->
+          <div style="width: 100px; height: 100px; background: #fff; border-radius: 10px; padding: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+              <rect x="0" y="0" width="30" height="30" fill="#005ce6" rx="2" />
+              <rect x="6" y="6" width="18" height="18" fill="#fff" rx="1" />
+              <rect x="10" y="10" width="10" height="10" fill="#005ce6" />
+              
+              <rect x="70" y="0" width="30" height="30" fill="#005ce6" rx="2" />
+              <rect x="76" y="6" width="18" height="18" fill="#fff" rx="1" />
+              <rect x="80" y="10" width="10" height="10" fill="#005ce6" />
+              
+              <rect x="0" y="70" width="30" height="30" fill="#005ce6" rx="2" />
+              <rect x="6" y="76" width="18" height="18" fill="#fff" rx="1" />
+              <rect x="10" y="80" width="10" height="10" fill="#005ce6" />
+              
+              <rect x="36" y="6" width="8" height="8" fill="#0f172a" />
+              <rect x="48" y="6" width="8" height="8" fill="#0f172a" />
+              <rect x="36" y="18" width="8" height="8" fill="#0f172a" />
+              <rect x="56" y="18" width="8" height="8" fill="#0f172a" />
+              <rect x="36" y="36" width="28" height="28" fill="#005ce6" rx="4" />
+              <circle cx="50" cy="50" r="8" fill="#fff" />
+              
+              <rect x="6" y="36" width="8" height="8" fill="#0f172a" />
+              <rect x="18" y="48" width="8" height="8" fill="#0f172a" />
+              <rect x="76" y="36" width="8" height="8" fill="#0f172a" />
+              <rect x="88" y="48" width="8" height="8" fill="#0f172a" />
+              
+              <rect x="36" y="76" width="8" height="8" fill="#0f172a" />
+              <rect x="48" y="88" width="8" height="8" fill="#0f172a" />
+              <rect x="68" y="76" width="8" height="8" fill="#0f172a" />
+              <rect x="80" y="88" width="8" height="8" fill="#0f172a" />
+            </svg>
+          </div>
+
+          <!-- Account Details -->
+          <div style="flex: 1; min-width: 180px;">
+            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Account Name</div>
+            <div style="font-size: 14.5px; font-weight: 800; color: #fff; margin-bottom: 8px;">FlexiTap POS / Jeffrey Datul</div>
+            
+            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">GCash Mobile Number</div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 800; color: #60a5fa;" id="gcash-number-display">0966 224 8178</span>
+              <button type="button" class="copy-pill-btn" onclick="copyGcashNumber()" id="copy-gcash-btn">📋 Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: VERIFICATION FORM -->
+      <div id="gcash-submit-section">
+        <div style="font-size: 12.5px; font-weight: 800; color: #93c5fd; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">
+          Step 2: Submit Verification Reference
+        </div>
+
+        <form id="gcash-verification-form" onsubmit="handleGcashVerificationSubmit(event)">
+          <label for="gcash-ref-input">GCash 13-Digit Reference Number *</label>
+          <input type="text" id="gcash-ref-input" required placeholder="e.g. 9023 4819 2831 2" maxlength="24" style="font-family: 'JetBrains Mono', monospace; font-size: 15px; letter-spacing: 1px;" />
+
+          <label for="gcash-sender-input">GCash Sender Name or Mobile Number *</label>
+          <input type="text" id="gcash-sender-input" required placeholder="e.g. Juan Dela Cruz / 0917XXXXXXX" />
+
+          <div class="checkbox-wrap" style="margin-top: 2px;">
+            <input type="checkbox" id="gcash-confirm-check" required checked>
+            <label for="gcash-confirm-check">I confirm that I have sent the exact amount to the official FlexiTap GCash account.</label>
+          </div>
+
+          <button type="submit" class="submit-btn" id="gcash-submit-btn" style="background: #2563eb; margin-top: 6px;">
+            Submit Payment for Instant Verification ⚡
+          </button>
+        </form>
+        <div id="gcash-modal-error" class="error-msg"></div>
+      </div>
+
+      <!-- STEP 3: SUBMITTED CONFIRMATION (Hidden initially) -->
+      <div id="gcash-confirmed-section" style="display: none; text-align: center; padding: 12px 6px;">
+        <div style="width: 56px; height: 56px; margin: 0 auto 14px; background: rgba(16, 185, 129, 0.2); border: 2px solid #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #34d399; font-size: 26px;">
+          ✓
+        </div>
+        <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">GCash Payment Submitted!</h3>
+        <p style="font-size: 13.5px; color: #cbd5e1; line-height: 1.5; margin-bottom: 16px;">
+          Salamat! Reference <strong style="color: #60a5fa;" id="gcash-confirmed-ref">#...</strong> has been sent to our engineering care desk for verification.
+        </p>
+        
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px; text-align: left; font-size: 13px; color: #94a3b8; line-height: 1.6; margin-bottom: 20px;">
+          ⏱️ <strong>Activation SLA:</strong> Local GCash payments are verified within <strong>15–30 minutes</strong> during store hours. Your plan entitlements and Cloud Back Office are unlocked automatically upon confirmation.
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+          <button type="button" class="submit-btn" onclick="window.location.href='portal.html'" style="flex: 1; min-width: 180px;">
+            Enter Merchant Back Office &rarr;
+          </button>
+          <button type="button" class="btn-card-action secondary" onclick="closeModal('gcash-payment-modal')" style="flex: 1; min-width: 140px;">
+            Close Window
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 
