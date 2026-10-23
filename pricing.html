@@ -247,7 +247,39 @@
     .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.14); padding: 36px 28px; border-radius: 20px; width: 100%; max-width: 460px; position: relative; text-align: center; margin: auto; max-height: 92vh; overflow-y: auto; }
     .close-btn { position: absolute; top: 18px; right: 18px; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
     label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
-    input:not([type="checkbox"]), select { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: white; font-size: 14.5px; box-sizing: border-box; }
+    input:not([type="checkbox"]), select { 
+      width: 100%; 
+      padding: 12px 14px; 
+      margin-bottom: 18px; 
+      background: #090d16; 
+      border: 1px solid rgba(255, 255, 255, 0.16); 
+      border-radius: 10px; 
+      color: #ffffff; 
+      font-size: 14.5px; 
+      box-sizing: border-box; 
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:not([type="checkbox"]):focus, select:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    }
+    select option {
+      background-color: #0b1120;
+      color: #f8fafc;
+      padding: 10px 14px;
+    }
+    #signup-tier {
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 14px;
+      padding-right: 38px;
+    }
     .checkbox-wrap { display: flex; align-items: flex-start; gap: 10px; margin: 4px 0 20px; text-align: left; }
     .checkbox-wrap input[type="checkbox"] { width: 18px; height: 18px; min-width: 18px; margin-top: 2px; accent-color: var(--primary); cursor: pointer; }
     .checkbox-wrap label { display: inline; font-size: 12.5px; line-height: 1.5; color: #cbd5e1; font-weight: 400; margin-bottom: 0; cursor: pointer; }
@@ -590,6 +622,15 @@
         return;
       }
 
+      // Fast check: Asia/Manila client timezone
+      try {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (tz === 'Asia/Manila') {
+          setCurrency('PHP', false, true);
+          return;
+        }
+      } catch (_) {}
+
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 1600);
@@ -707,7 +748,7 @@
       const selectEl = document.getElementById('signup-tier');
       if (!selectEl) return;
 
-      const previousVal = selectedKey || selectEl.value;
+      const previousVal = selectedKey || selectEl.value || 'free';
 
       if (currentCurrency === 'PHP') {
         selectEl.innerHTML = `
@@ -725,19 +766,21 @@
         `;
       }
 
-      if (previousVal) {
-        if (previousVal.includes('pro')) {
-          selectEl.value = (currentCurrency === 'PHP') 
-            ? (currentBillingCycle === 'annual' ? 'php_pro_annual' : 'php_pro_monthly') 
-            : 'pri_01m1pb6ba15axyr7acv0hswynd';
-        } else if (previousVal.includes('plus')) {
-          selectEl.value = (currentCurrency === 'PHP') 
-            ? (currentBillingCycle === 'annual' ? 'php_plus_annual' : 'php_plus_monthly') 
-            : 'pri_01m1pb8szpcf4vapm28yfzw9aq';
-        } else {
-          selectEl.value = 'free';
-        }
+      const pVal = String(previousVal).toLowerCase();
+      if (pVal === 'free') {
+        selectEl.value = 'free';
+      } else if (pVal.includes('pro') || pVal === 'pri_01m1pb6ba15axyr7acv0hswynd') {
+        selectEl.value = (currentCurrency === 'PHP') 
+          ? ((pVal.includes('annual') || currentBillingCycle === 'annual') ? 'php_pro_annual' : 'php_pro_monthly') 
+          : 'pri_01m1pb6ba15axyr7acv0hswynd';
+      } else if (pVal.includes('plus') || pVal === 'pri_01m1pb8szpcf4vapm28yfzw9aq') {
+        selectEl.value = (currentCurrency === 'PHP') 
+          ? ((pVal.includes('annual') || currentBillingCycle === 'annual') ? 'php_plus_annual' : 'php_plus_monthly') 
+          : 'pri_01m1pb8szpcf4vapm28yfzw9aq';
+      } else {
+        selectEl.value = 'free';
       }
+
       syncModalState();
     }
 
@@ -748,29 +791,31 @@
       const termsCheckbox = document.getElementById('signup-terms');
       if (!selectEl || !btnText) return;
 
-      const val = selectEl.value;
+      const val = selectEl.value || 'free';
+      const isPlus = val.includes('plus') || val === 'pri_01m1pb8szpcf4vapm28yfzw9aq';
+      const isPro = val.includes('pro') || val === 'pri_01m1pb6ba15axyr7acv0hswynd';
 
-      if (val === 'free') {
-        btnText.innerText = 'Join Free Launch Waitlist';
-        helper.innerText = 'No credit card required. You will receive access on November 13, 2026.';
-      } else if (val.includes('plus')) {
-        if (currentCurrency === 'PHP') {
+      if (isPlus) {
+        if (currentCurrency === 'PHP' || val.startsWith('php_')) {
           const isAnnual = val.includes('annual');
           btnText.innerText = isAnnual ? 'Lock In Plus Annual (₱14,990)' : 'Lock In Plus Plan (₱1,299/mo)';
-          helper.innerText = 'Includes 7-day shift guarantee. Pay securely via GCash with instant manual verification.';
+          if (helper) helper.innerText = 'Includes 7-day shift guarantee. Pay securely via GCash with instant manual verification.';
         } else {
           btnText.innerText = 'Lock In Plus VIP Pass ($290/yr)';
-          helper.innerText = 'Includes 100% money-back guarantee after your first live week via Paddle.';
+          if (helper) helper.innerText = 'Includes 100% money-back guarantee after your first live week via Paddle.';
         }
-      } else if (val.includes('pro')) {
-        if (currentCurrency === 'PHP') {
+      } else if (isPro) {
+        if (currentCurrency === 'PHP' || val.startsWith('php_')) {
           const isAnnual = val.includes('annual');
           btnText.innerText = isAnnual ? 'Lock In Pro Annual (₱28,990)' : 'Lock In Pro Plan (₱2,499/mo)';
-          helper.innerText = 'Includes white-glove menu migration and direct engineer standby via GCash.';
+          if (helper) helper.innerText = 'Includes white-glove menu migration and direct engineer standby via GCash.';
         } else {
           btnText.innerText = 'Lock In Pro VIP Pass ($590/yr)';
-          helper.innerText = 'Includes full menu migration and phone/remote standby access via Paddle.';
+          if (helper) helper.innerText = 'Includes full menu migration and phone/remote standby access via Paddle.';
         }
+      } else {
+        btnText.innerText = 'Join Free Launch Waitlist';
+        if (helper) helper.innerText = 'No credit card required. You will receive access on November 13, 2026.';
       }
 
       if (termsCheckbox) {
@@ -780,14 +825,20 @@
 
     function openSignupModalWithPlan(planKey) {
       let targetVal = 'free';
-      if (planKey === 'plus' || planKey.includes('plus') || planKey.includes('pri_01m1pb8szpcf4vapm28yfzw9aq')) {
-        targetVal = (currentCurrency === 'PHP') 
-          ? (currentBillingCycle === 'annual' ? 'php_plus_annual' : 'php_plus_monthly') 
-          : 'pri_01m1pb8szpcf4vapm28yfzw9aq';
-      } else if (planKey === 'pro' || planKey.includes('pro') || planKey.includes('pri_01m1pb6ba15axyr7acv0hswynd')) {
+      const keyStr = String(planKey || '').toLowerCase();
+      const isPro = keyStr === 'pro' || keyStr.includes('pro') || keyStr === 'pri_01m1pb6ba15axyr7acv0hswynd';
+      const isPlus = keyStr === 'plus' || keyStr.includes('plus') || keyStr === 'pri_01m1pb8szpcf4vapm28yfzw9aq';
+
+      if (isPro) {
         targetVal = (currentCurrency === 'PHP') 
           ? (currentBillingCycle === 'annual' ? 'php_pro_annual' : 'php_pro_monthly') 
           : 'pri_01m1pb6ba15axyr7acv0hswynd';
+      } else if (isPlus) {
+        targetVal = (currentCurrency === 'PHP') 
+          ? (currentBillingCycle === 'annual' ? 'php_plus_annual' : 'php_plus_monthly') 
+          : 'pri_01m1pb8szpcf4vapm28yfzw9aq';
+      } else {
+        targetVal = 'free';
       }
 
       populateSignupSelect(targetVal);
@@ -1162,37 +1213,7 @@
       }
     });
 
-    function syncModalState() {
-      const selectEl = document.getElementById('signup-tier');
-      const btnText = document.getElementById('signup-btn-text');
-      const helper = document.getElementById('modal-intent-helper');
-      const termsCheckbox = document.getElementById('signup-terms');
-      if (!selectEl || !btnText) return;
 
-      if (selectEl.value === 'free') {
-        btnText.innerText = 'Join Free Launch Waitlist';
-        helper.innerText = 'No credit card required. You will receive access on November 13, 2026.';
-      } else if (selectEl.value.includes('pri_01m1pb8szpcf4vapm28yfzw9aq')) {
-        btnText.innerText = 'Lock In Plus VIP Pass ($290/yr)';
-        helper.innerText = 'Includes 100% money-back guarantee after your first live week.';
-      } else {
-        btnText.innerText = 'Lock In Pro VIP Pass ($590/yr)';
-        helper.innerText = 'Includes full menu migration and phone/remote standby access.';
-      }
-
-      if (termsCheckbox) {
-        btnText.disabled = !termsCheckbox.checked;
-      }
-    }
-
-    function openSignupModalWithPlan(priceId) {
-      const selectEl = document.getElementById('signup-tier');
-      if (selectEl) {
-        selectEl.value = priceId;
-      }
-      syncModalState();
-      openModal('signup-modal');
-    }
 
     async function handleStoreSignup(event) {
       event.preventDefault();
@@ -1214,12 +1235,15 @@
       let tierName = 'free';
       let paymentStatus = 'free';
 
-      if (priceId.includes('pri_01m1pb8szpcf4vapm28yfzw9aq')) {
+      const isPlus = priceId.includes('plus') || priceId === 'pri_01m1pb8szpcf4vapm28yfzw9aq';
+      const isPro = priceId.includes('pro') || priceId === 'pri_01m1pb6ba15axyr7acv0hswynd';
+
+      if (isPlus) {
         tierName = 'plus';
-        paymentStatus = 'unpaid';
-      } else if (priceId.includes('pri_01m1pb6ba15axyr7acv0hswynd')) {
+        paymentStatus = (currentCurrency === 'PHP' || priceId.startsWith('php_')) ? 'pending_verification' : 'unpaid';
+      } else if (isPro) {
         tierName = 'pro';
-        paymentStatus = 'unpaid';
+        paymentStatus = (currentCurrency === 'PHP' || priceId.startsWith('php_')) ? 'pending_verification' : 'unpaid';
       }
 
       errorDiv.innerText = '';
@@ -1284,6 +1308,7 @@
             subscription_tier: activeTierOnSignup, 
             pending_tier: pendingTierOnSignup,
             payment_status: paymentStatus, 
+            billing_provider: (currentCurrency === 'PHP' || priceId.startsWith('php_')) ? 'gcash' : 'paddle',
             role: 'owner', 
             onboarding_completed: false 
           }
@@ -1364,7 +1389,7 @@
         return;
       }
 
-      if (currentCurrency === 'PHP') {
+      if (currentCurrency === 'PHP' || (priceId && priceId.startsWith('php_'))) {
         const isAnnual = (priceId && priceId.includes('annual')) || currentBillingCycle === 'annual';
         const amt = (tierName === 'plus') 
           ? (isAnnual ? 14990 : 1299) 
@@ -1959,9 +1984,11 @@
         
         <label>Select Plan</label>
         <select id="signup-tier" required>
-          <option value="free">Free Launch Waitlist ($0 / mo)</option>
-          <option value="pri_01m1pb8szpcf4vapm28yfzw9aq">Plus Founders VIP ($290 / year fixed)</option>
-          <option value="pri_01m1pb6ba15axyr7acv0hswynd">Pro Founders VIP ($590 / year fixed)</option>
+          <option value="free">Free Launch Waitlist (₱0 / mo)</option>
+          <option value="php_plus_monthly">Plus Plan (₱1,299 / month via GCash)</option>
+          <option value="php_plus_annual">Plus Founders Annual (₱14,990 / year via GCash)</option>
+          <option value="php_pro_monthly">Pro Plan (₱2,499 / month via GCash)</option>
+          <option value="php_pro_annual">Pro Founders Annual (₱28,990 / year via GCash)</option>
         </select>
 
         <div class="checkbox-wrap">
