@@ -924,6 +924,12 @@
             </button>
           </li>
           <li>
+            <button class="nav-btn" onclick="switchNav('feedback', this)">
+              <span>💡 Merchant Ideas</span>
+              <span class="nav-badge" id="merchant-feedback-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">0</span>
+            </button>
+          </li>
+          <li>
             <button class="nav-btn" onclick="switchNav('remote', this)">
               <span>📡 Remote Access</span>
             </button>
@@ -1965,6 +1971,81 @@
                   Select a ticket on the left to inspect details, log developer notes, and update resolution.
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= 3.6 MERCHANT IDEAS & FEEDBACK VIEW ================= -->
+        <div id="view-feedback" class="tab-view">
+          <!-- KPI Metrics Row -->
+          <div class="kpi-row" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 20px;">
+            <div class="kpi-card" onclick="filterFeedbackCategory('all')" style="cursor: pointer;" title="Filter by All Ratings">
+              <div class="kpi-title">Average POS Rating</div>
+              <div class="kpi-val" style="color: #fbbf24;" id="kpi-feedback-avg-rating">5.0 ★</div>
+              <div class="kpi-status" style="color: #34d399;" id="kpi-feedback-sentiment">● Excellent Merchant Sentiment</div>
+            </div>
+            <div class="kpi-card" onclick="filterFeedbackCategory('all')" style="cursor: pointer;" title="Show all feedback">
+              <div class="kpi-title">Total Submissions</div>
+              <div class="kpi-val" style="color: var(--primary);" id="kpi-feedback-total">0</div>
+              <div class="kpi-status" style="color: var(--text-muted);">From In-App Terminals</div>
+            </div>
+            <div class="kpi-card" onclick="filterFeedbackCategory('feature_request')" style="cursor: pointer;" title="Filter Feature Ideas">
+              <div class="kpi-title">Feature Requests</div>
+              <div class="kpi-val" style="color: #c084fc;" id="kpi-feedback-features">0</div>
+              <div class="kpi-status" style="color: var(--text-muted);">💡 Merchant Ideas &amp; Additions</div>
+            </div>
+            <div class="kpi-card" onclick="filterFeedbackCategory('ux_improvement')" style="cursor: pointer;" title="Filter UX Improvements">
+              <div class="kpi-title">UX &amp; Flow Improvements</div>
+              <div class="kpi-val" style="color: #60a5fa;" id="kpi-feedback-ux">0</div>
+              <div class="kpi-status" style="color: var(--text-muted);">⚡ Speed &amp; Layout Polish</div>
+            </div>
+            <div class="kpi-card" onclick="filterFeedbackCategory('bug')" style="cursor: pointer;" title="Filter Bugs & Friction">
+              <div class="kpi-title">Friction &amp; Bugs</div>
+              <div class="kpi-val" style="color: #f87171;" id="kpi-feedback-bugs">0</div>
+              <div class="kpi-status" style="color: #f87171;">🐞 Merchant Reported Points</div>
+            </div>
+          </div>
+
+          <!-- Main Panel -->
+          <div class="panel">
+            <div class="panel-header" style="flex-wrap: wrap; gap: 12px; margin-bottom: 18px;">
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <input type="text" id="feedback-search" onkeyup="filterFeedbackList()" placeholder="Search by store, keyword, or title..." style="padding: 8px 14px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; width: 260px;">
+                
+                <select id="feedback-filter-category" onchange="filterFeedbackList()" style="background: var(--bg); border: 1px solid var(--card-border); color: #fff; padding: 7px 12px; border-radius: 8px; font-size: 0.85rem;">
+                  <option value="all">All Categories</option>
+                  <option value="feature_request">💡 Feature Request</option>
+                  <option value="ux_improvement">⚡ UX / Flow Improvement</option>
+                  <option value="bug">🐞 Friction / Bug</option>
+                  <option value="general_feedback">⭐ General Feedback</option>
+                </select>
+
+                <select id="feedback-filter-status" onchange="filterFeedbackList()" style="background: var(--bg); border: 1px solid var(--card-border); color: #fff; padding: 7px 12px; border-radius: 8px; font-size: 0.85rem;">
+                  <option value="all">All Statuses</option>
+                  <option value="new">New / Unread Only</option>
+                  <option value="under_review">Under Review</option>
+                  <option value="planned">Planned for Next Release</option>
+                  <option value="in_progress">In Development</option>
+                  <option value="shipped">✓ Shipped / Live</option>
+                  <option value="declined">Declined</option>
+                </select>
+
+                <select id="feedback-filter-rating" onchange="filterFeedbackList()" style="background: var(--bg); border: 1px solid var(--card-border); color: #fff; padding: 7px 12px; border-radius: 8px; font-size: 0.85rem;">
+                  <option value="all">All Ratings (1-5 ★)</option>
+                  <option value="5">★★★★★ 5 Stars Only</option>
+                  <option value="4">★★★★☆ 4 Stars &amp; Up</option>
+                  <option value="3">★★★☆☆ 3 Stars or Less (Friction)</option>
+                </select>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <button class="action-btn" onclick="fetchMerchantFeedback()">🔄 Refresh Feed</button>
+              </div>
+            </div>
+
+            <!-- Feedback Feed Container -->
+            <div id="feedback-feed-container" style="display: flex; flex-direction: column; gap: 14px;">
+              <div style="text-align: center; color: var(--text-muted); padding: 32px;">Loading merchant feedback...</div>
             </div>
           </div>
         </div>
@@ -3373,6 +3454,7 @@
       updates: { title: 'App Updates & Storage Releases', subtitle: 'Listen directly to Supabase storage releases, inspect APKs/binaries, and publish OTA payloads.' },
       support: { title: 'Live Merchant Support Desk', subtitle: 'Reply directly to paying Plus & Pro merchants in real time.' },
       tickets: { title: 'Support Tickets & Issue Resolution', subtitle: 'Create tickets, log internal dev notes, update statuses, and resolve merchant issues.' },
+      feedback: { title: 'Merchant Feedback & Feature Requests', subtitle: 'Review in-app merchant ratings, feature suggestions, UX feedback, and developer triage.' },
       remote: { title: 'Remote Access & Diagnostics', subtitle: 'Send real-time ADB commands, clear caches, and inspect remote device state.' },
       monitoring: { title: 'Telemetry & Sockets Monitoring', subtitle: 'Live Supabase real-time channels, API latencies, and sync performance.' },
       errors: { title: 'Exception Log & Sync Repairs', subtitle: 'Diagnose SQLite/Supabase conflicts, schema mismatches, and failed upserts.' },
@@ -3441,6 +3523,9 @@
       if (key === 'clients') loadDevData();
       if (key === 'partners') loadPartnersAdminData();
       if (key === 'support') loadSupportDeskSessions();
+      if (key === 'feedback') {
+        fetchMerchantFeedback();
+      }
       if (key === 'tickets') {
         const effRole = typeof getEffectiveRole === 'function' ? getEffectiveRole() : 'admin';
         if (effRole === 'support' || effRole === 'customer_support' || effRole === 'agent') {
@@ -8772,18 +8857,18 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
 
       // Default role fallback:
       if (r === 'dev' || r === 'developer' || r === 'devops') {
-        return ['dashboard', 'clients', 'updates', 'support', 'tickets', 'remote', 'monitoring', 'errors', 'analytics', 'chat', 'workforce', 'partners'].includes(tabKey);
+        return ['dashboard', 'clients', 'updates', 'support', 'tickets', 'feedback', 'remote', 'monitoring', 'errors', 'analytics', 'chat', 'workforce', 'partners'].includes(tabKey);
       }
 
       if (r === 'support' || r === 'agent' || r === 'customer_support' || r === 'technician' || r === 'tech') {
-        return ['dashboard', 'clients', 'support', 'tickets', 'remote', 'chat', 'workforce', 'partners'].includes(tabKey);
+        return ['dashboard', 'clients', 'support', 'tickets', 'feedback', 'remote', 'chat', 'workforce', 'partners'].includes(tabKey);
       }
       return false;
     }
 
     // Hide sidebar navigation tabs completely if not in an employee's RBAC scope
     function updateSidebarNavVisibility() {
-      const allTabs = ['dashboard', 'clients', 'updates', 'support', 'tickets', 'remote', 'monitoring', 'errors', 'analytics', 'sla', 'chat', 'workforce', 'team', 'partners'];
+      const allTabs = ['dashboard', 'clients', 'updates', 'support', 'tickets', 'feedback', 'remote', 'monitoring', 'errors', 'analytics', 'sla', 'chat', 'workforce', 'team', 'partners'];
 
       allTabs.forEach(function(key) {
         const allowed = isTabAllowedForRole(key);
@@ -12912,6 +12997,9 @@ Role: ${lastProvisionedCreds.role}`;
       if ((!cachedTickets || cachedTickets.length === 0) && typeof fetchTickets === 'function') {
         try { await fetchTickets(); } catch (e) {}
       }
+      if (typeof fetchMerchantFeedback === 'function') {
+        try { await fetchMerchantFeedback(); } catch (e) {}
+      }
 
       updateDashboardHeader();
       updateDashboardPunchClockUI();
@@ -14325,3 +14413,262 @@ Role: ${lastProvisionedCreds.role}`;
   </div>
 </body>
 </html>
+
+    // =========================================================================
+    // MERCHANT IN-APP FEEDBACK & FEATURE REQUEST ENGINE
+    // =========================================================================
+    let allMerchantFeedback = [];
+
+    async function fetchMerchantFeedback() {
+      const container = document.getElementById('feedback-feed-container');
+      if (container && allMerchantFeedback.length === 0) {
+        container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 32px;"><span class="spinner" style="display:inline-block; margin-right: 8px;"></span>Loading merchant feedback & suggestions...</div>';
+      }
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('merchant_feedback')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        allMerchantFeedback = data || [];
+
+        renderFeedbackKPIs();
+        renderFeedbackFeed();
+      } catch (err) {
+        console.warn('Merchant feedback notice:', err);
+        if (container) {
+          container.innerHTML = `
+            <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 22px; text-align: center;">
+              <div style="font-weight: 700; color: #93c5fd; margin-bottom: 6px;">💡 Merchant Feedback Engine Ready</div>
+              <div style="font-size: 0.85rem; color: #cbd5e1; max-width: 580px; margin: 0 auto; line-height: 1.5;">
+                No merchant feedback records found yet, or the <code>merchant_feedback</code> database table is pending execution.
+                Run <code>supabase_merchant_feedback_migration.sql</code> in your Supabase SQL editor to enable real-time storage.
+              </div>
+            </div>
+          `;
+        }
+      }
+    }
+
+    function renderFeedbackKPIs() {
+      const total = allMerchantFeedback.length;
+      let sumRating = 0;
+      let countWithRating = 0;
+      let featuresCount = 0;
+      let uxCount = 0;
+      let bugsCount = 0;
+      let newCount = 0;
+
+      allMerchantFeedback.forEach(item => {
+        if (item.rating && item.rating > 0) {
+          sumRating += Number(item.rating);
+          countWithRating++;
+        }
+        if (item.category === 'feature_request') featuresCount++;
+        else if (item.category === 'ux_improvement') uxCount++;
+        else if (item.category === 'bug') bugsCount++;
+
+        if (item.status === 'new') newCount++;
+      });
+
+      const avg = countWithRating > 0 ? (sumRating / countWithRating).toFixed(1) : '5.0';
+
+      const avgEl = document.getElementById('kpi-feedback-avg-rating');
+      const sentEl = document.getElementById('kpi-feedback-sentiment');
+      const totEl = document.getElementById('kpi-feedback-total');
+      const featEl = document.getElementById('kpi-feedback-features');
+      const uxEl = document.getElementById('kpi-feedback-ux');
+      const bugsEl = document.getElementById('kpi-feedback-bugs');
+      const badgeEl = document.getElementById('merchant-feedback-badge');
+
+      if (avgEl) avgEl.textContent = `${avg} ★`;
+      if (sentEl) {
+        sentEl.textContent = avg >= 4.5 ? '● High Merchant Satisfaction' : (avg >= 3.5 ? '● Moderate Satisfaction' : '● Attention Needed');
+        sentEl.style.color = avg >= 4.5 ? '#34d399' : (avg >= 3.5 ? '#fbbf24' : '#f87171');
+      }
+      if (totEl) totEl.textContent = total;
+      if (featEl) featEl.textContent = featuresCount;
+      if (uxEl) uxEl.textContent = uxCount;
+      if (bugsEl) bugsEl.textContent = bugsCount;
+
+      if (badgeEl) {
+        badgeEl.textContent = newCount;
+        badgeEl.style.display = newCount > 0 ? 'inline-block' : 'none';
+      }
+    }
+
+    function filterFeedbackCategory(cat) {
+      const catSelect = document.getElementById('feedback-filter-category');
+      if (catSelect) {
+        catSelect.value = cat;
+        filterFeedbackList();
+      }
+    }
+
+    function filterFeedbackList() {
+      renderFeedbackFeed();
+    }
+
+    function renderFeedbackFeed() {
+      const container = document.getElementById('feedback-feed-container');
+      if (!container) return;
+
+      const searchInput = document.getElementById('feedback-search');
+      const catSelect = document.getElementById('feedback-filter-category');
+      const statusSelect = document.getElementById('feedback-filter-status');
+      const ratingSelect = document.getElementById('feedback-filter-rating');
+
+      const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      const cat = catSelect ? catSelect.value : 'all';
+      const status = statusSelect ? statusSelect.value : 'all';
+      const ratingFilter = ratingSelect ? ratingSelect.value : 'all';
+
+      const filtered = allMerchantFeedback.filter(item => {
+        // Query search
+        if (query) {
+          const matchStore = (item.store_name || '').toLowerCase().includes(query);
+          const matchTitle = (item.title || '').toLowerCase().includes(query);
+          const matchDesc = (item.description || '').toLowerCase().includes(query);
+          const matchEmail = (item.merchant_email || '').toLowerCase().includes(query);
+          if (!matchStore && !matchTitle && !matchDesc && !matchEmail) return false;
+        }
+
+        // Category filter
+        if (cat !== 'all' && item.category !== cat) return false;
+
+        // Status filter
+        if (status !== 'all' && item.status !== status) return false;
+
+        // Rating filter
+        if (ratingFilter !== 'all') {
+          const r = Number(item.rating || 5);
+          if (ratingFilter === '5' && r !== 5) return false;
+          if (ratingFilter === '4' && r < 4) return false;
+          if (ratingFilter === '3' && r > 3) return false;
+        }
+
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="background: rgba(255, 255, 255, 0.02); border: 1px dashed var(--card-border); border-radius: 14px; padding: 36px; text-align: center; color: var(--text-muted);">
+            <div style="font-size: 1.8rem; margin-bottom: 8px;">🔍</div>
+            <div style="font-weight: 700; color: #fff; margin-bottom: 4px;">No matching feedback found</div>
+            <div style="font-size: 0.85rem;">Try adjusting your search terms or filters above.</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => {
+        // Category Badge
+        let catBadge = `<span style="background: rgba(139, 92, 246, 0.2); color: #c084fc; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;">💡 Feature Idea</span>`;
+        if (item.category === 'ux_improvement') {
+          catBadge = `<span style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;">⚡ UX / Flow</span>`;
+        } else if (item.category === 'bug') {
+          catBadge = `<span style="background: rgba(239, 68, 68, 0.2); color: #f87171; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;">🐞 Friction / Bug</span>`;
+        } else if (item.category === 'general_feedback') {
+          catBadge = `<span style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;">⭐ General Rating</span>`;
+        }
+
+        // Impact Badge
+        let impactBadge = `<span style="background: rgba(59, 130, 246, 0.15); color: #93c5fd; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; font-weight: 600;">Important</span>`;
+        if (item.impact_level === 'critical') {
+          impactBadge = `<span style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; font-weight: 800;">⚡ Critical Impact</span>`;
+        } else if (item.impact_level === 'nice_to_have') {
+          impactBadge = `<span style="background: rgba(255, 255, 255, 0.08); color: #94a3b8; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px;">Nice to Have</span>`;
+        }
+
+        // Stars Render
+        const r = Number(item.rating || 5);
+        const starsText = '★'.repeat(r) + '☆'.repeat(5 - r);
+
+        // Date
+        const dateStr = item.created_at ? new Date(item.created_at).toLocaleString() : 'Recently';
+
+        // Escaped strings
+        const titleSafe = (item.title || 'Untitled Feedback').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const descSafe = (item.description || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>');
+        const storeSafe = (item.store_name || 'Store').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const emailSafe = (item.merchant_email || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+        return `
+          <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px 20px; transition: border-color 0.2s;">
+            <!-- Top Card Header -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                ${catBadge}
+                ${impactBadge}
+                <span style="font-weight: 800; color: #fff; font-size: 0.95rem;">🏪 ${storeSafe}</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: #fbbf24; font-size: 1.1rem; letter-spacing: 2px;" title="${r} out of 5 stars">${starsText}</span>
+                <span style="font-size: 0.78rem; color: var(--text-muted);">${dateStr}</span>
+              </div>
+            </div>
+
+            <!-- Title & Description -->
+            <div style="font-size: 1rem; font-weight: 800; color: #f8fafc; margin-bottom: 8px;">
+              ${titleSafe}
+            </div>
+            <div style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.55; margin-bottom: 16px; background: rgba(0, 0, 0, 0.2); padding: 12px 14px; border-radius: 10px; border-left: 3px solid var(--primary);">
+              ${descSafe}
+            </div>
+
+            <!-- Footer Metadata & Interactive Controls -->
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.8rem; color: var(--text-muted);">
+              <!-- Device & Platform Pill -->
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span>💻 ${item.platform || 'Desktop'} (${item.app_version || 'POS'})</span>
+                <span>•</span>
+                <span>Role: <strong>${item.device_role || 'Master'}</strong></span>
+                ${emailSafe ? `<span>•</span><span>✉️ <a href="mailto:${emailSafe}?subject=Re: Your FlexiTap Feedback (${encodeURIComponent(item.title || 'Feature Request')})" style="color: #60a5fa; text-decoration: underline;">${emailSafe}</a></span>` : ''}
+              </div>
+
+              <!-- Status Changer & Quick Actions -->
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">Status:</span>
+                <select onchange="updateFeedbackStatus('${item.id}', this.value)" style="background: var(--bg); border: 1px solid var(--card-border); color: #fff; padding: 6px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">
+                  <option value="new" ${item.status === 'new' ? 'selected' : ''}>🟡 New / Unread</option>
+                  <option value="under_review" ${item.status === 'under_review' ? 'selected' : ''}>🔵 Under Review</option>
+                  <option value="planned" ${item.status === 'planned' ? 'selected' : ''}>🟣 Planned for Release</option>
+                  <option value="in_progress" ${item.status === 'in_progress' ? 'selected' : ''}>🟠 In Development</option>
+                  <option value="shipped" ${item.status === 'shipped' ? 'selected' : ''}>🟢 Shipped / Live</option>
+                  <option value="declined" ${item.status === 'declined' ? 'selected' : ''}>⚪ Declined</option>
+                </select>
+
+                ${emailSafe ? `
+                  <a href="mailto:${emailSafe}?subject=Re: Your FlexiTap Idea (${encodeURIComponent(item.title || '')})&body=Hi ${encodeURIComponent(storeSafe)} team,%0D%0A%0D%0AThank you for sharing your feedback regarding: %22${encodeURIComponent(item.title || '')}%22.%0D%0A%0D%0A" 
+                     class="action-btn" style="text-decoration: none; padding: 6px 12px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 4px; background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.4); color: #60a5fa;">
+                    ✉️ Reply
+                  </a>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function updateFeedbackStatus(feedbackId, newStatus) {
+      try {
+        const { error } = await supabaseClient
+          .from('merchant_feedback')
+          .update({ status: newStatus, updated_at: new Date().toISOString() })
+          .eq('id', feedbackId);
+
+        if (error) throw error;
+
+        // Update local cache
+        const target = allMerchantFeedback.find(f => f.id === feedbackId);
+        if (target) target.status = newStatus;
+
+        renderFeedbackKPIs();
+        renderFeedbackFeed();
+      } catch (err) {
+        alert('Failed to update status: ' + err.message);
+      }
+    }
