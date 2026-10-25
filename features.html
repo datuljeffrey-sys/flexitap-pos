@@ -598,7 +598,7 @@
         <span class="hero-dot"></span> Complete Multi-Vertical Ecosystem
       </div>
       <h1 class="section-title">One Unified Operating System.<br>F&B, Retail, and Appointments.</h1>
-      <p class="section-subtitle">From barcode-scanning retail boutiques and appointment-based spas to high-turnover cafes and multi-station kitchens—FlexiTap adapts natively to your business.</p>
+      <p class="section-subtitle">From barcode-scanning retail pop-ups and 24/7 social DM intake to appointment-based spas and multi-station kitchens—FlexiTap runs your operation around the clock.</p>
     </section>
 
     <!-- LIVE PRODUCT SHOWCASES WITH REAL SCREENSHOTS & OVERLAYS -->
@@ -648,6 +648,56 @@
             <div>
               <div style="font-size: 11.5px; font-weight: 700; color: #fff;">Parked Sales Hub</div>
               <div style="font-size: 10px; color: #94a3b8;">Zero Wait Time for Next Customer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- SHOWCASE: 24/7 RETAIL ONLINE & SOCIAL COMMERCE -->
+      <div class="showcase-row reversed">
+        <div class="screen-mockup-wrapper">
+          <div class="window-header">
+            <div class="window-dots">
+              <div class="window-dot dot-red"></div>
+              <div class="window-dot dot-yellow"></div>
+              <div class="window-dot dot-green"></div>
+            </div>
+            <div class="window-title">FlexiTap — 24/7 Online &amp; Social Commerce Desk</div>
+            <div style="font-size: 11px; color: #10b981; font-weight: 700;">● 24/7 Hub</div>
+          </div>
+          
+          <img src="retail_online.png" alt="FlexiTap 24/7 Online and Social Commerce Hub" class="screenshot-img" />
+
+          <div class="screen-overlay-badge top-right">
+            <div style="font-size: 16px;">💬</div>
+            <div>
+              <div style="font-size: 11px; font-weight: 800; color: #fff;">SOCIAL DM INTAKE</div>
+              <div style="font-size: 10px; color: #cbd5e1;">Instagram, FB &amp; WhatsApp Orders</div>
+            </div>
+          </div>
+
+          <div class="screen-overlay-badge bottom-left">
+            <div style="font-size: 16px;">🚚</div>
+            <div>
+              <div style="font-size: 11.5px; font-weight: 700; color: #fff;">3-Lane Fulfillment</div>
+              <div style="font-size: 10px; color: #94a3b8;">To Pack, Courier Ready &amp; Dispatched</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="showcase-content">
+          <div class="pill-indicator" style="color: #10b981; background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.25);">24/7 Dual-Mode Operations</div>
+          <h3>Pop-Up Register by Day, Online Desk by Night</h3>
+          <p>Never disconnect from your business when your physical booth packs up. Switch seamlessly into the 3-column Online Desk to intake customer orders directly from Instagram and WhatsApp DMs, verify e-wallet payment slips (GCash, Maya, Bank Transfer), soft-reserve inventory to eliminate double-selling, and generate courier waybills.</p>
+          <div class="showcase-metrics">
+            <div class="metric-item">
+              <strong>3-Column Desk</strong>
+              <span>Intake, Queue &amp; Dispatch</span>
+            </div>
+            <div class="metric-item">
+              <strong>Zero Leakage</strong>
+              <span>Payment Proof Lightbox</span>
             </div>
           </div>
         </div>
@@ -1004,7 +1054,8 @@
       <p style="color: var(--text-muted); font-size: 14.5px; margin-bottom: 28px;">Switch effortlessly between restaurant tables, retail barcodes, and spa appointment schedules.</p>
       
       <div class="workflow-toggle-wrap">
-        <button class="workflow-btn active" id="wf-btn-retail" onclick="switchWorkflow('retail')">🏷️ Retail &amp; Convenience</button>
+        <button class="workflow-btn active" id="wf-btn-retail" onclick="switchWorkflow('retail')">🏷️ Retail Register</button>
+        <button class="workflow-btn" id="wf-btn-social" onclick="switchWorkflow('social')">🌐 24/7 Online &amp; Social Desk</button>
         <button class="workflow-btn" id="wf-btn-services" onclick="switchWorkflow('services')">💆 Appointments &amp; Services</button>
         <button class="workflow-btn" id="wf-btn-fb" onclick="switchWorkflow('fb')">🍽️ Food &amp; Beverage (F&amp;B)</button>
       </div>
@@ -1022,6 +1073,22 @@
         <div class="workflow-card">
           <h4>💵 Till Audits &amp; Cash Controls</h4>
           <p>Automated drawer kicks via RJ11, recorded cash drops, and manager PIN authorizations for secure shift reconciliation.</p>
+        </div>
+      </div>
+
+      <!-- 24/7 ONLINE & SOCIAL DESK CARDS -->
+      <div class="workflow-view" id="wf-social">
+        <div class="workflow-card">
+          <h4>💬 Instagram &amp; Social DM Intake</h4>
+          <p>Build orders on the fly from customer DMs with customer social handles, contact numbers, delivery addresses, and custom discounts.</p>
+        </div>
+        <div class="workflow-card">
+          <h4>💳 GCash &amp; Bank Slip Verification</h4>
+          <p>Review customer payment screenshots directly in an integrated lightbox viewer with reference number validation before marking paid.</p>
+        </div>
+        <div class="workflow-card">
+          <h4>🚚 3-Lane Fulfillment &amp; Waybills</h4>
+          <p>Pack parcels, generate courier waybills, and dispatch couriers with automated inventory hold release timers to prevent double-selling.</p>
         </div>
       </div>
 
@@ -1256,6 +1323,9 @@
       if (type === 'retail') { 
         document.getElementById('wf-btn-retail').classList.add('active'); 
         document.getElementById('wf-retail').classList.add('active'); 
+      } else if (type === 'social') { 
+        document.getElementById('wf-btn-social').classList.add('active'); 
+        document.getElementById('wf-social').classList.add('active'); 
       } else if (type === 'services') { 
         document.getElementById('wf-btn-services').classList.add('active'); 
         document.getElementById('wf-services').classList.add('active'); 
