@@ -822,8 +822,14 @@
 
       <div class="sidebar-footer">
         <div class="store-info">
-          <div>
-            <div id="store-name-display" style="font-weight: 700; color: #fff;">My Store</div>
+          <div style="flex: 1; min-width: 0;">
+            <div id="store-name-display" onclick="promptEditStoreDetails()" title="Click to rename store" style="font-weight: 700; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+              <span id="store-name-text">My Store</span>
+              <span style="font-size: 11px; opacity: 0.7;">✏️</span>
+            </div>
+            <div id="store-id-display" onclick="copyStoreId()" title="Click to copy Store ID" style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #94a3b8; cursor: pointer; margin-top: 3px; display: flex; align-items: center; gap: 4px;">
+              <span>ID:</span> <span id="store-id-val" style="max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">---</span> <span style="font-size: 10px;">📋</span>
+            </div>
             <div class="tier" id="store-tier-display">PRO EDITION</div>
           </div>
           <span class="status-badge">● ONLINE</span>
@@ -1684,7 +1690,7 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Store DBA Name</label>
-                <input type="text" id="mt-store" readonly style="width: 100%; padding: 11px 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; font-size: 14px;" />
+                <input type="text" id="mt-store" required style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px;" onchange="updateStoreNameFromTicket(this.value)" placeholder="Enter your Store DBA Name" />
               </div>
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Contact Email *</label>
@@ -3070,8 +3076,25 @@
       };
 
       if (resp.storeName) {
-        document.getElementById('store-name-display').innerText = resp.storeName;
-        document.getElementById('zread-store-name').innerText = resp.storeName;
+        activeStore.name = resp.storeName;
+        localStorage.setItem('flexitap_store_name', resp.storeName);
+        const storeTextEl = document.getElementById('store-name-text') || document.getElementById('store-name-display');
+        if (storeTextEl) storeTextEl.innerText = resp.storeName;
+        const zreadStoreEl = document.getElementById('zread-store-name');
+        if (zreadStoreEl) zreadStoreEl.innerText = resp.storeName;
+        const mtStoreInp = document.getElementById('mt-store');
+        if (mtStoreInp && (!mtStoreInp.value || mtStoreInp.value === 'My Store' || mtStoreInp.value.includes('Merchant Store'))) {
+          mtStoreInp.value = resp.storeName;
+        }
+      }
+      if (resp.storeId) {
+        activeStore.id = resp.storeId;
+        localStorage.setItem('flexitap_store_id', resp.storeId);
+        const storeIdValEl = document.getElementById('store-id-val');
+        if (storeIdValEl) {
+          storeIdValEl.innerText = resp.storeId.length > 18 ? resp.storeId.substring(0, 14) + '...' : resp.storeId;
+          storeIdValEl.title = resp.storeId;
+        }
       }
       if (resp.currency) {
         activeStore.currency_symbol = resp.currency === 'PHP' ? '₱' : '$';
@@ -4692,33 +4715,80 @@
       if (appLayout) appLayout.style.display = 'flex';
 
       try {
+        // Multi-source Store & Profile Resolution
         const { data: store } = await supabaseClient
           .from('stores')
           .select('*')
-          .or(`owner_id.eq.${user.id},user_id.eq.${user.id}`)
+          .or(`owner_id.eq.${user.id},user_id.eq.${user.id},id.eq.${user.id}`)
           .maybeSingle();
 
         const { data: profile } = await supabaseClient
           .from('profiles')
-          .select('subscription_tier, payment_status, role, store_name')
+          .select('subscription_tier, payment_status, role, store_name, store_id')
           .eq('id', user.id)
           .maybeSingle();
 
+        // Check if there are historical daily summaries with an assigned store_id
+        let syncedStoreId = null;
+        try {
+          const { data: latestDaily } = await supabaseClient
+            .from('daily_sales_summaries')
+            .select('store_id')
+            .order('updated_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (latestDaily?.store_id) syncedStoreId = latestDaily.store_id;
+        } catch (_) {}
+
+        const localStoreName = localStorage.getItem('flexitap_store_name');
+        const localStoreId = localStorage.getItem('flexitap_store_id');
+
+        const storeCandidate = (
+          localStoreName ||
+          store?.name ||
+          store?.store_name ||
+          store?.legal_name ||
+          store?.business_name ||
+          profile?.store_name ||
+          ''
+        ).trim();
+
         const emailPrefix = (user.email?.split('@')[0] || '').trim();
         const genericMailboxes = ['info', 'admin', 'support', 'sales', 'contact', 'hello', 'help', 'billing', 'office', 'test', 'user'];
-        const rawCandidateName = (store?.name || profile?.store_name || emailPrefix || '').trim();
-        const resolvedStoreName = (rawCandidateName && !genericMailboxes.includes(rawCandidateName.toLowerCase()))
-          ? rawCandidateName
-          : 'FlexiTap Merchant Store';
+        
+        let resolvedStoreName = storeCandidate;
+        if (!resolvedStoreName || genericMailboxes.includes(resolvedStoreName.toLowerCase())) {
+          if (emailPrefix && !genericMailboxes.includes(emailPrefix.toLowerCase())) {
+            resolvedStoreName = emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1) + ' Store';
+          } else {
+            resolvedStoreName = 'My Store';
+          }
+        }
 
-        activeStore = store ? { ...store, name: resolvedStoreName } : {
-          id: user.id,
+        const resolvedStoreId = localStoreId || store?.id || profile?.store_id || syncedStoreId || user.id;
+
+        activeStore = {
+          id: resolvedStoreId,
           name: resolvedStoreName,
-          currency_symbol: '$'
+          currency_symbol: store?.currency === 'PHP' ? '₱' : (store?.currency_symbol || '₱'),
+          ...(store || {})
         };
+        activeStore.id = resolvedStoreId;
+        activeStore.name = resolvedStoreName;
 
+        const storeTextEl = document.getElementById('store-name-text');
+        if (storeTextEl) storeTextEl.innerText = activeStore.name;
         const storeNameEl = document.getElementById('store-name-display');
-        if (storeNameEl) storeNameEl.innerText = activeStore.name;
+        if (storeNameEl && !storeTextEl) storeNameEl.innerText = activeStore.name;
+
+        const storeIdValEl = document.getElementById('store-id-val');
+        if (storeIdValEl) {
+          storeIdValEl.innerText = activeStore.id.length > 18 ? activeStore.id.substring(0, 14) + '...' : activeStore.id;
+          storeIdValEl.title = activeStore.id;
+        }
+
+        const mtStoreInp = document.getElementById('mt-store');
+        if (mtStoreInp) mtStoreInp.value = activeStore.name;
 
         const paymentStatus = (profile?.payment_status || 'free').toLowerCase();
         let rawTier = (profile?.subscription_tier || 'free').toLowerCase();
@@ -7797,6 +7867,52 @@ Return strictly this valid JSON structure:
       });
 
       svg.innerHTML = svgHtml;
+    }
+
+
+    // --- STORE IDENTITY MANAGEMENT (STORE NAME & STORE ID) ---
+    function promptEditStoreDetails() {
+      const current = activeStore?.name || 'My Store';
+      const newName = prompt('Enter your Store DBA Name:', current);
+      if (newName && newName.trim().length > 0 && newName.trim() !== current) {
+        const trimmed = newName.trim();
+        activeStore.name = trimmed;
+        localStorage.setItem('flexitap_store_name', trimmed);
+        const storeTextEl = document.getElementById('store-name-text') || document.getElementById('store-name-display');
+        if (storeTextEl) storeTextEl.innerText = trimmed;
+        const mtStoreInp = document.getElementById('mt-store');
+        if (mtStoreInp) mtStoreInp.value = trimmed;
+
+        if (supabaseClient && activeUser?.id) {
+          supabaseClient.from('profiles').update({ store_name: trimmed }).eq('id', activeUser.id).then(() => {}).catch(() => {});
+          if (activeStore?.id && activeStore.id !== activeUser.id) {
+            supabaseClient.from('stores').update({ name: trimmed }).eq('id', activeStore.id).then(() => {}).catch(() => {});
+          }
+        }
+      }
+    }
+
+    function updateStoreNameFromTicket(val) {
+      if (!val || !val.trim()) return;
+      const trimmed = val.trim();
+      activeStore.name = trimmed;
+      localStorage.setItem('flexitap_store_name', trimmed);
+      const storeTextEl = document.getElementById('store-name-text') || document.getElementById('store-name-display');
+      if (storeTextEl) storeTextEl.innerText = trimmed;
+
+      if (supabaseClient && activeUser?.id) {
+        supabaseClient.from('profiles').update({ store_name: trimmed }).eq('id', activeUser.id).then(() => {}).catch(() => {});
+      }
+    }
+
+    function copyStoreId() {
+      const id = activeStore?.id || '';
+      if (!id) return;
+      navigator.clipboard.writeText(id).then(() => {
+        alert('Store ID copied to clipboard:\n' + id);
+      }).catch(() => {
+        prompt('Copy Store ID:', id);
+      });
     }
 
   </script>
