@@ -823,12 +823,11 @@
       <div class="sidebar-footer">
         <div class="store-info">
           <div style="flex: 1; min-width: 0;">
-            <div id="store-name-display" onclick="promptEditStoreDetails()" title="Click to rename store" style="font-weight: 700; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+            <div id="store-name-display" style="font-weight: 800; color: #fff; font-size: 14.5px; letter-spacing: 0.3px;">
               <span id="store-name-text">My Store</span>
-              <span style="font-size: 11px; opacity: 0.7;">✏️</span>
             </div>
-            <div id="store-id-display" onclick="copyStoreId()" title="Click to copy Store ID" style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #94a3b8; cursor: pointer; margin-top: 3px; display: flex; align-items: center; gap: 4px;">
-              <span>ID:</span> <span id="store-id-val" style="max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">---</span> <span style="font-size: 10px;">📋</span>
+            <div id="store-id-display" onclick="copyStoreId()" title="Click to copy Store Code" style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #94a3b8; cursor: pointer; margin-top: 2px; display: flex; align-items: center; gap: 4px;">
+              <span>Store Code:</span> <span id="store-id-val" style="max-width: 115px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">---</span> <span style="font-size: 10px;">📋</span>
             </div>
             <div class="tier" id="store-tier-display">PRO EDITION</div>
           </div>
@@ -4715,62 +4714,33 @@
       if (appLayout) appLayout.style.display = 'flex';
 
       try {
-        // Multi-source Store & Profile Resolution
-        const { data: store } = await supabaseClient
-          .from('stores')
-          .select('*')
-          .or(`owner_id.eq.${user.id},user_id.eq.${user.id},id.eq.${user.id}`)
-          .maybeSingle();
+        // 1. Fetch live Profile and matching Store (identical to dev-portal.html CRM engine)
+        const [profileRes, storeRes] = await Promise.all([
+          supabaseClient.from('profiles').select('*').eq('id', user.id).maybeSingle(),
+          supabaseClient.from('stores').select('*').or(`owner_id.eq.${user.id},user_id.eq.${user.id},id.eq.${user.id}`).maybeSingle()
+        ]);
 
-        const { data: profile } = await supabaseClient
-          .from('profiles')
-          .select('subscription_tier, payment_status, role, store_name, store_id')
-          .eq('id', user.id)
-          .maybeSingle();
+        const profile = profileRes?.data || null;
+        const store = storeRes?.data || null;
 
-        // Check if there are historical daily summaries with an assigned store_id
-        let syncedStoreId = null;
-        try {
-          const { data: latestDaily } = await supabaseClient
-            .from('daily_sales_summaries')
-            .select('store_id')
-            .order('updated_at', { ascending: false })
-            .limit(1)
-            .maybeSingle();
-          if (latestDaily?.store_id) syncedStoreId = latestDaily.store_id;
-        } catch (_) {}
+        // Exact dev-portal.html matching resolution:
+        // storeName = p.store_name || (matchedStore ? matchedStore.name : null) || p.full_name || emailPrefix || 'FlexiTap Account'
+        const storeName = profile?.store_name || store?.name || store?.store_name || store?.legal_name || store?.business_name || profile?.full_name || (user.email ? user.email.split('@')[0].toUpperCase() : 'FlexiTap Account');
+        const resolvedStoreName = (storeName || 'FlexiTap Account').trim();
 
-        const localStoreName = localStorage.getItem('flexitap_store_name');
-        const localStoreId = localStorage.getItem('flexitap_store_id');
+        // Exact dev-portal.html store_code resolution:
+        // store_code = p.store_id || (matchedStore ? matchedStore.id : p.id)
+        const resolvedStoreId = profile?.store_id || store?.id || user.id;
 
-        const storeCandidate = (
-          localStoreName ||
-          store?.name ||
-          store?.store_name ||
-          store?.legal_name ||
-          store?.business_name ||
-          profile?.store_name ||
-          ''
-        ).trim();
-
-        const emailPrefix = (user.email?.split('@')[0] || '').trim();
-        const genericMailboxes = ['info', 'admin', 'support', 'sales', 'contact', 'hello', 'help', 'billing', 'office', 'test', 'user'];
-        
-        let resolvedStoreName = storeCandidate;
-        if (!resolvedStoreName || genericMailboxes.includes(resolvedStoreName.toLowerCase())) {
-          if (emailPrefix && !genericMailboxes.includes(emailPrefix.toLowerCase())) {
-            resolvedStoreName = emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1) + ' Store';
-          } else {
-            resolvedStoreName = 'My Store';
-          }
-        }
-
-        const resolvedStoreId = localStoreId || store?.id || profile?.store_id || syncedStoreId || user.id;
+        const isPH = profile?.country === 'PH' || store?.currency === 'PHP';
+        const currency = profile?.currency || store?.currency || (isPH ? 'PHP' : 'USD');
+        const currencySymbol = currency === 'PHP' ? '₱' : '$';
 
         activeStore = {
           id: resolvedStoreId,
           name: resolvedStoreName,
-          currency_symbol: store?.currency === 'PHP' ? '₱' : (store?.currency_symbol || '₱'),
+          currency: currency,
+          currency_symbol: currencySymbol,
           ...(store || {})
         };
         activeStore.id = resolvedStoreId;
@@ -7871,27 +7841,6 @@ Return strictly this valid JSON structure:
 
 
     // --- STORE IDENTITY MANAGEMENT (STORE NAME & STORE ID) ---
-    function promptEditStoreDetails() {
-      const current = activeStore?.name || 'My Store';
-      const newName = prompt('Enter your Store DBA Name:', current);
-      if (newName && newName.trim().length > 0 && newName.trim() !== current) {
-        const trimmed = newName.trim();
-        activeStore.name = trimmed;
-        localStorage.setItem('flexitap_store_name', trimmed);
-        const storeTextEl = document.getElementById('store-name-text') || document.getElementById('store-name-display');
-        if (storeTextEl) storeTextEl.innerText = trimmed;
-        const mtStoreInp = document.getElementById('mt-store');
-        if (mtStoreInp) mtStoreInp.value = trimmed;
-
-        if (supabaseClient && activeUser?.id) {
-          supabaseClient.from('profiles').update({ store_name: trimmed }).eq('id', activeUser.id).then(() => {}).catch(() => {});
-          if (activeStore?.id && activeStore.id !== activeUser.id) {
-            supabaseClient.from('stores').update({ name: trimmed }).eq('id', activeStore.id).then(() => {}).catch(() => {});
-          }
-        }
-      }
-    }
-
     function updateStoreNameFromTicket(val) {
       if (!val || !val.trim()) return;
       const trimmed = val.trim();
@@ -7909,10 +7858,13 @@ Return strictly this valid JSON structure:
       const id = activeStore?.id || '';
       if (!id) return;
       navigator.clipboard.writeText(id).then(() => {
-        alert('Store ID copied to clipboard:\n' + id);
-      }).catch(() => {
-        prompt('Copy Store ID:', id);
-      });
+        const badge = document.getElementById('store-id-display');
+        if (badge) {
+          const original = badge.innerHTML;
+          badge.innerHTML = '<span style="color:#34d399;">Copied!</span>';
+          setTimeout(() => { badge.innerHTML = original; }, 1800);
+        }
+      }).catch(() => {});
     }
 
   </script>
