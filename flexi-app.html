@@ -3682,7 +3682,7 @@
             .lte('date', end);
 
           if (storeId) {
-            query = query.or(`store_id.eq.${storeId},store_id.eq.a927b91f-0c1a-47b7-bf8b-59a9764aeacd`);
+            query = query.eq('store_id', storeId);
           }
           const { data, error } = await query;
           if (!error && Array.isArray(data)) {
