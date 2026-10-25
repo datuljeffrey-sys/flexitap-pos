@@ -2934,6 +2934,7 @@
     // --- ON-DEMAND REALTIME RELAY ENGINE (Option 2) ---
     let relayChannels = [];
     let currentPendingRequestId = null;
+    let isRelayDataActive = false;
 
     function initReportRelay() {
       if (relayChannels.length > 0) return;
@@ -3027,6 +3028,7 @@
 
     function handleRelayResponse(resp) {
       if (!resp || resp.status !== 'success' || !resp.data) return;
+      isRelayDataActive = true;
       currentPendingRequestId = null;
       resetRunButton();
 
@@ -3105,6 +3107,10 @@
 
     // --- DATA AGGREGATOR & REPORT ENGINE ---
     async function fetchAndRenderAllReports(startDate, endDate) {
+      if (isRelayDataActive) {
+        console.log('Skipping cloud query overwrite because live POS terminal relay data is active.');
+        return;
+      }
       try {
         // Query daily_sales_summaries for this store or user
         let query = supabaseClient
@@ -3114,7 +3120,7 @@
           .lte('date', endDate);
 
         if (activeStore?.id) {
-          query = query.or(`store_id.eq.${activeStore.id},store_id.eq.a927b91f-0c1a-47b7-bf8b-59a9764aeacd`);
+          query = query.eq('store_id', activeStore.id);
         }
 
         const { data: summaries, error: sumErr } = await query;
@@ -3126,22 +3132,24 @@
         let txns = 0, voidsCount = 0, voidsAmount = 0;
         let openingBank = 0, paidIn = 0, paidOut = 0;
         let payments = {}, categories = {}, hourly = {};
-        let liveTerminalSales = [];
-        let liveProductMix = [];
-        let liveLaborSummary = [];
-        let liveInventory = [];
-        let liveExceptions = [];
-        let liveCustomers = [];
-        let liveChecks = [];
-        let liveDiscounts = [];
-        let liveGiftCards = [];
-        let liveLoyalty = {};
-        let liveArLedger = [];
-        let liveRecipeCogs = [];
-        let liveExpiring = [];
-        let liveDrawer = [];
-        let liveWaste = [];
-        let liveActivity = [];
+        
+        // Multi-day accumulation dictionaries and lists
+        const pmixMap = {};
+        const terminalMap = {};
+        const laborMap = {};
+        const cogsMap = {};
+        let allChecks = [];
+        let allExceptions = [];
+        let allDiscounts = [];
+        let allGiftCards = [];
+        let allDrawer = [];
+        let allWaste = [];
+        let allActivity = [];
+        let latestInventory = [];
+        let latestExpiring = [];
+        let latestCustomers = [];
+        let latestLoyalty = {};
+        let latestArLedger = [];
 
         if (summaries && summaries.length > 0) {
           summaries.forEach(row => {
@@ -3175,7 +3183,7 @@
               categories[k].count += Number(countVal || 0);
             }
 
-            // Merge hourly sales if stored on row
+            // Merge hourly sales
             const hb = row.hourly_sales || {};
             for (let hk in hb) {
               const hInt = parseInt(hk, 10);
@@ -3184,25 +3192,124 @@
               }
             }
 
-            // Extract live granular datasets
-            if (Array.isArray(row.terminal_sales) && row.terminal_sales.length > 0) liveTerminalSales = row.terminal_sales;
-            if (Array.isArray(row.product_mix) && row.product_mix.length > 0) liveProductMix = row.product_mix;
-            if (Array.isArray(row.labor_summary) && row.labor_summary.length > 0) liveLaborSummary = row.labor_summary;
-            if (Array.isArray(row.inventory_snapshot) && row.inventory_snapshot.length > 0) liveInventory = row.inventory_snapshot;
-            if (Array.isArray(row.audit_exceptions) && row.audit_exceptions.length > 0) liveExceptions = row.audit_exceptions;
-            if (Array.isArray(row.customers_crm) && row.customers_crm.length > 0) liveCustomers = row.customers_crm;
-            if (Array.isArray(row.recent_checks) && row.recent_checks.length > 0) liveChecks = row.recent_checks;
-            if (Array.isArray(row.discounts_summary) && row.discounts_summary.length > 0) liveDiscounts = row.discounts_summary;
-            if (Array.isArray(row.gift_cards_summary) && row.gift_cards_summary.length > 0) liveGiftCards = row.gift_cards_summary;
-            if (row.loyalty_summary && typeof row.loyalty_summary === 'object') liveLoyalty = row.loyalty_summary;
-            if (Array.isArray(row.ar_ledger_summary) && row.ar_ledger_summary.length > 0) liveArLedger = row.ar_ledger_summary;
-            if (Array.isArray(row.recipe_cogs_summary) && row.recipe_cogs_summary.length > 0) liveRecipeCogs = row.recipe_cogs_summary;
-            if (Array.isArray(row.expiring_batches) && row.expiring_batches.length > 0) liveExpiring = row.expiring_batches;
-            if (Array.isArray(row.drawer_ledger_summary) && row.drawer_ledger_summary.length > 0) liveDrawer = row.drawer_ledger_summary;
-            if (Array.isArray(row.waste_loss_summary) && row.waste_loss_summary.length > 0) liveWaste = row.waste_loss_summary;
-            if (Array.isArray(row.activity_clickstream) && row.activity_clickstream.length > 0) liveActivity = row.activity_clickstream;
+            // Multi-Day Aggregation: Product Mix
+            if (Array.isArray(row.product_mix)) {
+              row.product_mix.forEach(p => {
+                const key = p.itemId || p.itemName || p.name || 'item';
+                if (!pmixMap[key]) {
+                  pmixMap[key] = {
+                    itemId: p.itemId,
+                    itemName: p.itemName || p.name || 'Item',
+                    categoryName: p.categoryName || p.cat || 'General',
+                    quantitySold: 0,
+                    netSales: 0
+                  };
+                }
+                pmixMap[key].quantitySold += Number(p.quantitySold || p.quantity || p.qty || 0);
+                pmixMap[key].netSales += Number(p.netSales || p.sales || 0);
+              });
+            }
+
+            // Multi-Day Aggregation: Terminal Sales
+            if (Array.isArray(row.terminal_sales)) {
+              row.terminal_sales.forEach(t => {
+                const key = t.device_name || t.name || 'Station';
+                if (!terminalMap[key]) {
+                  terminalMap[key] = {
+                    device_name: key,
+                    role: t.role || 'STATION',
+                    txn_count: 0,
+                    total_sales: 0,
+                    cash_tendered: 0
+                  };
+                }
+                terminalMap[key].txn_count += Number(t.txn_count || t.transactions || 0);
+                terminalMap[key].total_sales += Number(t.total_sales || t.sales || 0);
+                terminalMap[key].cash_tendered += Number(t.cash_tendered || t.cash || 0);
+              });
+            }
+
+            // Multi-Day Aggregation: Labor Summary
+            if (Array.isArray(row.labor_summary)) {
+              row.labor_summary.forEach(l => {
+                const key = l.userId || l.userName || l.name || 'Staff';
+                if (!laborMap[key]) {
+                  laborMap[key] = {
+                    userId: l.userId,
+                    userName: l.userName || l.name || 'Staff',
+                    role: l.role || 'Staff',
+                    hourlyRate: Number(l.hourlyRate || l.rate || 0),
+                    regularHours: 0,
+                    overtimeHours: 0,
+                    totalHours: 0,
+                    totalPay: 0,
+                    totalSales: 0
+                  };
+                }
+                laborMap[key].regularHours += Number(l.regularHours || l.reg || 0);
+                laborMap[key].overtimeHours += Number(l.overtimeHours || l.ot || 0);
+                laborMap[key].totalHours += Number(l.totalHours || l.hours || 0);
+                laborMap[key].totalPay += Number(l.totalPay || l.pay || 0);
+                laborMap[key].totalSales += Number(l.totalSales || l.sales || 0);
+              });
+            }
+
+            // Multi-Day Aggregation: Recipe COGS
+            if (Array.isArray(row.recipe_cogs_summary)) {
+              row.recipe_cogs_summary.forEach(c => {
+                const key = c.itemId || c.itemName || c.name || 'Recipe';
+                if (!cogsMap[key]) {
+                  cogsMap[key] = {
+                    itemId: c.itemId,
+                    itemName: c.itemName || c.name,
+                    categoryName: c.categoryName,
+                    unitsSold: 0,
+                    unitCost: Number(c.unitCost || 0),
+                    unitPrice: Number(c.unitPrice || 0),
+                    totalCogs: 0,
+                    totalRevenue: 0
+                  };
+                }
+                cogsMap[key].unitsSold += Number(c.unitsSold || c.qty || 0);
+                cogsMap[key].totalCogs += Number(c.totalCogs || 0);
+                cogsMap[key].totalRevenue += Number(c.totalRevenue || c.sales || 0);
+              });
+            }
+
+            // Multi-Day Aggregation: Audit & Event Logs (Concatenate)
+            if (Array.isArray(row.recent_checks) && row.recent_checks.length > 0) allChecks = allChecks.concat(row.recent_checks);
+            if (Array.isArray(row.audit_exceptions) && row.audit_exceptions.length > 0) allExceptions = allExceptions.concat(row.audit_exceptions);
+            if (Array.isArray(row.discounts_summary) && row.discounts_summary.length > 0) allDiscounts = allDiscounts.concat(row.discounts_summary);
+            if (Array.isArray(row.gift_cards_summary) && row.gift_cards_summary.length > 0) allGiftCards = allGiftCards.concat(row.gift_cards_summary);
+            if (Array.isArray(row.drawer_ledger_summary) && row.drawer_ledger_summary.length > 0) allDrawer = allDrawer.concat(row.drawer_ledger_summary);
+            if (Array.isArray(row.waste_loss_summary) && row.waste_loss_summary.length > 0) allWaste = allWaste.concat(row.waste_loss_summary);
+            if (Array.isArray(row.activity_clickstream) && row.activity_clickstream.length > 0) allActivity = allActivity.concat(row.activity_clickstream);
+
+            // Keep latest snapshots for stateful catalogs
+            if (Array.isArray(row.inventory_snapshot) && row.inventory_snapshot.length > 0) latestInventory = row.inventory_snapshot;
+            if (Array.isArray(row.customers_crm) && row.customers_crm.length > 0) latestCustomers = row.customers_crm;
+            if (Array.isArray(row.expiring_batches) && row.expiring_batches.length > 0) latestExpiring = row.expiring_batches;
+            if (row.loyalty_summary && typeof row.loyalty_summary === 'object') latestLoyalty = row.loyalty_summary;
+            if (Array.isArray(row.ar_ledger_summary) && row.ar_ledger_summary.length > 0) latestArLedger = row.ar_ledger_summary;
           });
         }
+
+        const liveProductMix = Object.values(pmixMap).sort((a, b) => b.netSales - a.netSales);
+        const liveTerminalSales = Object.values(terminalMap).sort((a, b) => b.total_sales - a.total_sales);
+        const liveLaborSummary = Object.values(laborMap).sort((a, b) => b.totalHours - a.totalHours);
+        const liveRecipeCogs = Object.values(cogsMap).sort((a, b) => b.totalRevenue - a.totalRevenue);
+        const liveChecks = allChecks;
+        const liveExceptions = allExceptions;
+        const liveDiscounts = allDiscounts;
+        const liveGiftCards = allGiftCards;
+        const liveDrawer = allDrawer;
+        const liveWaste = allWaste;
+        const liveActivity = allActivity;
+        const liveInventory = latestInventory;
+        const liveCustomers = latestCustomers;
+        const liveExpiring = latestExpiring;
+        const liveLoyalty = latestLoyalty;
+        const liveArLedger = latestArLedger;
 
         const cashSales = payments['Cash'] || payments['CASH'] || 0;
         const expectedCash = openingBank + cashSales + paidIn - paidOut;
@@ -3490,34 +3597,37 @@
         <tr class="total-row"><td>Total Accountable Liability</td><td class="num">${formatMoney(totalAccountable)}</td></tr>
       `;
 
-      // 6. Media Settlement Table
+      // 6. Media Settlement Table (Tenders Recorded)
       let mHtml = '';
       let mTotal = 0;
       for (let k in currentAgg.payments) {
         const val = currentAgg.payments[k];
         mTotal += val;
-        mHtml += `<tr><td><strong>${k}</strong></td><td class="num">${formatMoney(val)}</td><td class="num">${formatMoney(k.includes('Card') ? currentAgg.tips : 0)}</td><td class="num">${formatMoney(val + (k.includes('Card') ? currentAgg.tips : 0))}</td></tr>`;
+        const tipVal = k.toLowerCase().includes('card') ? currentAgg.tips : 0;
+        mHtml += `<tr><td><strong>${k}</strong></td><td class="num">${formatMoney(val)}</td><td class="num">${formatMoney(tipVal)}</td><td class="num">${formatMoney(val)}</td></tr>`;
       }
       if (mHtml === '') {
         mHtml = '<tr><td colspan="4" style="text-align:center; padding: 24px; color: var(--text-muted);">No payment transactions recorded for this period.</td></tr>';
       } else {
-        mHtml += `<tr class="total-row"><td>Total Tendered Media</td><td class="num" colspan="3">${formatMoney(mTotal + currentAgg.tips)}</td></tr>`;
+        mHtml += `<tr class="total-row"><td>Total Tendered Media</td><td class="num" colspan="3">${formatMoney(mTotal)}</td></tr>`;
       }
       document.getElementById('summary-media-tbody').innerHTML = mHtml;
 
-      // 7. Audit Verification Ribbon Check
+      // 7. Audit Verification Ribbon Check (Liabilities vs Tendered Media)
       const totalLiabilities = currentAgg.netSales + currentAgg.taxes + currentAgg.tips;
-      const variance = Math.abs(mTotal + currentAgg.tips - totalLiabilities);
+      const variance = Math.abs(mTotal - totalLiabilities);
       const isBalanced = variance < 0.05 || (mTotal === 0 && totalLiabilities === 0);
       const banner = document.getElementById('global-audit-banner');
-      banner.className = `audit-notice-banner ${isBalanced ? 'balanced' : 'unbalanced'}`;
-      const iconEl = document.getElementById('audit-banner-icon');
-      if (iconEl) iconEl.innerText = isBalanced ? '✓' : '⚠️';
-      const targetEl = document.getElementById('audit-banner-target');
-      if (targetEl) targetEl.innerText = `Target: ${formatMoney(totalLiabilities)}`;
-      document.getElementById('audit-banner-text').innerText = isBalanced
-        ? 'Audit Verified: All cash & card settlement records match total recorded liabilities.'
-        : `Ledger Variance Detected: Tendered media (${formatMoney(mTotal + currentAgg.tips)}) differs by ${formatMoney(variance)} from recorded liabilities (${formatMoney(totalLiabilities)}).`;
+      if (banner) {
+        banner.className = `audit-notice-banner ${isBalanced ? 'balanced' : 'unbalanced'}`;
+        const iconEl = document.getElementById('audit-banner-icon');
+        if (iconEl) iconEl.innerText = isBalanced ? '✓' : '⚠️';
+        const targetEl = document.getElementById('audit-banner-target');
+        if (targetEl) targetEl.innerText = `Target: ${formatMoney(totalLiabilities)}`;
+        document.getElementById('audit-banner-text').innerText = isBalanced
+          ? `Audit Verified: Complete mathematical symmetry between recorded settlement media (${formatMoney(mTotal)}) and accountable liabilities (${formatMoney(totalLiabilities)}).`
+          : `Ledger Variance Detected: Tendered media (${formatMoney(mTotal)}) differs by ${formatMoney(variance)} from recorded liabilities (${formatMoney(totalLiabilities)}).`;
+      }
     }
 
     // --- VISUAL CHART 1: REVENUE TREND OVER TIME (Smooth SVG Line + Gradient Area + Comparative Baseline) ---
