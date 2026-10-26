@@ -514,7 +514,7 @@
 
         <div>
           <strong>2. What we collect</strong><br><br>
-          <strong>Account data.</strong> Email address, business name and type, business address and contact information, business logo, country and locale, and the subscription receipt or purchase token issued by the app store on subscription.<br><br>
+          <strong>Account data.</strong> Email address, business name and type, business address and contact information, business logo, country and locale, and the subscription receipt, order ID, or customer token issued by Paddle, our Merchant of Record.<br><br>
           <strong>Staff data.</strong> Names, email addresses, phone numbers, photos, role and permission assignments, login PINs, and login activity for staff accounts you create.<br><br>
           <strong>Customer data you record.</strong> Names, phone numbers, addresses, notes, loyalty point balances and ledger, outstanding debt and debt payment history, and any photos of payment proofs you upload (e.g. transfer slips). You decide what to record.<br><br>
           <strong>Transactional and operational data.</strong> Items, item variants, modifiers, taxes, discounts, payment methods, transactions, orders, shifts, settlements, stock levels and adjustments, receipts, and printable templates.<br><br>
@@ -526,26 +526,24 @@
         <div>
           <strong>3. How we use your data and the legal bases</strong><br>
           <ul>
-            <li>To provide the Service — keeping your data in sync across your paired devices, processing your transactions, generating receipts, sending push notifications, and similar (basis: performance of our contract with you);</li>
-            <li>To process payments and subscriptions — through the app store you used to subscribe and through RevenueCat, which validates your subscription on our behalf (basis: performance of our contract);</li>
+            <li>To provide the Service — keeping your data in sync across your paired devices, processing your transactions, generating receipts, sending operational push notifications, and similar (basis: performance of our contract with you);</li>
+            <li>To process payments and subscriptions — through Paddle (our Merchant of Record), which validates transactions, processes subscriptions, and remits taxes on our behalf (basis: performance of our contract);</li>
             <li>To provide customer support when you contact us (basis: performance of our contract and our legitimate interest in resolving your inquiry);</li>
-            <li>To improve reliability through aggregated and anonymized crash and usage analytics (basis: our legitimate interest in maintaining a working product);</li>
-            <li>To show advertising on the Free tier via third-party ad networks (basis: performance of our contract with you for the ad-supported Free tier, or your consent where required);</li>
+            <li>To improve reliability through aggregated and anonymized crash and performance metrics (basis: our legitimate interest in maintaining a working product);</li>
             <li>To comply with legal obligations and to protect the rights, safety, or property of FlexiTap, our users, or the public (basis: legal obligation and legitimate interest).</li>
           </ul>
           <br>
-          We do not sell your personal data, and we do not use it for cross-context behavioral advertising or profiling.
+          We do not sell your personal data, and we do not use it for cross-context behavioral advertising or profiling. The Service is 100% ad-free across all tiers.
         </div>
 
         <div>
           <strong>4. Who we share data with</strong><br>
           We share data only with service providers we rely on to operate the Service, and only to the extent necessary for them to perform their function. Each is bound by appropriate confidentiality and data-processing obligations.<br><br>
-          <strong>Supabase</strong> – authentication, database management, and backend infrastructure.<br><br>
-          <strong>Google Play and Apple App Store</strong> – subscription billing, in-app purchases, and receipt validation. We never see your full payment instrument.<br><br>
-          <strong>Paddle</strong> – web-based subscription billing, payment processing, and entitlement management.<br><br>
-          <strong>Google Drive (Google LLC)</strong> – optional encrypted backups, only if you enable this feature, and stored in your own Google Drive account.<br><br>
-          <strong>Cloudflare (Cloudflare, Inc.)</strong> – edge security, content delivery, and DDoS protection for our website and API.<br><br>
-          <strong>Advertising networks used on the Free tier</strong> – to serve in-app advertising. These networks may collect device identifiers and similar information as described in their own privacy policies.<br><br>
+          <strong>Supabase</strong> – user authentication, PostgreSQL database hosting, and realtime synchronization.<br><br>
+          <strong>Paddle (Paddle.com Market Ltd)</strong> – Merchant of Record, subscription billing, fraud detection, and tax remittance. We never see or store your full payment card details.<br><br>
+          <strong>Google Drive (Google LLC)</strong> – optional manual database snapshot backups initiated by you, stored directly in your own personal Google Drive account via Google OAuth 2.0. We do not store or access your personal Drive files or credentials on our servers.<br><br>
+          <strong>Cloudflare (Cloudflare, Inc.)</strong> – edge security, content delivery, SSL certificate provisioning, and DDoS protection for our website and API.<br><br>
+          <strong>RustDesk (Remote Desktop Tooling)</strong> – optional on-demand remote support for Founders Pro merchants, used strictly during authorized diagnostic support sessions with merchant permission.<br><br>
           <strong>Hosting and infrastructure providers</strong> we use to operate our backend.<br><br>
           We may also disclose data when required by law, valid legal process, or a binding order from a competent authority, or to protect the rights, safety, or property of FlexiTap, our users, or the public. If we are involved in a merger, acquisition, or sale of assets, your data may be transferred as part of that transaction, and we will notify you before it becomes subject to a different privacy policy.
         </div>
@@ -562,12 +560,13 @@
 
         <div>
           <strong>7. Data loss and Free-tier storage</strong><br>
-          Free-tier data is stored only on your device. We do not back it up and we cannot recover it if your device is lost, stolen, damaged, factory reset, or if the app is uninstalled. The Service is offline-first: changes you make while offline are queued locally and uploaded the next time the device successfully reaches our servers. If the device is wiped, replaced, or reinstalled before that upload completes, the queued changes are lost. You are solely responsible for maintaining your own backups using the export, local backup, and Google Drive backup features available in the Service. Please see our Terms of Service for the full allocation of responsibility regarding data loss.
+          Free-tier data is stored only on your device. We do not back it up and we cannot recover it if your device is lost, stolen, damaged, factory reset, or if the app is uninstalled. The Service is offline-first: changes you make while offline are queued locally and uploaded the next time the device successfully reaches our servers. If the device is wiped, replaced, or reinstalled before that upload completes, the queued changes are lost. You are solely responsible for maintaining your own backups using the manual export, local database backup, and manual Google Drive backup features available under Data Management in the Service. Please see our Terms of Service for the full allocation of responsibility regarding data loss.
         </div>
 
         <div>
-          <strong>8. Security</strong><br>
-          We use technical and organizational measures designed to protect your data, including encryption in transit (TLS) and at rest, access controls, audit logging, device pairing, and the ability to remotely deactivate a paired device. No method of transmission or storage is completely secure, and we cannot guarantee absolute security. You are responsible for safeguarding your account credentials, your staff PINs, and the physical security of the devices on which the Service is installed.
+          <strong>8. Security and cyber liability disclaimer</strong><br>
+          We employ reasonable and appropriate technical and organizational measures designed to protect your data, including encryption in transit (TLS), encrypted database storage at rest, token-based authentication, audit logging, device pairing authorization, and the ability to remotely deactivate paired devices.<br><br>
+          <strong>No Absolute Security or Cyber Insurance:</strong> However, no method of digital storage or internet transmission is completely secure, and we cannot guarantee absolute immunity from unauthorized access, cyber attacks, hardware theft, or zero-day vulnerabilities. FlexiTap is a startup software provider and <strong>does not carry commercial cyber liability insurance</strong> covering merchant data or operations. FlexiTap does not act as an insurer of your business data. You are solely responsible for safeguarding your account credentials, enforcing staff PINs, securing your local physical devices and Wi-Fi networks, maintaining your own offline backups, and obtaining independent cyber liability insurance if required for your business operations.
         </div>
 
         <div>
