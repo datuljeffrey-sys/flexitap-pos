@@ -861,6 +861,9 @@
         <button class="nav-item" data-report="submit-ticket" onclick="switchReport('submit-ticket', this)">
           <span class="icon">🎫</span> Submit a Ticket <span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">Help Desk</span>
         </button>
+        <button class="nav-item" data-report="delete-account" onclick="openDeleteAccountModal()" style="color: #f87171;">
+          <span class="icon">🗑️</span> Delete Account (Clause 6)
+        </button>
       </nav>
 
       <div class="sidebar-footer">
@@ -876,7 +879,10 @@
           </div>
           <span class="status-badge">● ONLINE</span>
         </div>
-        <button class="logout-btn" onclick="logout()">Sign Out</button>
+        <div style="display: flex; gap: 8px; margin-top: 10px;">
+          <button class="logout-btn" onclick="logout()" style="flex: 1; margin: 0;">Sign Out</button>
+          <button type="button" onclick="openDeleteAccountModal()" title="Account & Data Erasure (Privacy Clause 6)" style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); color: #f87171; border-radius: 8px; padding: 0 12px; font-size: 13px; font-weight: 700; cursor: pointer;">🗑️</button>
+        </div>
       </div>
     </aside>
 
@@ -4969,6 +4975,109 @@
         params.delete('store_id');
         params.delete('dev_inspect');
         window.location.search = params.toString();
+      }
+    }
+
+    /* =========================================================================
+       ACCOUNT DELETION & DATA RETENTION (PRIVACY POLICY CLAUSE 6)
+       ========================================================================= */
+    function openDeleteAccountModal() {
+      const modal = document.getElementById('modal-delete-account');
+      const errBox = document.getElementById('modal-del-error');
+      const confirmInput = document.getElementById('portal-del-confirm');
+      const pwInput = document.getElementById('portal-del-pw');
+      if (errBox) { errBox.style.display = 'none'; errBox.innerText = ''; }
+      if (confirmInput) confirmInput.value = '';
+      if (pwInput) pwInput.value = '';
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeDeleteAccountModal() {
+      const modal = document.getElementById('modal-delete-account');
+      if (modal) modal.style.display = 'none';
+    }
+
+    async function handlePortalAccountDeletion(e) {
+      e.preventDefault();
+      const errBox = document.getElementById('modal-del-error');
+      const confirmVal = (document.getElementById('portal-del-confirm')?.value || '').trim();
+      const enteredPw = document.getElementById('portal-del-pw')?.value || '';
+      const reason = document.getElementById('portal-del-reason')?.value || 'other';
+      const btn = document.getElementById('btn-portal-del-submit');
+
+      const storeName = (activeStore?.name || '').trim();
+      const isMatch = confirmVal.toUpperCase() === 'DELETE' || (storeName && confirmVal.toLowerCase() === storeName.toLowerCase());
+
+      if (!isMatch) {
+        if (errBox) {
+          errBox.style.display = 'block';
+          errBox.innerText = 'Confirmation mismatch: please type DELETE or "' + (storeName || 'DELETE') + '" exactly.';
+        }
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Verifying credentials & scheduling erasure...';
+      }
+
+      try {
+        const userEmail = activeUser?.email;
+        if (!userEmail) throw new Error('No active user email session found.');
+
+        // Re-authenticate password for identity verification
+        const { error: authErr } = await supabaseClient.auth.signInWithPassword({
+          email: userEmail,
+          password: enteredPw
+        });
+
+        if (authErr) {
+          throw new Error('Verification failed: ' + authErr.message);
+        }
+
+        const nowIso = new Date().toISOString();
+
+        // 1. Mark profile status as pending deletion
+        await supabaseClient.from('profiles').update({
+          account_status: 'pending_deletion',
+          deletion_requested_at: nowIso,
+          deletion_reason: reason
+        }).eq('id', activeUser.id);
+
+        // 2. Mark store status as pending deletion
+        if (activeStore?.id) {
+          await supabaseClient.from('stores').update({
+            status: 'pending_deletion'
+          }).eq('id', activeStore.id).catch(function() {});
+        }
+
+        // 3. Log GDPR/CCPA Erasure ticket
+        const ticketNum = 'DEL-' + Math.floor(100000 + Math.random() * 900000);
+        await supabaseClient.from('tickets').insert([{
+          ticket_number: ticketNum,
+          store_name: activeStore?.name || userEmail.split('@')[0].toUpperCase(),
+          contact_email: userEmail,
+          subject: 'Account & Data Erasure Request (Clause 6) - ' + (activeStore?.name || userEmail),
+          details: 'Merchant requested permanent deletion under Privacy Policy Clause 6. Reason: ' + reason + '. Production wipe scheduled within 30 days.',
+          category: 'Account & Security',
+          priority: 'high',
+          status: 'open',
+          tier: 'tier_3'
+        }]).catch(function() {});
+
+        alert('✓ Account Deletion Scheduled: In accordance with Clause 6 of our Privacy Policy, your operational data will be purged within 30 days. You will now be signed out.');
+        closeDeleteAccountModal();
+        logout();
+
+      } catch (err) {
+        if (errBox) {
+          errBox.style.display = 'block';
+          errBox.innerText = err.message;
+        }
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = '⚠️ Schedule Erasure (30-Day Window)';
+        }
       }
     }
 

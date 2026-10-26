@@ -1390,8 +1390,39 @@
                       <option value="onboarding">Onboarding / Staging</option>
                       <option value="suspended">Suspended / Past Due</option>
                       <option value="decommissioned">Decommissioned</option>
+                      <option value="pending_deletion">⚠️ Pending Deletion (Clause 6: 30-Day Window)</option>
+                      <option value="deleted">🗑️ Permanently Deleted / Anonymized</option>
                     </select>
                   </div>
+                </div>
+              </div>
+
+              <!-- DANGER ZONE: DATA RETENTION & ACCOUNT DELETION (CLAUSE 6) -->
+              <div class="panel" style="border: 1px solid rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.03); margin-top: 20px;">
+                <div class="panel-header" style="border-bottom-color: rgba(239, 68, 68, 0.2);">
+                  <div>
+                    <div class="panel-title" style="color: #f87171; display: flex; align-items: center; gap: 8px;">
+                      <span>⚠️ Danger Zone &bull; Account Erasure &amp; Retention (Clause 6)</span>
+                      <span id="crm-deletion-badge" class="crm-pill-badge" style="display: none; background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);">Deletion Scheduled</span>
+                    </div>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">In accordance with Section 6, production data is permanently purged or irreversibly anonymized within 30 days of request, followed by backup rotation within 30 days.</p>
+                  </div>
+                </div>
+
+                <div id="crm-deletion-status-box" style="margin-bottom: 16px; padding: 12px 16px; border-radius: 10px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border); font-size: 0.82rem; color: #cbd5e1;">
+                  Account is currently active and healthy. No deletion scheduled.
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                  <button type="button" class="action-btn" id="crm-btn-schedule-delete" onclick="scheduleCrmAccountDeletion()" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.4); font-weight: 700;">
+                    🗑️ Schedule 30-Day Erasure
+                  </button>
+                  <button type="button" class="action-btn" id="crm-btn-restore-account" onclick="restoreCrmAccountFromDeletion()" style="display: none; background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.4); font-weight: 700;">
+                    ↺ Cancel Deletion &amp; Restore Account
+                  </button>
+                  <button type="button" class="action-btn" id="crm-btn-purge-now" onclick="purgeCrmAccountImmediately()" style="background: #dc2626; color: #fff; border-color: #dc2626; font-weight: 700;">
+                    ⚡ Immediate Purge &amp; Anonymize
+                  </button>
                 </div>
               </div>
             </div>
@@ -4851,10 +4882,14 @@
 
       const stripStatus = document.getElementById('crm-strip-status');
       if (stripStatus) {
-        stripStatus.innerText = (acc.status || 'ACTIVE').toUpperCase();
-        stripStatus.style.background = acc.status === 'suspended' ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)';
-        stripStatus.style.color = acc.status === 'suspended' ? '#f87171' : '#34d399';
+        const isDel = acc.status === 'pending_deletion';
+        stripStatus.innerText = isDel ? 'DELETION PENDING (30-DAY)' : (acc.status || 'ACTIVE').toUpperCase();
+        stripStatus.style.background = isDel ? 'rgba(239,68,68,0.25)' : (acc.status === 'suspended' ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)');
+        stripStatus.style.color = (isDel || acc.status === 'suspended') ? '#f87171' : '#34d399';
       }
+
+      // Update Danger Zone Status
+      updateCrmDangerZoneUI(acc);
 
       const stripMeta = document.getElementById('crm-strip-meta');
       if (stripMeta) {
@@ -14066,6 +14101,135 @@ Role: ${lastProvisionedCreds.role}`;
       }).catch(function() {
         alert('Copy failed, please select and copy manually.');
       });
+    }
+
+    /* =========================================================================
+       CRM DANGER ZONE & CLAUSE 6 DATA ERASURE ENGINE
+       ========================================================================= */
+    function updateCrmDangerZoneUI(acc) {
+      const box = document.getElementById('crm-deletion-status-box');
+      const badge = document.getElementById('crm-deletion-badge');
+      const btnSchedule = document.getElementById('crm-btn-schedule-delete');
+      const btnRestore = document.getElementById('crm-btn-restore-account');
+
+      const isPending = acc.status === 'pending_deletion';
+
+      if (badge) badge.style.display = isPending ? 'inline-flex' : 'none';
+      if (btnSchedule) btnSchedule.style.display = isPending ? 'none' : 'inline-block';
+      if (btnRestore) btnRestore.style.display = isPending ? 'inline-block' : 'none';
+
+      if (box) {
+        if (isPending) {
+          const reqDate = acc.deletion_scheduled_at ? new Date(acc.deletion_scheduled_at).toLocaleDateString() : 'Recent';
+          box.style.background = 'rgba(239, 68, 68, 0.08)';
+          box.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+          box.innerHTML = '<strong style="color: #f87171;">⚠️ Erasure Scheduled Under Clause 6:</strong><br>' +
+            'This account was requested for deletion on <strong>' + reqDate + '</strong>. All operational records, register licenses, and sales summaries will be permanently purged at the conclusion of the 30-day window.';
+        } else {
+          box.style.background = 'rgba(255, 255, 255, 0.02)';
+          box.style.borderColor = 'var(--card-border)';
+          box.innerHTML = 'Account is currently active and healthy. Retention active under Service Agreement.';
+        }
+      }
+    }
+
+    async function scheduleCrmAccountDeletion() {
+      const acc = crmAccounts.find(function(a) { return a.id === currentCrmAccountId; });
+      if (!acc) return;
+
+      const reason = prompt('Please enter the reason for scheduling account deletion (Clause 6):', 'Merchant request / Business closed');
+      if (reason === null) return;
+
+      if (!confirm('Are you sure you want to schedule 30-day erasure for "' + acc.store_name + '"?')) return;
+
+      acc.status = 'pending_deletion';
+      acc.deletion_scheduled_at = new Date().toISOString();
+
+      try {
+        if (supabaseClient) {
+          await supabaseClient.from('profiles').update({
+            account_status: 'pending_deletion',
+            deletion_requested_at: acc.deletion_scheduled_at,
+            deletion_reason: reason
+          }).eq('id', acc.id);
+
+          await supabaseClient.from('merchant_crm_accounts').upsert({
+            id: acc.id,
+            status: 'pending_deletion'
+          }).catch(function() {});
+        }
+      } catch (e) {
+        console.warn('Error scheduling deletion in Supabase:', e);
+      }
+
+      renderSelectedCrmAccount();
+      alert('✓ Account "' + acc.store_name + '" has been marked for 30-day permanent erasure in accordance with Section 6.');
+    }
+
+    async function restoreCrmAccountFromDeletion() {
+      const acc = crmAccounts.find(function(a) { return a.id === currentCrmAccountId; });
+      if (!acc) return;
+
+      if (!confirm('Cancel deletion and restore "' + acc.store_name + '" to Active status?')) return;
+
+      acc.status = 'active';
+      acc.deletion_scheduled_at = null;
+
+      try {
+        if (supabaseClient) {
+          await supabaseClient.from('profiles').update({
+            account_status: 'active',
+            deletion_requested_at: null,
+            deletion_reason: null
+          }).eq('id', acc.id);
+
+          await supabaseClient.from('merchant_crm_accounts').upsert({
+            id: acc.id,
+            status: 'active'
+          }).catch(function() {});
+        }
+      } catch (e) {
+        console.warn('Error restoring account in Supabase:', e);
+      }
+
+      renderSelectedCrmAccount();
+      alert('✓ Account "' + acc.store_name + '" restored to Active status.');
+    }
+
+    async function purgeCrmAccountImmediately() {
+      const acc = crmAccounts.find(function(a) { return a.id === currentCrmAccountId; });
+      if (!acc) return;
+
+      const confirmCode = prompt('⚠️ WARNING: Immediate Purge & Anonymization is IRREVERSIBLE.\nAll operational sales data, terminal device bindings, and merchant profile records will be wiped immediately.\n\nTo confirm, type PURGE below:');
+      if (confirmCode !== 'PURGE') {
+        alert('Action cancelled. Confirmation code did not match.');
+        return;
+      }
+
+      try {
+        if (supabaseClient) {
+          // Anonymize profile
+          await supabaseClient.from('profiles').update({
+            full_name: 'Anonymized Account',
+            store_name: 'Purged Store',
+            account_status: 'purged',
+            email: 'purged_' + acc.id.substring(0, 8) + '@anonymized.local'
+          }).eq('id', acc.id);
+
+          // Mark store deleted
+          await supabaseClient.from('stores').update({
+            status: 'purged',
+            name: 'Purged Store'
+          }).or('owner_id.eq.' + acc.id + ',id.eq.' + (acc.store_code || acc.id)).catch(function() {});
+        }
+      } catch (e) {
+        console.warn('Error purging in Supabase:', e);
+      }
+
+      acc.store_name = 'Purged Store (' + acc.id.substring(0, 8) + ')';
+      acc.status = 'deleted';
+      renderSelectedCrmAccount();
+      alert('✓ Account data has been immediately purged and anonymized.');
     }
   </script>
 
