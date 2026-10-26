@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>FlexiTap — Remote Support & Diagnostics</title>
+  
+  <link rel="icon" type="image/png" href="image_02e503.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="image_02e503.png">
+  <meta name="theme-color" content="#080c14">
+
+  <!-- Supabase JS Client for session verification & realtime presence -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(22, 30, 49, 0.85);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent-teal: #0d9488;
+      --accent-teal-hover: #0f766e;
+      --accent-green: #10b981;
+      --accent-green-bg: rgba(16, 185, 129, 0.12);
+      --accent-amber: #f59e0b;
+      --accent-amber-bg: rgba(245, 158, 11, 0.12);
+      --accent-red: #ef4444;
+      --accent-red-bg: rgba(239, 68, 68, 0.12);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at 10% 80%, rgba(13, 148, 136, 0.1) 0%, transparent 40%);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 48px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    /* Header */
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0 28px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #2563eb, #0d9488);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+    }
+
+    .brand-title {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: #fff;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .security-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 9999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #34d399;
+    }
+
+    /* Privacy Banner */
+    .isolation-banner {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      backdrop-filter: blur(8px);
+    }
+
+    .isolation-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .isolation-text {
+      font-size: 12.5px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .isolation-text strong {
+      color: #fff;
+    }
+
+    /* Main Card */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .card-description {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    /* Form Inputs */
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .code-input {
+      flex: 1;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: #fff;
+      font-size: 18px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      outline: none;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .code-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+      background: #0f172a;
+    }
+
+    .btn-connect {
+      padding: 0 24px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      white-space: nowrap;
+    }
+
+    .btn-connect:hover:not(:disabled) {
+      background: linear-gradient(135deg, #1d4ed8, #1e40af);
+      transform: translateY(-1px);
+    }
+
+    .btn-connect:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Status Notifications */
+    .status-msg {
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    .status-msg.info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(37, 99, 235, 0.12);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      color: #93c5fd;
+    }
+
+    .status-msg.success {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent-green-bg);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+    }
+
+    .status-msg.error {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent-red-bg);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    /* Step 2 Section (RustDesk Connection) */
+    #rustdesk-step {
+      display: none;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--card-border);
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .download-helper-box {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(13, 148, 136, 0.2);
+      border: 1px solid rgba(13, 148, 136, 0.5);
+      color: #2dd4bf;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      margin-bottom: 8px;
+    }
+
+    .download-btn:hover {
+      background: rgba(13, 148, 136, 0.35);
+      color: #fff;
+    }
+
+    .server-config-box {
+      background: #0b1120;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      margin-top: 10px;
+      color: #cbd5e1;
+    }
+
+    .server-config-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      word-break: break-all;
+    }
+
+    .server-config-label {
+      color: var(--text-muted);
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .server-config-val {
+      color: #38bdf8;
+      font-weight: 600;
+      user-select: all;
+    }
+
+    .rustdesk-input {
+      flex: 1;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: #fff;
+      font-size: 17px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      letter-spacing: 2px;
+      outline: none;
+      text-align: center;
+    }
+
+    .rustdesk-input:focus {
+      border-color: var(--accent-teal);
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.25);
+    }
+
+    .btn-share {
+      padding: 0 22px;
+      background: linear-gradient(135deg, #0d9488, #0f766e);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-share:hover:not(:disabled) {
+      background: linear-gradient(135deg, #0f766e, #115e59);
+    }
+
+    .live-status-card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .pulse-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #3b82f6;
+      box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+      animation: pulse 1.8s infinite;
+      flex-shrink: 0;
+    }
+
+    .pulse-dot.active {
+      background: #10b981;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+
+    .pulse-dot.ended {
+      background: #64748b;
+      animation: none;
+      box-shadow: none;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+      }
+      70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+      }
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+      }
+    }
+
+    .footer-help {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+
+    .footer-help a {
+      color: #60a5fa;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer-help a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .input-row {
+        flex-direction: column;
+      }
+      .btn-connect, .btn-share {
+        width: 100%;
+        padding: 12px;
+      }
+      .header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="header-bar">
+      <div class="brand-group">
+        <div class="brand-logo">⚡</div>
+        <div>
+          <div class="brand-title">FlexiTap Remote Support</div>
+          <div class="brand-subtitle" id="terminal-context-display">Dedicated Terminal Diagnostic Channel</div>
+        </div>
+      </div>
+      <div class="security-badge">
+        <span>🛡️</span>
+        <span>Isolated Session • Secure</span>
+      </div>
+    </header>
+
+    <!-- Isolation Notice -->
+    <div class="isolation-banner">
+      <div class="isolation-icon">🔒</div>
+      <div class="isolation-text">
+        <strong>Direct Floor Staff Access:</strong> You are in a dedicated screen-sharing portal. Cashiers and shift managers can safely receive technical support here without exposing the owner's passwords or back-office sales reports.
+      </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card">
+      <div class="card-title">
+        <span>1. Enter Support Session Code</span>
+      </div>
+      <p class="card-description">
+        During a support phone call or chat, our technician will provide you with a 6-character session code (e.g., <strong>6MGPA7</strong>). Enter it below to begin:
+      </p>
+
+      <div class="input-row">
+        <input 
+          type="text" 
+          id="session-code-input" 
+          class="code-input" 
+          placeholder="e.g. 6MGPA7" 
+          maxlength="6"
+          autocomplete="off"
+          spellcheck="false"
+          onkeydown="if(event.key==='Enter') verifySessionCode()"
+        />
+        <button class="btn-connect" id="verify-btn" onclick="verifySessionCode()">
+          <span>Verify Session</span>
+          <span>→</span>
+        </button>
+      </div>
+
+      <div id="code-status-msg" class="status-msg"></div>
+
+      <!-- Step 2: RustDesk Screen Sharing -->
+      <div id="rustdesk-step">
+        <div class="card-title" style="color: #2dd4bf; margin-top: 6px;">
+          <span>2. Launch RustDesk Screen Share</span>
+        </div>
+        <p class="card-description">
+          Open RustDesk on this terminal so our technician can diagnose printer cutters, scanner pairing, payment sync, or POS application issues.
+        </p>
+
+        <div class="download-helper-box" id="platform-helper-box">
+          <!-- Dynamic platform content rendered by JS -->
+        </div>
+
+        <div class="card-title" style="font-size: 15px; margin-bottom: 8px;">
+          <span>Enter your 9-digit RustDesk ID:</span>
+        </div>
+        <div class="input-row">
+          <input 
+            type="text" 
+            id="rustdesk-id-input" 
+            class="rustdesk-input" 
+            placeholder="e.g. 793 024 246" 
+            inputmode="numeric"
+            maxlength="16"
+            onkeydown="if(event.key==='Enter') submitRustdeskId()"
+          />
+          <button class="btn-share" id="share-id-btn" onclick="submitRustdeskId()">
+            Share with Technician
+          </button>
+        </div>
+
+        <div id="rustdesk-status-msg" class="status-msg"></div>
+
+        <!-- Live Connection Status Card -->
+        <div id="live-session-card" class="live-status-card" style="display: none;">
+          <div class="pulse-dot" id="session-pulse-dot"></div>
+          <div>
+            <div style="font-weight: 700; font-size: 13.5px; color: #fff;" id="session-status-headline">
+              Connecting to agent...
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted);" id="session-status-subline">
+              Waiting for support technician to establish remote connection.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Need a ticket instead? -->
+    <div class="footer-help">
+      Looking to submit a non-urgent engineering ticket instead? 
+      <a href="portal.html#report-submit-ticket" target="_blank" rel="noopener">Submit a Support Ticket</a> • 
+      <a href="https://flexitapapp.com/support.html" target="_blank" rel="noopener">Help Documentation</a>
+    </div>
+  </div>
+
+  <script>
+    // Supabase Anonymous Client Config
+    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const FLEXITAP_SERVER_ID = 'rustdesk.flexitapapp.com';
+    const FLEXITAP_SERVER_KEY = 'DupmnPdDGeoTy26tsw0JqfcU9rmh5hBotMp8mQMsqAg=';
+
+    let currentSessionCode = '';
+    let currentSessionId = '';
+    let statusPollInterval = null;
+    let realtimeChannel = null;
+
+    // Initialize from URL parameters
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const code = (params.get('code') || '').trim().toUpperCase();
+      const storeName = params.get('store');
+      const terminalName = params.get('terminal');
+
+      // Update terminal context display
+      const contextEl = document.getElementById('terminal-context-display');
+      if (storeName && contextEl) {
+        let label = 'Store: ' + decodeURIComponent(storeName);
+        if (terminalName) label += ' (' + decodeURIComponent(terminalName) + ')';
+        contextEl.textContent = label;
+      }
+
+      renderPlatformHelper();
+
+      // Pre-fill and auto-verify session code if passed from POS app
+      if (code && code.length === 6) {
+        const input = document.getElementById('session-code-input');
+        if (input) input.value = code;
+        verifySessionCode();
+      }
+    });
+
+    // Detect Platform for RustDesk installation instructions
+    function renderPlatformHelper() {
+      const helperBox = document.getElementById('platform-helper-box');
+      if (!helperBox) return;
+
+      const ua = navigator.userAgent;
+      const isIOS = /iPhone|iPad|iPod/.test(ua) && !window.MSStream;
+      const isMac = /Macintosh/.test(ua) && !isIOS;
+      const isAndroid = /Android/.test(ua);
+
+      if (isIOS) {
+        helperBox.innerHTML = `
+          <div style="color: #f87171; font-weight: 700; font-size: 13.5px; margin-bottom: 4px;">⚠️ iOS Remote Control Restricted</div>
+          <p style="font-size: 12.5px; color: var(--text-muted); margin: 0;">
+            Apple restricts screen remote control on iPhones and iPads. Please launch this session on the Windows, Mac, or Android POS terminal that requires technical support.
+          </p>`;
+        return;
+      }
+
+      if (isAndroid) {
+        helperBox.innerHTML = `
+          <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 10px;">
+            1. If RustDesk is not installed, install it from the 
+            <a href="https://play.google.com/store/apps/details?id=com.carriez.flutter_hbb" target="_blank" rel="noopener" style="color: #38bdf8; text-decoration: underline; font-weight: 700;">Google Play Store</a>.
+          </p>
+          <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 10px;">
+            2. Open RustDesk → Tap <strong>⋮ (Menu)</strong> → <strong>Settings</strong> → <strong>ID/Relay Server</strong> and enter:
+          </p>
+          <div class="server-config-box">
+            <div class="server-config-row">
+              <span class="server-config-label">ID / Relay Server:</span>
+              <span class="server-config-val">${FLEXITAP_SERVER_ID}</span>
+            </div>
+            <div class="server-config-row">
+              <span class="server-config-label">Public Key:</span>
+              <span class="server-config-val">${FLEXITAP_SERVER_KEY}</span>
+            </div>
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">
+            Return to RustDesk's main screen to find your 9-digit device ID.
+          </p>`;
+        return;
+      }
+
+      if (isMac) {
+        helperBox.innerHTML = `
+          <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 10px;">
+            Download and run our automated Mac configuration script:
+          </p>
+          <a href="/install-flexitap-support.sh" download class="download-btn">
+            <span>📥 Download Support Helper for Mac (.sh)</span>
+          </a>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">
+            After downloading, open Terminal and execute: <code>sudo bash ~/Downloads/install-flexitap-support.sh</code>
+          </p>`;
+        return;
+      }
+
+      // Default: Windows POS Terminal
+      helperBox.innerHTML = `
+        <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 10px;">
+          If RustDesk is already open on this POS, enter your 9-digit ID below. If not yet installed, download our one-click support helper:
+        </p>
+        <a href="/Install-FlexiTapSupport.ps1" download class="download-btn">
+          <span>📥 Download FlexiTap Support Helper (Windows .ps1)</span>
+        </a>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">
+          Right-click the downloaded <strong>Install-FlexiTapSupport.ps1</strong> and click <strong>"Run with PowerShell"</strong>. It will automatically download, launch, and configure RustDesk for you.
+        </p>`;
+    }
+
+    // Step 1: Verify Session Code
+    async function verifySessionCode() {
+      const input = document.getElementById('session-code-input');
+      const statusMsg = document.getElementById('code-status-msg');
+      const verifyBtn = document.getElementById('verify-btn');
+      const code = (input ? input.value : '').trim().toUpperCase();
+
+      if (!code || code.length !== 6) {
+        showStatus(statusMsg, 'error', '⚠️ Please enter a valid 6-character session code (e.g., 6MGPA7).');
+        return;
+      }
+
+      verifyBtn.disabled = true;
+      verifyBtn.innerHTML = '<span>Verifying…</span>';
+      showStatus(statusMsg, 'info', '⏳ Contacting FlexiTap Support Server...');
+
+      try {
+        let sessionValid = false;
+        let sessionId = code;
+
+        // 1. Try secure RPC
+        const { data: rpcData, error: rpcError } = await supabaseClient.rpc('get_support_session_status', { p_code: code });
+
+        if (!rpcError && rpcData) {
+          const row = Array.isArray(rpcData) ? rpcData[0] : rpcData;
+          if (row && (row.status === 'pending' || row.status === 'client_ready' || row.status === 'active')) {
+            sessionValid = true;
+            if (row.id) sessionId = row.id;
+          }
+        }
+
+        // 2. Direct table fallback
+        if (!sessionValid) {
+          try {
+            const { data: tblData, error: tblError } = await supabaseClient
+              .from('remote_support_sessions')
+              .select('*')
+              .eq('code', code)
+              .maybeSingle();
+
+            if (!tblError && tblData && tblData.status !== 'ended' && tblData.status !== 'expired') {
+              sessionValid = true;
+              sessionId = tblData.id;
+            }
+          } catch (tblErr) {
+            console.warn('Fallback direct table check failed:', tblErr);
+          }
+        }
+
+        if (!sessionValid) {
+          showStatus(statusMsg, 'error', '❌ Invalid or expired session code. Please verify the code with your support agent.');
+        } else {
+          currentSessionCode = code;
+          currentSessionId = sessionId;
+          showStatus(statusMsg, 'success', `✓ Session code ${code} verified! Proceed to Step 2 below.`);
+          
+          // Reveal Step 2
+          document.getElementById('rustdesk-step').style.display = 'block';
+          document.getElementById('rustdesk-id-input').focus();
+
+          // Start listening for status changes
+          startWatchingStatus(code);
+        }
+      } catch (err) {
+        console.error('Session verification error:', err);
+        showStatus(statusMsg, 'error', '❌ Network error verifying session code. Please check internet connection.');
+      } finally {
+        verifyBtn.disabled = false;
+        verifyBtn.innerHTML = '<span>Verify Session</span><span>→</span>';
+      }
+    }
+
+    // Step 2: Submit RustDesk ID
+    async function submitRustdeskId() {
+      const idInput = document.getElementById('rustdesk-id-input');
+      const statusMsg = document.getElementById('rustdesk-status-msg');
+      const shareBtn = document.getElementById('share-id-btn');
+      const liveCard = document.getElementById('live-session-card');
+      const headline = document.getElementById('session-status-headline');
+      const subline = document.getElementById('session-status-subline');
+      const pulseDot = document.getElementById('session-pulse-dot');
+
+      const rustdeskId = (idInput ? idInput.value : '').replace(/\s+/g, '').trim();
+
+      if (!rustdeskId) {
+        showStatus(statusMsg, 'error', '⚠️ Please enter your 9-digit RustDesk ID.');
+        return;
+      }
+
+      shareBtn.disabled = true;
+      shareBtn.textContent = 'Sharing…';
+
+      try {
+        const { error } = await supabaseClient.rpc('submit_rustdesk_id', {
+          p_code: currentSessionCode,
+          p_rustdesk_id: rustdeskId
+        });
+
+        if (error) {
+          console.error('submit_rustdesk_id error:', error);
+          showStatus(statusMsg, 'error', `❌ Could not share ID: ${error.message}`);
+          return;
+        }
+
+        showStatus(statusMsg, 'success', '✓ RustDesk ID shared with support agent! Waiting for connection...');
+        
+        liveCard.style.display = 'flex';
+        headline.textContent = 'ID Shared • Awaiting Technician';
+        subline.textContent = `RustDesk ID (${rustdeskId}) transmitted. Keep RustDesk open on your screen.`;
+        pulseDot.className = 'pulse-dot';
+
+        startWatchingStatus(currentSessionCode);
+      } catch (err) {
+        console.error('Error submitting RustDesk ID:', err);
+        showStatus(statusMsg, 'error', '❌ Communication error. Please retry.');
+      } finally {
+        shareBtn.disabled = false;
+        shareBtn.textContent = 'Share with Technician';
+      }
+    }
+
+    // Watch Session Status via Polling & Realtime
+    function startWatchingStatus(code) {
+      if (statusPollInterval) clearInterval(statusPollInterval);
+
+      // 1. Polling interval every 3 seconds
+      statusPollInterval = setInterval(() => checkStatusUpdate(code), 3000);
+
+      // 2. Realtime subscription
+      if (!realtimeChannel) {
+        try {
+          realtimeChannel = supabaseClient
+            .channel(`remote_support:${code}`)
+            .on('postgres_changes', {
+              event: 'UPDATE',
+              schema: 'public',
+              table: 'remote_support_sessions',
+              filter: `code=eq.${code}`
+            }, (payload) => {
+              if (payload && payload.new) {
+                applyStatusUpdate(payload.new.status);
+              }
+            })
+            .subscribe();
+        } catch (subErr) {
+          console.warn('Realtime subscription failed, continuing with polling:', subErr);
+        }
+      }
+    }
+
+    async function checkStatusUpdate(code) {
+      try {
+        const { data, error } = await supabaseClient.rpc('get_support_session_status', { p_code: code });
+        let row = null;
+        if (!error && data) {
+          row = Array.isArray(data) ? data[0] : data;
+        } else {
+          const { data: tblData } = await supabaseClient
+            .from('remote_support_sessions')
+            .select('status')
+            .eq('code', code)
+            .maybeSingle();
+          if (tblData) row = tblData;
+        }
+
+        if (row && row.status) {
+          applyStatusUpdate(row.status);
+        }
+      } catch (err) {
+        console.warn('Status check poll failed:', err);
+      }
+    }
+
+    function applyStatusUpdate(status) {
+      const liveCard = document.getElementById('live-session-card');
+      const headline = document.getElementById('session-status-headline');
+      const subline = document.getElementById('session-status-subline');
+      const pulseDot = document.getElementById('session-pulse-dot');
+
+      if (!liveCard || !headline || !subline) return;
+
+      liveCard.style.display = 'flex';
+
+      if (status === 'active') {
+        headline.textContent = '🟢 Support Technician Connected';
+        subline.textContent = 'Your remote support session is active. Please observe your screen.';
+        if (pulseDot) pulseDot.className = 'pulse-dot active';
+      } else if (status === 'ended') {
+        headline.textContent = 'Session Concluded';
+        subline.textContent = 'This remote support session has ended. Thank you for using FlexiTap Support.';
+        if (pulseDot) pulseDot.className = 'pulse-dot ended';
+        if (statusPollInterval) clearInterval(statusPollInterval);
+      } else if (status === 'client_ready') {
+        headline.textContent = 'ID Received • Connecting...';
+        subline.textContent = 'Our technician has received your terminal ID and is initiating the session.';
+        if (pulseDot) pulseDot.className = 'pulse-dot';
+      }
+    }
+
+    function showStatus(element, type, message) {
+      if (!element) return;
+      element.className = `status-msg ${type}`;
+      element.textContent = message;
+      element.style.display = 'flex';
+    }
+  </script>
+</body>
+</html>
