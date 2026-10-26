@@ -57,6 +57,30 @@
     /* --- APP LAYOUT --- */
     #app-layout { display: none; width: 100%; height: 100%; flex-direction: row; }
 
+    /* --- STAFF DEV INSPECTION MODE STYLES --- */
+    #dev-inspection-banner {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100vw;
+      height: 48px;
+      background: linear-gradient(90deg, #b45309, #d97706);
+      color: #fff;
+      padding: 0 24px;
+      box-sizing: border-box;
+      z-index: 100000;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      border-bottom: 2px solid #f59e0b;
+      align-items: center;
+      justify-content: space-between;
+    }
+    body.has-dev-inspection #app-layout {
+      height: calc(100vh - 48px) !important;
+      margin-top: 48px !important;
+    }
+
     /* --- SIDEBAR --- */
     .sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); background: var(--sidebar-bg); display: flex; flex-direction: column; height: 100%; z-index: 50; }
     .logo-container { padding: 20px; font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); }
@@ -717,23 +741,21 @@
   </div>
 
     <!-- STAFF DEV INSPECTION MODE BANNER -->
-  <div id="dev-inspection-banner" style="display: none; background: linear-gradient(90deg, #b45309, #d97706); color: #fff; padding: 10px 24px; position: sticky; top: 0; z-index: 10000; box-shadow: 0 4px 14px rgba(0,0,0,0.4); border-bottom: 2px solid #f59e0b;" data-html2canvas-ignore>
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; max-width: 100%;">
-      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <span style="font-size: 18px;">🔍</span>
-        <div>
-          <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.85; font-weight: 800; display: block;">Developer &amp; Support Inspection Mode</span>
-          <span style="font-size: 13.5px; font-weight: 800;">Viewing Merchant: <span id="inspect-banner-store-name" style="text-decoration: underline; color: #fef3c7;">Loading...</span></span>
-          <span style="font-size: 11px; background: rgba(0,0,0,0.3); padding: 2px 7px; border-radius: 4px; margin-left: 6px; font-family: monospace;" id="inspect-banner-store-id">ID: —</span>
-          <span style="font-size: 10.5px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 9999px; font-weight: 800; text-transform: uppercase; margin-left: 6px;">Read-Only Audit</span>
-        </div>
+  <div id="dev-inspection-banner" data-html2canvas-ignore>
+    <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+      <span style="font-size: 18px; flex-shrink: 0;">🔍</span>
+      <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9; font-weight: 800; background: rgba(0,0,0,0.25); padding: 2px 7px; border-radius: 4px;">Staff Inspection Mode</span>
+        <span style="font-size: 13px; font-weight: 800;">Viewing Merchant: <span id="inspect-banner-store-name" style="text-decoration: underline; color: #fef3c7;">Loading...</span></span>
+        <span style="font-size: 11px; background: rgba(0,0,0,0.3); padding: 2px 7px; border-radius: 4px; font-family: monospace;" id="inspect-banner-store-id">ID: —</span>
+        <span style="font-size: 10.5px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 9999px; font-weight: 800; text-transform: uppercase;">Read-Only Audit</span>
       </div>
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <select id="inspect-store-switcher" onchange="switchInspectedStore(this.value)" style="background: rgba(0,0,0,0.35); color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; outline: none; cursor: pointer; max-width: 260px;">
-          <option value="">Switch Store...</option>
-        </select>
-        <button type="button" onclick="exitDevInspection()" style="background: #fff; color: #b45309; border: none; border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">✕ Exit to Dev Portal</button>
-      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+      <select id="inspect-store-switcher" onchange="switchInspectedStore(this.value)" style="background: rgba(0,0,0,0.35); color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; outline: none; cursor: pointer; max-width: 260px;">
+        <option value="">Switch Store...</option>
+      </select>
+      <button type="button" onclick="exitDevInspection()" style="background: #fff; color: #b45309; border: none; border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.2); white-space: nowrap;">✕ Exit to Dev Portal</button>
     </div>
   </div>
 
@@ -4782,10 +4804,11 @@
               window.isDevInspectionMode = true;
               window.inspectedStoreId = targetId;
 
+              document.body.classList.add('has-dev-inspection');
               const banner = document.getElementById('dev-inspection-banner');
               const bName = document.getElementById('inspect-banner-store-name');
               const bId = document.getElementById('inspect-banner-store-id');
-              if (banner) banner.style.display = 'block';
+              if (banner) banner.style.display = 'flex';
               if (bName) bName.innerText = targetName;
               if (bId) bId.innerText = 'ID: ' + (targetId.length > 20 ? targetId.substring(0, 16) + '...' : targetId);
 
@@ -4937,6 +4960,7 @@
     }
 
     function exitDevInspection() {
+      document.body.classList.remove('has-dev-inspection');
       const isDevPortal = document.referrer.includes('dev-portal.html') || window.location.search.includes('dev_inspect');
       if (isDevPortal) {
         window.location.href = 'dev-portal.html';
