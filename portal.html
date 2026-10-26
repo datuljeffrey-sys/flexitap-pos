@@ -716,6 +716,27 @@
     </div>
   </div>
 
+    <!-- STAFF DEV INSPECTION MODE BANNER -->
+  <div id="dev-inspection-banner" style="display: none; background: linear-gradient(90deg, #b45309, #d97706); color: #fff; padding: 10px 24px; position: sticky; top: 0; z-index: 10000; box-shadow: 0 4px 14px rgba(0,0,0,0.4); border-bottom: 2px solid #f59e0b;" data-html2canvas-ignore>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; max-width: 100%;">
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span style="font-size: 18px;">🔍</span>
+        <div>
+          <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.85; font-weight: 800; display: block;">Developer &amp; Support Inspection Mode</span>
+          <span style="font-size: 13.5px; font-weight: 800;">Viewing Merchant: <span id="inspect-banner-store-name" style="text-decoration: underline; color: #fef3c7;">Loading...</span></span>
+          <span style="font-size: 11px; background: rgba(0,0,0,0.3); padding: 2px 7px; border-radius: 4px; margin-left: 6px; font-family: monospace;" id="inspect-banner-store-id">ID: —</span>
+          <span style="font-size: 10.5px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 9999px; font-weight: 800; text-transform: uppercase; margin-left: 6px;">Read-Only Audit</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <select id="inspect-store-switcher" onchange="switchInspectedStore(this.value)" style="background: rgba(0,0,0,0.35); color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; outline: none; cursor: pointer; max-width: 260px;">
+          <option value="">Switch Store...</option>
+        </select>
+        <button type="button" onclick="exitDevInspection()" style="background: #fff; color: #b45309; border: none; border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">✕ Exit to Dev Portal</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 2. MAIN APPLICATION LAYOUT -->
   <div id="app-layout">
     <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleMobileSidebar(false)"></div>
@@ -4723,6 +4744,58 @@
         const profile = profileRes?.data || null;
         const store = storeRes?.data || null;
 
+        const userRole = (profile?.role || '').toLowerCase();
+        const isStaff = ['admin', 'developer', 'support', 'owner'].includes(userRole);
+
+        // Check for Staff Dev Inspection query parameters (?store_id=...&dev_inspect=true)
+        const urlParams = new URLSearchParams(window.location.search);
+        const inspectStoreParam = (urlParams.get('store_id') || urlParams.get('store') || '').trim();
+        const isInspectRequested = urlParams.get('dev_inspect') === 'true' || Boolean(inspectStoreParam);
+        let inspectedMerchantData = null;
+
+        if (isInspectRequested && inspectStoreParam && isStaff) {
+          try {
+            const [targetProfRes, targetStoreRes] = await Promise.all([
+              supabaseClient.from('profiles').select('*').or(`id.eq.${inspectStoreParam},store_id.eq.${inspectStoreParam}`).maybeSingle(),
+              supabaseClient.from('stores').select('*').or(`id.eq.${inspectStoreParam},owner_id.eq.${inspectStoreParam},user_id.eq.${inspectStoreParam}`).maybeSingle()
+            ]);
+            const targetProf = targetProfRes?.data;
+            const targetSt = targetStoreRes?.data;
+
+            if (targetProf || targetSt) {
+              const targetName = targetProf?.store_name || targetSt?.name || targetSt?.store_name || targetProf?.full_name || 'Inspected Merchant';
+              const targetId = targetProf?.store_id || targetSt?.id || targetProf?.id || inspectStoreParam;
+              const targetCurrency = targetProf?.currency || targetSt?.currency || 'PHP';
+              const targetSymbol = targetCurrency === 'PHP' ? '₱' : '$';
+
+              inspectedMerchantData = {
+                id: targetId,
+                name: targetName,
+                currency: targetCurrency,
+                currency_symbol: targetSymbol,
+                is_inspected: true,
+                ...(targetSt || {})
+              };
+              inspectedMerchantData.id = targetId;
+              inspectedMerchantData.name = targetName;
+
+              window.isDevInspectionMode = true;
+              window.inspectedStoreId = targetId;
+
+              const banner = document.getElementById('dev-inspection-banner');
+              const bName = document.getElementById('inspect-banner-store-name');
+              const bId = document.getElementById('inspect-banner-store-id');
+              if (banner) banner.style.display = 'block';
+              if (bName) bName.innerText = targetName;
+              if (bId) bId.innerText = 'ID: ' + (targetId.length > 20 ? targetId.substring(0, 16) + '...' : targetId);
+
+              populateInspectStoreSwitcher(targetId);
+            }
+          } catch (inspectErr) {
+            console.warn('Error setting up Dev Inspection Mode:', inspectErr);
+          }
+        }
+
         // Exact dev-portal.html matching resolution:
         // storeName = p.store_name || (matchedStore ? matchedStore.name : null) || p.full_name || emailPrefix || 'FlexiTap Account'
         const storeName = profile?.store_name || store?.name || store?.store_name || store?.legal_name || store?.business_name || profile?.full_name || (user.email ? user.email.split('@')[0].toUpperCase() : 'FlexiTap Account');
@@ -4736,15 +4809,19 @@
         const currency = profile?.currency || store?.currency || (isPH ? 'PHP' : 'USD');
         const currencySymbol = currency === 'PHP' ? '₱' : '$';
 
-        activeStore = {
-          id: resolvedStoreId,
-          name: resolvedStoreName,
-          currency: currency,
-          currency_symbol: currencySymbol,
-          ...(store || {})
-        };
-        activeStore.id = resolvedStoreId;
-        activeStore.name = resolvedStoreName;
+        if (inspectedMerchantData) {
+          activeStore = inspectedMerchantData;
+        } else {
+          activeStore = {
+            id: resolvedStoreId,
+            name: resolvedStoreName,
+            currency: currency,
+            currency_symbol: currencySymbol,
+            ...(store || {})
+          };
+          activeStore.id = resolvedStoreId;
+          activeStore.name = resolvedStoreName;
+        }
 
         const storeTextEl = document.getElementById('store-name-text');
         if (storeTextEl) storeTextEl.innerText = activeStore.name;
@@ -4770,7 +4847,8 @@
         const tierLower = tier;
 
         // Access Gate: Free Community tier accounts run only on POS terminal PWA (not Cloud Back Office)
-        if (tierLower === 'free' || tierLower.includes('free')) {
+        // Internal staff (admin, developer, support, owner) or active dev inspection bypasses this gate
+        if (!isStaff && !window.isDevInspectionMode && (tierLower === 'free' || tierLower.includes('free'))) {
           if (appLayout) appLayout.style.display = 'none';
           if (loginView) loginView.style.display = 'none';
           const gate = document.getElementById('free-gate-view');
@@ -4825,6 +4903,48 @@
         }
         initReportRelay();
         requestOnDemandReport();
+      }
+    }
+
+    async function populateInspectStoreSwitcher(currentStoreId) {
+      const switcher = document.getElementById('inspect-store-switcher');
+      if (!switcher || !supabaseClient) return;
+      try {
+        const { data: profs } = await supabaseClient
+          .from('profiles')
+          .select('id, store_id, store_name, email')
+          .not('store_name', 'is', null)
+          .order('store_name');
+        if (profs && profs.length > 0) {
+          switcher.innerHTML = '<option value="">Switch Inspected Store...</option>' + profs.map(p => {
+            const sid = p.store_id || p.id;
+            const sname = p.store_name || p.email || sid;
+            const isSel = String(sid).toLowerCase() === String(currentStoreId).toLowerCase() ? 'selected' : '';
+            return `<option value="${escapeHtml(sid)}" ${isSel}>${escapeHtml(sname)}</option>`;
+          }).join('');
+        }
+      } catch (err) {
+        console.warn('Could not populate store switcher:', err);
+      }
+    }
+
+    function switchInspectedStore(newStoreId) {
+      if (!newStoreId) return;
+      const params = new URLSearchParams(window.location.search);
+      params.set('store_id', newStoreId);
+      params.set('dev_inspect', 'true');
+      window.location.search = params.toString();
+    }
+
+    function exitDevInspection() {
+      const isDevPortal = document.referrer.includes('dev-portal.html') || window.location.search.includes('dev_inspect');
+      if (isDevPortal) {
+        window.location.href = 'dev-portal.html';
+      } else {
+        const params = new URLSearchParams(window.location.search);
+        params.delete('store_id');
+        params.delete('dev_inspect');
+        window.location.search = params.toString();
       }
     }
 

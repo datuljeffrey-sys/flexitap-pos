@@ -1258,6 +1258,9 @@
                 <button class="action-btn" onclick="toggleCrmDemosMode()" id="crm-btn-toggle-demos" style="padding: 9px 14px; font-weight: 700; background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.4);">
                   <span>🗓️ 1-on-1 Demos (<span id="crm-demos-badge-count">0</span>)</span>
                 </button>
+                <button class="action-btn" onclick="openMerchantInspectionPortal()" id="crm-btn-inspect-portal" style="padding: 9px 14px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); font-weight: 700; display: inline-flex; align-items: center; gap: 6px;" title="Open Merchant Live Back Office Sales Portal in Inspection Mode">
+                  <span>🔍 Inspect Store Portal ↗</span>
+                </button>
                 <button class="action-btn" onclick="openAddMerchantModal()" style="padding: 9px 14px; background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700;">
                   <span>+ New Merchant</span>
                 </button>
@@ -1318,6 +1321,9 @@
               </button>
               <button class="crm-tab-btn" id="crm-tabbtn-tickets" onclick="switchCrmSubTab('tickets')">
                 <span>🎫</span> Tickets
+              </button>
+              <button class="crm-tab-btn" id="crm-tabbtn-reports" onclick="switchCrmSubTab('reports')">
+                <span>📊</span> Sales &amp; Reports Audit
               </button>
             </div>
 
@@ -1654,6 +1660,81 @@
                     <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">Loading store tickets...</td></tr>
                   </tbody>
                 </table>
+              </div>
+            </div>
+
+            <!-- SUB-PANEL 6: SALES & REPORTS AUDIT -->
+            <div id="crm-subpanel-reports" class="crm-sub-panel">
+              <div class="panel">
+                <div class="panel-header">
+                  <div>
+                    <div class="panel-title" style="display: flex; align-items: center; gap: 8px;">
+                      <span>Live Sales &amp; Discrepancy Audit</span>
+                      <span id="crm-reports-live-badge" class="crm-pill-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">POS Connected</span>
+                    </div>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Inspect Z-Read balancing, cash vs electronic tender splits, and void anomalies directly without screen-sharing or remote desktop.</p>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <select id="crm-report-range-select" onchange="loadCrmMerchantSalesReport()" style="padding: 7px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.8rem; font-weight: 700; outline: none; cursor: pointer;">
+                      <option value="today">Today</option>
+                      <option value="yesterday">Yesterday</option>
+                      <option value="7days">Last 7 Days</option>
+                      <option value="30days">Last 30 Days</option>
+                      <option value="month">This Month</option>
+                    </select>
+                    <button class="action-btn" onclick="loadCrmMerchantSalesReport(true)" style="padding: 7px 12px; font-weight: 700;">↻ Refresh</button>
+                    <button class="action-btn" onclick="openMerchantInspectionPortal()" style="padding: 7px 14px; background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700;">
+                      Launch Full Portal (24 Reports) ↗
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Sales & Drawer KPI Cards -->
+                <div class="kpi-row" style="margin-bottom: 20px;">
+                  <div class="kpi-card">
+                    <div class="kpi-title">Net Sales</div>
+                    <div class="kpi-val" id="crm-kpi-net" style="color: #60a5fa;">₱0.00</div>
+                    <div class="kpi-status" id="crm-kpi-gross-sub" style="color: var(--text-muted);">Gross: ₱0.00</div>
+                  </div>
+                  <div class="kpi-card">
+                    <div class="kpi-title">Transactions &amp; Avg Check</div>
+                    <div class="kpi-val" id="crm-kpi-txns">0</div>
+                    <div class="kpi-status" id="crm-kpi-avg-sub" style="color: #34d399;">Avg: ₱0.00</div>
+                  </div>
+                  <div class="kpi-card">
+                    <div class="kpi-title">Calculated Cash In Drawer</div>
+                    <div class="kpi-val" id="crm-kpi-cash" style="color: #34d399;">₱0.00</div>
+                    <div class="kpi-status" id="crm-kpi-bank-sub" style="color: var(--text-muted);">Opening Bank: ₱0.00</div>
+                  </div>
+                  <div class="kpi-card">
+                    <div class="kpi-title">Discounts &amp; Voids Audit</div>
+                    <div class="kpi-val" id="crm-kpi-voids" style="color: #f87171;">0 Voids</div>
+                    <div class="kpi-status" id="crm-kpi-discounts-sub" style="color: #fbbf24;">Discounts: ₱0.00</div>
+                  </div>
+                </div>
+
+                <!-- Tender Breakdown & Raw Z-Read Inspection Columns -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+                  <!-- Tender Breakdown -->
+                  <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px;">
+                    <h4 style="font-size: 0.9rem; font-weight: 800; color: #fff; margin-bottom: 12px; display: flex; justify-content: space-between;">
+                      <span>Payment Tender Reconciliation</span>
+                      <span id="crm-tender-total" style="color: var(--primary);">₱0.00</span>
+                    </h4>
+                    <div id="crm-tender-rows" style="display: flex; flex-direction: column; gap: 8px;">
+                      <div style="color: var(--text-muted); font-size: 0.8rem; padding: 10px 0;">Select a store to view payment tenders.</div>
+                    </div>
+                  </div>
+
+                  <!-- Raw Z-Read Monospace View -->
+                  <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                      <h4 style="font-size: 0.9rem; font-weight: 800; color: #fff;">Raw Z-Read Thermal Replica</h4>
+                      <button class="action-btn" onclick="copyCrmRawZRead()" style="padding: 4px 10px; font-size: 0.72rem;">📋 Copy Text</button>
+                    </div>
+                    <pre id="crm-raw-zread" style="flex: 1; min-height: 200px; max-height: 320px; overflow-y: auto; background: #000; color: #34d399; padding: 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.4; border: 1px solid rgba(255,255,255,0.08); margin: 0;">Generating Z-Read preview...</pre>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -4330,7 +4411,7 @@
 
     function switchCrmSubTab(tabKey) {
       activeCrmSubTab = tabKey;
-      const tabs = ['account', 'contact', 'assets', 'subscription', 'tickets'];
+      const tabs = ['account', 'contact', 'assets', 'subscription', 'tickets', 'reports'];
       tabs.forEach(function(t) {
         const btn = document.getElementById('crm-tabbtn-' + t);
         const panel = document.getElementById('crm-subpanel-' + t);
@@ -4343,6 +4424,9 @@
           else panel.classList.remove('active');
         }
       });
+      if (tabKey === 'reports') {
+        loadCrmMerchantSalesReport();
+      }
     }
 
     let cachedLeads = [];
@@ -7687,11 +7771,12 @@
               ${deptIndicator}
               ${tierBadge}
             </div>
-            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
-              Store: <strong style="color: #fff;">${escapeHtml(selectedTicket.store_name)}</strong>
-              ${selectedTicket.contact_email ? ` • Email: ${escapeHtml(selectedTicket.contact_email)}` : ''}
-              • Created: ${timeStr}
-              • <span style="color: #38bdf8; font-weight: 700;">👤 Assigned: ${escapeHtml(assignedLabel)}</span>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <span>Store: <strong style="color: #fff;">${escapeHtml(selectedTicket.store_name)}</strong></span>
+              ${selectedTicket.contact_email ? `<span>• Email: ${escapeHtml(selectedTicket.contact_email)}</span>` : ''}
+              <span>• Created: ${timeStr}</span>
+              <span>• <span style="color: #38bdf8; font-weight: 700;">👤 Assigned: ${escapeHtml(assignedLabel)}</span></span>
+              <button type="button" class="action-btn" onclick="openMerchantInspectionPortal('${escapeHtml(selectedTicket.store_id || selectedTicket.store_name)}')" style="padding: 3px 9px; font-size: 0.72rem; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); font-weight: 700;" title="Inspect merchant sales, Z-Read & POS reports">🔍 Inspect Reports ↗</button>
             </div>
           </div>
           <span style="background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 4px 10px; border-radius: 8px; font-size: 0.72rem; color: var(--text-muted);">
@@ -13721,6 +13806,266 @@ Role: ${lastProvisionedCreds.role}`;
       } catch (err) {
         alert('Failed to update status: ' + err.message);
       }
+    }
+
+    /* =========================================================================
+       DEV INSPECTION & CRM SALES REPORTS AUDIT ENGINE
+       ========================================================================= */
+    let crmReportRelayChannel = null;
+
+    function openMerchantInspectionPortal(targetId) {
+      const accountId = targetId || currentCrmAccountId;
+      if (!accountId) {
+        alert('Please select a merchant account first.');
+        return;
+      }
+      const acc = crmAccounts.find(function(a) {
+        return a.id === accountId || a.store_code === accountId || a.store_name === accountId;
+      });
+      const storeId = acc ? (acc.store_code || acc.id) : accountId;
+      window.open('portal.html?store_id=' + encodeURIComponent(storeId) + '&dev_inspect=true', '_blank');
+    }
+
+    async function loadCrmMerchantSalesReport(forceRefresh) {
+      const acc = crmAccounts.find(function(a) { return a.id === currentCrmAccountId; });
+      if (!acc) return;
+
+      const rangeSelect = document.getElementById('crm-report-range-select');
+      const range = rangeSelect ? rangeSelect.value : 'today';
+      const now = new Date();
+      let sDate = now.toISOString().split('T')[0];
+      let eDate = sDate;
+
+      if (range === 'yesterday') {
+        const y = new Date(now.getTime() - 86400000);
+        sDate = y.toISOString().split('T')[0];
+        eDate = sDate;
+      } else if (range === '7days') {
+        const d7 = new Date(now.getTime() - 7 * 86400000);
+        sDate = d7.toISOString().split('T')[0];
+      } else if (range === '30days') {
+        const d30 = new Date(now.getTime() - 30 * 86400000);
+        sDate = d30.toISOString().split('T')[0];
+      } else if (range === 'month') {
+        sDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+      }
+
+      const liveBadge = document.getElementById('crm-reports-live-badge');
+      if (liveBadge) {
+        liveBadge.innerText = 'Connecting Relay...';
+        liveBadge.style.color = '#fbbf24';
+        liveBadge.style.background = 'rgba(245, 158, 11, 0.15)';
+      }
+
+      // Connect to merchant's Realtime POS relay channel
+      if (crmReportRelayChannel) {
+        try { supabaseClient.removeChannel(crmReportRelayChannel); } catch (_) {}
+        crmReportRelayChannel = null;
+      }
+
+      const storeKey = acc.store_code || acc.id;
+      if (supabaseClient) {
+        try {
+          crmReportRelayChannel = supabaseClient.channel('store_reports_relay_' + storeKey, {
+            config: { broadcast: { self: false } }
+          });
+          crmReportRelayChannel.on('broadcast', { event: 'REPORT_RESPONSE' }, function(payload) {
+            if (payload && payload.payload) {
+              if (liveBadge) {
+                liveBadge.innerText = '● Live POS Terminal Relay';
+                liveBadge.style.color = '#34d399';
+                liveBadge.style.background = 'rgba(16, 185, 129, 0.15)';
+              }
+              renderCrmSalesAggregates(payload.payload.data || payload.payload, acc);
+            }
+          }).subscribe(function(status) {
+            if (status === 'SUBSCRIBED') {
+              crmReportRelayChannel.send({
+                type: 'broadcast',
+                event: 'RUN_REPORT',
+                payload: {
+                  requestId: 'crm_' + Date.now(),
+                  report: 'sales-summary',
+                  startDate: sDate,
+                  endDate: eDate
+                }
+              }).catch(function() {});
+            }
+          });
+        } catch (_) {}
+      }
+
+      // Simultaneously query cloud database summaries
+      if (supabaseClient) {
+        try {
+          let query = supabaseClient
+            .from('daily_sales_summaries')
+            .select('*')
+            .gte('date', sDate)
+            .lte('date', eDate);
+
+          if (acc.store_code && acc.id && acc.store_code !== acc.id) {
+            query = query.or('store_id.eq.' + acc.store_code + ',store_id.eq.' + acc.id);
+          } else {
+            query = query.eq('store_id', acc.store_code || acc.id);
+          }
+
+          const res = await query;
+          const rows = res.data;
+          if (!res.error && rows && rows.length > 0) {
+            let gross = 0, net = 0, tax = 0, txns = 0, bank = 0, voids = 0, voidAmt = 0, disc = 0;
+            let cash = 0, payments = {};
+
+            rows.forEach(function(r) {
+              gross += Number(r.gross_sales || r.net_sales || 0);
+              net += Number(r.net_sales || 0);
+              tax += Number(r.total_taxes || r.total_tax || 0);
+              txns += Number(r.transactions || 0);
+              bank += Number(r.opening_bank || 0);
+              voids += Number(r.voided_count || 0);
+              voidAmt += Number(r.voided_amount || 0);
+              disc += Number(r.total_discounts || 0);
+
+              const pb = r.payment_breakdown || {};
+              for (let k in pb) {
+                const val = typeof pb[k] === 'number' ? pb[k] : (pb[k].total_sales || 0);
+                payments[k] = (payments[k] || 0) + Number(val || 0);
+                if (k.toLowerCase().includes('cash')) cash += Number(val || 0);
+              }
+            });
+
+            renderCrmSalesAggregates({
+              gross_sales: gross,
+              net_sales: net,
+              total_taxes: tax,
+              transactions: txns,
+              opening_bank: bank,
+              voided_count: voids,
+              voided_amount: voidAmt,
+              total_discounts: disc,
+              expected_cash: bank + cash,
+              payment_breakdown: payments
+            }, acc);
+          } else {
+            // Baseline if no rows in cloud
+            renderCrmSalesAggregates({
+              gross_sales: 0,
+              net_sales: 0,
+              total_taxes: 0,
+              transactions: 0,
+              opening_bank: 0,
+              voided_count: 0,
+              voided_amount: 0,
+              total_discounts: 0,
+              expected_cash: 0,
+              payment_breakdown: {}
+            }, acc);
+          }
+        } catch (err) {
+          console.warn('Error querying CRM sales report:', err);
+        }
+      }
+    }
+
+    function renderCrmSalesAggregates(d, acc) {
+      const sym = acc.currency === 'USD' ? '$' : '₱';
+      const fmt = function(n) {
+        return sym + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      };
+
+      const netEl = document.getElementById('crm-kpi-net');
+      const grossEl = document.getElementById('crm-kpi-gross-sub');
+      const txnsEl = document.getElementById('crm-kpi-txns');
+      const avgEl = document.getElementById('crm-kpi-avg-sub');
+      const cashEl = document.getElementById('crm-kpi-cash');
+      const bankEl = document.getElementById('crm-kpi-bank-sub');
+      const voidsEl = document.getElementById('crm-kpi-voids');
+      const discEl = document.getElementById('crm-kpi-discounts-sub');
+
+      const net = Number(d.net_sales || d.netSales || 0);
+      const gross = Number(d.gross_sales || d.grossSales || 0);
+      const txns = Number(d.transactions || d.txnCount || 0);
+      const avg = txns > 0 ? (net / txns) : 0;
+      const cash = Number(d.expected_cash || d.expectedCash || 0);
+      const bank = Number(d.opening_bank || d.openingBank || 0);
+      const voids = Number(d.voided_count || d.voidsCount || 0);
+      const voidAmt = Number(d.voided_amount || d.voidsAmount || 0);
+      const disc = Number(d.total_discounts || d.discounts || 0);
+
+      if (netEl) netEl.innerText = fmt(net);
+      if (grossEl) grossEl.innerText = 'Gross Sales: ' + fmt(gross);
+      if (txnsEl) txnsEl.innerText = String(txns);
+      if (avgEl) avgEl.innerText = 'Avg Check: ' + fmt(avg);
+      if (cashEl) cashEl.innerText = fmt(cash);
+      if (bankEl) bankEl.innerText = 'Opening Bank Float: ' + fmt(bank);
+      if (voidsEl) voidsEl.innerText = voids + ' Voids (' + fmt(voidAmt) + ')';
+      if (discEl) discEl.innerText = 'Total Discounts: ' + fmt(disc);
+
+      // Render tender split
+      const tenderCont = document.getElementById('crm-tender-rows');
+      const tenderTotal = document.getElementById('crm-tender-total');
+      const pb = d.payment_breakdown || d.payments || {};
+      let totalTender = 0;
+      let rowsHtml = '';
+
+      const keys = Object.keys(pb);
+      if (keys.length === 0) {
+        rowsHtml = '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 10px 0;">No tender records found for this period.</div>';
+      } else {
+        keys.forEach(function(k) {
+          const val = typeof pb[k] === 'number' ? pb[k] : (pb[k].total_sales || 0);
+          totalTender += Number(val || 0);
+          let icon = '💳';
+          const kLower = k.toLowerCase();
+          if (kLower.includes('cash')) icon = '💵';
+          else if (kLower.includes('gcash') || kLower.includes('maya')) icon = '📱';
+          rowsHtml += '<div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: rgba(255,255,255,0.03); border-radius: 8px; font-size: 0.82rem;">' +
+            '<span style="display: flex; align-items: center; gap: 8px;"><span>' + icon + '</span> <strong>' + escapeHtml(k) + '</strong></span>' +
+            '<span style="font-weight: 800; color: #fff;">' + fmt(val) + '</span>' +
+          '</div>';
+        });
+      }
+      if (tenderCont) tenderCont.innerHTML = rowsHtml;
+      if (tenderTotal) tenderTotal.innerText = fmt(totalTender > 0 ? totalTender : net);
+
+      // Render Raw Z-Read Monospace text
+      const zBox = document.getElementById('crm-raw-zread');
+      if (zBox) {
+        const rawLines = [
+          '========================================',
+          '      FLEXITAP OFFICIAL Z-READ AUDIT    ',
+          '========================================',
+          'STORE : ' + (acc.store_name || 'STORE').toUpperCase(),
+          'CODE  : ' + (acc.store_code || acc.id),
+          'DATE  : ' + new Date().toLocaleDateString('en-PH'),
+          '----------------------------------------',
+          'GROSS SALES        : ' + fmt(gross).padStart(18),
+          'DISCOUNTS & COMPS  : ' + ('-' + fmt(disc)).padStart(18),
+          'NET SALES          : ' + fmt(net).padStart(18),
+          'TAXES (VAT 12%)    : ' + fmt(d.total_taxes || 0).padStart(18),
+          '----------------------------------------',
+          'TRANSACTIONS COUNT : ' + String(txns).padStart(18),
+          'AVERAGE TICKET     : ' + fmt(avg).padStart(18),
+          'VOIDS / CANCELS    : ' + String(voids).padStart(18),
+          'VOIDS TOTAL VALUE  : ' + fmt(voidAmt).padStart(18),
+          '----------------------------------------',
+          'CASH DRAWER BALANCING',
+          '  OPENING BANK     : ' + fmt(bank).padStart(18),
+          '  EXPECTED CASH    : ' + fmt(cash).padStart(18),
+          '========================================'
+        ];
+        zBox.innerText = rawLines.join('\n');
+      }
+    }
+
+    function copyCrmRawZRead() {
+      const zBox = document.getElementById('crm-raw-zread');
+      if (!zBox || !zBox.innerText) return;
+      navigator.clipboard.writeText(zBox.innerText).then(function() {
+        alert('✓ Raw Z-Read report copied to clipboard!');
+      }).catch(function() {
+        alert('Copy failed, please select and copy manually.');
+      });
     }
   </script>
 
