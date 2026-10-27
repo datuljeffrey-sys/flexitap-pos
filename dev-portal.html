@@ -3742,17 +3742,27 @@
         return;
       }
 
-      // 3. Resolve role from user auth metadata if not in profile
-      if (!role && user.user_metadata && user.user_metadata.role) {
-        const metaRole = String(user.user_metadata.role).toLowerCase();
-        if (metaRole === 'affiliate' || metaRole === 'partner' || metaRole === 'customer') {
+      // 3. Reject explicit non-staff roles in user_metadata; only accept staff roles from server-restricted app_metadata
+      if (user.user_metadata && user.user_metadata.role) {
+        const clientMetaRole = String(user.user_metadata.role).toLowerCase();
+        if (clientMetaRole === 'affiliate' || clientMetaRole === 'partner' || clientMetaRole === 'customer' || clientMetaRole === 'owner') {
           await supabaseClient.auth.signOut();
           document.getElementById('dev-err').innerText = 'Access Denied: Partner/Affiliate accounts cannot access internal operations.';
           document.getElementById('dev-auth-view').style.display = 'flex';
           document.getElementById('dev-app-layout').style.display = 'none';
           return;
         }
-        role = metaRole;
+      }
+      if (!role && user.app_metadata && user.app_metadata.role) {
+        const appMetaRole = String(user.app_metadata.role).toLowerCase();
+        if (appMetaRole === 'affiliate' || appMetaRole === 'partner' || appMetaRole === 'customer' || appMetaRole === 'owner') {
+          await supabaseClient.auth.signOut();
+          document.getElementById('dev-err').innerText = 'Access Denied: Partner/Affiliate accounts cannot access internal operations.';
+          document.getElementById('dev-auth-view').style.display = 'flex';
+          document.getElementById('dev-app-layout').style.display = 'none';
+          return;
+        }
+        role = appMetaRole;
       }
 
       // 4. Resolve role strictly from official company email domain (@flexitapapp.com or @flexitap.io)
@@ -3921,6 +3931,11 @@
     }) {
       if (!recipientEmail) return;
 
+      const safeStoreName = escapeHtml(storeName || 'Store');
+      const safeTicketNumber = escapeHtml(ticketNumber || 'Update');
+      const safeDetails = escapeHtml(details || 'No detailed description provided.');
+      const safeResolutionNotes = escapeHtml(resolutionNotes || 'All diagnostic inspections passed and terminal sync is restored.');
+
       const emailSubject = isResolved
         ? `[FlexiTap Support] Resolved: Ticket #${ticketNumber} - ${storeName}`
         : `[FlexiTap Support] Ticket #${ticketNumber} Acknowledged - ${storeName}`;
@@ -3937,16 +3952,16 @@
             <div style="padding: 28px 24px;">
               <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
                 <div style="color: #065f46; font-size: 14px; font-weight: 700;">Issue Marked as Resolved</div>
-                <div style="color: #047857; font-size: 13px; margin-top: 2px;">Ticket <strong>#${ticketNumber}</strong> has been completed and verified.</div>
+                <div style="color: #047857; font-size: 13px; margin-top: 2px;">Ticket <strong>#${safeTicketNumber}</strong> has been completed and verified.</div>
               </div>
               <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">
-                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${storeName}</td></tr>
-                <tr><td style="padding: 6px 0; color: #64748b;">Ticket Reference:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 700;">#${ticketNumber}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${safeStoreName}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Ticket Reference:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 700;">#${safeTicketNumber}</td></tr>
                 <tr><td style="padding: 6px 0; color: #64748b;">Support Tier:</td><td style="padding: 6px 0; color: #0f172a;">${tierLabel}</td></tr>
               </table>
               <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
                 <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Resolution Details &amp; Engineer Notes:</div>
-                <div style="color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${resolutionNotes || 'All diagnostic inspections passed and terminal sync is restored.'}</div>
+                <div style="color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${safeResolutionNotes}</div>
               </div>
               <!-- PWA Support App Callout -->
               <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #10b981; border-radius: 10px; padding: 18px 20px; margin: 20px 0; text-align: center;">
@@ -3973,16 +3988,16 @@
             <div style="padding: 28px 24px;">
               <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
                 <div style="color: #1e40af; font-size: 14px; font-weight: 700;">Ticket Received &amp; Logged</div>
-                <div style="color: #2563eb; font-size: 13px; margin-top: 2px;">Your ticket <strong>#${ticketNumber}</strong> has been dispatched to our engineering queue.</div>
+                <div style="color: #2563eb; font-size: 13px; margin-top: 2px;">Your ticket <strong>#${safeTicketNumber}</strong> has been dispatched to our engineering queue.</div>
               </div>
               <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">
-                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${storeName}</td></tr>
-                <tr><td style="padding: 6px 0; color: #64748b;">Ticket Reference:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 700;">#${ticketNumber}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${safeStoreName}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Ticket Reference:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 700;">#${safeTicketNumber}</td></tr>
                 <tr><td style="padding: 6px 0; color: #64748b;">Support Tier:</td><td style="padding: 6px 0; color: #0f172a;">${tierLabel}</td></tr>
               </table>
               <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
                 <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Issue Description:</div>
-                <div style="color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${details || 'No detailed description provided.'}</div>
+                <div style="color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${safeDetails}</div>
               </div>
               <!-- PWA Support App Callout -->
               <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #3b82f6; border-radius: 10px; padding: 18px 20px; margin: 20px 0; text-align: center;">
@@ -4597,8 +4612,8 @@
           statusBadge = '<span class="session-pill-store">🟢 Converted</span>';
         }
 
-        const safeName = (lead.business_name || '').replace(/'/g, "\\'");
-        const safeEmail = (lead.contact_email || '').replace(/'/g, "\\'");
+        const safeName = escapeHtml(lead.business_name || '').replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+        const safeEmail = escapeHtml(lead.contact_email || '').replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 
         return `
           <tr>
@@ -4734,9 +4749,9 @@
         const notes = escapeHtml(d.notes || '—');
         const status = (d.status || 'pending').toLowerCase();
 
-        const safeName = (d.business_name || '').replace(/'/g, "\\'");
-        const safeEmail = (d.contact_email || '').replace(/'/g, "\\'");
-        const safeDate = dateFormatted.replace(/'/g, "\\'");
+        const safeName = escapeHtml(d.business_name || '').replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+        const safeEmail = escapeHtml(d.contact_email || '').replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+        const safeDate = escapeHtml(dateFormatted).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 
         return `
           <tr>

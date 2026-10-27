@@ -2924,25 +2924,29 @@
             const isClosed = t.status === 'resolved' || t.status === 'closed';
             const badgeColor = isClosed ? '#10b981' : (t.status === 'in_progress' ? '#f59e0b' : '#3b82f6');
             const badgeBg = isClosed ? 'rgba(16,185,129,0.15)' : (t.status === 'in_progress' ? 'rgba(245,158,11,0.15)' : 'rgba(59,130,246,0.15)');
-            const numLabel = t.ticket_number ? '#' + t.ticket_number : '#TCK';
-            const dateStr = t.created_at ? new Date(t.created_at).toLocaleDateString() : 'Recent';
-            const assignedInfo = t.device_telemetry?.auto_assigned
+            const numLabel = escapeHtml(t.ticket_number ? '#' + t.ticket_number : '#TCK');
+            const dateStr = escapeHtml(t.created_at ? new Date(t.created_at).toLocaleDateString() : 'Recent');
+            const rawAssignedInfo = t.device_telemetry?.auto_assigned
               ? `${t.device_telemetry.auto_assigned.staff_name} (${t.device_telemetry.auto_assigned.role === 'dev' ? 'Core Dev' : 'Customer Support'})`
               : (t.assigned_to || 'Assigned Specialist');
+            const assignedInfo = escapeHtml(rawAssignedInfo);
+            const safeSubject = escapeHtml(t.subject || 'Ticket');
+            const safeCategory = escapeHtml((t.category || 'General').toUpperCase());
+            const safeStatus = escapeHtml((t.status || 'OPEN').replace('_', ' '));
 
             return '<div style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">' +
               '<div>' +
                 '<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">' +
                   '<span style="font-family: monospace; font-weight: 800; color: var(--primary); font-size: 13px;">' + numLabel + '</span>' +
-                  '<span style="font-weight: 700; color: #fff; font-size: 14px;">' + (t.subject || 'Ticket') + '</span>' +
+                  '<span style="font-weight: 700; color: #fff; font-size: 14px;">' + safeSubject + '</span>' +
                 '</div>' +
                 '<div style="font-size: 12px; color: var(--text-muted);">' +
-                  (t.category || 'General').toUpperCase() + ' • ' + dateStr +
+                  safeCategory + ' • ' + dateStr +
                   ' • <span style="color: #38bdf8; font-weight: 600;">👤 Assigned: ' + assignedInfo + '</span>' +
                 '</div>' +
               '</div>' +
               '<span style="font-size: 11px; font-weight: 800; color: ' + badgeColor + '; background: ' + badgeBg + '; padding: 3px 10px; border-radius: 9999px; text-transform: uppercase;">' +
-                (t.status || 'OPEN').replace('_', ' ') +
+                safeStatus +
               '</span>' +
             '</div>';
           }).join('') +
@@ -2994,9 +2998,8 @@
       if (relayChannels.length > 0) return;
 
       const channelNames = [
-        `store_reports_relay_${activeStore?.id}`,
-        `store_reports_relay_${activeUser?.id}`,
-        'store_reports_relay_a927b91f-0c1a-47b7-bf8b-59a9764aeacd'
+        activeStore?.id ? `store_reports_relay_${activeStore.id}` : null,
+        (activeUser?.id && activeUser.id !== activeStore?.id) ? `store_reports_relay_${activeUser.id}` : null
       ].filter(Boolean);
 
       channelNames.forEach(chName => {
@@ -3048,6 +3051,7 @@
             event: 'RUN_REPORT',
             payload: {
               requestId: reqId,
+              storeId: activeStore?.id || activeUser?.id || null,
               report: activeReportId,
               startDate: s,
               endDate: e
@@ -3082,6 +3086,10 @@
 
     function handleRelayResponse(resp) {
       if (!resp || resp.status !== 'success' || !resp.data) return;
+      if (resp.storeId && activeStore?.id && resp.storeId !== activeStore.id && resp.storeId !== activeUser?.id) {
+        console.warn('Ignored cross-store relay response:', resp.storeId);
+        return;
+      }
       isRelayDataActive = true;
       currentPendingRequestId = null;
       resetRunButton();
@@ -4773,7 +4781,7 @@
         const store = storeRes?.data || null;
 
         const userRole = (profile?.role || '').toLowerCase();
-        const isStaff = ['admin', 'developer', 'support', 'owner'].includes(userRole);
+        const isStaff = ['admin', 'super_admin', 'dev', 'developer', 'support', 'staff', 'ops', 'devops'].includes(userRole);
 
         // Check for Staff Dev Inspection query parameters (?store_id=...&dev_inspect=true)
         const urlParams = new URLSearchParams(window.location.search);
@@ -5512,6 +5520,12 @@
       }
 
       const isResolved = type === 'resolution_notice';
+      const safeStoreName = escapeHtml(storeName || 'Store');
+      const safeTicketNumber = escapeHtml(ticketNumber || (isResolved ? 'Update' : 'New'));
+      const safeSubject = escapeHtml(subject || 'Support Request');
+      const safeDetails = escapeHtml(details || 'No detailed description provided.');
+      const safeResolutionNotes = escapeHtml(resolutionNotes || 'All diagnostic inspections passed and terminal sync is restored.');
+
       const emailSubject = isResolved
         ? `[Resolved] FlexiTap Support Ticket #${ticketNumber || 'Update'} — ${storeName || 'Store'}`
         : `[FlexiTap Support] Ticket #${ticketNumber || 'New'} Acknowledgment — ${subject || 'Support Request'}`;
@@ -5528,16 +5542,16 @@
             <div style="padding: 28px 24px;">
               <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
                 <div style="color: #065f46; font-size: 14px; font-weight: 700;">Issue Marked as Resolved</div>
-                <div style="color: #047857; font-size: 13px; margin-top: 2px;">Ticket <strong>#${ticketNumber}</strong> has been completed and verified.</div>
+                <div style="color: #047857; font-size: 13px; margin-top: 2px;">Ticket <strong>#${safeTicketNumber}</strong> has been completed and verified.</div>
               </div>
               <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">
-                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${storeName}</td></tr>
-                <tr><td style="padding: 6px 0; color: #64748b;">Ticket Reference:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 700;">#${ticketNumber}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${safeStoreName}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Ticket Reference:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 700;">#${safeTicketNumber}</td></tr>
                 <tr><td style="padding: 6px 0; color: #64748b;">Support Tier:</td><td style="padding: 6px 0; color: #0f172a;">${tierLabel}</td></tr>
               </table>
               <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
                 <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Resolution Details &amp; Engineer Notes:</div>
-                <div style="color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${resolutionNotes || 'All diagnostic inspections passed and terminal sync is restored.'}</div>
+                <div style="color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${safeResolutionNotes}</div>
               </div>
               <!-- PWA Support App Callout -->
               <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #10b981; border-radius: 10px; padding: 18px 20px; margin: 20px 0; text-align: center;">
@@ -5564,16 +5578,16 @@
             <div style="padding: 28px 24px;">
               <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
                 <div style="color: #1e40af; font-size: 14px; font-weight: 700;">Ticket Received &amp; Logged</div>
-                <div style="color: #2563eb; font-size: 13px; margin-top: 2px;">Your ticket <strong>#${ticketNumber}</strong> has been dispatched to our engineering queue.</div>
+                <div style="color: #2563eb; font-size: 13px; margin-top: 2px;">Your ticket <strong>#${safeTicketNumber}</strong> has been dispatched to our engineering queue.</div>
               </div>
               <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">
-                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${storeName}</td></tr>
-                <tr><td style="padding: 6px 0; color: #64748b;">Ticket Reference:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 700;">#${ticketNumber}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${safeStoreName}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Ticket Reference:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 700;">#${safeTicketNumber}</td></tr>
                 <tr><td style="padding: 6px 0; color: #64748b;">Support Tier:</td><td style="padding: 6px 0; color: #0f172a;">${tierLabel}</td></tr>
               </table>
               <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
                 <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Issue Description:</div>
-                <div style="color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${details || 'No detailed description provided.'}</div>
+                <div style="color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${safeDetails}</div>
               </div>
               <!-- PWA Support App Callout -->
               <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #3b82f6; border-radius: 10px; padding: 18px 20px; margin: 20px 0; text-align: center;">
@@ -6915,6 +6929,8 @@
     // --- GEMINI FLASH-LITE CONNECTOR + CONTEXT-AWARE KNOWLEDGE BASE ---
     async function resolveGeminiApiKey() {
       if (cachedGeminiApiKey) return cachedGeminiApiKey;
+      // Require an authenticated merchant/staff session before resolving any LLM key
+      if (!activeUser || !activeUser.id) return '';
       try {
         if (window.FLEXITAP_GEMINI_API_KEY) {
           cachedGeminiApiKey = window.FLEXITAP_GEMINI_API_KEY;
@@ -6928,9 +6944,8 @@
           }
         }
       } catch (_) {}
-      // Default integrated FlexiTap Gemini API credential (assembled at runtime)
-      cachedGeminiApiKey = ['AQ.Ab8RN6L4rB9y', 'HHgrQWG5TVtSnK7', 'pT8CVHNGTz-kuQs', '6W3XkEvg'].join('');
-      return cachedGeminiApiKey;
+      // No hardcoded public client-side API key; falls back cleanly to built-in 42-guide RAG knowledge base & statistical forecasting engine
+      return '';
     }
 
     function buildGroundedSystemPrompt(userQuery = '') {
