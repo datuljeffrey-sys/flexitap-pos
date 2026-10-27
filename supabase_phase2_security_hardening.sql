@@ -1,345 +1,407 @@
--- =============================================================================
--- FlexiTap Enterprise Security Hardening: Phase 2 Complete Cloud & RBAC Shield
--- Zero-Downtime Migration for Privilege Escalation, CRM, Feedback, Affiliates & RPCs
--- =============================================================================
+-- ============================================================================
+-- FLEXITAP POS — PHASE 2 ENTERPRISE SECURITY HARDENING MIGRATION
+-- Safe to run regardless of which optional tables exist in your Supabase DB.
+-- ============================================================================
 
--- -----------------------------------------------------------------------------
--- 1. HELPER FUNCTION: VERIFY IF CALLER IS AUTHORIZED BACKEND STAFF
--- -----------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION public.is_flexitap_staff()
-RETURNS boolean
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $$
-DECLARE
-  v_uid uuid := auth.uid();
-  v_email text := lower(COALESCE(auth.email(), ''));
+-- 1. STAFF VERIFICATION HELPER FUNCTION (SECURITY DEFINER)
+create or replace function public.is_flexitap_staff()
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
   v_role text;
-BEGIN
-  IF v_uid IS NULL THEN
-    RETURN false;
-  END IF;
+  v_email text;
+begin
+  if auth.uid() is null then
+    return false;
+  end if;
 
-  -- Check profile role
-  SELECT lower(COALESCE(role, '')) INTO v_role
-  FROM public.profiles
-  WHERE id::text = v_uid::text
-  LIMIT 1;
+  select lower(coalesce(p.role, '')), lower(coalesce(p.email, auth.jwt() ->> 'email', ''))
+    into v_role, v_email
+    from public.profiles p
+   where p.id = auth.uid();
 
-  IF v_role IN ('dev', 'developer', 'admin', 'super_admin', 'staff', 'support', 'ops', 'devops', 'agent') THEN
-    RETURN true;
-  END IF;
+  if v_role in ('admin', 'super_admin', 'dev', 'developer', 'devops', 'support', 'staff', 'ops', 'agent') then
+    return true;
+  end if;
 
-  -- Official corporate domain fallback (provided not registered as affiliate)
-  IF (v_email LIKE '%@flexitapapp.com' OR v_email LIKE '%@flexitap.io') THEN
-    IF NOT EXISTS (SELECT 1 FROM public.affiliates WHERE lower(email) = v_email) THEN
-      RETURN true;
-    END IF;
-  END IF;
+  if v_email like '%@flexitapapp.com' or v_email like '%@flexitap.io' then
+    return true;
+  end if;
 
-  RETURN false;
-END;
+  return false;
+end;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.is_flexitap_staff() TO authenticated, anon;
+-- 2. PREVENT PRIVILEGE ESCALATION ON public.profiles
+create or replace function public.guard_profile_sensitive_columns()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_jwt_role text := coalesce(auth.jwt() ->> 'role', current_setting('request.jwt.claim.role', true), '');
+  v_caller_email text := lower(coalesce(auth.jwt() ->> 'email', ''));
+  v_is_staff boolean := false;
+  v_new_role text := lower(coalesce(new.role, 'owner'));
+  v_restricted_roles text[] := array['admin', 'super_admin', 'dev', 'developer', 'devops', 'support', 'staff', 'ops', 'agent'];
+begin
+  if v_jwt_role = 'service_role' or current_user in ('postgres', 'supabase_admin', 'supabase_auth_admin') then
+    return new;
+  end if;
 
+  if v_caller_email like '%@flexitapapp.com' or v_caller_email like '%@flexitap.io' then
+    v_is_staff := true;
+  elsif auth.uid() is not null then
+    v_is_staff := public.is_flexitap_staff();
+  end if;
 
--- -----------------------------------------------------------------------------
--- 2. PREVENT PRIVILEGE ESCALATION ON public.profiles (Trigger + RLS)
--- -----------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION public.guard_profile_sensitive_columns()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $$
-DECLARE
-  v_jwt_role text := COALESCE(current_setting('request.jwt.claim.role', true), '');
-  v_email text := lower(COALESCE(NEW.email, auth.email(), ''));
-  v_is_staff_caller boolean := false;
-BEGIN
-  -- Allow service_role or internal postgres superuser (e.g. Paddle webhooks / SQL editor)
-  IF v_jwt_role = 'service_role' OR current_user IN ('postgres', 'supabase_admin') AND auth.uid() IS NULL THEN
-    RETURN NEW;
-  END IF;
+  if v_is_staff then
+    return new;
+  end if;
 
-  v_is_staff_caller := public.is_flexitap_staff();
+  if tg_op = 'INSERT' then
+    if v_new_role = any(v_restricted_roles) then
+      new.role := 'owner';
+    end if;
+    new.is_suspended := coalesce(new.is_suspended, false);
+    new.max_devices_override := null;
+    return new;
+  end if;
 
-  IF TG_OP = 'INSERT' THEN
-    -- Prevent self-assigning staff roles on signup unless corporate domain or admin caller
-    IF lower(COALESCE(NEW.role, '')) IN ('dev', 'developer', 'admin', 'super_admin', 'staff', 'support', 'ops', 'devops', 'agent') THEN
-      IF NOT v_is_staff_caller AND NOT (v_email LIKE '%@flexitapapp.com' OR v_email LIKE '%@flexitap.io') THEN
-        NEW.role := 'owner';
-      END IF;
-    END IF;
-    RETURN NEW;
-  END IF;
+  if tg_op = 'UPDATE' then
+    if new.role is distinct from old.role then
+      if v_new_role = any(v_restricted_roles) then
+        new.role := old.role;
+      end if;
+    end if;
 
-  IF TG_OP = 'UPDATE' THEN
-    -- If caller is not staff/admin, lock sensitive administrative columns
-    IF NOT v_is_staff_caller THEN
-      IF NEW.role IS DISTINCT FROM OLD.role THEN
-        IF lower(COALESCE(NEW.role, '')) IN ('dev', 'developer', 'admin', 'super_admin', 'staff', 'support', 'ops', 'devops', 'agent') THEN
-          NEW.role := OLD.role;
-        END IF;
-      END IF;
+    if old.is_suspended is true and new.is_suspended is distinct from old.is_suspended then
+      new.is_suspended := old.is_suspended;
+    end if;
 
-      -- Prevent self-unsuspending or overriding device limits
-      NEW.is_account_suspended := OLD.is_account_suspended;
-      NEW.max_devices_override := OLD.max_devices_override;
-    END IF;
-    RETURN NEW;
-  END IF;
+    if new.max_devices_override is distinct from old.max_devices_override then
+      new.max_devices_override := old.max_devices_override;
+    end if;
 
-  RETURN NEW;
-END;
+    return new;
+  end if;
+
+  return new;
+end;
 $$;
 
-DROP TRIGGER IF EXISTS trg_guard_profile_sensitive_columns ON public.profiles;
-CREATE TRIGGER trg_guard_profile_sensitive_columns
-  BEFORE INSERT OR UPDATE ON public.profiles
-  FOR EACH ROW
-  EXECUTE FUNCTION public.guard_profile_sensitive_columns();
+do $$
+begin
+  if to_regclass('public.profiles') is not null then
+    execute 'drop trigger if exists trg_guard_profile_sensitive_columns on public.profiles';
+    execute 'create trigger trg_guard_profile_sensitive_columns before insert or update on public.profiles for each row execute function public.guard_profile_sensitive_columns()';
 
--- Harden public.profiles RLS (Users see own profile; Staff see all for CRM)
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+    execute 'alter table public.profiles enable row level security';
+    execute 'drop policy if exists "Public profiles are viewable by everyone" on public.profiles';
+    execute 'drop policy if exists "Anyone can view profiles" on public.profiles';
+    execute 'drop policy if exists "Users can view own profile or staff can view all" on public.profiles';
+    execute 'drop policy if exists "Users can update own profile or staff can update all" on public.profiles';
+    execute 'drop policy if exists "Users can insert own profile or staff can insert" on public.profiles';
 
-DROP POLICY IF EXISTS "Public profiles are viewable by everyone." ON public.profiles;
-DROP POLICY IF EXISTS "Users can view all profiles" ON public.profiles;
-DROP POLICY IF EXISTS "Users can read own profile or staff can read all" ON public.profiles;
-DROP POLICY IF EXISTS "Users can update own profile or staff can update all" ON public.profiles;
-DROP POLICY IF EXISTS "Users can insert own profile" ON public.profiles;
+    execute $p$
+      create policy "Users can view own profile or staff can view all"
+        on public.profiles for select
+        to authenticated
+        using (auth.uid() = id or public.is_flexitap_staff())
+    $p$;
 
-CREATE POLICY "Users can read own profile or staff can read all"
-  ON public.profiles
-  FOR SELECT
-  TO authenticated
-  USING (
-    id::text = auth.uid()::text
-    OR public.is_flexitap_staff()
+    execute $p$
+      create policy "Users can insert own profile or staff can insert"
+        on public.profiles for insert
+        to authenticated
+        with check (auth.uid() = id or public.is_flexitap_staff())
+    $p$;
+
+    execute $p$
+      create policy "Users can update own profile or staff can update all"
+        on public.profiles for update
+        to authenticated
+        using (auth.uid() = id or public.is_flexitap_staff())
+        with check (auth.uid() = id or public.is_flexitap_staff())
+    $p$;
+  end if;
+end;
+$$;
+
+-- 3. LOCK DOWN CRM TABLES (IF PRESENT)
+do $$
+begin
+  if to_regclass('public.merchant_crm_accounts') is not null then
+    execute 'alter table public.merchant_crm_accounts enable row level security';
+    execute 'drop policy if exists "Enable all access for CRM accounts" on public.merchant_crm_accounts';
+    execute 'drop policy if exists "Allow staff full access to crm accounts" on public.merchant_crm_accounts';
+    execute 'drop policy if exists "CRM accounts access for owner and staff" on public.merchant_crm_accounts';
+    execute $p$
+      create policy "CRM accounts access for owner and staff"
+        on public.merchant_crm_accounts for all
+        to authenticated
+        using (public.is_flexitap_staff() or profile_id = auth.uid())
+        with check (public.is_flexitap_staff() or profile_id = auth.uid())
+    $p$;
+  end if;
+
+  if to_regclass('public.merchant_crm_contacts') is not null then
+    execute 'alter table public.merchant_crm_contacts enable row level security';
+    execute 'drop policy if exists "Enable all access for CRM contacts" on public.merchant_crm_contacts';
+    execute 'drop policy if exists "Allow staff full access to crm contacts" on public.merchant_crm_contacts';
+    execute 'drop policy if exists "CRM contacts access for owner and staff" on public.merchant_crm_contacts';
+    execute $p$
+      create policy "CRM contacts access for owner and staff"
+        on public.merchant_crm_contacts for all
+        to authenticated
+        using (public.is_flexitap_staff())
+        with check (public.is_flexitap_staff())
+    $p$;
+  end if;
+
+  if to_regclass('public.merchant_crm_assets') is not null then
+    execute 'alter table public.merchant_crm_assets enable row level security';
+    execute 'drop policy if exists "Enable all access for CRM assets" on public.merchant_crm_assets';
+    execute 'drop policy if exists "Allow staff full access to crm assets" on public.merchant_crm_assets';
+    execute 'drop policy if exists "CRM assets access for owner and staff" on public.merchant_crm_assets';
+    execute $p$
+      create policy "CRM assets access for owner and staff"
+        on public.merchant_crm_assets for all
+        to authenticated
+        using (public.is_flexitap_staff())
+        with check (public.is_flexitap_staff())
+    $p$;
+  end if;
+
+  if to_regclass('public.merchant_crm_subscriptions') is not null then
+    execute 'alter table public.merchant_crm_subscriptions enable row level security';
+    execute 'drop policy if exists "Enable all access for CRM subscriptions" on public.merchant_crm_subscriptions';
+    execute 'drop policy if exists "Allow staff full access to crm subscriptions" on public.merchant_crm_subscriptions';
+    execute 'drop policy if exists "CRM subscriptions access for owner and staff" on public.merchant_crm_subscriptions';
+    execute $p$
+      create policy "CRM subscriptions access for owner and staff"
+        on public.merchant_crm_subscriptions for all
+        to authenticated
+        using (public.is_flexitap_staff())
+        with check (public.is_flexitap_staff())
+    $p$;
+  end if;
+end;
+$$;
+
+-- 4. LOCK DOWN merchant_feedback & ticket_notifications (IF PRESENT)
+do $$
+begin
+  if to_regclass('public.merchant_feedback') is not null then
+    execute 'alter table public.merchant_feedback enable row level security';
+    execute 'drop policy if exists "Allow anon and authenticated to read merchant_feedback" on public.merchant_feedback';
+    execute 'drop policy if exists "Allow staff to update merchant_feedback" on public.merchant_feedback';
+    execute 'drop policy if exists "Authenticated users and staff read merchant_feedback" on public.merchant_feedback';
+    execute 'drop policy if exists "Staff can update merchant_feedback" on public.merchant_feedback';
+
+    execute $p$
+      create policy "Authenticated users and staff read merchant_feedback"
+        on public.merchant_feedback for select
+        to authenticated
+        using (
+          public.is_flexitap_staff()
+          or store_id = auth.uid()::text
+          or lower(coalesce(owner_email, '')) = lower(coalesce(auth.jwt() ->> 'email', ''))
+        )
+    $p$;
+
+    execute $p$
+      create policy "Staff can update merchant_feedback"
+        on public.merchant_feedback for update
+        to authenticated
+        using (public.is_flexitap_staff())
+        with check (public.is_flexitap_staff())
+    $p$;
+  end if;
+
+  if to_regclass('public.ticket_notifications') is not null then
+    execute 'alter table public.ticket_notifications enable row level security';
+    execute 'drop policy if exists "Allow all select ticket_notifications" on public.ticket_notifications';
+    execute 'drop policy if exists "Allow all insert ticket_notifications" on public.ticket_notifications';
+    execute 'drop policy if exists "Authenticated select ticket_notifications" on public.ticket_notifications';
+    execute 'drop policy if exists "Authenticated insert ticket_notifications" on public.ticket_notifications';
+
+    execute $p$
+      create policy "Authenticated select ticket_notifications"
+        on public.ticket_notifications for select
+        to authenticated
+        using (
+          public.is_flexitap_staff()
+          or lower(coalesce(recipient_email, '')) = lower(coalesce(auth.jwt() ->> 'email', ''))
+        )
+    $p$;
+
+    execute $p$
+      create policy "Authenticated insert ticket_notifications"
+        on public.ticket_notifications for insert
+        to authenticated
+        with check (true)
+    $p$;
+  end if;
+end;
+$$;
+
+-- 5. LOCK DOWN AFFILIATE REFERRALS, COMMISSIONS & PAYOUTS (IF PRESENT)
+do $$
+begin
+  if to_regclass('public.affiliate_referrals') is not null and to_regclass('public.affiliates') is not null then
+    execute 'alter table public.affiliate_referrals enable row level security';
+    execute 'drop policy if exists "Public select referrals" on public.affiliate_referrals';
+    execute 'drop policy if exists "Public update referrals" on public.affiliate_referrals';
+    execute 'drop policy if exists "Affiliates and staff select referrals" on public.affiliate_referrals';
+    execute 'drop policy if exists "Staff update referrals" on public.affiliate_referrals';
+
+    execute $p$
+      create policy "Affiliates and staff select referrals"
+        on public.affiliate_referrals for select
+        to authenticated
+        using (
+          public.is_flexitap_staff()
+          or exists (
+            select 1 from public.affiliates a
+            where a.id = affiliate_referrals.affiliate_id
+              and (a.user_id = auth.uid() or lower(a.email) = lower(coalesce(auth.jwt() ->> 'email', '')))
+          )
+        )
+    $p$;
+
+    execute $p$
+      create policy "Staff update referrals"
+        on public.affiliate_referrals for update
+        to authenticated
+        using (public.is_flexitap_staff())
+        with check (public.is_flexitap_staff())
+    $p$;
+  end if;
+
+  if to_regclass('public.affiliate_commissions') is not null and to_regclass('public.affiliates') is not null then
+    execute 'alter table public.affiliate_commissions enable row level security';
+    execute 'drop policy if exists "Public select commissions" on public.affiliate_commissions';
+    execute 'drop policy if exists "Public manage commissions" on public.affiliate_commissions';
+    execute 'drop policy if exists "Affiliates and staff select commissions" on public.affiliate_commissions';
+    execute 'drop policy if exists "Staff manage commissions" on public.affiliate_commissions';
+
+    execute $p$
+      create policy "Affiliates and staff select commissions"
+        on public.affiliate_commissions for select
+        to authenticated
+        using (
+          public.is_flexitap_staff()
+          or exists (
+            select 1 from public.affiliates a
+            where a.id = affiliate_commissions.affiliate_id
+              and (a.user_id = auth.uid() or lower(a.email) = lower(coalesce(auth.jwt() ->> 'email', '')))
+          )
+        )
+    $p$;
+
+    execute $p$
+      create policy "Staff manage commissions"
+        on public.affiliate_commissions for all
+        to authenticated
+        using (public.is_flexitap_staff())
+        with check (public.is_flexitap_staff())
+    $p$;
+  end if;
+
+  if to_regclass('public.affiliate_payouts') is not null and to_regclass('public.affiliates') is not null then
+    execute 'alter table public.affiliate_payouts enable row level security';
+    execute 'drop policy if exists "Public select payouts" on public.affiliate_payouts';
+    execute 'drop policy if exists "Public update payouts" on public.affiliate_payouts';
+    execute 'drop policy if exists "Affiliates and staff select payouts" on public.affiliate_payouts';
+    execute 'drop policy if exists "Staff update payouts" on public.affiliate_payouts';
+
+    execute $p$
+      create policy "Affiliates and staff select payouts"
+        on public.affiliate_payouts for select
+        to authenticated
+        using (
+          public.is_flexitap_staff()
+          or exists (
+            select 1 from public.affiliates a
+            where a.id = affiliate_payouts.affiliate_id
+              and (a.user_id = auth.uid() or lower(a.email) = lower(coalesce(auth.jwt() ->> 'email', '')))
+          )
+        )
+    $p$;
+
+    execute $p$
+      create policy "Staff update payouts"
+        on public.affiliate_payouts for update
+        to authenticated
+        using (public.is_flexitap_staff())
+        with check (public.is_flexitap_staff())
+    $p$;
+  end if;
+end;
+$$;
+
+-- 6. HARDEN SUPPORT SESSION RPCs (REQUIRE STAFF AUTHENTICATION)
+create or replace function public.create_support_session()
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_code text;
+  v_id uuid;
+  v_attempts int := 0;
+begin
+  if not public.is_flexitap_staff() then
+    raise exception 'Access Denied: Only authorized FlexiTap staff can generate support sessions.';
+  end if;
+
+  loop
+    v_attempts := v_attempts + 1;
+    v_code := lpad((floor(random() * 900000) + 100000)::int::text, 6, '0');
+
+    exit when not exists (
+      select 1 from public.support_sessions
+      where session_code = v_code
+        and status in ('waiting', 'active')
+        and expires_at > now()
+    );
+
+    if v_attempts > 25 then
+      raise exception 'Unable to allocate unique 6-digit support session code';
+    end if;
+  end loop;
+
+  insert into public.support_sessions (session_code, staff_id, status, expires_at)
+  values (v_code, auth.uid(), 'waiting', now() + interval '15 minutes')
+  returning id into v_id;
+
+  return jsonb_build_object(
+    'session_id', v_id,
+    'code', v_code
   );
+end;
+$$;
 
-CREATE POLICY "Users can insert own profile"
-  ON public.profiles
-  FOR INSERT
-  TO authenticated
-  WITH CHECK (
-    id::text = auth.uid()::text
-    OR public.is_flexitap_staff()
-  );
+create or replace function public.staff_start_session(p_session_id uuid)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not public.is_flexitap_staff() then
+    raise exception 'Access Denied: Only authorized FlexiTap staff can start support sessions.';
+  end if;
 
-CREATE POLICY "Users can update own profile or staff can update all"
-  ON public.profiles
-  FOR UPDATE
-  TO authenticated
-  USING (
-    id::text = auth.uid()::text
-    OR public.is_flexitap_staff()
-  )
-  WITH CHECK (
-    id::text = auth.uid()::text
-    OR public.is_flexitap_staff()
-  );
-
-
--- -----------------------------------------------------------------------------
--- 3. HARDEN MERCHANT CRM TABLES (Remove Anon Access)
--- -----------------------------------------------------------------------------
-ALTER TABLE public.merchant_crm_accounts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.merchant_crm_contacts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.merchant_crm_assets ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.merchant_crm_subscriptions ENABLE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS "Allow staff full access to crm accounts" ON public.merchant_crm_accounts;
-DROP POLICY IF EXISTS "Staff and owner access to crm accounts" ON public.merchant_crm_accounts;
-CREATE POLICY "Staff and owner access to crm accounts"
-  ON public.merchant_crm_accounts
-  FOR ALL
-  TO authenticated
-  USING (
-    profile_id::text = auth.uid()::text
-    OR public.is_flexitap_staff()
-  )
-  WITH CHECK (
-    profile_id::text = auth.uid()::text
-    OR public.is_flexitap_staff()
-  );
-
-DROP POLICY IF EXISTS "Allow staff full access to crm contacts" ON public.merchant_crm_contacts;
-DROP POLICY IF EXISTS "Staff access to crm contacts" ON public.merchant_crm_contacts;
-CREATE POLICY "Staff access to crm contacts"
-  ON public.merchant_crm_contacts
-  FOR ALL
-  TO authenticated
-  USING (public.is_flexitap_staff())
-  WITH CHECK (public.is_flexitap_staff());
-
-DROP POLICY IF EXISTS "Allow staff full access to crm assets" ON public.merchant_crm_assets;
-DROP POLICY IF EXISTS "Staff access to crm assets" ON public.merchant_crm_assets;
-CREATE POLICY "Staff access to crm assets"
-  ON public.merchant_crm_assets
-  FOR ALL
-  TO authenticated
-  USING (public.is_flexitap_staff())
-  WITH CHECK (public.is_flexitap_staff());
-
-DROP POLICY IF EXISTS "Allow staff full access to crm subscriptions" ON public.merchant_crm_subscriptions;
-DROP POLICY IF EXISTS "Staff access to crm subscriptions" ON public.merchant_crm_subscriptions;
-CREATE POLICY "Staff access to crm subscriptions"
-  ON public.merchant_crm_subscriptions
-  FOR ALL
-  TO authenticated
-  USING (public.is_flexitap_staff())
-  WITH CHECK (public.is_flexitap_staff());
-
-
--- -----------------------------------------------------------------------------
--- 4. HARDEN MERCHANT FEEDBACK & TICKET NOTIFICATIONS
--- -----------------------------------------------------------------------------
-ALTER TABLE public.merchant_feedback ENABLE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS "Allow select merchant_feedback" ON public.merchant_feedback;
-DROP POLICY IF EXISTS "Allow update merchant_feedback" ON public.merchant_feedback;
-DROP POLICY IF EXISTS "Merchants and staff can read feedback" ON public.merchant_feedback;
-DROP POLICY IF EXISTS "Staff can update feedback" ON public.merchant_feedback;
-
-CREATE POLICY "Merchants and staff can read feedback"
-  ON public.merchant_feedback
-  FOR SELECT
-  TO authenticated
-  USING (
-    store_id::text = auth.uid()::text
-    OR lower(COALESCE(merchant_email, '')) = lower(COALESCE(auth.email(), ''))
-    OR public.is_flexitap_staff()
-  );
-
-CREATE POLICY "Staff can update feedback"
-  ON public.merchant_feedback
-  FOR UPDATE
-  TO authenticated
-  USING (public.is_flexitap_staff())
-  WITH CHECK (public.is_flexitap_staff());
-
-ALTER TABLE public.ticket_notifications ENABLE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS "Allow select ticket_notifications" ON public.ticket_notifications;
-DROP POLICY IF EXISTS "Recipients and staff can read ticket_notifications" ON public.ticket_notifications;
-
-CREATE POLICY "Recipients and staff can read ticket_notifications"
-  ON public.ticket_notifications
-  FOR SELECT
-  TO authenticated
-  USING (
-    lower(COALESCE(recipient_email, '')) = lower(COALESCE(auth.email(), ''))
-    OR public.is_flexitap_staff()
-  );
-
-
--- -----------------------------------------------------------------------------
--- 5. HARDEN AFFILIATE REFERRALS, COMMISSIONS & PAYOUTS
--- -----------------------------------------------------------------------------
-ALTER TABLE public.affiliate_referrals ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.affiliate_commissions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.affiliate_payouts ENABLE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS "Affiliates can view referrals" ON public.affiliate_referrals;
-DROP POLICY IF EXISTS "Affiliates and staff can view referrals" ON public.affiliate_referrals;
-CREATE POLICY "Affiliates and staff can view referrals"
-  ON public.affiliate_referrals
-  FOR SELECT
-  TO authenticated
-  USING (
-    affiliate_id IN (
-      SELECT id FROM public.affiliates
-      WHERE user_id::text = auth.uid()::text OR lower(email) = lower(auth.email())
-    )
-    OR public.is_flexitap_staff()
-  );
-
-DROP POLICY IF EXISTS "Affiliates can view commissions" ON public.affiliate_commissions;
-DROP POLICY IF EXISTS "Affiliates and staff can view commissions" ON public.affiliate_commissions;
-CREATE POLICY "Affiliates and staff can view commissions"
-  ON public.affiliate_commissions
-  FOR SELECT
-  TO authenticated
-  USING (
-    affiliate_id IN (
-      SELECT id FROM public.affiliates
-      WHERE user_id::text = auth.uid()::text OR lower(email) = lower(auth.email())
-    )
-    OR public.is_flexitap_staff()
-  );
-
-DROP POLICY IF EXISTS "Affiliates can view payouts" ON public.affiliate_payouts;
-DROP POLICY IF EXISTS "Affiliates and staff can view payouts" ON public.affiliate_payouts;
-CREATE POLICY "Affiliates and staff can view payouts"
-  ON public.affiliate_payouts
-  FOR SELECT
-  TO authenticated
-  USING (
-    affiliate_id IN (
-      SELECT id FROM public.affiliates
-      WHERE user_id::text = auth.uid()::text OR lower(email) = lower(auth.email())
-    )
-    OR public.is_flexitap_staff()
-  );
-
-
--- -----------------------------------------------------------------------------
--- 6. HARDEN REMOTE SUPPORT SECURITY DEFINER RPCs
--- -----------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION public.create_support_session()
-RETURNS TABLE (id text, code text)
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $func$
-DECLARE
-  new_code text;
-  new_id uuid;
-  current_user_id uuid := auth.uid();
-BEGIN
-  IF current_user_id IS NULL OR NOT public.is_flexitap_staff() THEN
-    RAISE EXCEPTION 'Forbidden: Authorized support or engineering staff role required.';
-  END IF;
-
-  new_code := upper(substring(md5(random()::text || clock_timestamp()::text) from 1 for 6));
-
-  IF EXISTS (
-    SELECT 1 FROM information_schema.columns 
-    WHERE table_schema = 'public' AND table_name = 'remote_support_sessions' AND column_name = 'created_by'
-  ) THEN
-    EXECUTE 'INSERT INTO public.remote_support_sessions (code, staff_user_id, created_by, status) VALUES ($1, $2, $2, $3) RETURNING id'
-    INTO new_id
-    USING new_code, current_user_id, 'pending';
-  ELSE
-    INSERT INTO public.remote_support_sessions (code, staff_user_id, status)
-    VALUES (new_code, current_user_id, 'pending')
-    RETURNING remote_support_sessions.id INTO new_id;
-  END IF;
-
-  RETURN QUERY SELECT new_id::text, new_code::text;
-END;
-$func$;
-
-CREATE OR REPLACE FUNCTION public.staff_start_session(p_session_id uuid)
-RETURNS boolean
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $func$
-BEGIN
-  IF auth.uid() IS NULL OR NOT public.is_flexitap_staff() THEN
-    RAISE EXCEPTION 'Forbidden: Authorized support or engineering staff role required.';
-  END IF;
-
-  UPDATE public.remote_support_sessions
-  SET status = 'active', updated_at = now()
-  WHERE id = p_session_id;
-  RETURN FOUND;
-END;
-$func$;
-
--- Reload PostgREST schema cache
-NOTIFY pgrst, 'reload schema';
+  update public.support_sessions
+     set status = 'active'
+   where id = p_session_id;
+  return found;
+end;
+$$;
