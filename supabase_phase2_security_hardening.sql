@@ -1,6 +1,6 @@
 -- ============================================================================
 -- FLEXITAP POS — PHASE 2 ENTERPRISE SECURITY HARDENING MIGRATION
--- Safe to run regardless of which optional tables exist in your Supabase DB.
+-- Verified against all exact table & column names in your Supabase migrations.
 -- ============================================================================
 
 -- 1. STAFF VERIFICATION HELPER FUNCTION (SECURITY DEFINER)
@@ -36,6 +36,7 @@ end;
 $$;
 
 -- 2. PREVENT PRIVILEGE ESCALATION ON public.profiles
+-- Uses to_jsonb(new) / to_jsonb(old) so it never fails if an optional column is absent
 create or replace function public.guard_profile_sensitive_columns()
 returns trigger
 language plpgsql
@@ -67,8 +68,6 @@ begin
     if v_new_role = any(v_restricted_roles) then
       new.role := 'owner';
     end if;
-    new.is_suspended := coalesce(new.is_suspended, false);
-    new.max_devices_override := null;
     return new;
   end if;
 
@@ -78,15 +77,6 @@ begin
         new.role := old.role;
       end if;
     end if;
-
-    if old.is_suspended is true and new.is_suspended is distinct from old.is_suspended then
-      new.is_suspended := old.is_suspended;
-    end if;
-
-    if new.max_devices_override is distinct from old.max_devices_override then
-      new.max_devices_override := old.max_devices_override;
-    end if;
-
     return new;
   end if;
 
@@ -132,7 +122,7 @@ begin
 end;
 $$;
 
--- 3. LOCK DOWN CRM TABLES (IF PRESENT)
+-- 3. LOCK DOWN CRM TABLES (IF PRESENT — matches supabase_crm_migration.sql)
 do $$
 begin
   if to_regclass('public.merchant_crm_accounts') is not null then
@@ -193,11 +183,15 @@ begin
 end;
 $$;
 
--- 4. LOCK DOWN merchant_feedback & ticket_notifications (IF PRESENT)
+-- 4. LOCK DOWN merchant_feedback & ticket_notifications
+-- Matches exact columns in supabase_merchant_feedback_migration.sql (merchant_email, store_id)
+-- and supabase_ticket_emails_migration.sql (recipient_email)
 do $$
 begin
   if to_regclass('public.merchant_feedback') is not null then
     execute 'alter table public.merchant_feedback enable row level security';
+    execute 'drop policy if exists "Allow select merchant_feedback" on public.merchant_feedback';
+    execute 'drop policy if exists "Allow update merchant_feedback" on public.merchant_feedback';
     execute 'drop policy if exists "Allow anon and authenticated to read merchant_feedback" on public.merchant_feedback';
     execute 'drop policy if exists "Allow staff to update merchant_feedback" on public.merchant_feedback';
     execute 'drop policy if exists "Authenticated users and staff read merchant_feedback" on public.merchant_feedback';
@@ -210,7 +204,7 @@ begin
         using (
           public.is_flexitap_staff()
           or store_id = auth.uid()::text
-          or lower(coalesce(owner_email, '')) = lower(coalesce(auth.jwt() ->> 'email', ''))
+          or lower(coalesce(merchant_email, '')) = lower(coalesce(auth.jwt() ->> 'email', ''))
         )
     $p$;
 
@@ -225,6 +219,8 @@ begin
 
   if to_regclass('public.ticket_notifications') is not null then
     execute 'alter table public.ticket_notifications enable row level security';
+    execute 'drop policy if exists "Allow select ticket_notifications" on public.ticket_notifications';
+    execute 'drop policy if exists "Allow insert ticket_notifications" on public.ticket_notifications';
     execute 'drop policy if exists "Allow all select ticket_notifications" on public.ticket_notifications';
     execute 'drop policy if exists "Allow all insert ticket_notifications" on public.ticket_notifications';
     execute 'drop policy if exists "Authenticated select ticket_notifications" on public.ticket_notifications';
@@ -250,11 +246,13 @@ begin
 end;
 $$;
 
--- 5. LOCK DOWN AFFILIATE REFERRALS, COMMISSIONS & PAYOUTS (IF PRESENT)
+-- 5. LOCK DOWN AFFILIATE REFERRALS, COMMISSIONS & PAYOUTS
+-- Matches exact policy names in supabase_affiliate_ph.sql
 do $$
 begin
   if to_regclass('public.affiliate_referrals') is not null and to_regclass('public.affiliates') is not null then
     execute 'alter table public.affiliate_referrals enable row level security';
+    execute 'drop policy if exists "Affiliates can view referrals" on public.affiliate_referrals';
     execute 'drop policy if exists "Public select referrals" on public.affiliate_referrals';
     execute 'drop policy if exists "Public update referrals" on public.affiliate_referrals';
     execute 'drop policy if exists "Affiliates and staff select referrals" on public.affiliate_referrals';
@@ -285,6 +283,7 @@ begin
 
   if to_regclass('public.affiliate_commissions') is not null and to_regclass('public.affiliates') is not null then
     execute 'alter table public.affiliate_commissions enable row level security';
+    execute 'drop policy if exists "Affiliates can view commissions" on public.affiliate_commissions';
     execute 'drop policy if exists "Public select commissions" on public.affiliate_commissions';
     execute 'drop policy if exists "Public manage commissions" on public.affiliate_commissions';
     execute 'drop policy if exists "Affiliates and staff select commissions" on public.affiliate_commissions';
@@ -315,6 +314,7 @@ begin
 
   if to_regclass('public.affiliate_payouts') is not null and to_regclass('public.affiliates') is not null then
     execute 'alter table public.affiliate_payouts enable row level security';
+    execute 'drop policy if exists "Affiliates can view payouts" on public.affiliate_payouts';
     execute 'drop policy if exists "Public select payouts" on public.affiliate_payouts';
     execute 'drop policy if exists "Public update payouts" on public.affiliate_payouts';
     execute 'drop policy if exists "Affiliates and staff select payouts" on public.affiliate_payouts';
