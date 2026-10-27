@@ -1,6 +1,6 @@
 -- ============================================================================
 -- FLEXITAP POS — PHASE 2 ENTERPRISE SECURITY HARDENING MIGRATION
--- Verified against all exact table & column names in your Supabase migrations.
+-- Verified against all exact table, column & RPC signatures in your migrations.
 -- ============================================================================
 
 -- 1. STAFF VERIFICATION HELPER FUNCTION (SECURITY DEFINER)
@@ -36,7 +36,6 @@ end;
 $$;
 
 -- 2. PREVENT PRIVILEGE ESCALATION ON public.profiles
--- Uses to_jsonb(new) / to_jsonb(old) so it never fails if an optional column is absent
 create or replace function public.guard_profile_sensitive_columns()
 returns trigger
 language plpgsql
@@ -184,8 +183,6 @@ end;
 $$;
 
 -- 4. LOCK DOWN merchant_feedback & ticket_notifications
--- Matches exact columns in supabase_merchant_feedback_migration.sql (merchant_email, store_id)
--- and supabase_ticket_emails_migration.sql (recipient_email)
 do $$
 begin
   if to_regclass('public.merchant_feedback') is not null then
@@ -247,7 +244,6 @@ end;
 $$;
 
 -- 5. LOCK DOWN AFFILIATE REFERRALS, COMMISSIONS & PAYOUTS
--- Matches exact policy names in supabase_affiliate_ph.sql
 do $$
 begin
   if to_regclass('public.affiliate_referrals') is not null and to_regclass('public.affiliates') is not null then
@@ -345,63 +341,62 @@ begin
 end;
 $$;
 
--- 6. HARDEN SUPPORT SESSION RPCs (REQUIRE STAFF AUTHENTICATION)
+-- 6. HARDEN SUPPORT SESSION RPCs (MATCHING EXACT supabase_remote_support_migration.sql SIGNATURES)
+drop function if exists public.create_support_session() cascade;
+drop function if exists public.staff_start_session(uuid) cascade;
+
 create or replace function public.create_support_session()
-returns jsonb
+returns table (id text, code text)
 language plpgsql
 security definer
 set search_path = public
-as $$
+as $func$
 declare
-  v_code text;
-  v_id uuid;
-  v_attempts int := 0;
+  new_code text;
+  new_id uuid;
+  current_user_id uuid;
 begin
   if not public.is_flexitap_staff() then
     raise exception 'Access Denied: Only authorized FlexiTap staff can generate support sessions.';
   end if;
 
-  loop
-    v_attempts := v_attempts + 1;
-    v_code := lpad((floor(random() * 900000) + 100000)::int::text, 6, '0');
+  new_code := upper(substring(md5(random()::text || clock_timestamp()::text) from 1 for 6));
+  current_user_id := auth.uid();
 
-    exit when not exists (
-      select 1 from public.support_sessions
-      where session_code = v_code
-        and status in ('waiting', 'active')
-        and expires_at > now()
-    );
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'remote_support_sessions' and column_name = 'created_by'
+  ) then
+    execute 'insert into public.remote_support_sessions (code, staff_user_id, created_by, status) values ($1, $2, $2, $3) returning id'
+    into new_id
+    using new_code, current_user_id, 'pending';
+  else
+    insert into public.remote_support_sessions (code, staff_user_id, status)
+    values (new_code, current_user_id, 'pending')
+    returning remote_support_sessions.id into new_id;
+  end if;
 
-    if v_attempts > 25 then
-      raise exception 'Unable to allocate unique 6-digit support session code';
-    end if;
-  end loop;
-
-  insert into public.support_sessions (session_code, staff_id, status, expires_at)
-  values (v_code, auth.uid(), 'waiting', now() + interval '15 minutes')
-  returning id into v_id;
-
-  return jsonb_build_object(
-    'session_id', v_id,
-    'code', v_code
-  );
+  return query select new_id::text, new_code::text;
 end;
-$$;
+$func$;
 
 create or replace function public.staff_start_session(p_session_id uuid)
 returns boolean
 language plpgsql
 security definer
 set search_path = public
-as $$
+as $func$
 begin
   if not public.is_flexitap_staff() then
     raise exception 'Access Denied: Only authorized FlexiTap staff can start support sessions.';
   end if;
 
-  update public.support_sessions
-     set status = 'active'
+  update public.remote_support_sessions
+     set status = 'active', updated_at = now()
    where id = p_session_id;
   return found;
 end;
-$$;
+$func$;
+
+grant execute on function public.create_support_session to authenticated;
+grant execute on function public.staff_start_session to authenticated;
