@@ -2206,7 +2206,7 @@
                 <span style="width: 10px; height: 10px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
                 <span id="sentry-status-text">Connected</span>
               </div>
-              <div class="kpi-status" id="sentry-project-tag" style="color: var(--text-muted);">Project: flexitap-pos</div>
+              <div class="kpi-status" id="sentry-project-tag" style="color: var(--text-muted);">Project: flutter (flexitap-pos)</div>
             </div>
 
             <div class="kpi-card" style="border-left: 3px solid var(--primary);">
@@ -15339,14 +15339,14 @@ Role: ${lastProvisionedCreds.role}`;
           <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">
             Sentry Organization Slug
           </label>
-          <input type="text" id="sentry-org-input" class="crm-input" placeholder="e.g. flexitap" required>
+          <input type="text" id="sentry-org-input" class="crm-input" placeholder="flexitap-pos" required>
         </div>
 
         <div style="margin-bottom: 14px;">
           <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">
             Sentry Project Slug
           </label>
-          <input type="text" id="sentry-project-input" class="crm-input" placeholder="e.g. flexitap-pos or flexitapv2" required>
+          <input type="text" id="sentry-project-input" class="crm-input" placeholder="flutter" required>
         </div>
 
         <div style="margin-bottom: 18px;">
@@ -15436,8 +15436,8 @@ Role: ${lastProvisionedCreds.role}`;
 
     function getSentryConfig() {
       return {
-        org: localStorage.getItem('flexitap_sentry_org') || '',
-        project: localStorage.getItem('flexitap_sentry_project') || 'flexitap-pos',
+        org: localStorage.getItem('flexitap_sentry_org') || 'flexitap-pos',
+        project: localStorage.getItem('flexitap_sentry_project') || 'flutter',
         token: localStorage.getItem('flexitap_sentry_token') || ''
       };
     }
