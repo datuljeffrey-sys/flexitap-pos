@@ -518,6 +518,8 @@
           <strong>Staff data.</strong> Names, email addresses, phone numbers, photos, role and permission assignments, login PINs, and login activity for staff accounts you create.<br><br>
           <strong>Customer data you record.</strong> Names, phone numbers, addresses, notes, loyalty point balances and ledger, outstanding debt and debt payment history, and any photos of payment proofs you upload (e.g. transfer slips). You decide what to record.<br><br>
           <strong>Transactional and operational data.</strong> Items, item variants, modifiers, taxes, discounts, payment methods, transactions, orders, shifts, settlements, stock levels and adjustments, receipts, and printable templates.<br><br>
+          <strong>Exclusion of Cardholder Data (PCI DSS):</strong> FlexiTap explicitly excludes Cardholder Data. We do not collect, process, or store full credit or debit card Primary Account Numbers (PANs), card expiration dates, CVVs, or card magnetic stripe/chip track data. Any card payment processed at merchant locations is handled directly off-system by physical payment terminals or certified third-party merchant acquirers. For web subscription billing, all card details are submitted directly to our Merchant of Record, Paddle, under PCI DSS Level 1 compliance.<br><br>
+          <strong>Exclusion of Protected Health Information (HIPAA):</strong> FlexiTap does not collect or process Protected Health Information (PHI) and is not intended for use with patient medical data.<br><br>
           <strong>Device and technical data.</strong> Device model, operating system and version, app version, locale, a per-device identifier and device key used for sync and pairing, push-notification token, IP address, and approximate region derived from it.<br><br>
           <strong>Crash and diagnostic data.</strong> Stack traces, performance metrics, and similar runtime information used to detect and fix bugs. We do not intentionally include the contents of your business records in these reports.<br><br>
           <strong>Communications.</strong> Messages you send to support and any attachments you provide.
@@ -539,11 +541,11 @@
         <div>
           <strong>4. Who we share data with</strong><br>
           We share data only with service providers we rely on to operate the Service, and only to the extent necessary for them to perform their function. Each is bound by appropriate confidentiality and data-processing obligations.<br><br>
-          <strong>Supabase</strong> – user authentication, PostgreSQL database hosting, and realtime synchronization.<br><br>
+          <strong>Supabase</strong> – user authentication, PostgreSQL database hosting, realtime synchronization, and private, tenant-isolated cloud storage buckets for encrypted merchant database backups (.bak).<br><br>
           <strong>Paddle (Paddle.com Market Ltd)</strong> – Merchant of Record, subscription billing, fraud detection, and tax remittance. We never see or store your full payment card details.<br><br>
           <strong>Google Drive (Google LLC)</strong> – optional manual database snapshot backups initiated by you, stored directly in your own personal Google Drive account via Google OAuth 2.0. We do not store or access your personal Drive files or credentials on our servers.<br><br>
           <strong>Cloudflare (Cloudflare, Inc.)</strong> – edge security, content delivery, SSL certificate provisioning, and DDoS protection for our website and API.<br><br>
-          <strong>RustDesk (Remote Desktop Tooling)</strong> – optional on-demand remote support for Founders Pro merchants, used strictly during authorized diagnostic support sessions with merchant permission.<br><br>
+          <strong>RustDesk (Remote Desktop Tooling)</strong> – optional on-demand remote support for Founders Pro merchants, used strictly during authorized diagnostic support sessions with explicit merchant PIN authorization and real-time merchant supervision, without background or unattended access.<br><br>
           <strong>Hosting and infrastructure providers</strong> we use to operate our backend.<br><br>
           We may also disclose data when required by law, valid legal process, or a binding order from a competent authority, or to protect the rights, safety, or property of FlexiTap, our users, or the public. If we are involved in a merger, acquisition, or sale of assets, your data may be transferred as part of that transaction, and we will notify you before it becomes subject to a different privacy policy.
         </div>
@@ -565,7 +567,7 @@
 
         <div>
           <strong>8. Security and cyber liability disclaimer</strong><br>
-          We employ reasonable and appropriate technical and organizational measures designed to protect your data, including encryption in transit (TLS), encrypted database storage at rest, token-based authentication, audit logging, device pairing authorization, and the ability to remotely deactivate paired devices.<br><br>
+          We employ reasonable and appropriate technical and organizational measures designed to protect your data, including encryption in transit (TLS), encrypted database storage at rest, token-based authentication, database Row-Level Security (RLS) enforcing strict tenant isolation, private storage access policies, audit logging, device pairing authorization, and the ability to remotely deactivate paired devices.<br><br>
           <strong>No Absolute Security or Cyber Insurance:</strong> However, no method of digital storage or internet transmission is completely secure, and we cannot guarantee absolute immunity from unauthorized access, cyber attacks, hardware theft, or zero-day vulnerabilities. FlexiTap is a startup software provider and <strong>does not carry commercial cyber liability insurance</strong> covering merchant data or operations. FlexiTap does not act as an insurer of your business data. You are solely responsible for safeguarding your account credentials, enforcing staff PINs, securing your local physical devices and Wi-Fi networks, maintaining your own offline backups, and obtaining independent cyber liability insurance if required for your business operations.
         </div>
 
