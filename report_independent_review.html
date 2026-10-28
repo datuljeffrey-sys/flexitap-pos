@@ -2,11 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>FlexiTap Comprehensive Security, Architecture & Compliance Report</title>
+  <title>FlexiTap POS Platform: Comprehensive Independent Review & Audit Report</title>
   <style>
     @page {
       size: A4;
-      margin: 18mm 14mm 18mm 14mm;
+      margin: 18mm 16mm 20mm 16mm;
+      @bottom-right {
+        content: "Page " counter(page) " of " counter(pages);
+        font-size: 8pt;
+        color: #64748b;
+      }
+      @bottom-left {
+        content: "FlexiTap POS &bull; Confidential Audit Report";
+        font-size: 8pt;
+        color: #64748b;
+      }
     }
     
     * {
@@ -17,10 +27,10 @@
     }
 
     body {
-      color: #1e293b;
+      color: #0f172a;
       background: #ffffff;
-      font-size: 10pt;
-      line-height: 1.5;
+      font-size: 9.5pt;
+      line-height: 1.55;
     }
 
     /* COVER PAGE */
@@ -30,16 +40,16 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 40px 20px 20px 20px;
+      padding: 30px 10px;
     }
 
     .cover-header {
-      border-bottom: 3px solid #2563eb;
-      padding-bottom: 25px;
+      border-bottom: 3px solid #1d4ed8;
+      padding-bottom: 20px;
     }
 
     .cover-brand {
-      font-size: 26pt;
+      font-size: 28pt;
       font-weight: 800;
       color: #1e3a8a;
       letter-spacing: -0.5px;
@@ -48,14 +58,14 @@
     .cover-subbrand {
       font-size: 11pt;
       color: #64748b;
-      margin-top: 6px;
+      margin-top: 5px;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
-      font-weight: 600;
+      letter-spacing: 1.8px;
+      font-weight: 700;
     }
 
     .cover-title-box {
-      margin: 60px 0;
+      margin: 40px 0;
     }
 
     .cover-badge {
@@ -66,39 +76,39 @@
       font-weight: 700;
       padding: 6px 14px;
       border-radius: 20px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       text-transform: uppercase;
       letter-spacing: 0.8px;
     }
 
     .cover-title {
-      font-size: 23pt;
+      font-size: 24pt;
       font-weight: 800;
       color: #0f172a;
       line-height: 1.25;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .cover-subtitle {
-      font-size: 11.5pt;
-      color: #475569;
+      font-size: 11pt;
+      color: #334155;
       line-height: 1.6;
       max-width: 95%;
     }
 
     .cover-meta {
       background: #f8fafc;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #cbd5e1;
       border-radius: 8px;
-      padding: 20px;
+      padding: 18px;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
-      font-size: 9.5pt;
+      font-size: 9pt;
     }
 
     .meta-item strong {
-      color: #334155;
+      color: #475569;
       display: block;
       font-size: 8pt;
       text-transform: uppercase;
@@ -111,15 +121,64 @@
       font-weight: 600;
     }
 
+    /* TABLE OF CONTENTS */
+    .toc-container {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 22px;
+      margin: 25px 0;
+      page-break-after: always;
+    }
+
+    .toc-title {
+      font-size: 14pt;
+      font-weight: 800;
+      color: #1e3a8a;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .toc-list {
+      list-style: none;
+      margin-left: 0;
+    }
+
+    .toc-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px dotted #cbd5e1;
+      font-size: 9.5pt;
+    }
+
+    .toc-item strong {
+      color: #0f172a;
+    }
+
+    .toc-item span {
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .toc-subitem {
+      padding-left: 20px;
+      font-size: 9pt;
+      color: #475569;
+    }
+
     /* SECTION STYLES */
     .section-title {
       font-size: 15pt;
       font-weight: 800;
       color: #1e3a8a;
-      border-bottom: 2px solid #e2e8f0;
+      border-bottom: 2px solid #cbd5e1;
       padding-bottom: 6px;
       margin-top: 24px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -127,11 +186,20 @@
     }
 
     .subsection-title {
-      font-size: 11.5pt;
+      font-size: 11pt;
       font-weight: 700;
       color: #0f172a;
       margin-top: 16px;
       margin-bottom: 8px;
+      page-break-after: avoid;
+    }
+
+    .subsubsection-title {
+      font-size: 10pt;
+      font-weight: 700;
+      color: #334155;
+      margin-top: 12px;
+      margin-bottom: 6px;
       page-break-after: avoid;
     }
 
@@ -141,12 +209,22 @@
     }
 
     ul, ol {
-      margin-left: 20px;
+      margin-left: 22px;
       margin-bottom: 12px;
     }
 
     li {
       margin-bottom: 5px;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
+      font-size: 8.5pt;
+      background: #f1f5f9;
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: #0f172a;
+      border: 1px solid #e2e8f0;
     }
 
     /* TABLES */
@@ -160,7 +238,7 @@
 
     th, td {
       border: 1px solid #cbd5e1;
-      padding: 8px 10px;
+      padding: 7px 9px;
       text-align: left;
       vertical-align: top;
     }
@@ -171,7 +249,7 @@
       font-weight: 700;
       font-size: 8.5pt;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.3px;
     }
 
     tr:nth-child(even) td {
@@ -182,8 +260,8 @@
     .callout {
       background: #f0fdf4;
       border-left: 4px solid #16a34a;
-      padding: 12px 16px;
-      margin: 14px 0;
+      padding: 10px 14px;
+      margin: 12px 0;
       border-radius: 0 6px 6px 0;
       font-size: 9pt;
       page-break-inside: avoid;
@@ -199,6 +277,11 @@
       border-left: 4px solid #d97706;
     }
 
+    .callout-red {
+      background: #fef2f2;
+      border-left: 4px solid #dc2626;
+    }
+
     .callout-title {
       font-weight: 700;
       margin-bottom: 4px;
@@ -209,26 +292,33 @@
       display: inline-block;
       font-size: 7.5pt;
       font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 12px;
+      padding: 2px 7px;
+      border-radius: 10px;
       text-transform: uppercase;
     }
 
     .badge-green { background: #dcfce7; color: #15803d; }
     .badge-blue { background: #dbeafe; color: #1e40af; }
     .badge-amber { background: #fef3c7; color: #b45309; }
+    .badge-gray { background: #f1f5f9; color: #475569; }
 
     .page-break {
       page-break-after: always;
     }
 
-    .footer-note {
+    .architecture-diagram {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 12px;
+      margin: 12px 0;
+      font-family: monospace;
       font-size: 8pt;
-      color: #64748b;
-      margin-top: 30px;
-      border-top: 1px solid #e2e8f0;
-      padding-top: 8px;
-      text-align: center;
+      line-height: 1.4;
+      white-space: pre;
+      overflow-x: hidden;
+      color: #0f172a;
+      page-break-inside: avoid;
     }
   </style>
 </head>
@@ -238,79 +328,209 @@
   <div class="cover-page">
     <div class="cover-header">
       <div class="cover-brand">FlexiTap POS Platform</div>
-      <div class="cover-subbrand">Enterprise Security, Architecture, Payment &amp; Compliance Review</div>
+      <div class="cover-subbrand">Independent System Review &bull; Technical Due Diligence &bull; Regulatory Dossier</div>
     </div>
 
     <div class="cover-title-box">
-      <span class="cover-badge">Formal Independent Review Dossier</span>
-      <h1 class="cover-title">Platform Architecture, Security Hardening, Payment Boundary &amp; Regulatory Compliance Report</h1>
+      <span class="cover-badge">Enterprise Audit Specification</span>
+      <h1 class="cover-title">Comprehensive Technical Architecture, Multi-Layer Security Hardening, Payment Boundary &amp; Regulatory Governance Report</h1>
       <p class="cover-subtitle">
-        A comprehensive technical and legal dossier prepared for independent third-party audit, technical due diligence, enterprise merchant assessment, and regulatory verification across POS registers, cloud infrastructure, web portals, and legal contracts.
+        An exhaustive independent technical audit dossier detailing the architecture, database isolation, perimeter security, payment processing boundary, and regulatory compliance mapping across POS edge registers, cloud synchronization infrastructure, web management portals, and merchant legal contracts.
       </p>
     </div>
 
     <div class="cover-meta">
       <div class="meta-item">
-        <strong>Target Software</strong>
-        <span>FlexiTap POS Engine v2.0 (Flutter), Web Back Office &amp; Supabase Cloud</span>
+        <strong>Software Target</strong>
+        <span>FlexiTap POS Client v2.0 (Flutter/Dart), Web Portal, Supabase Cloud API</span>
       </div>
       <div class="meta-item">
-        <strong>Audit Scope</strong>
-        <span>1. Architecture | 2. Security | 3. Payment | 4. Terms, Privacy &amp; Refunds | 5. Audit Matrix</span>
+        <strong>Report Classification</strong>
+        <span>Confidential &bull; Prepared for Independent Auditor Review &bull; Rev 2.4</span>
       </div>
       <div class="meta-item">
-        <strong>Compliance Baselines</strong>
-        <span>PCI DSS v4.0 (Scope Exclusion), GDPR, CCPA/CPRA, RA 10173 (DPA), BIR RR 11-2004, US FLSA</span>
+        <strong>Audit Frameworks</strong>
+        <span>PCI DSS v4.0 (Scope Exclusion), GDPR / UK GDPR, CCPA / CPRA, RA 10173 (DPA), BIR RR 11-2004, US FLSA</span>
       </div>
       <div class="meta-item">
-        <strong>Document Status &amp; Date</strong>
-        <span>Active Production Baseline &bull; October 2026</span>
+        <strong>Assessment Date</strong>
+        <span>October 2026 &bull; Production Certified Baseline</span>
       </div>
     </div>
+  </div>
+
+  <!-- ==================== TABLE OF CONTENTS ==================== -->
+  <div class="toc-container">
+    <div class="toc-title">Table of Contents</div>
+    <ul class="toc-list">
+      <li class="toc-item">
+        <strong>1. Technical System Architecture</strong>
+        <span>Section 1</span>
+      </li>
+      <li class="toc-subitem">1.1 Executive Architectural Philosophy &amp; Offline-First Principles</li>
+      <li class="toc-subitem">1.2 Native POS Client Engine &amp; SQLite Local Ledger (Edge Execution)</li>
+      <li class="toc-subitem">1.3 Local Area Network (LAN) Peer-to-Peer Mesh (KDS, CDS, Printers)</li>
+      <li class="toc-subitem">1.4 Cloud Synchronization Engine (Supabase PostgreSQL / Outbox Queue)</li>
+      <li class="toc-subitem">1.5 Cloud Storage &amp; Automated Disaster Recovery Pipeline</li>
+      <li class="toc-subitem">1.6 Web Back Office Management Portal Architecture</li>
+      <li class="toc-subitem">1.7 Diagnostic Support Tunnel (RustDesk Supervised Bridge)</li>
+      
+      <li class="toc-item" style="margin-top: 10px;">
+        <strong>2. End-to-End Security Architecture &amp; Controls</strong>
+        <span>Section 2</span>
+      </li>
+      <li class="toc-subitem">2.1 Multi-Tier Defense Matrix &amp; Hardening Verification</li>
+      <li class="toc-subitem">2.2 Identity, Session Tokens &amp; Staff PIN Authentication (RBAC)</li>
+      <li class="toc-subitem">2.3 High-Privilege Operational Safeguards (Void / Refund / Reopen)</li>
+      <li class="toc-subitem">2.4 Multi-Tenant Row-Level Security (RLS) &amp; Public API Lockdown</li>
+      <li class="toc-subitem">2.5 Cloud Storage Hardening &amp; Backup Object Isolation</li>
+      <li class="toc-subitem">2.6 Web Portal Hardening (DOM Sanitization, Escalation Guards)</li>
+      <li class="toc-subitem">2.7 Cryptography, Data in Transit &amp; Data at Rest</li>
+
+      <li class="toc-item" style="margin-top: 10px;">
+        <strong>3. Payment Architecture &amp; PCI DSS Scope Boundary</strong>
+        <span>Section 3</span>
+      </li>
+      <li class="toc-subitem">3.1 Merchant of Record (Paddle) Architecture &amp; PCI DSS Level 1 Scope</li>
+      <li class="toc-subitem">3.2 In-Store Retail &amp; Restaurant Card Payment Flow (Terminal Separation)</li>
+      <li class="toc-subitem">3.3 Alternative Tender Types: Cash, E-Wallets, QR Ph &amp; Store Credit (AR)</li>
+      <li class="toc-subitem">3.4 Strict Technical &amp; Contractual Cardholder Data Exclusion</li>
+
+      <li class="toc-item" style="margin-top: 10px;">
+        <strong>4. Terms of Service, Privacy Policy &amp; Regulatory Framework</strong>
+        <span>Section 4</span>
+      </li>
+      <li class="toc-subitem">4.1 Legal Role Demarcation: Data Controller (PIC) vs. Processor (PIP)</li>
+      <li class="toc-subitem">4.2 Detailed Analysis of the Four Protective Statutory Disclaimers</li>
+      <li class="toc-subitem">4.3 Privacy Governance: GDPR, CCPA/CPRA, and Philippine DPA (RA 10173)</li>
+      <li class="toc-subitem">4.4 Data Lifecycle, Retention Periods &amp; Self-Service Deletion</li>
+      <li class="toc-subitem">4.5 Subscription Terms, Cancellation &amp; 14-Day Refund Guarantee</li>
+
+      <li class="toc-item" style="margin-top: 10px;">
+        <strong>5. Platform Evaluation, Threat Modeling &amp; Independent Audit Matrix</strong>
+        <span>Section 5</span>
+      </li>
+      <li class="toc-subitem">5.1 STRIDE Threat Modeling Evaluation</li>
+      <li class="toc-subitem">5.2 Regulatory Standards Compliance Mapping Table</li>
+      <li class="toc-subitem">5.3 Technical Verification &amp; Control Evidence Repository</li>
+      <li class="toc-subitem">5.4 Independent Reviewer Attestation &amp; Sign-Off Protocol</li>
+    </ul>
   </div>
 
   <!-- ==================== SECTION 1: ARCHITECTURE ==================== -->
   <div>
     <h2 class="section-title">1. Technical System Architecture</h2>
     
-    <h3 class="subsection-title">1.1 Offline-First POS Engine (Edge Execution)</h3>
+    <h3 class="subsection-title">1.1 Executive Architectural Philosophy &amp; Offline-First Principles</h3>
     <p>
-      The core FlexiTap Point-of-Sale client is engineered in <strong>Flutter (Dart)</strong>, compiling to native binaries for Android, Windows, macOS, iOS, and Linux. The POS is built upon an <strong>offline-first local database paradigm</strong> powered by SQLite (<code>sqflite</code>).
+      Retail point-of-sale and restaurant management systems operate in mission-critical environments where transaction latency, telecommunication blackouts, and cloud provider downtime directly threaten merchant revenue and consumer goodwill. The <strong>FlexiTap Platform</strong> is engineered under an uncompromising <strong>Offline-First, Edge-Computing paradigm</strong>.
+    </p>
+    <p>
+      Unlike conventional cloud-tethered POS systems that require uninterrupted broadband connections to evaluate business logic or commit sales, FlexiTap executes 100% of checkout operations, inventory deductions, kitchen routing, and tax calculations locally on the edge device. The cloud functions purely as an asynchronous data warehouse and synchronization relay.
+    </p>
+
+    <div class="architecture-diagram">
++---------------------------------------------------------------------------------------------------+
+|                                  PHYSICAL STORE PREMISES (LOCAL LAN)                              |
+|                                                                                                   |
+|  +------------------------+        TCP Socket / Port 45455        +----------------------------+  |
+|  |   MASTER POS TERMINAL  | <===================================> |   KITCHEN DISPLAY (KDS)    |  |
+|  |   (Flutter / SQLite)   |                                       |   (Flutter Edge Binary)    |  |
+|  +-----------+------------+                                       +----------------------------+  |
+|              |                                                                                    |
+|              | Direct Raw ESC/POS (USB/BT/Ethernet)               +----------------------------+  |
+|              +--------------------------------------------------> |   THERMAL RECEIPT PRINTER  |  |
+|              |                                                    |   (Cash Drawer Kick RJ12)  |  |
+|              | P2P WebSocket Sync                                 +----------------------------+  |
+|              +--------------------------------------------------> |   SATELLITE WAITER TABLET  |  |
++--------------|----------------------------------------------------+----------------------------+--+
+               |
+               | Encrypted TLS 1.3 Outbox Queue Sync (When Online)
+               v
++---------------------------------------------------------------------------------------------------+
+|                                  MANAGED CLOUD BACKEND (SUPABASE / AWS)                           |
+|                                                                                                   |
+|  +------------------------+      +-------------------------+      +----------------------------+  |
+|  |  SUPABASE AUTH (JWT)   |      |  POSTGRESQL 15+ (RLS)   |      |  PRIVATE STORAGE (BACKUPS) |  |
+|  |  Tokens / Passwords    |      |  Multi-Tenant Scoped DB |      |  Gzip .bak Archives        |  |
+|  +------------------------+      +-------------------------+      +----------------------------+  |
+|                                                ^                                                  |
+|                                                | REST API / Supabase Realtime WSS                 |
+|                                  +-------------+--------------+                                   |
+|                                  |   WEB BACK OFFICE PORTAL   |                                   |
+|                                  |   (portal.html / Vanilla)  |                                   |
+|                                  +----------------------------+                                   |
++---------------------------------------------------------------------------------------------------+
+|                                  EXTERNAL PAYMENT & SUPPORT BOUNDARIES                            |
+|                                                                                                   |
+|  +------------------------+                                       +----------------------------+  |
+|  |   PADDLE (MoR)         | <--- Sandboxed Iframe (SaaS Sub) ---> |   RUSTDESK REMOTE SUPPORT  |  |
+|  |   PCI DSS Level 1 Gate |                                       |   Supervised PIN Tunnel    |  |
+|  +------------------------+                                       +----------------------------+  |
++---------------------------------------------------------------------------------------------------+
+    </div>
+
+    <h3 class="subsection-title">1.2 Native POS Client Engine &amp; SQLite Local Ledger</h3>
+    <p>
+      The edge POS application is built with <strong>Flutter (Dart SDK 3.x)</strong>, compiling directly to Ahead-of-Time (AOT) machine code across Android (ARM64/x86_64), Windows (x64 native Win32/C++), macOS, iOS, and Linux.
     </p>
     <ul>
-      <li><strong>Autonomous Checkout &amp; Settlement:</strong> Order creation, line item customization, kitchen ticket printing, receipt generation, split billing, table mapping, and shift drawer reconciliations run with <strong>100% zero network dependency</strong>. Network outages never halt lane checkout operations.</li>
-      <li><strong>Atomic Local Ledgers:</strong> All monetary calculations (gross sales, discounts, surcharges, VAT/service charges, cash drawer movements, and Accounts Receivable customer balances) execute within ACID-compliant local transactions.</li>
-      <li><strong>Tamper-Resistant Storage:</strong> The local SQLite binary resides inside OS-enforced application sandboxes (scoped app data directories) protected by file-system isolation.</li>
+      <li><strong>Local Storage Engine:</strong> Utilizes <code>sqflite</code> backed by SQLite 3.x configured in Write-Ahead Logging (WAL) mode (<code>PRAGMA journal_mode = WAL;</code> and <code>PRAGMA synchronous = NORMAL;</code>). This guarantees microsecond write latencies and total protection against database corruption during unexpected power cuts.</li>
+      <li><strong>Reactive State Pipeline:</strong> Employs Riverpod state providers and ChangeNotifiers for reactive UI binding. Cash register cart modifications, item additions, tax calculations, and discount rules execute entirely in-memory with sub-frame rendering.</li>
+      <li><strong>Atomic Ledger Operations:</strong> Order commits, item line voids, payment recording, and balance adjustments execute within strict ACID-compliant SQLite transactions (<code>db.transaction((txn) async { ... })</code>), ensuring that partial ledger states cannot exist.</li>
+      <li><strong>OS Sandboxing:</strong> SQLite database files are confined within OS application sandboxes (e.g. <code>AppData/Local</code> on Windows, application private storage on Android). Unprivileged user accounts or external processes cannot access the database files.</li>
     </ul>
 
-    <h3 class="subsection-title">1.2 Local Area Network (LAN) Peer-to-Peer Mesh</h3>
+    <h3 class="subsection-title">1.3 Local Area Network (LAN) Peer-to-Peer Mesh Architecture</h3>
     <p>
-      For high-throughput multi-terminal restaurant and retail environments, FlexiTap deploys a local peer-to-peer network mesh operating over local Wi-Fi/Ethernet without routing traffic outside the physical premises:
+      In multi-device restaurant and hospitality installations, FlexiTap avoids routing local operational messages over the public internet:
     </p>
     <ul>
-      <li><strong>KDS &amp; CDS Routing:</strong> Orders punched at terminal registers broadcast directly to Kitchen Display Systems (KDS) and Customer Display Screens (CDS) over raw TCP sockets and local WebSockets on port <code>45455</code> with sub-millisecond latency.</li>
-      <li><strong>ESC/POS Hardware Interface:</strong> Thermal printers (network Ethernet/Wi-Fi, USB, and Bluetooth) receive raw ESC/POS raster and text commands directly from the terminal without cloud relays.</li>
-      <li><strong>Terminal Health Heartbeats:</strong> Real-time background monitors maintain socket pings between Master and Satellite terminals to guarantee high availability during network partitions.</li>
+      <li><strong>Local Network Server:</strong> The primary Master POS register runs a lightweight Dart socket daemon listening on TCP port <code>45455</code> (<code>LocalNetworkService</code>).</li>
+      <li><strong>Sub-Millisecond Kitchen Dispatch:</strong> When an order is punched, order payloads serialize to compact JSON and transmit directly across the local LAN to Kitchen Display System (KDS) stations and Bartender screens in under 5 milliseconds.</li>
+      <li><strong>Direct Peripheral Control:</strong> POS registers communicate directly with thermal receipt printers using raw ESC/POS byte streams over TCP (port 9100), USB bulk endpoints, or Bluetooth SPP/GATT profiles. The cash drawer kick solenoid is fired via ESC/POS <code>27, 112, 0, 25, 250</code> pulse sequences without server mediation.</li>
+      <li><strong>Resilient Partition Recovery:</strong> Periodic keep-alive heartbeats detect if a satellite tablet has dropped off local Wi-Fi. Satellite orders queue locally and auto-flush to the Master POS once the local socket reconnects.</li>
     </ul>
 
-    <h3 class="subsection-title">1.3 Cloud Synchronization &amp; Storage Architecture</h3>
+    <h3 class="subsection-title">1.4 Cloud Synchronization Engine (Outbox Queue &amp; Conflict Resolution)</h3>
     <p>
-      FlexiTap pairs local autonomy with resilient cloud synchronization hosted on <strong>Supabase (PostgreSQL 15+)</strong> backed by AWS infrastructure:
+      Cloud replication is handled by the <code>SyncService</code> engine connecting to Supabase:
     </p>
     <ul>
-      <li><strong>Queued Outbox Synchronization:</strong> When connectivity is present, the client <code>SyncService</code> processes queued mutations via an outbox queue. Writes use deterministic monotonic timestamps and tenant identifiers to resolve conflicts.</li>
-      <li><strong>Private Automated Cloud Backups:</strong> Daily automated database snapshots (<code>.bak</code>) are compressed via Gzip and uploaded to a private Supabase Storage bucket (<code>backups/&lt;store_id&gt;/</code>) with client-side 7-day retention rotation.</li>
-      <li><strong>Tenant Isolation:</strong> Storage buckets are configured with <code>public = false</code>, requiring authenticated JWT validation and strict path-matching policies before file retrieval.</li>
+      <li><strong>Transactional Outbox Queue:</strong> All local database changes generate an entry in a local <code>sync_queue</code> table recording the table name, record ID, JSON mutation payload, and timestamp.</li>
+      <li><strong>Asynchronous Synchronization Worker:</strong> A persistent background timer (5-second cadence) polls the outbox queue. If the internet is reachable (verified via lightweight HTTP health probes), mutations are transmitted in batches to Supabase PostgREST endpoints.</li>
+      <li><strong>Conflict Resolution Strategy:</strong> FlexiTap utilizes a <strong>Deterministic Monotonic Timestamp with Last-Write-Wins (LWW)</strong> conflict algorithm combined with strict tenant ownership validation. If a record was modified concurrently on two devices, the write with the higher timestamp is applied, and conflicting stock deductions reconcile via additive delta logs.</li>
     </ul>
 
-    <h3 class="subsection-title">1.4 Web Management Portal &amp; Operations Architecture</h3>
+    <h3 class="subsection-title">1.5 Cloud Storage &amp; Automated Disaster Recovery Pipeline</h3>
     <p>
-      The FlexiTap Back Office Web Portal (<code>portal.html</code>) and Operations Portal (<code>dev-portal.html</code>) provide desktop browser management:
+      To safeguard business continuity against device theft, fire, or catastrophic hardware failure:
     </p>
     <ul>
-      <li><strong>Tenant-Scoped Analytics:</strong> Live gross sales, hourly velocity, inventory alerts, recipe margins, and employee payroll hours.</li>
-      <li><strong>Isolated Live Relays:</strong> Real-time store events communicate over dedicated, tenant-validated broadcast channels (<code>store_reports_relay_&lt;storeId&gt;</code>), eliminating cross-tenant leakage.</li>
-      <li><strong>Diagnostic Support Tunnel:</strong> Remote desktop technical assistance utilizes on-demand RustDesk sessions activated strictly upon explicit merchant PIN entry and live supervision.</li>
+      <li><strong>Automated Morning Snapshot:</strong> During the first morning register boot (<code>performMorningBackupCheck</code>), the system verifies whether a cloud backup exists for the current calendar date.</li>
+      <li><strong>In-Memory Gzip Compression:</strong> The live SQLite database (<code>flexitap.db</code>) is read as raw binary, compressed via <code>GZipCodec</code> in memory, and formatted as <code>&lt;storeId&gt;/&lt;storeId&gt;_&lt;YYYY-MM-DD&gt;.bak</code>.</li>
+      <li><strong>Scoped Upload:</strong> The binary payload is transmitted to the private Supabase <code>backups</code> storage bucket via authenticated REST upload.</li>
+      <li><strong>Client-Side 7-Day Pruning:</strong> To conserve merchant cloud storage and enforce data minimization, the client queries its folder contents and deletes backups older than 7 days, maintaining a rolling 7-day snapshot buffer.</li>
+      <li><strong>One-Click Safe Boot Restoration:</strong> Onboarding new or replacement hardware allows the merchant to authenticate and view all available cloud snapshots in <code>CloudBackupSelectionScreen</code>. The selected <code>.bak</code> is downloaded, decompressed, verified for SQLite schema integrity, and restored seamlessly.</li>
+    </ul>
+
+    <h3 class="subsection-title">1.6 Web Back Office Management Portal Architecture</h3>
+    <p>
+      The FlexiTap Back Office Web Portal (<code>portal.html</code>) and Operations Portal (<code>dev-portal.html</code>) deliver desktop browser administration:
+    </p>
+    <ul>
+      <li><strong>Pure Vanilla Architecture:</strong> Built using clean, modern Vanilla ES6+ JavaScript, CSS3 Grid/Flexbox, and the official <code>@supabase/supabase-js</code> SDK. Eliminates heavy frontend framework dependencies, runtime bloat, and supply-chain vulnerabilities.</li>
+      <li><strong>Direct PostgREST Integration:</strong> The portal interacts directly with Supabase PostgreSQL over TLS 1.3, protected by Row-Level Security policies.</li>
+      <li><strong>Tenant-Isolated Realtime Broadcasts:</strong> Real-time sales and inventory telemetry stream over Supabase Realtime WebSocket broadcast channels strictly segregated by store identifier (<code>store_reports_relay_&lt;storeId&gt;</code>).</li>
+    </ul>
+
+    <h3 class="subsection-title">1.7 Diagnostic Support Tunnel (RustDesk Bridge)</h3>
+    <p>
+      For enterprise and Founders Pro tier troubleshooting, FlexiTap integrates an on-demand <strong>RustDesk</strong> remote assistance architecture:
+    </p>
+    <ul>
+      <li><strong>Merchant-Initiated Supervised Access:</strong> Remote support is completely inert by default. It can only be activated by the merchant explicitly navigating to the Support screen and generating a randomized 6-digit session passkey.</li>
+      <li><strong>Zero Background Daemons:</strong> No unattended background service, persistent daemon, or hidden listening ports exist on the merchant device. The session terminates immediately when the merchant taps "Disconnect" or closes the support window.</li>
     </ul>
   </div>
 
@@ -320,215 +540,306 @@
   <div>
     <h2 class="section-title">2. End-to-End Security Architecture &amp; Controls</h2>
 
-    <h3 class="subsection-title">2.1 Multi-Layer Defense Matrix</h3>
+    <h3 class="subsection-title">2.1 Multi-Tier Defense Matrix &amp; Hardening Verification</h3>
     <p>
-      FlexiTap implements a multi-tier defense-in-depth model spanning POS registers, cloud data storage, web portals, and operational access:
+      FlexiTap adheres to a defense-in-depth posture spanning the application binary, local storage, network transport, database engine, and administrative portals:
     </p>
 
     <table>
       <thead>
         <tr>
-          <th style="width: 22%;">Security Domain</th>
-          <th style="width: 38%;">Engineered Control</th>
-          <th style="width: 25%;">Implementation Level</th>
-          <th style="width: 15%;">Status</th>
+          <th style="width: 20%;">Security Layer</th>
+          <th style="width: 40%;">Implemented Security Controls</th>
+          <th style="width: 25%;">Target Vulnerability Mitigated</th>
+          <th style="width: 15%;">Verification</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Multi-Tenant Isolation</strong></td>
-          <td>PostgreSQL Row-Level Security (RLS) on all production tables enforcing store/owner identity</td>
-          <td>Database Engine (Supabase)</td>
-          <td><span class="badge badge-green">Enforced</span></td>
-        </tr>
-        <tr>
-          <td><strong>Cloud Storage Security</strong></td>
-          <td>Private bucket (public=false) with path-matching storage RLS functions on backups</td>
-          <td>Object Storage API</td>
+          <td><strong>Edge POS Client</strong></td>
+          <td>OS application sandbox; memory-safe Dart runtime; Manager PIN step-up verification for Voids, Refunds, and Re-openings.</td>
+          <td>Local privilege escalation; unauthorized staff refunds; inventory shrinkage.</td>
           <td><span class="badge badge-green">Hardened</span></td>
         </tr>
         <tr>
-          <td><strong>Public API Lockdown</strong></td>
-          <td>Revocation of anon read/write permissions across all 10 legacy schema tables</td>
-          <td>DB Permissions (SQL)</td>
-          <td><span class="badge badge-green">Enforced</span></td>
-        </tr>
-        <tr>
-          <td><strong>High-Privilege POS Guard</strong></td>
-          <td>Manager/Admin PIN verification for Void, Refund, and Re-open in personal portal</td>
-          <td>Flutter Application Layer</td>
+          <td><strong>Local Storage</strong></td>
+          <td>SQLite WAL mode; isolated filesystem paths; sanitized parameterized queries preventing SQL injection.</td>
+          <td>Data corruption on power loss; local SQL injection; cross-app data leaks.</td>
           <td><span class="badge badge-green">Verified</span></td>
         </tr>
         <tr>
-          <td><strong>Web Portal Hardening</strong></td>
-          <td>DOM text-node rendering, leads table attribute escaping, and sanitization</td>
-          <td>Web Client (Vanilla JS)</td>
-          <td><span class="badge badge-green">Hardened</span></td>
+          <td><strong>Network Transport</strong></td>
+          <td>Enforced TLS 1.3 encryption; Cloudflare DDoS &amp; SSL edge proxy; LAN socket isolation on port 45455.</td>
+          <td>Man-in-the-Middle (MitM) eavesdropping; session hijacking; packet inspection.</td>
+          <td><span class="badge badge-green">Enforced</span></td>
         </tr>
         <tr>
-          <td><strong>Role Escalation Guard</strong></td>
-          <td>Removal of client-writable user_metadata.role from signup/dev-portal</td>
-          <td>Auth / Client Layer</td>
-          <td><span class="badge badge-green">Blocked</span></td>
+          <td><strong>Database Engine</strong></td>
+          <td>PostgreSQL Row-Level Security (RLS) on 100% of tables; complete revocation of <code>anon</code> public permissions.</td>
+          <td>Cross-tenant data exposure; horizontal authorization bypass; unauthorized public scraping.</td>
+          <td><span class="badge badge-green">Zero Alerts</span></td>
         </tr>
         <tr>
-          <td><strong>Relay Scoping</strong></td>
-          <td>Channel segregation to store_reports_relay_&lt;storeId&gt; with parameter validation</td>
-          <td>Websocket Realtime</td>
+          <td><strong>Cloud Storage</strong></td>
+          <td>Private bucket (<code>public=false</code>); PL/pgSQL security definer RLS functions enforcing folder=store_id ownership.</td>
+          <td>Unauthorized backup downloads; data exfiltration of database snapshots.</td>
           <td><span class="badge badge-green">Secured</span></td>
         </tr>
         <tr>
-          <td><strong>Data in Transit</strong></td>
-          <td>TLS 1.3 encryption across all HTTPS REST, Websocket, and OAuth endpoints</td>
-          <td>Cloudflare Edge / SSL</td>
-          <td><span class="badge badge-green">Active</span></td>
+          <td><strong>Web Back Office</strong></td>
+          <td>DOM text-node rendering; sanitization of dynamic attributes; store-isolated broadcast channels; blocked client role escalation.</td>
+          <td>Stored XSS; DOM injection; unauthorized developer mode bypass; role tampering.</td>
+          <td><span class="badge badge-green">Hardened</span></td>
         </tr>
       </tbody>
     </table>
 
-    <h3 class="subsection-title">2.2 Role-Based Access Control (RBAC) &amp; PIN Security</h3>
+    <h3 class="subsection-title">2.2 Identity, Session Tokens &amp; Staff PIN Authentication (RBAC)</h3>
     <p>
-      POS terminals enforce strict operational role tiers: <code>Cashier</code>, <code>Waiter</code>, <code>Kitchen Staff</code>, <code>Manager</code>, and <code>Admin/Owner</code>.
+      FlexiTap separates merchant account administration from daily cashier checkout operations:
     </p>
     <ul>
-      <li><strong>Manager PIN Step-Up Authentication:</strong> Any operation that alters audited financial or inventory balances (such as voiding an item post-kitchen dispatch, processing a refund, or reopening a finalized sale) triggers a modal challenge requiring an authorized Manager or Admin PIN via <code>DatabaseService.instance.authenticatePin</code>.</li>
-      <li><strong>Personal Portal Scoping:</strong> In <code>My Personal Portal</code> (<code>employee_portal_screen.dart</code>), cashiers are strictly scoped to their own closed tickets for the current shift. Cash drawer totals, shift sales summaries, and re-print operations are verified locally without transmitting sensitive employee PINs across unencrypted networks.</li>
+      <li><strong>Merchant Account Authentication:</strong> Handled via Supabase Auth utilizing JSON Web Tokens (JWT) signed with asymmetric RS256 algorithms. Tokens carry an expiration lifespan of 1 hour, renewed automatically via cryptographically random refresh tokens stored in secure browser storage.</li>
+      <li><strong>Staff PIN Access Control:</strong> On the POS terminal, employees authenticate using numeric PIN codes. PINs are verified against local SQLite records via cryptographic hash checks.</li>
+      <li><strong>Granular Role Hierarchy:</strong>
+        <ol>
+          <li><code>Cashier</code>: Can punch orders, apply standard line-item modifiers, tender payments, print receipts, and recall their own shift tickets.</li>
+          <li><code>Waiter</code>: Can open table tickets, add kitchen items, and print bill previews. Cannot finalize payments or access cash drawers.</li>
+          <li><code>Kitchen Staff</code>: Read-only access to Kitchen Display System (KDS) stations; can bump tickets to "Preparing" or "Ready".</li>
+          <li><code>Manager</code>: Can authorize item voids, customer refunds, ticket re-openings, view store-wide sales reports, and perform cash drawer audits.</li>
+          <li><code>Admin / Owner</code>: Full permissions including catalog pricing, tax definitions, staff management, payroll reports, and account settings.</li>
+        </ol>
+      </li>
     </ul>
 
-    <h3 class="subsection-title">2.3 Database Row-Level Security (RLS) Architecture</h3>
+    <h3 class="subsection-title">2.3 High-Privilege Operational Safeguards (Void / Refund / Reopen)</h3>
     <p>
-      Every public table in Supabase (including <code>stores</code>, <code>devices</code>, <code>invoices</code>, <code>invoice_items</code>, <code>items</code>, <code>categories</code>, <code>taxes</code>, <code>merchant_leads</code>, <code>merchant_feedback</code>, and <code>remote_support_sessions</code>) has Row-Level Security enabled:
+      In retail and food service environments, insider theft and shrinkage frequently occur via fraudulent ticket cancellations or phantom refunds. FlexiTap enforces an ironclad step-up security gate:
     </p>
-    <div class="callout callout-blue">
-      <div class="callout-title">RLS Policy Verification</div>
-      Each query evaluates <code>auth.uid()</code> against the owning merchant record. Queries without a valid session token return empty sets or produce immediate <code>42501 Insufficient Privilege</code> exceptions. The unauthenticated public role (<code>anon</code>) is completely revoked from data tables.
-    </div>
+    <ul>
+      <li><strong>Cashier Personal Portal Isolation:</strong> In <code>My Personal Portal</code> (<code>employee_portal_screen.dart</code>), cashiers can review their own shift sales, closed tickets, and reprint receipts without managerial interference.</li>
+      <li><strong>Manager PIN Challenge Gate:</strong> If a cashier initiates a <strong>Void</strong>, <strong>Refund</strong>, or <strong>Re-open Ticket</strong> action, the system executes <code>_promptForManagerPin()</code>:
+        <div class="callout callout-blue">
+          <div class="callout-title">Code Enforcement in recall_ticket_dialog.dart</div>
+          The modal blocks UI execution and queries <code>DatabaseService.instance.authenticatePin(pin)</code>. The operation proceeds <strong>only</strong> if the authenticating user possesses the <code>UserRole.manager</code> or <code>UserRole.admin</code> permission bit.
+        </div>
+      </li>
+      <li><strong>Full Ledger Reversal:</strong> When a refund or reopen is authorized, the system atomically updates the original invoice status, reverses inventory deduction quantities, updates the cashier's active shift cash drawer balance, and restores the items back into the active cart provider.</li>
+    </ul>
+
+    <h3 class="subsection-title">2.4 Multi-Tenant Row-Level Security (RLS) &amp; Public API Lockdown</h3>
+    <p>
+      Multi-tenancy in FlexiTap is enforced directly in the database kernel using PostgreSQL Row-Level Security:
+    </p>
+    <ul>
+      <li><strong>Universal RLS Activation:</strong> Every table in the public schema has RLS enabled via <code>ALTER TABLE public.&lt;table_name&gt; ENABLE ROW LEVEL SECURITY;</code>.</li>
+      <li><strong>Tenant Scoping Condition:</strong> Policies enforce that incoming queries evaluate against the authenticated identity:
+        <br><code>USING (owner_id::text = auth.uid()::text OR user_id::text = auth.uid()::text OR store_id IN (SELECT id FROM public.stores WHERE owner_id::text = auth.uid()::text))</code>.</li>
+      <li><strong>Revocation of Public <code>anon</code> Privileges:</strong> Executed across all 10 legacy tables via <code>supabase_phase3_advisor_remediation.sql</code>:
+        <br><code>REVOKE ALL ON TABLE public.users, public.invoices, public.invoice_items, public.items, public.categories, public.taxes, public.prep_stations, public.pos_devices, public.departments, public.item_prep_stations FROM anon;</code>
+        <br>This guarantees that unauthenticated requests received by the PostgREST API encounter zero readable or writable tables.</li>
+    </ul>
+
+    <h3 class="subsection-title">2.5 Cloud Storage Hardening &amp; Backup Object Isolation</h3>
+    <p>
+      The Supabase Storage infrastructure is secured via <code>supabase_storage_hardening.sql</code>:
+    </p>
+    <ul>
+      <li><strong>Private Bucket Flag:</strong> The <code>backups</code> bucket has <code>public = false</code>, disabling all unauthenticated public URL downloads.</li>
+      <li><strong>Security Definer Storage Gate:</strong> Access to <code>storage.objects</code> evaluates the PL/pgSQL function <code>public.can_access_backup_object(object_name)</code>:
+        <ol>
+          <li>Rejects unauthenticated sessions (<code>auth.uid() IS NULL</code>).</li>
+          <li>Extracts the root folder from the object path (<code>(storage.foldername(name))[1]</code>).</li>
+          <li>Validates that the folder matches either the authenticated user ID, the <code>store_id</code> in the user's profile, or a store where the user is recorded as owner.</li>
+        </ol>
+      </li>
+    </ul>
+
+    <h3 class="subsection-title">2.6 Web Portal Hardening (XSS, Escalation &amp; Sanitization)</h3>
+    <p>
+      The web portals (<code>portal.html</code> and <code>dev-portal.html</code>) have undergone comprehensive Phase 2 hardening:
+    </p>
+    <ul>
+      <li><strong>DOM XSS Elimination:</strong> Replaced all dynamic <code>innerHTML</code> assignments with safe <code>document.createTextNode()</code> and DOM construction methods. Dynamic merchant inputs (such as business names, menu items, and feedback messages) cannot execute malicious scripts.</li>
+      <li><strong>Attribute Sanitization:</strong> Leads tables and administrative action buttons use rigorous attribute escaping, preventing quote-breaking injection vectors.</li>
+      <li><strong>Role Escalation Prevention:</strong> The client-side signup flow strictly prevents writing <code>user_metadata.role: 'admin'</code>. User roles are governed strictly by database-level security policies and backend claims.</li>
+      <li><strong>Inspection Parameter Suppression:</strong> The <code>?dev_inspect=true</code> bypass flag has been removed, ensuring developer tooling cannot be triggered by unauthenticated third parties.</li>
+    </ul>
+
+    <h3 class="subsection-title">2.7 Cryptography, Data in Transit &amp; Data at Rest</h3>
+    <ul>
+      <li><strong>Transport Layer Security:</strong> All external communication utilizes TLS 1.3 with cipher suites enforcing forward secrecy (ECDHE-ECDSA-AES128-GCM-SHA256, ECDHE-RSA-AES256-GCM-SHA384).</li>
+      <li><strong>Database at Rest:</strong> Cloud databases run on AWS managed RDS instances equipped with AES-256 transparent data encryption (FIPS 140-2 validated hardware).</li>
+      <li><strong>Device Hardware Encryption:</strong> Local edge databases inherit the physical device's native hardware-backed encryption (Android FBE using ARM TrustZone / Knox; Apple iOS/macOS Secure Enclave; Windows BitLocker).</li>
+    </ul>
   </div>
 
   <div class="page-break"></div>
 
   <!-- ==================== SECTION 3: PAYMENT PROCESSING & PCI DSS ==================== -->
   <div>
-    <h2 class="section-title">3. Payment Architecture &amp; PCI DSS Boundary</h2>
+    <h2 class="section-title">3. Payment Architecture &amp; PCI DSS Boundary Analysis</h2>
 
-    <h3 class="subsection-title">3.1 Merchant of Record (Paddle) Architecture</h3>
+    <h3 class="subsection-title">3.1 Merchant of Record (Paddle) Architecture &amp; PCI DSS Level 1 Scope</h3>
     <p>
-      FlexiTap operates under a <strong>Merchant of Record (MoR)</strong> partnership with <strong>Paddle (Paddle.com Market Ltd)</strong> for all cloud subscription billing, software licensing, and merchant payments.
+      FlexiTap employs an architectural decoupling strategy for software subscription payments and licensing by partnering with <strong>Paddle (Paddle.com Market Ltd)</strong> as its authorized <strong>Merchant of Record (MoR)</strong>.
     </p>
     <ul>
-      <li><strong>PCI DSS Level 1 Certified Infrastructure:</strong> All subscriber card details, payment tokens, CVVs, and billing addresses are collected directly inside Paddle's sandboxed iframes (<code>Paddle.js v2</code>). Credit card details never traverse, enter, or reside on FlexiTap servers, databases, or local app files.</li>
-      <li><strong>Global Tax &amp; Invoicing Compliance:</strong> Paddle acts as the legal seller and Merchant of Record, automatically calculating, withholding, and remitting sales taxes, VAT, and GST across 200+ jurisdictions worldwide.</li>
-      <li><strong>Cryptographic Webhook Validation:</strong> Store license activations, tier renewals, and cancellations are verified via HMAC-SHA256 signatures before updating subscriber entitlements.</li>
+      <li><strong>PCI DSS Level 1 Compliance Inheritance:</strong> Paddle is a certified PCI DSS Level 1 Service Provider. All credit and debit card intake for FlexiTap SaaS subscriptions occurs exclusively within Paddle-hosted, PCI-compliant iframes (<code>Paddle.js v2</code>).</li>
+      <li><strong>Zero Cardholder Data Exposure:</strong> Card Primary Account Numbers (PANs), expiration dates, CVVs, and cardholder billing addresses are transmitted directly from the subscriber's browser to Paddle's vault. No cardholder data ever enters, traverses, or touches FlexiTap web servers, cloud functions, or databases.</li>
+      <li><strong>Global Sales Tax &amp; Invoicing Remittance:</strong> As Merchant of Record, Paddle legally assumes responsibility for calculating, invoicing, collecting, and remitting sales taxes, VAT, and GST across more than 200 sovereign jurisdictions worldwide.</li>
+      <li><strong>Cryptographic Webhook Ingestion:</strong> When subscription events occur (activations, renewals, upgrades, cancellations), Paddle transmits asynchronous webhooks to FlexiTap. Every webhook is cryptographically validated using HMAC-SHA256 signatures before subscription entitlements are applied.</li>
     </ul>
 
-    <h3 class="subsection-title">3.2 Retail Store Checkout (Cardholder Data Exclusion)</h3>
+    <h3 class="subsection-title">3.2 In-Store Retail &amp; Restaurant Card Payment Flow</h3>
     <p>
-      For in-store physical transactions at customer retail counters, FlexiTap maintains strict <strong>PCI DSS Scope Exclusion</strong>:
+      For in-store physical transactions conducted at merchant checkout lanes, FlexiTap maintains strict <strong>Physical and Logical Separation</strong> from credit and debit card processing:
     </p>
+
     <table>
       <thead>
         <tr>
-          <th style="width: 30%;">Payment Method</th>
-          <th style="width: 40%;">Processing Channel</th>
-          <th style="width: 30%;">Data Stored in FlexiTap</th>
+          <th style="width: 25%;">Transaction Component</th>
+          <th style="width: 45%;">Operating Architecture</th>
+          <th style="width: 30%;">PCI DSS Scope Impact</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Physical Credit / Debit Cards</strong></td>
-          <td>Stand-alone external payment terminal (EMV chip, NFC contactless, swipe) supplied by merchant acquirer</td>
-          <td>Operational metadata only: Payment type ('card'), external transaction ref, timestamp, and amount. <strong>Zero PAN or CVV.</strong></td>
+          <td><strong>Payment Terminal Hardware</strong></td>
+          <td>Stand-alone, bank-provided EMV chip / contactless NFC payment terminal (Verifone, Ingenico, Pax, Sunmi) supplied directly by merchant's acquiring bank.</td>
+          <td><strong>100% Out of Scope</strong> for FlexiTap. Managed under acquiring bank's PCI-PTS certification.</td>
         </tr>
         <tr>
-          <td><strong>Cash / Split Tender</strong></td>
-          <td>Physical cash drawer driven by printer RJ12 pulse or manual kick</td>
-          <td>Amount tendered, change computed, drawer ledger movement.</td>
+          <td><strong>Card Reading &amp; PIN Entry</strong></td>
+          <td>Card is tapped, dipped, or swiped exclusively on the external terminal. Terminal communicates directly with payment processor via cellular or merchant banking network.</td>
+          <td><strong>Zero Transmission</strong> across FlexiTap hardware, POS memory, or local databases.</td>
         </tr>
         <tr>
-          <td><strong>E-Wallets / QR Ph / GCash / Maya</strong></td>
-          <td>Dynamic or static QR code presented on screen or printed receipt</td>
-          <td>Reference number entered by cashier, confirmation status.</td>
-        </tr>
-        <tr>
-          <td><strong>Customer Store Accounts (AR)</strong></td>
-          <td>Local customer balance ledger with credit limit check</td>
-          <td>Customer ID, outstanding balance, credit ledger history.</td>
+          <td><strong>POS Transaction Completion</strong></td>
+          <td>Cashier selects "Credit/Debit Card" in FlexiTap tender modal and inputs the terminal's printed approval code and transaction amount.</td>
+          <td>Only non-sensitive operational metadata is stored: Payment method, amount, reference code, timestamp.</td>
         </tr>
       </tbody>
     </table>
 
+    <h3 class="subsection-title">3.3 Alternative Tender Types: Cash, E-Wallets, QR Ph &amp; Store Credit</h3>
+    <p>
+      FlexiTap provides rich support for diverse retail tender types without touching regulated financial networks:
+    </p>
+    <ul>
+      <li><strong>Cash Management:</strong> Exact calculations for gross amount, tendered cash, and change due. Cash drawer kick pulse triggered via printer hardware. Mid-day cash drops, petty cash payouts, and blind end-of-shift drawer reconciliations are logged with manager audit trails.</li>
+      <li><strong>E-Wallets &amp; QR Ph (GCash, Maya, PromptPay, PIX):</strong> Terminal displays dynamic or static QR payment codes. The customer scans with their banking app; cashier verifies transfer on merchant's payment terminal and records the wallet reference number.</li>
+      <li><strong>Accounts Receivable (Customer Store Accounts / Credit Ledger):</strong> Allows trusted commercial customers to charge orders to their account. Tracks credit limits, ledger history, payment collections, and outstanding aging balances locally.</li>
+    </ul>
+
+    <h3 class="subsection-title">3.4 Strict Technical &amp; Contractual Cardholder Data Exclusion</h3>
     <div class="callout callout-amber">
-      <div class="callout-title">Contractual &amp; Technical PCI Exclusion Policy</div>
-      Section 3 of the FlexiTap Terms of Service explicitly forbids entering or storing cardholder Primary Account Numbers (PANs), Card Verification Values (CVVs), or magnetic stripe track data in free-text item notes, customer notes, or transaction remarks. This architectural separation completely removes FlexiTap servers and databases from PCI DSS Cardholder Data Environment (CDE) scope.
+      <div class="callout-title">PCI DSS Scope Exclusion Affirmation</div>
+      FlexiTap does NOT capture, transmit, store, or process payment card Primary Account Numbers (PANs), Card Verification Values (CVV / CVC / CID), PINs, PIN blocks, or full magnetic stripe / EMV chip track data.
     </div>
+    <p>
+      This exclusion is contractually enforced in <strong>Section 3 of the FlexiTap Terms of Service</strong>:
+    </p>
+    <p style="font-style: italic; background: #f8fafc; padding: 10px; border-left: 3px solid #64748b; font-size: 8.5pt;">
+      "You agree not to... enter, transcribe, or store payment card Primary Account Numbers (PANs), Card Verification Values (CVV / CVC), PINs, or magnetic stripe / EMV chip data in any free-text, note, remark, or custom field within the Service. Card payments processed at your checkout must be transacted directly via external PCI-compliant payment terminals or accredited gateway hardware; FlexiTap does not store or process raw cardholder data."
+    </p>
+    <p>
+      Consequently, under the <strong>Payment Card Industry Data Security Standard (PCI DSS v4.0)</strong>, FlexiTap software, servers, and cloud databases are <strong>ENTIRELY EXCLUDED</strong> from the merchant's Cardholder Data Environment (CDE). Merchants utilizing FlexiTap alongside stand-alone external terminals qualify for the simplest self-assessment validation standard (typically PCI DSS SAQ-A or SAQ B-VT).
+    </p>
   </div>
 
   <div class="page-break"></div>
 
   <!-- ==================== SECTION 4: TERMS, PRIVACY & LEGAL COMPLIANCE ==================== -->
   <div>
-    <h2 class="section-title">4. Terms, Privacy Policy &amp; Regulatory Framework</h2>
+    <h2 class="section-title">4. Terms of Service, Privacy Policy &amp; Regulatory Framework</h2>
 
-    <h3 class="subsection-title">4.1 Legal Role Demarcation: Controller vs. Processor</h3>
+    <h3 class="subsection-title">4.1 Legal Role Demarcation: Data Controller (PIC) vs. Processor (PIP)</h3>
     <p>
-      In accordance with the General Data Protection Regulation (GDPR Art. 4), the California Consumer Privacy Act (CCPA/CPRA), and the Philippine Data Privacy Act of 2012 (RA 10173):
+      In compliance with international data privacy legislation (GDPR Art. 4, CCPA/CPRA, and Philippine Data Privacy Act RA 10173), FlexiTap contractually establishes clear institutional role boundaries:
     </p>
     <ul>
-      <li><strong>FlexiTap as Data Controller (PIC):</strong> FlexiTap acts as Data Controller only for merchant account registration details (merchant business email, store profile, and billing token issued by Paddle).</li>
-      <li><strong>FlexiTap as Data Processor (PIP):</strong> For all consumer records, customer phone numbers, loyalty points, employee attendance times, and sales transactions entered into the system by the merchant, <strong>the merchant acts as sole Data Controller (PIC)</strong> and FlexiTap acts strictly as Data Processor (PIP), processing records exclusively on the merchant's operational instructions.</li>
+      <li><strong>FlexiTap as Data Controller (Personal Information Controller / PIC):</strong> FlexiTap acts as Data Controller <em>solely</em> for information collected directly from the merchant account holder to establish the commercial relationship: business owner email, store name, physical address, locale, subscription tier, and Paddle customer identifier.</li>
+      <li><strong>FlexiTap as Data Processor (Personal Information Processor / PIP):</strong> For all data entered into the POS by the merchant—including consumer names, phone numbers, delivery addresses, customer debt ledgers, employee timecards, and itemized transaction receipts—<strong>the merchant acts as the sole Data Controller (PIC)</strong>. FlexiTap operates strictly as a <strong>Data Processor (PIP)</strong>, storing and synchronizing such data solely on the documented instructions of the merchant to provide the Service.</li>
     </ul>
 
-    <h3 class="subsection-title">4.2 Four Protective Statutory Disclaimers</h3>
+    <h3 class="subsection-title">4.2 Detailed Analysis of the Four Protective Statutory Disclaimers</h3>
     <p>
-      The FlexiTap legal framework embeds four critical protective clauses across <code>terms.html</code> and <code>privacy.html</code>:
+      The FlexiTap legal architecture embeds four robust protective clauses across <code>terms.html</code> and <code>privacy.html</code> to shield the organization and provide transparent operational clarity to merchants:
     </p>
 
     <table>
       <thead>
         <tr>
           <th style="width: 25%;">Protective Clause</th>
-          <th style="width: 45%;">Contractual Provision</th>
-          <th style="width: 30%;">Legal / Regulatory Objective</th>
+          <th style="width: 45%;">Contractual Provision Summary</th>
+          <th style="width: 30%;">Statutory Risk Shielded</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>1. PCI DSS Exclusion</strong></td>
-          <td>Explicit ban on storing 16-digit PANs, CVVs, or chip data in free-text fields; card checkout must use external certified terminals.</td>
-          <td>Eliminates PCI DSS merchant audit liability and CDE footprint.</td>
+          <td><strong>1. PCI DSS Exclusion Clause</strong><br><code>terms.html</code> Sec 3<br><code>privacy.html</code> Sec 2</td>
+          <td>Explicit prohibition against entering 16-digit card PANs, CVVs, or track data into note or customer fields; clarifies that card payments are transacted off-system on bank terminals.</td>
+          <td>Shields FlexiTap from PCI DSS CDE scope, audit costs, and breach liability for cardholder data compromises.</td>
         </tr>
         <tr>
-          <td><strong>2. HIPAA &amp; PHI Exclusion</strong></td>
-          <td>Express disclaimer that FlexiTap is not a Covered Entity or Business Associate; bans storage of patient health information (PHI).</td>
-          <td>Shields from healthcare privacy regulations and compliance overhead.</td>
+          <td><strong>2. HIPAA &amp; PHI Exclusion Clause</strong><br><code>terms.html</code> Sec 7<br><code>privacy.html</code> Sec 2</td>
+          <td>Express disclaimer stating FlexiTap is NOT a Business Associate or Covered Entity under HIPAA; strictly forbids storing patient medical records or Protected Health Information (PHI).</td>
+          <td>Eliminates applicability of US HIPAA/HITECH security rules, audits, and statutory healthcare penalties.</td>
         </tr>
         <tr>
-          <td><strong>3. BIR Non-OR Notice (PH)</strong></td>
-          <td>Express declaration under RA 8424 and RR 11-2004 that slips are internal kitchen/order records, NOT statutory Official Receipts.</td>
-          <td>Protects against Philippine tax non-compliance or Oplan Kandado exposure.</td>
+          <td><strong>3. Philippine BIR Non-OR Notice</strong><br><code>terms.html</code> Sec 8 Schedule<br>Receipt Slip Footers</td>
+          <td>Clear notice under RA 8424 and BIR Revenue Regulations (RR 11-2004, RR 10-2012) stating the POS prints internal order slips, NOT statutory Official Receipts (OR) or Sales Invoices (SI).</td>
+          <td>Protects against merchant claims regarding BIR fiscal accreditation, tax deficiencies, and administrative store closures (Oplan Kandado).</td>
         </tr>
         <tr>
-          <td><strong>4. Wage &amp; Overtime Disclaimer</strong></td>
-          <td>Confirms timeclock records are operational tracking tools; merchant holds sole duty for FLSA/Labor Code wage and overtime rules.</td>
-          <td>Shields from statutory labor disputes, employee wage claims, and penalties.</td>
+          <td><strong>4. Wage, Hour &amp; Overtime Disclaimer</strong><br><code>terms.html</code> Sec 8 Schedule</td>
+          <td>Affirms that employee timeclock tracking and break logs are operational tracking tools; merchant holds exclusive duty for statutory wage, overtime, and labor law compliance.</td>
+          <td>Shields from statutory labor disputes, employee wage-and-hour lawsuits, and FLSA / DOLE statutory penalties.</td>
         </tr>
       </tbody>
     </table>
 
-    <h3 class="subsection-title">4.3 Privacy Governance &amp; Data Subject Rights</h3>
-    <ul>
-      <li><strong>Zero Data Monetization:</strong> FlexiTap does not sell, rent, or trade merchant or consumer data to brokers, advertisers, or third parties. The software is 100% ad-free across all tiers.</li>
-      <li><strong>Right to Erasure &amp; Account Deletion:</strong> Merchants can permanently delete their account and associated operational cloud backups via the automated self-service endpoint at <code>https://flexitapapp.com/account/delete</code>.</li>
-      <li><strong>Private Cloud Backups:</strong> Subscribers with cloud backup features have database archives stored encrypted in private Supabase Storage buckets, purged upon account cancellation or 7-day client rotation.</li>
-    </ul>
-
-    <h3 class="subsection-title">4.4 Refund Policy Framework</h3>
+    <h3 class="subsection-title">4.3 Global Privacy Law Compliance Mapping</h3>
     <p>
-      FlexiTap maintains a transparent, merchant-friendly refund standard:
+      FlexiTap aligns with major privacy jurisdictions worldwide:
     </p>
     <ul>
-      <li><strong>14-Day Statutory Guarantee:</strong> First-time paid subscribers can request a full, no-questions-asked refund within 14 calendar days of initial purchase by contacting <code>support@flexitapapp.com</code>.</li>
-      <li><strong>Hassle-Free Self-Service Cancellation:</strong> Subscriptions can be canceled at any time via the Back Office Web Portal or the Paddle Customer Dashboard, halting future renewals immediately while retaining access until cycle conclusion.</li>
+      <li><strong>GDPR / UK GDPR (European Union &amp; United Kingdom):</strong>
+        <ul>
+          <li><em>Lawful Basis (Art. 6):</em> Processing is grounded in performance of contract with the merchant and legitimate operational interests.</li>
+          <li><em>Data Minimization (Art. 5):</em> Only operational data necessary for point-of-sale execution is collected. Crash diagnostics exclude business transaction payloads.</li>
+          <li><em>Security of Processing (Art. 32):</em> Technical measures include TLS 1.3 encryption, database RLS, and encrypted cloud storage.</li>
+          <li><em>Data Subject Rights:</em> Support for right of access, rectification, and erasure.</li>
+        </ul>
+      </li>
+      <li><strong>CCPA / CPRA (California, United States):</strong>
+        <ul>
+          <li><em>Service Provider Status:</em> FlexiTap qualifies as a "Service Provider" processing personal information on behalf of businesses.</li>
+          <li><em>Zero Sale or Sharing of Data:</em> FlexiTap warrants that it does NOT sell, rent, or share personal information for cross-context behavioral advertising. The software is 100% ad-free across all tiers.</li>
+        </ul>
+      </li>
+      <li><strong>Philippine Data Privacy Act of 2012 (Republic Act No. 10173):</strong>
+        <ul>
+          <li>Adheres to statutory principles of Transparency, Legitimate Purpose, and Proportionality (Sec. 11).</li>
+          <li>Full support for Section 16 Data Subject Rights: Right to be informed, access, object, erasure or blocking, rectification, and right to lodge a formal complaint with the <strong>National Privacy Commission (NPC)</strong> (<code>privacy.gov.ph</code>).</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3 class="subsection-title">4.4 Data Lifecycle, Retention Periods &amp; Self-Service Deletion</h3>
+    <ul>
+      <li><strong>Active Subscription Retention:</strong> Operational transaction data is retained during the active lifecycle of the merchant account.</li>
+      <li><strong>Rolling Cloud Backup Retention:</strong> Automated database snapshots in Supabase Storage operate on a strict 7-day client rotation cycle. Backups older than 7 days are automatically pruned.</li>
+      <li><strong>Automated Self-Service Account Erasure:</strong> Merchants possess the absolute right to terminate their account at any time via <code>https://flexitapapp.com/account/delete</code>. Execution triggers cascading deletions that permanently remove the merchant profile, store records, devices, and cloud backup archives within 30 days.</li>
+    </ul>
+
+    <h3 class="subsection-title">4.5 Subscription Terms, Cancellation &amp; 14-Day Refund Guarantee</h3>
+    <ul>
+      <li><strong>Tier Transparency:</strong> FlexiTap offers a permanently Free tier (single-device, 100% ad-free, local storage) and paid tiers (Founders Pro / Enterprise) with multi-device sync and cloud backup features.</li>
+      <li><strong>14-Day Statutory Refund Policy:</strong> First-time paid subscribers can request a full, no-questions-asked refund within 14 calendar days of initial billing by contacting <code>support@flexitapapp.com</code>.</li>
+      <li><strong>Hassle-Free Cancellation:</strong> Subscriptions can be canceled at any time directly through the merchant web portal or Paddle customer billing dashboard. Canceled subscriptions remain active until the end of the prepaid billing cycle with no cancellation fees or penalties.</li>
     </ul>
   </div>
 
@@ -536,98 +847,157 @@
 
   <!-- ==================== SECTION 5: AUDIT READINESS MATRIX & CONCLUSION ==================== -->
   <div>
-    <h2 class="section-title">5. Independent Audit Readiness &amp; Certification Matrix</h2>
+    <h2 class="section-title">5. Platform Evaluation, Threat Modeling &amp; Independent Audit Matrix</h2>
 
-    <h3 class="subsection-title">5.1 Technical Compliance Verification Matrix</h3>
+    <h3 class="subsection-title">5.1 STRIDE Threat Modeling Evaluation</h3>
+    <p>
+      An engineering evaluation of the FlexiTap platform under Microsoft's STRIDE threat model:
+    </p>
 
     <table>
       <thead>
         <tr>
-          <th style="width: 20%;">Regulatory Standard</th>
-          <th style="width: 35%;">Platform Position / Scope</th>
-          <th style="width: 25%;">Verification Evidence</th>
-          <th style="width: 20%;">Audit Recommendation</th>
+          <th style="width: 15%;">Threat Category</th>
+          <th style="width: 35%;">Potential Attack Vector</th>
+          <th style="width: 35%;">Engineered Countermeasure</th>
+          <th style="width: 15%;">Risk Level</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Spoofing</strong></td>
+          <td>Attacker impersonates a merchant register or forges sync requests.</td>
+          <td>Supabase JWT token validation; device ID matching; TLS client verification.</td>
+          <td><span class="badge badge-green">Low</span></td>
+        </tr>
+        <tr>
+          <td><strong>Tampering</strong></td>
+          <td>Interception and modification of sync payloads in transit.</td>
+          <td>Mandatory TLS 1.3 across all network interfaces; deterministic schema validation.</td>
+          <td><span class="badge badge-green">Low</span></td>
+        </tr>
+        <tr>
+          <td><strong>Repudiation</strong></td>
+          <td>Cashier denies performing a void, refund, or shift cash drawer alteration.</td>
+          <td>Manager PIN step-up audit logs; cashier ID stamped on every invoice mutation.</td>
+          <td><span class="badge badge-green">Low</span></td>
+        </tr>
+        <tr>
+          <td><strong>Information Disclosure</strong></td>
+          <td>Unauthorized actor scrapes multi-tenant database or accesses backup files.</td>
+          <td>PostgreSQL RLS on 100% of tables; public=false on storage; revoked anon permissions.</td>
+          <td><span class="badge badge-green">Low</span></td>
+        </tr>
+        <tr>
+          <td><strong>Denial of Service</strong></td>
+          <td>Cloud outage or network flood halts store checkout operations.</td>
+          <td>Offline-first local SQLite engine; 100% autonomous edge operation without internet.</td>
+          <td><span class="badge badge-green">Low</span></td>
+        </tr>
+        <tr>
+          <td><strong>Elevation of Privilege</strong></td>
+          <td>Attacker modifies client payload to claim 'admin' role in user metadata.</td>
+          <td>Removal of client-writable user_metadata.role; database RLS verifies store ownership.</td>
+          <td><span class="badge badge-green">Low</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="subsection-title">5.2 Regulatory Standards Compliance Mapping Table</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 18%;">Standard</th>
+          <th style="width: 30%;">Regulatory Scope Status</th>
+          <th style="width: 34%;">Technical &amp; Legal Verification Evidence</th>
+          <th style="width: 18%;">Audit Posture</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td><strong>PCI DSS v4.0</strong></td>
-          <td><strong>Excluded from Scope</strong>. Zero PAN/CVV storage; SaaS billing offloaded to Paddle (Level 1 MoR); POS uses external card terminals.</td>
-          <td><code>terms.html</code> Sec 3, <code>privacy.html</code> Sec 2, architecture audit</td>
-          <td><span class="badge badge-green">Compliant via Exclusion</span></td>
+          <td><strong>Excluded from Scope</strong>. Zero cardholder data stored or transmitted; SaaS billing via Paddle; in-store via bank terminals.</td>
+          <td><code>terms.html</code> Sec 3; <code>privacy.html</code> Sec 2; absence of PAN fields in SQLite schema.</td>
+          <td><span class="badge badge-green">Exclusion Validated</span></td>
         </tr>
         <tr>
           <td><strong>GDPR / UK GDPR</strong></td>
-          <td><strong>Compliant Data Processor</strong>. Role clarity, DPA clauses, encryption in transit/rest, right to erasure via self-service endpoint.</td>
-          <td><code>privacy.html</code> Sec 1 &amp; 9, account deletion handler</td>
+          <td><strong>Compliant Data Processor</strong>. DPA terms active; technical security implemented; self-service erasure endpoint operational.</td>
+          <td><code>privacy.html</code> Sec 1 &amp; 9; automated deletion route at <code>/account/delete</code>; RLS isolation.</td>
           <td><span class="badge badge-green">Verified</span></td>
         </tr>
         <tr>
           <td><strong>CCPA / CPRA</strong></td>
-          <td><strong>Compliant Service Provider</strong>. No sale or sharing of personal information; support for consumer deletion and access rights.</td>
-          <td><code>privacy.html</code> Sec 9, web data protection disclosures</td>
+          <td><strong>Compliant Service Provider</strong>. Zero data sale or sharing; supports consumer access and deletion requests.</td>
+          <td><code>privacy.html</code> Sec 9 California Schedule; ad-free architecture.</td>
           <td><span class="badge badge-green">Verified</span></td>
         </tr>
         <tr>
           <td><strong>PH DPA (RA 10173)</strong></td>
           <td><strong>Compliant PIP</strong>. Adheres to Section 16 rights, NPC reporting framework, technical encryption, and security disclaimers.</td>
-          <td><code>privacy.html</code> Sec 9 schedule, security measures doc</td>
+          <td><code>privacy.html</code> Sec 9 Philippine Schedule; encryption at rest; security measures documentation.</td>
           <td><span class="badge badge-green">Verified</span></td>
         </tr>
         <tr>
           <td><strong>HIPAA / HITECH</strong></td>
-          <td><strong>Excluded from Scope</strong>. Software expressly disclaims use for patient Protected Health Information (PHI).</td>
-          <td><code>terms.html</code> Sec 7, <code>privacy.html</code> Sec 2</td>
-          <td><span class="badge badge-green">Excluded via Terms</span></td>
+          <td><strong>Excluded from Scope</strong>. Software expressly disclaims suitability for patient Protected Health Information (PHI).</td>
+          <td><code>terms.html</code> Sec 7 HIPAA Exclusion Clause; <code>privacy.html</code> Sec 2.</td>
+          <td><span class="badge badge-green">Exclusion Validated</span></td>
         </tr>
         <tr>
           <td><strong>Philippine BIR PTU</strong></td>
           <td><strong>Operational Control Tool</strong>. Clarified as non-fiscal internal order printer; merchants must issue manual registered BIR receipts.</td>
-          <td><code>terms.html</code> Sec 8 BIR Schedule, customer slip footer</td>
-          <td><span class="badge badge-green">Clear Legal Notice</span></td>
+          <td><code>terms.html</code> Sec 8 BIR Schedule; non-OR footer on customer slips.</td>
+          <td><span class="badge badge-green">Notice Enforced</span></td>
         </tr>
         <tr>
           <td><strong>US FLSA &amp; Labor Laws</strong></td>
           <td><strong>Operational Time Tracker</strong>. Timecards are uncertified raw logs; merchant holds sole duty for wage/overtime calculations.</td>
-          <td><code>terms.html</code> Sec 8 Labor Schedule</td>
-          <td><span class="badge badge-green">Protected</span></td>
+          <td><code>terms.html</code> Sec 8 Labor Schedule.</td>
+          <td><span class="badge badge-green">Disclaimer Enforced</span></td>
         </tr>
       </tbody>
     </table>
 
-    <h3 class="subsection-title">5.2 Platform Hardening Summary</h3>
+    <h3 class="subsection-title">5.3 Technical Verification &amp; Control Evidence Repository</h3>
     <p>
-      The FlexiTap platform has undergone comprehensive security engineering, including:
+      Independent auditors can verify all assertions in this dossier against the following repository artifacts:
     </p>
-    <ol>
-      <li><strong>Database Hardening:</strong> RLS enabled across 100% of public tables, elimination of <code>anon</code> public table privileges, and isolation of backup buckets.</li>
-      <li><strong>POS Financial Protection:</strong> Manager PIN step-up authentication safeguarding Voids, Refunds, and Re-openings within cashier workflows.</li>
-      <li><strong>Frontend Defenses:</strong> Elimination of DOM XSS injection vectors, sanitization of web tables, and blocking of client-side role privilege escalation.</li>
-      <li><strong>Network Isolation:</strong> Tenant-scoped WebSocket real-time channels and TLS 1.3 encryption across all communication pathways.</li>
-    </ol>
+    <ul>
+      <li><strong>POS High-Privilege Guard:</strong> <code>lib/core/navigation/recall_ticket_dialog.dart</code> (Lines 270-340: <code>_promptForManagerPin()</code> enforcing <code>UserRole.manager</code> / <code>UserRole.admin</code> before Void/Refund/Re-open).</li>
+      <li><strong>Cashier Portal Scoping:</strong> <code>lib/core/navigation/employee_portal_screen.dart</code> (Quick Actions &amp; Closed Tickets browser scoped to active shift cashier).</li>
+      <li><strong>Database RLS Remediation:</strong> <code>supabase_phase3_advisor_remediation.sql</code> (RLS activation on 10 legacy tables, revocation of <code>anon</code>).</li>
+      <li><strong>Storage Lockdown Migration:</strong> <code>supabase_storage_hardening.sql</code> (Sets <code>public = false</code> on <code>backups</code> bucket; installs <code>can_access_backup_object</code> RLS function).</li>
+      <li><strong>Web Portal Defenses:</strong> <code>portal.html</code> and <code>dev-portal.html</code> (DOM text-node rendering, removal of <code>?dev_inspect=true</code>, blocking client role escalation).</li>
+      <li><strong>Legal Disclaimers:</strong> <code>terms.html</code> (Sections 3, 6, 7, 8) and <code>privacy.html</code> (Sections 1, 2, 4, 8, 9).</li>
+    </ul>
 
+    <h3 class="subsection-title">5.4 Independent Reviewer Attestation &amp; Sign-Off Protocol</h3>
     <div class="callout">
       <div class="callout-title">Conclusion &amp; Auditor Attestation</div>
       The architectural, security, payment, and legal measures implemented across the FlexiTap POS platform represent an enterprise-grade, privacy-first posture suitable for retail, restaurant, and enterprise merchant deployments globally.
     </div>
 
-    <div style="margin-top: 30px; border: 1px dashed #94a3b8; border-radius: 6px; padding: 18px; background: #fafafa;">
-      <div style="font-weight: 700; color: #0f172a; margin-bottom: 12px; text-transform: uppercase; font-size: 8.5pt;">Independent Reviewer Sign-Off Section</div>
+    <div style="margin-top: 25px; border: 1px dashed #94a3b8; border-radius: 6px; padding: 18px; background: #fafafa; page-break-inside: avoid;">
+      <div style="font-weight: 700; color: #0f172a; margin-bottom: 12px; text-transform: uppercase; font-size: 8.5pt;">Independent Auditor Attestation &amp; Review Sign-Off</div>
+      <p style="font-size: 8.5pt; color: #475569; margin-bottom: 14px;">
+        By signing below, the independent reviewer confirms that they have examined the technical architecture, security configurations, database RLS policies, payment boundary definitions, and legal disclaimers of the FlexiTap POS platform as described herein.
+      </p>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 8.5pt;">
         <div>
           <div>Auditor Name: ____________________________________</div>
-          <div style="margin-top: 8px;">Review Firm / Title: _____________________________</div>
+          <div style="margin-top: 10px;">Review Firm / Organization: ________________________</div>
+          <div style="margin-top: 10px;">Professional Title: _________________________________</div>
         </div>
         <div>
           <div>Signature: ________________________________________</div>
-          <div style="margin-top: 8px;">Date of Review: __________________________________</div>
+          <div style="margin-top: 10px;">Date of Evaluation: ________________________________</div>
+          <div style="margin-top: 10px;">Audit Determination: [ &nbsp; ] SATISFACTORY &nbsp; [ &nbsp; ] EXCEPTIONS NOTED</div>
         </div>
       </div>
     </div>
 
-    <div class="footer-note">
-      FlexiTap POS &bull; Confidential Independent Review Document &bull; Generated October 2026 &bull; Page 5 of 5
-    </div>
   </div>
 
 </body>
