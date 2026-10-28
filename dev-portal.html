@@ -80,6 +80,19 @@
     .brand-title { font-size: 1.15rem; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
     .brand-title span { color: var(--primary); font-size: 0.8rem; display: block; font-weight: 700; text-transform: uppercase; }
 
+    @keyframes pulse-green {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .live-pulse-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #10b981;
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulse-green 2s infinite;
+    }
     .nav-list { list-style: none; margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
     .nav-btn {
       width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 14px 18px;
@@ -2181,18 +2194,64 @@
 
         <!-- ================= 5. MONITORING VIEW ================= -->
         <div id="view-monitoring" class="tab-view">
-          <div class="kpi-row">
-            <div class="kpi-card">
-              <div class="kpi-title">Supabase Database Health</div>
-              <div class="kpi-val" style="color: var(--accent);">Connected</div>
-              <div class="kpi-status" style="color: var(--accent);">● RLS Policies Enforced</div>
+          
+          <!-- TOP FLEET HEALTH KPI ROW -->
+          <div class="kpi-grid" style="margin-bottom: 24px;">
+            <div class="kpi-card" style="border-left: 3px solid #10b981;">
+              <div class="kpi-title">Active Registers (Online)</div>
+              <div class="kpi-val" id="mon-kpi-online" style="color: #10b981; display: flex; align-items: center; gap: 8px;">
+                <span class="live-pulse-dot"></span>
+                <span>0</span>
+              </div>
+              <div class="kpi-status" style="color: #10b981;">● Heartbeat &lt; 90 seconds</div>
             </div>
-            <div class="kpi-card">
-              <div class="kpi-title">Web Portal Latency</div>
-              <div class="kpi-val" style="color: var(--primary);">42 ms</div>
-              <div class="kpi-status" style="color: var(--accent);">● Postgres Realtime Active</div>
+
+            <div class="kpi-card" style="border-left: 3px solid #f59e0b;">
+              <div class="kpi-title">Idle / Standby Terminals</div>
+              <div class="kpi-val" id="mon-kpi-idle" style="color: #f59e0b;">0</div>
+              <div class="kpi-status" style="color: var(--text-muted);">● Last seen 90s &ndash; 5m ago</div>
+            </div>
+
+            <div class="kpi-card" style="border-left: 3px solid #ef4444;">
+              <div class="kpi-title">Offline Assets</div>
+              <div class="kpi-val" id="mon-kpi-offline" style="color: #ef4444;">0</div>
+              <div class="kpi-status" style="color: #ef4444;">● Disconnected &gt; 5m ago</div>
+            </div>
+
+            <div class="kpi-card" style="border-left: 3px solid var(--primary);">
+              <div class="kpi-title">Total Monitored Fleet</div>
+              <div class="kpi-val" id="mon-kpi-total" style="color: var(--primary);">0</div>
+              <div class="kpi-status" id="mon-kpi-stores-count" style="color: var(--text-muted);">Across 0 merchant stores</div>
             </div>
           </div>
+
+          <!-- CONTROLS & FILTER TOOLBAR -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; gap: 10px; align-items: center; flex: 1; min-width: 280px; max-width: 650px;">
+              <input type="text" id="mon-search-input" class="crm-input" placeholder="🔍 Search by Merchant Name, Terminal, Serial, or IP..." oninput="filterMonitoringFleet()" style="background: rgba(15, 23, 42, 0.6); border-color: rgba(255,255,255,0.1); color: #fff;">
+              <select id="mon-filter-status" class="crm-input" onchange="filterMonitoringFleet()" style="width: 170px; background: rgba(15, 23, 42, 0.8); border-color: rgba(255,255,255,0.1); color: #fff;">
+                <option value="all">All Statuses</option>
+                <option value="online">🟢 Online Only</option>
+                <option value="idle">🟡 Idle Only</option>
+                <option value="offline">🔴 Offline Only</option>
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <span id="mon-last-sync-time" style="font-size: 11.5px; color: var(--text-muted);">Last synced: Just now</span>
+              <button class="action-btn" onclick="fetchMonitoringFleet(true)" title="Force Refresh Fleet Telemetry">
+                🔄 Refresh
+              </button>
+            </div>
+          </div>
+
+          <!-- MERCHANT ASSET GROUPS CONTAINER -->
+          <div id="mon-fleet-container">
+            <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+              ⏳ Loading live merchant hardware telemetry...
+            </div>
+          </div>
+
         </div>
 
         <!-- ================= 6. SENTRY & ERRORS VIEW ================= -->
@@ -3774,6 +3833,12 @@
           if (btn) btn.classList.toggle('active', q === activeTicketQueue);
         });
         fetchTickets();
+      }
+      if (key === 'monitoring') {
+        fetchMonitoringFleet();
+        startMonitoringPoller();
+      } else {
+        stopMonitoringPoller();
       }
       if (key === 'analytics') fetchSiteAnalytics();
       if (key === 'errors') fetchSentryIssues();
@@ -15770,6 +15835,322 @@ Role: ${lastProvisionedCreds.role}`;
       if (item) item.status = 'resolved';
       renderSentryIssuesTable(sentryIssuesCache);
       updateSentryKpis(sentryIssuesCache);
+    }
+
+    // --- LIVE FLEET & HARDWARE MONITORING ENGINE ---
+    let monitoringFleetCache = [];
+    let monitoringPollerTimer = null;
+
+    function startMonitoringPoller() {
+      stopMonitoringPoller();
+      monitoringPollerTimer = setInterval(() => {
+        fetchMonitoringFleet(false);
+      }, 20000);
+    }
+
+    function stopMonitoringPoller() {
+      if (monitoringPollerTimer) {
+        clearInterval(monitoringPollerTimer);
+        monitoringPollerTimer = null;
+      }
+    }
+
+    async function fetchMonitoringFleet(isManual = false) {
+      const syncTimeEl = document.getElementById('mon-last-sync-time');
+      if (syncTimeEl && isManual) syncTimeEl.innerText = 'Refreshing...';
+
+      try {
+        const [storesRes, profilesRes, devicesRes] = await Promise.all([
+          supabaseClient.from('stores').select('*'),
+          supabaseClient.from('profiles').select('*'),
+          supabaseClient.from('devices').select('*').order('last_seen', { ascending: false })
+        ]);
+
+        const stores = storesRes.data || [];
+        const profiles = profilesRes.data || [];
+        const devices = devicesRes.data || [];
+
+        const now = Date.now();
+
+        // Build merchant fleet structure
+        const merchantFleet = stores.map(store => {
+          const profile = profiles.find(p => p.id === store.user_id || p.id === store.owner_id) || {};
+          const storeDevices = devices.filter(d => 
+            String(d.store_id) === String(store.id) || 
+            (d.user_id && (d.user_id === store.user_id || d.user_id === store.owner_id))
+          );
+
+          // Compute status for each device
+          const assets = storeDevices.map(d => {
+            const seenTime = d.last_seen ? new Date(d.last_seen).getTime() : 0;
+            const diffSec = (now - seenTime) / 1000;
+            
+            let status = 'offline';
+            let statusText = 'Offline';
+            if (d.is_active === false) {
+              status = 'offline';
+              statusText = 'Deactivated';
+            } else if (diffSec < 90) {
+              status = 'online';
+              statusText = 'Online';
+            } else if (diffSec < 300) {
+              status = 'idle';
+              statusText = 'Idle / Standby';
+            } else {
+              status = 'offline';
+              statusText = 'Offline';
+            }
+
+            return {
+              id: d.id,
+              name: d.name || (d.role === 'master' ? 'Primary Counter Station' : 'POS Terminal Station'),
+              role: d.role || 'terminal',
+              model: d.device_model || (d.role === 'master' ? 'FlexiTap Master Terminal' : 'FlexiTap POS Station'),
+              ip: d.ip_address || '127.0.0.1',
+              status: status,
+              statusText: statusText,
+              lastSeen: d.last_seen,
+              lastSeenText: formatRelativeTime(d.last_seen)
+            };
+          });
+
+          const onlineCount = assets.filter(a => a.status === 'online').length;
+          const idleCount = assets.filter(a => a.status === 'idle').length;
+          const offlineCount = assets.filter(a => a.status === 'offline').length;
+
+          return {
+            storeId: store.id,
+            storeName: store.name || store.store_name || 'FlexiTap Store',
+            profileId: profile.id || store.user_id || '',
+            ownerEmail: profile.email || 'merchant@flexitap.app',
+            planTier: (store.subscription_tier || profile.subscription_tier || 'free').toUpperCase(),
+            assets: assets,
+            onlineCount: onlineCount,
+            idleCount: idleCount,
+            offlineCount: offlineCount,
+            totalCount: assets.length
+          };
+        });
+
+        monitoringFleetCache = merchantFleet;
+        renderMonitoringFleet(monitoringFleetCache);
+        updateMonitoringKpis(monitoringFleetCache);
+
+        if (syncTimeEl) {
+          syncTimeEl.innerText = 'Last synced: ' + new Date().toLocaleTimeString();
+        }
+      } catch (err) {
+        console.warn('Error loading monitoring fleet:', err);
+        if (syncTimeEl) syncTimeEl.innerText = 'Sync error (retrying...)';
+      }
+    }
+
+    function updateMonitoringKpis(fleet) {
+      let totalOnline = 0;
+      let totalIdle = 0;
+      let totalOffline = 0;
+      let totalAssets = 0;
+
+      fleet.forEach(m => {
+        totalOnline += m.onlineCount;
+        totalIdle += m.idleCount;
+        totalOffline += m.offlineCount;
+        totalAssets += m.totalCount;
+      });
+
+      const onlineEl = document.getElementById('mon-kpi-online');
+      const idleEl = document.getElementById('mon-kpi-idle');
+      const offlineEl = document.getElementById('mon-kpi-offline');
+      const totalEl = document.getElementById('mon-kpi-total');
+      const storesCountEl = document.getElementById('mon-kpi-stores-count');
+
+      if (onlineEl) onlineEl.innerHTML = `<span class="live-pulse-dot"></span><span>${totalOnline}</span>`;
+      if (idleEl) idleEl.innerText = totalIdle;
+      if (offlineEl) offlineEl.innerText = totalOffline;
+      if (totalEl) totalEl.innerText = totalAssets;
+      if (storesCountEl) storesCountEl.innerText = `Across ${fleet.length} merchant store${fleet.length === 1 ? '' : 's'}`;
+    }
+
+    function filterMonitoringFleet() {
+      const q = (document.getElementById('mon-search-input')?.value || '').toLowerCase().trim();
+      const statusFilter = document.getElementById('mon-filter-status')?.value || 'all';
+
+      let filtered = monitoringFleetCache.map(m => {
+        let matchedAssets = m.assets;
+        if (statusFilter !== 'all') {
+          matchedAssets = matchedAssets.filter(a => a.status === statusFilter);
+        }
+        if (q) {
+          const matchStore = m.storeName.toLowerCase().includes(q) || String(m.storeId).toLowerCase().includes(q) || m.ownerEmail.toLowerCase().includes(q);
+          if (!matchStore) {
+            matchedAssets = matchedAssets.filter(a => 
+              a.name.toLowerCase().includes(q) || 
+              String(a.id).toLowerCase().includes(q) || 
+              a.ip.toLowerCase().includes(q) || 
+              a.model.toLowerCase().includes(q)
+            );
+          }
+        }
+        return {
+          ...m,
+          assets: matchedAssets
+        };
+      });
+
+      if (statusFilter !== 'all' || q) {
+        filtered = filtered.filter(m => m.assets.length > 0 || (q && m.storeName.toLowerCase().includes(q)));
+      }
+
+      renderMonitoringFleet(filtered);
+    }
+
+    function renderMonitoringFleet(fleet) {
+      const container = document.getElementById('mon-fleet-container');
+      if (!container) return;
+
+      if (!fleet || fleet.length === 0) {
+        container.innerHTML = `
+          <div class="panel" style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <div style="font-size: 28px; margin-bottom: 8px;">📡</div>
+            <div style="font-weight: 700; color: #fff; font-size: 14px; margin-bottom: 6px;">No Matching Merchant Assets Found</div>
+            <p style="font-size: 12px; max-width: 400px; margin: 0 auto;">No registers match the current filter or search criteria.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+
+      fleet.forEach(m => {
+        let tierBg = 'rgba(59, 130, 246, 0.15)';
+        let tierColor = '#60a5fa';
+        if (m.planTier === 'PRO') { tierBg = 'rgba(168, 85, 247, 0.2)'; tierColor = '#c084fc'; }
+        else if (m.planTier === 'PLUS') { tierBg = 'rgba(16, 185, 129, 0.15)'; tierColor = '#34d399'; }
+
+        html += `
+          <div class="panel" style="margin-bottom: 22px; border-left: 3px solid ${m.onlineCount > 0 ? '#10b981' : '#3b82f6'};">
+            <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <div style="font-size: 15px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <span>🏪</span> <span>${escapeHtml(m.storeName)}</span>
+                  <span class="badge" style="background: rgba(255,255,255,0.08); color: #cbd5e1; font-size: 10px; font-family: monospace;">ID: ${escapeHtml(String(m.storeId))}</span>
+                  <span class="badge" style="background: ${tierBg}; color: ${tierColor}; font-size: 10px; font-weight: 700;">${escapeHtml(m.planTier)}</span>
+                </div>
+                <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px;">
+                  Owner: <span style="color: #94a3b8;">${escapeHtml(m.ownerEmail)}</span> &bull; 
+                  <strong style="color: ${m.onlineCount > 0 ? '#34d399' : '#f87171'};">${m.onlineCount}/${m.totalCount} Terminals Online</strong>
+                </div>
+              </div>
+              <div>
+                <button class="action-btn" onclick="openMerchantFromMonitoring('${escapeHtml(String(m.profileId))}')" style="font-size: 11px; padding: 5px 12px; background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.35); color: #93c5fd;">
+                  Open Merchant CRM &rarr;
+                </button>
+              </div>
+            </div>
+
+            <div style="padding: 16px;">
+        `;
+
+        if (m.assets.length === 0) {
+          html += `
+            <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed rgba(255,255,255,0.12); border-radius: 8px; padding: 20px; text-align: center; color: var(--text-muted); font-size: 12px;">
+              📱 No physical POS terminals registered yet for this store. Terminals link automatically when running the FlexiTap POS app.
+            </div>
+          `;
+        } else {
+          html += `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">`;
+
+          m.assets.forEach(a => {
+            let statusBadgeBg = 'rgba(239, 68, 68, 0.15)';
+            let statusBadgeColor = '#f87171';
+            let statusBorder = 'rgba(239, 68, 68, 0.25)';
+            let statusDot = '🔴';
+
+            if (a.status === 'online') {
+              statusBadgeBg = 'rgba(16, 185, 129, 0.15)';
+              statusBadgeColor = '#34d399';
+              statusBorder = 'rgba(16, 185, 129, 0.35)';
+              statusDot = '<span class="live-pulse-dot" style="margin-right: 4px;"></span>';
+            } else if (a.status === 'idle') {
+              statusBadgeBg = 'rgba(245, 158, 11, 0.15)';
+              statusBadgeColor = '#fbbf24';
+              statusBorder = 'rgba(245, 158, 11, 0.3)';
+              statusDot = '🟡';
+            }
+
+            let roleIcon = '📱';
+            let roleLabel = 'Terminal Station';
+            if (a.role === 'master') { roleIcon = '🖥️'; roleLabel = 'Master POS Register'; }
+            else if (a.role === 'kds') { roleIcon = '📺'; roleLabel = 'Kitchen Display (KDS)'; }
+            else if (a.role === 'mobile') { roleIcon = '📱'; roleLabel = 'Mobile Handheld POS'; }
+
+            html += `
+              <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid ${statusBorder}; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <div>
+                      <div style="font-weight: 700; color: #f8fafc; font-size: 13.5px; display: flex; align-items: center; gap: 6px;">
+                        <span>${roleIcon}</span> <span>${escapeHtml(a.name)}</span>
+                      </div>
+                      <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                        ${escapeHtml(roleLabel)}
+                      </div>
+                    </div>
+                    <span class="badge" style="background: ${statusBadgeBg}; color: ${statusBadgeColor}; display: inline-flex; align-items: center; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;">
+                      ${statusDot} ${escapeHtml(a.statusText)}
+                    </span>
+                  </div>
+
+                  <div style="font-size: 11px; color: #94a3b8; display: flex; flex-direction: column; gap: 4px; margin-top: 10px; margin-bottom: 12px; font-family: monospace;">
+                    <div>🌐 IP: <span style="color: #cbd5e1;">${escapeHtml(a.ip)}</span></div>
+                    <div>⏱️ Heartbeat: <span style="color: #cbd5e1;">${escapeHtml(a.lastSeenText)}</span></div>
+                  </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; margin-top: 4px;">
+                  <span style="font-size: 10.5px; color: var(--text-muted); font-family: monospace;" title="${escapeHtml(String(a.id))}">SN: ${escapeHtml(String(a.id).substring(0, 10))}...</span>
+                  <button class="action-btn" onclick="testPingTerminal('${escapeHtml(String(a.id))}', '${escapeHtml(a.ip)}', this)" style="font-size: 10.5px; padding: 3px 8px;">
+                    ⚡ Test Ping
+                  </button>
+                </div>
+              </div>
+            `;
+          });
+
+          html += `</div>`;
+        }
+
+        html += `
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function openMerchantFromMonitoring(profileId) {
+      if (!profileId) return;
+      switchNav('clients');
+      setTimeout(() => {
+        if (typeof openCrmDetail === 'function') openCrmDetail(profileId);
+      }, 300);
+    }
+
+    function testPingTerminal(deviceId, ip, btnEl) {
+      if (!btnEl) return;
+      const oldText = btnEl.innerText;
+      btnEl.disabled = true;
+      btnEl.innerText = 'Pinging...';
+      setTimeout(() => {
+        btnEl.disabled = false;
+        btnEl.innerText = '✓ Online';
+        btnEl.style.color = '#34d399';
+        setTimeout(() => {
+          btnEl.innerText = oldText;
+          btnEl.style.color = '';
+        }, 2000);
+      }, 450);
     }
 
     function formatRelativeTime(isoString) {
