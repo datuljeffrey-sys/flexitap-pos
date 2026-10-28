@@ -15325,7 +15325,7 @@ Role: ${lastProvisionedCreds.role}`;
     <div class="crm-modal-box">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <h3 style="font-size: 16px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 18px;">⚙️</span> Sentry.io API Integration
+          <span style="font-size: 18px;">⚙️</span> Sentry.io API Integration <span style="font-size: 10px; background: #2563eb; color: #fff; padding: 2px 7px; border-radius: 9999px; margin-left: 6px; font-weight: 700;">v2.5 (Latest)</span>
         </h3>
         <button onclick="closeSentryConfigModal()" style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer;">✕</button>
       </div>
@@ -15373,6 +15373,7 @@ Role: ${lastProvisionedCreds.role}`;
           </button>
           <div style="display: flex; gap: 10px;">
             <button type="button" onclick="closeSentryConfigModal()" class="action-btn">Cancel</button>
+            <button type="button" onclick="saveSentryConfigForce()" class="action-btn" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #34d399;" title="Save credentials without blocking on live API check">Save Config</button>
             <button type="submit" id="sentry-save-btn" class="action-btn active" style="background: var(--primary);">Save &amp; Test Connection</button>
           </div>
         </div>
@@ -15472,11 +15473,40 @@ Role: ${lastProvisionedCreds.role}`;
       fetchSentryIssues(true);
     }
 
-    async function saveSentryConfig(e) {
-      e.preventDefault();
+    function saveSentryConfigForce() {
       let org = document.getElementById('sentry-org-input').value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9_-]/g, '');
       let project = document.getElementById('sentry-project-input').value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9_-]/g, '');
-      const token = document.getElementById('sentry-token-input').value.trim();
+      let token = document.getElementById('sentry-token-input').value.replace(/^Bearer\s+/i, '').replace(/['"\s]/g, '').trim();
+
+      if (!org || !project) {
+        alert('Please provide Organization and Project slugs.');
+        return;
+      }
+
+      localStorage.setItem('flexitap_sentry_org', org);
+      localStorage.setItem('flexitap_sentry_project', project);
+      if (token) localStorage.setItem('flexitap_sentry_token', token);
+      else localStorage.removeItem('flexitap_sentry_token');
+
+      const msg = document.getElementById('sentry-test-msg');
+      if (msg) {
+        msg.style.display = 'block';
+        msg.style.background = 'rgba(16, 185, 129, 0.15)';
+        msg.style.color = '#34d399';
+        msg.innerHTML = '✓ <strong>Saved!</strong> Sentry config saved to local dev portal.';
+      }
+
+      setTimeout(() => {
+        closeSentryConfigModal();
+        fetchSentryIssues(true);
+      }, 700);
+    }
+
+    async function saveSentryConfig(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      let org = document.getElementById('sentry-org-input').value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9_-]/g, '');
+      let project = document.getElementById('sentry-project-input').value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9_-]/g, '');
+      let token = document.getElementById('sentry-token-input').value.replace(/^Bearer\s+/i, '').replace(/['"\s]/g, '').trim();
       const btn = document.getElementById('sentry-save-btn');
       const msg = document.getElementById('sentry-test-msg');
 
@@ -15488,32 +15518,40 @@ Role: ${lastProvisionedCreds.role}`;
         return;
       }
 
+      // Always persist config first so user never loses inputs
+      localStorage.setItem('flexitap_sentry_org', org);
+      localStorage.setItem('flexitap_sentry_project', project);
+      if (token) localStorage.setItem('flexitap_sentry_token', token);
+      else localStorage.removeItem('flexitap_sentry_token');
+
       if (btn) { btn.disabled = true; btn.innerText = 'Testing Connection...'; }
       if (msg) msg.style.display = 'none';
 
       try {
         if (token) {
-          // Test Sentry API call - test project endpoint directly
+          // Verify with Sentry API
           const url = `https://sentry.io/api/0/projects/${encodeURIComponent(org)}/${encodeURIComponent(project)}/`;
+          console.log('[Sentry Config] Testing URL:', url);
           const res = await fetch(url, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           if (!res.ok) {
-            const errJson = await res.json().catch(() => ({}));
-            throw new Error(errJson.detail || `Sentry API responded with HTTP ${res.status}`);
+            let detail = '';
+            try {
+              const j = await res.json();
+              detail = j.detail || j.message || j.error || JSON.stringify(j);
+            } catch (_) {
+              try { detail = await res.text(); } catch (_) {}
+            }
+            throw new Error(detail || `HTTP ${res.status}`);
           }
         }
-
-        localStorage.setItem('flexitap_sentry_org', org);
-        localStorage.setItem('flexitap_sentry_project', project);
-        if (token) localStorage.setItem('flexitap_sentry_token', token);
-        else localStorage.removeItem('flexitap_sentry_token');
 
         if (msg) {
           msg.style.display = 'block';
           msg.style.background = 'rgba(16, 185, 129, 0.15)';
           msg.style.color = '#34d399';
-          msg.innerText = '✓ Sentry connection verified and saved!';
+          msg.innerHTML = '✓ <strong>Success!</strong> Sentry project verified and connected.';
         }
 
         setTimeout(() => {
@@ -15521,11 +15559,12 @@ Role: ${lastProvisionedCreds.role}`;
           fetchSentryIssues(true);
         }, 800);
       } catch (err) {
+        console.warn('[Sentry Config] Live connection test notice:', err);
         if (msg) {
           msg.style.display = 'block';
-          msg.style.background = 'rgba(239, 68, 68, 0.15)';
-          msg.style.color = '#f87171';
-          msg.innerText = 'Connection Failed: ' + (err.message || 'Check your token and organization slug.');
+          msg.style.background = 'rgba(245, 158, 11, 0.15)';
+          msg.style.color = '#fbbf24';
+          msg.innerHTML = `<strong>Config Saved</strong> (API Notice: ${err.message || 'Check scopes'}).<br><span style="font-size: 11px; opacity: 0.9; margin-top: 4px; display: inline-block;">Credentials saved. Direct Sentry dashboard links and offline telemetry are now active.</span><div style="margin-top: 8px;"><button type="button" class="action-btn" onclick="closeSentryConfigModal(); fetchSentryIssues(true);" style="font-size: 11px; padding: 4px 10px;">Proceed to Dashboard →</button></div>`;
         }
       } finally {
         if (btn) { btn.disabled = false; btn.innerText = 'Save & Test Connection'; }
