@@ -1,0 +1,23 @@
+# FlexiTap POS - Search Engine Crawler Directive
+User-agent: *
+Allow: /
+Allow: /features.html
+Allow: /pricing.html
+Allow: /about.html
+Allow: /support.html
+Allow: /remote-support.html
+Allow: /insights.html
+Allow: /affiliate.html
+Allow: /terms.html
+Allow: /privacy.html
+Allow: /refunds.html
+
+# Disallow internal apps, portals and account deletion endpoints
+Disallow: /portal.html
+Disallow: /dev-portal.html
+Disallow: /dev_portal.html
+Disallow: /partner-portal.html
+Disallow: /flexi-app.html
+Disallow: /account/
+
+Sitemap: https://flexitapapp.com/sitemap.xml
