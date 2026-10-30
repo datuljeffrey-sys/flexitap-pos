@@ -5417,23 +5417,70 @@
       });
     }
 
-    async function logout() {
+    const MERCHANT_IDLE_TIMEOUT_MS = 60 * 60 * 1000; // 60 minutes inactivity limit
+    const MERCHANT_MAX_SESSION_MS = 8 * 60 * 60 * 1000; // 8 hours (store shift ceiling)
+    let merchantWatchdogTimer = null;
+
+    function startMerchantSessionWatchdog() {
+      if (merchantWatchdogTimer) clearInterval(merchantWatchdogTimer);
+
+      function recordMerchantActivity() {
+        if (activeUser && sessionStorage.getItem('ft_p_2fa_verified') === 'true') {
+          sessionStorage.setItem('ft_p_last_activity', Date.now().toString());
+        }
+      }
+
+      ['mousedown', 'keydown', 'touchstart', 'scroll'].forEach(evt => {
+        window.removeEventListener(evt, recordMerchantActivity);
+        window.addEventListener(evt, recordMerchantActivity, { passive: true });
+      });
+
+      merchantWatchdogTimer = setInterval(async () => {
+        if (!activeUser) return;
+        const lastAct = parseInt(sessionStorage.getItem('ft_p_last_activity') || '0', 10);
+        const verAt = parseInt(sessionStorage.getItem('ft_p_auth_verified_at') || '0', 10);
+        const now = Date.now();
+
+        if (now - lastAct > MERCHANT_IDLE_TIMEOUT_MS) {
+          await logout('🛡️ Security Timeout: Back Office locked due to 60 minutes of inactivity. Please sign in with 2FA.');
+        } else if (now - verAt > MERCHANT_MAX_SESSION_MS) {
+          await logout('🛡️ Security Notice: Maximum shift session limit (8 hours) reached. Please sign in again.');
+        }
+      }, 30000);
+    }
+
+    async function logout(reasonMsg) {
+      if (merchantWatchdogTimer) {
+        clearInterval(merchantWatchdogTimer);
+        merchantWatchdogTimer = null;
+      }
+      sessionStorage.removeItem('ft_p_2fa_verified');
+      sessionStorage.removeItem('ft_p_auth_verified_at');
+      sessionStorage.removeItem('ft_p_last_activity');
       try {
         await supabaseClient.auth.signOut();
       } catch (_) {}
       activeUser = null;
       activeStore = null;
-      document.getElementById('app-layout').style.display = 'none';
+      const appLayout = document.getElementById('app-layout');
       const gate = document.getElementById('free-gate-view');
-      if (gate) gate.style.display = 'none';
+      const loginView = document.getElementById('login-view');
       const pw = document.getElementById('p-password');
-      if (pw) pw.value = '';
       const btn = document.getElementById('p-btn');
+      const err = document.getElementById('p-err');
+
+      if (appLayout) appLayout.style.display = 'none';
+      if (gate) gate.style.display = 'none';
+      if (pw) pw.value = '';
       if (btn) {
         btn.innerText = 'Sign In to Reports';
         btn.disabled = false;
       }
-      document.getElementById('login-view').style.display = 'flex';
+      if (loginView) loginView.style.display = 'flex';
+      if (err && reasonMsg) {
+        err.innerText = reasonMsg;
+        err.style.color = '#d97706';
+      }
     }
 
     async function restoreSessionFromUrl() {
@@ -5487,24 +5534,53 @@
     // Startup Session Check (Immediate on load + Listener)
     async function checkMerchantSession() {
       try {
-        // First, attempt to restore session from URL SSO tokens
+        // Anti-Clickjacking Frame Buster
+        if (window.top !== window.self) {
+          window.top.location = window.self.location;
+        }
+
+        // First, attempt to restore session from URL SSO tokens (Dev Inspection Mode)
         const ssoUser = await restoreSessionFromUrl();
         if (ssoUser) {
+          const now = Date.now().toString();
+          sessionStorage.setItem('ft_p_2fa_verified', 'true');
+          sessionStorage.setItem('ft_p_auth_verified_at', now);
+          sessionStorage.setItem('ft_p_last_activity', now);
           await loadApp(ssoUser);
+          startMerchantSessionWatchdog();
           return;
         }
 
-        // Otherwise check local persistent session
+        // Check local persistent session against OWASP session expiration
         const { data: { session }, error } = await supabaseClient.auth.getSession();
+        const is2FaVerified = sessionStorage.getItem('ft_p_2fa_verified') === 'true';
+        const verifiedAt = parseInt(sessionStorage.getItem('ft_p_auth_verified_at') || '0', 10);
+        const lastActivity = parseInt(sessionStorage.getItem('ft_p_last_activity') || '0', 10);
+        const now = Date.now();
+
         if (session?.user && !error) {
+          // If 2FA was never performed in this browser tab/session or timed out, invalidate
+          if (!is2FaVerified || !verifiedAt || !lastActivity) {
+            await logout('🛡️ Security Notice: Session expired or 2FA required. Please sign in to access reports.');
+            return;
+          }
+
+          if (now - lastActivity > MERCHANT_IDLE_TIMEOUT_MS) {
+            await logout('🛡️ Security Timeout: Back Office session locked due to 60 minutes of inactivity. Please sign in with 2FA.');
+            return;
+          }
+
+          if (now - verifiedAt > MERCHANT_MAX_SESSION_MS) {
+            await logout('🛡️ Security Notice: Maximum shift session limit (8 hours) reached. Please sign in again.');
+            return;
+          }
+
+          // Valid active session
+          sessionStorage.setItem('ft_p_last_activity', now.toString());
           await loadApp(session.user);
+          startMerchantSessionWatchdog();
         } else {
-          const loginView = document.getElementById('login-view');
-          const appLayout = document.getElementById('app-layout');
-          const gate = document.getElementById('free-gate-view');
-          if (gate) gate.style.display = 'none';
-          if (loginView) loginView.style.display = 'flex';
-          if (appLayout) appLayout.style.display = 'none';
+          await logout();
         }
       } catch (err) {
         console.warn('Initial session check note:', err);
@@ -5762,8 +5838,16 @@
           type: 'email'
         });
         if (error) throw error;
+
+        // Record 2FA authentication state in sessionStorage
+        const now = Date.now().toString();
+        sessionStorage.setItem('ft_p_2fa_verified', 'true');
+        sessionStorage.setItem('ft_p_auth_verified_at', now);
+        sessionStorage.setItem('ft_p_last_activity', now);
+
         closeMerchantOtpModal();
         await loadApp(data.user || pendingMerchantUser);
+        startMerchantSessionWatchdog();
       } catch (err) {
         msg.style.color = '#dc2626';
         msg.innerText = err.message || 'Invalid or expired code. Please try again.';

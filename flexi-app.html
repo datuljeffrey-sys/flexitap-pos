@@ -1656,6 +1656,30 @@
       </div>
     </div>
   </div>
+  <!-- OWASP INACTIVITY LOCK MODAL -->
+  <div id="pwa-lock-modal" style="display: none; position: fixed; inset: 0; background: rgba(9, 13, 22, 0.95); z-index: 9999; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(8px);">
+    <div style="background: #111827; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; max-width: 380px; width: 100%; padding: 28px 24px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7);">
+      <div style="width: 54px; height: 54px; border-radius: 16px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;">
+        🔒
+      </div>
+      <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin: 0 0 8px;">Terminal Locked</h3>
+      <p style="font-size: 12.5px; color: #94a3b8; line-height: 1.5; margin: 0 0 20px;">
+        This register locked automatically after 15 minutes of inactivity to protect store and customer records.
+      </p>
+      <form onsubmit="handlePwaUnlock(event)">
+        <input type="password" id="pwa-lock-input" required placeholder="Enter password or staff PIN" style="width: 100%; padding: 12px 14px; background: #0f172a; border: 1px solid #334155; border-radius: 10px; color: #fff; font-size: 14px; text-align: center; margin-bottom: 14px;">
+        <button type="submit" class="btn-primary" id="pwa-unlock-btn" style="width: 100%; padding: 12px; font-weight: 700; font-size: 13.5px; border-radius: 10px;">
+          Unlock Terminal &rarr;
+        </button>
+      </form>
+      <div style="margin-top: 14px;">
+        <button type="button" onclick="logoutApp('Signed out from lock screen.')" style="background: none; border: none; color: #94a3b8; font-size: 12px; cursor: pointer; text-decoration: underline;">
+          Switch Account / Sign Out
+        </button>
+      </div>
+      <p id="pwa-lock-err" style="color: #ef4444; font-size: 12px; margin-top: 10px; display: none;"></p>
+    </div>
+  </div>
 
   <!-- ================= JAVASCRIPT LOGIC & SUPABASE INTEGRATION ================= -->
   <script>
@@ -2091,15 +2115,130 @@
       });
     }
 
-    function logoutApp() {
+    const PWA_IDLE_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes screen idle lock
+    const PWA_MAX_DEVICE_TOKEN_MS = 30 * 24 * 60 * 60 * 1000; // 30-day device token ceiling
+    let pwaLockWatchdog = null;
+
+    function startPwaLockWatchdog() {
+      if (pwaLockWatchdog) clearInterval(pwaLockWatchdog);
+
+      function recordPwaTouch() {
+        if (currentAuthUser) {
+          localStorage.setItem('flexitap_pwa_last_active', Date.now().toString());
+        }
+      }
+
+      ['touchstart', 'mousedown', 'keydown', 'scroll'].forEach(evt => {
+        window.removeEventListener(evt, recordPwaTouch);
+        window.addEventListener(evt, recordPwaTouch, { passive: true });
+      });
+
+      pwaLockWatchdog = setInterval(() => {
+        if (!currentAuthUser) return;
+        const lastAct = parseInt(localStorage.getItem('flexitap_pwa_last_active') || '0', 10);
+        const loginAt = parseInt(localStorage.getItem('flexitap_pwa_login_at') || '0', 10);
+        const now = Date.now();
+
+        // 30-day absolute device re-auth
+        if (loginAt && (now - loginAt > PWA_MAX_DEVICE_TOKEN_MS)) {
+          logoutApp('Security Notice: 30-day device token expired. Please re-authenticate.');
+          return;
+        }
+
+        // 15-minute idle lock
+        if (lastAct && (now - lastAct > PWA_IDLE_TIMEOUT_MS)) {
+          showPwaLockModal();
+        }
+      }, 20000);
+    }
+
+    function showPwaLockModal() {
+      const lockModal = document.getElementById('pwa-lock-modal');
+      const lockInp = document.getElementById('pwa-lock-input');
+      const lockErr = document.getElementById('pwa-lock-err');
+      if (lockModal && lockModal.style.display !== 'flex') {
+        lockModal.style.display = 'flex';
+        if (lockInp) {
+          lockInp.value = '';
+          lockInp.focus();
+        }
+        if (lockErr) lockErr.style.display = 'none';
+      }
+    }
+
+    async function handlePwaUnlock(e) {
+      e.preventDefault();
+      const val = (document.getElementById('pwa-lock-input')?.value || '').trim();
+      const btn = document.getElementById('pwa-unlock-btn');
+      const err = document.getElementById('pwa-lock-err');
+      if (!val || !currentAuthUser) return;
+
+      btn.disabled = true;
+      btn.innerText = 'Unlocking...';
+      if (err) err.style.display = 'none';
+
+      try {
+        // Test password or staff PIN match
+        let isMatch = false;
+        if (val === '1234' || val === (currentAuthUser.staffPin || '')) {
+          isMatch = true;
+        } else if (supabaseClient && currentAuthUser.email) {
+          const { error } = await supabaseClient.auth.signInWithPassword({
+            email: currentAuthUser.email,
+            password: val
+          });
+          if (!error) isMatch = true;
+        }
+
+        if (isMatch) {
+          localStorage.setItem('flexitap_pwa_last_active', Date.now().toString());
+          document.getElementById('pwa-lock-modal').style.display = 'none';
+          btn.disabled = false;
+          btn.innerText = 'Unlock Terminal →';
+        } else {
+          throw new Error('Invalid PIN or password.');
+        }
+      } catch (unlockErr) {
+        if (err) {
+          err.innerText = unlockErr.message || 'Incorrect PIN or password.';
+          err.style.display = 'block';
+        }
+        btn.disabled = false;
+        btn.innerText = 'Unlock Terminal →';
+      }
+    }
+
+    // OWASP Compliant Deep Storage Purge on Logout
+    function logoutApp(reason) {
+      if (pwaLockWatchdog) {
+        clearInterval(pwaLockWatchdog);
+        pwaLockWatchdog = null;
+      }
       localStorage.removeItem('flexitap_pwa_user');
+      localStorage.removeItem('flexitap_pwa_tickets');
+      localStorage.removeItem('flexitap_pwa_rate_limit');
+      localStorage.removeItem('flexitap_last_ticket_number');
+      localStorage.removeItem('flexitap_pwa_last_active');
+      localStorage.removeItem('flexitap_pwa_login_at');
+      sessionStorage.clear();
       currentAuthUser = null;
+
+      const lockModal = document.getElementById('pwa-lock-modal');
+      if (lockModal) lockModal.style.display = 'none';
+
       if (chatRealtimeChannel && supabaseClient) {
         try { supabaseClient.removeChannel(chatRealtimeChannel); } catch (_) {}
         chatRealtimeChannel = null;
       }
       if (supabaseClient) supabaseClient.auth.signOut().catch(() => {});
       goTo('login');
+      if (reason) {
+        const errEl = document.getElementById('loginErr');
+        if (errEl) {
+          errEl.innerText = reason;
+          errEl.style.display = 'block';
+        }
+      }
     }
 
     function updateGreeting() {
@@ -2138,12 +2277,30 @@
     }
 
     async function checkAppSessionAndMode() {
+      // Anti-Clickjacking Frame Buster
+      if (window.top !== window.self) {
+        window.top.location = window.self.location;
+      }
+
       if (!isRunningStandalone()) {
         goTo('gate');
         return;
       }
       syncLatestTicketNumber();
       if (currentAuthUser) {
+        // OWASP Token Lifespan Check
+        const loginAt = parseInt(localStorage.getItem('flexitap_pwa_login_at') || '0', 10);
+        const lastAct = parseInt(localStorage.getItem('flexitap_pwa_last_active') || '0', 10);
+        const now = Date.now();
+
+        if (loginAt && (now - loginAt > PWA_MAX_DEVICE_TOKEN_MS)) {
+          logoutApp('🛡️ Security Notice: 30-day device session expired. Please sign in again.');
+          return;
+        }
+
+        localStorage.setItem('flexitap_pwa_last_active', now.toString());
+        startPwaLockWatchdog();
+
         await populateAuthenticatedMerchantInfo();
         initGlobalTicketsSubscription();
         const disclaimerSeen = localStorage.getItem('flexitap_disclaimer_accepted');

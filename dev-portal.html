@@ -3862,7 +3862,39 @@
       document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
     }
 
-    // --- DEV AUTHENTICATION & ACCESS GUARD ---
+    // --- DEV AUTHENTICATION & OWASP SECURITY GUARD ---
+    const DEV_IDLE_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes inactivity limit
+    const DEV_MAX_SESSION_MS = 2 * 60 * 60 * 1000; // 2 hours absolute hard session ceiling
+    let devWatchdogTimer = null;
+
+    function startDevSessionWatchdog() {
+      if (devWatchdogTimer) clearInterval(devWatchdogTimer);
+
+      function recordDevActivity() {
+        if (activeDevUser && sessionStorage.getItem('ft_dev_2fa_verified') === 'true') {
+          sessionStorage.setItem('ft_dev_last_activity', Date.now().toString());
+        }
+      }
+
+      ['mousedown', 'keydown', 'touchstart', 'scroll'].forEach(evt => {
+        window.removeEventListener(evt, recordDevActivity);
+        window.addEventListener(evt, recordDevActivity, { passive: true });
+      });
+
+      devWatchdogTimer = setInterval(async () => {
+        if (!activeDevUser) return;
+        const lastAct = parseInt(sessionStorage.getItem('ft_dev_last_activity') || '0', 10);
+        const verAt = parseInt(sessionStorage.getItem('ft_dev_auth_verified_at') || '0', 10);
+        const now = Date.now();
+
+        if (now - lastAct > DEV_IDLE_TIMEOUT_MS) {
+          await devLogout('🛡️ Security Timeout: Session locked due to 30 minutes of inactivity. Please re-authenticate with 2FA.');
+        } else if (now - verAt > DEV_MAX_SESSION_MS) {
+          await devLogout('🛡️ Security Notice: Maximum session duration (2 hours) reached. Please re-authenticate.');
+        }
+      }, 15000);
+    }
+
     async function checkDevSession() {
       if (window.location.hash && window.location.hash.includes('type=recovery')) {
         const modal = document.getElementById('dev-new-password-modal');
@@ -3871,11 +3903,34 @@
 
       const authResponse = await supabaseClient.auth.getSession();
       const session = authResponse.data.session;
+      
+      const is2FaVerified = sessionStorage.getItem('ft_dev_2fa_verified') === 'true';
+      const verifiedAt = parseInt(sessionStorage.getItem('ft_dev_auth_verified_at') || '0', 10);
+      const lastActivity = parseInt(sessionStorage.getItem('ft_dev_last_activity') || '0', 10);
+      const now = Date.now();
+
       if (session && session.user) {
-        verifyDevRole(session.user);
+        // Enforce OWASP security: Must have completed 2FA in this browser session and be within timeout limits
+        if (!is2FaVerified || !verifiedAt || !lastActivity) {
+          await devLogout('🛡️ Security Notice: Active 2FA session expired. Please sign in with email verification.');
+          return;
+        }
+
+        if (now - lastActivity > DEV_IDLE_TIMEOUT_MS) {
+          await devLogout('🛡️ Security Timeout: Session expired due to 30 minutes of inactivity. Please sign in with 2FA.');
+          return;
+        }
+
+        if (now - verifiedAt > DEV_MAX_SESSION_MS) {
+          await devLogout('🛡️ Security Notice: Maximum active session limit (2 hours) reached. Please re-authenticate.');
+          return;
+        }
+
+        sessionStorage.setItem('ft_dev_last_activity', now.toString());
+        await verifyDevRole(session.user);
+        startDevSessionWatchdog();
       } else {
-        document.getElementById('dev-auth-view').style.display = 'flex';
-        document.getElementById('dev-app-layout').style.display = 'none';
+        await devLogout();
       }
     }
 
@@ -4062,7 +4117,7 @@
       btnText.disabled = true;
 
       try {
-        // Authenticate with 10-second timeout safety race
+        // Authenticate credentials with 10-second timeout safety race
         const authPromise = supabaseClient.auth.signInWithPassword({ email: email, password: password });
         const timeoutPromise = new Promise((_, reject) => 
           setTimeout(() => reject(new Error('Authentication timed out. Please check your network connection.')), 10000)
@@ -4078,8 +4133,20 @@
         }
 
         if (res.data && res.data.user) {
-          btnText.innerText = '✓ Access Verified. Loading...';
-          await verifyDevRole(res.data.user);
+          pendingDevUser = res.data.user;
+          btnText.innerText = 'Sending 2FA security code...';
+
+          // OWASP Mandatory 2FA Gate: Dispatch OTP security token to staff email
+          const { error: otpErr } = await supabaseClient.auth.signInWithOtp({
+            email: email,
+            options: { shouldCreateUser: false }
+          });
+
+          if (otpErr) throw otpErr;
+
+          btnText.innerText = 'Authenticate';
+          btnText.disabled = false;
+          openDevOtpModal(email);
         } else {
           btnText.innerText = 'Authenticate';
           btnText.disabled = false;
@@ -4098,12 +4165,33 @@
       }
     });
 
-    async function devLogout() {
+    async function devLogout(reasonMsg) {
+      if (devWatchdogTimer) {
+        clearInterval(devWatchdogTimer);
+        devWatchdogTimer = null;
+      }
+      sessionStorage.removeItem('ft_dev_2fa_verified');
+      sessionStorage.removeItem('ft_dev_auth_verified_at');
+      sessionStorage.removeItem('ft_dev_last_activity');
+      activeDevUser = null;
+      activeDevProfile = null;
       stopStoragePoller();
-      await supabaseClient.auth.signOut();
-      document.getElementById('dev-app-layout').style.display = 'none';
-      document.getElementById('dev-password').value = '';
-      document.getElementById('dev-auth-view').style.display = 'flex';
+      try {
+        await supabaseClient.auth.signOut();
+      } catch (_) {}
+      
+      const appLayout = document.getElementById('dev-app-layout');
+      const authView = document.getElementById('dev-auth-view');
+      const pwInput = document.getElementById('dev-password');
+      const errEl = document.getElementById('dev-err');
+
+      if (appLayout) appLayout.style.display = 'none';
+      if (pwInput) pwInput.value = '';
+      if (authView) authView.style.display = 'flex';
+      if (errEl && reasonMsg) {
+        errEl.innerText = reasonMsg;
+        errEl.style.color = '#fbbf24';
+      }
     }
 
     const GOOGLE_TICKET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzJu1CEi1qhT-k7Qc_tisMN7vXbbCuGymgiMMk_K6PGIMnrUHkIrYEuQFMCviZfaYvoQw/exec';
@@ -4360,8 +4448,16 @@
           type: 'email'
         });
         if (error) throw error;
+        
+        // Record 2FA authentication state in sessionStorage
+        const now = Date.now().toString();
+        sessionStorage.setItem('ft_dev_2fa_verified', 'true');
+        sessionStorage.setItem('ft_dev_auth_verified_at', now);
+        sessionStorage.setItem('ft_dev_last_activity', now);
+
         closeDevOtpModal();
-        verifyDevRole(data.user || pendingDevUser);
+        await verifyDevRole(data.user || pendingDevUser);
+        startDevSessionWatchdog();
       } catch (err) {
         msg.style.color = '#ef4444';
         msg.innerText = err.message || 'Invalid or expired code. Please try again.';
