@@ -4511,7 +4511,9 @@
           const cleanUrl = window.location.pathname + window.location.search;
           window.history.replaceState({}, document.title, cleanUrl);
         }
-        if (!activeDevUser) {
+        // OWASP 2FA Gate: Never load the dev portal layout until 2FA OTP is explicitly verified
+        const is2FaVerified = sessionStorage.getItem('ft_dev_2fa_verified') === 'true';
+        if (is2FaVerified && !activeDevUser) {
           await verifyDevRole(session.user);
         }
       } else if (event === 'SIGNED_OUT') {
