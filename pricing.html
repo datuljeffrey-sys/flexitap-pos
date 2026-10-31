@@ -30,14 +30,15 @@
   <link rel="shortcut icon" href="favicon.ico">
   <link rel="apple-touch-icon" href="image_02e503.png">
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js" defer></script>
   <!-- FlexiTap Hybrid Analytics Engine -->
-  <script src="analytics.js"></script>
+  <script src="analytics.js?v=20261031" defer></script>
   <!-- In-House Philippine Affiliate & Referral Tracker -->
-  <script src="affiliate-tracker.js"></script>
+  <script src="affiliate-tracker.js?v=20261031" defer></script>
   
-  <link rel="stylesheet" href="fonts.css">
+  <link rel="preload" href="fonts/480c062501_tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css?v=20261031">
 
   <style>
     :root {
@@ -2045,7 +2046,7 @@
         <div style="display: flex; gap: 18px; align-items: center; justify-content: center; flex-wrap: wrap;">
           <!-- Real QR Code Image -->
           <div style="background: #ffffff; border-radius: 14px; padding: 10px; width: 175px; max-width: 100%; box-shadow: 0 8px 24px rgba(0,0,0,0.4); text-align: center; flex-shrink: 0;">
-            <img src="gcash_qr_card.png" alt="Official FlexiTap GCash QR" style="width: 100%; height: auto; display: block; border-radius: 8px;" />
+            <img src="gcash_qr_card.webp" alt="Official FlexiTap GCash QR" style="width: 100%; height: auto; display: block; border-radius: 8px;" loading="lazy" />
           </div>
 
           <!-- Instructions & Action Pills -->
@@ -2249,10 +2250,10 @@
   </div>
 
   <!-- In-House Affiliate & Referral Tracker -->
-  <script src="affiliate-tracker.js"></script>
+  <script src="affiliate-tracker.js?v=20261031" defer></script>
   <!-- Unified Elevated Sales & Inquiries Live Chat -->
-  <script src="sales-chat.js"></script>
+  <script src="sales-chat.js?v=20261031" defer></script>
   <!-- Privacy & Tracking Cookie Consent Banner -->
-  <script src="cookie-consent.js"></script>
+  <script src="cookie-consent.js?v=20261031" defer></script>
 </body>
 </html>
