@@ -16087,20 +16087,44 @@ Role: ${lastProvisionedCreds.role}`;
       }
     }
 
+    // In-Memory SWR Query Cache (60s TTL) to protect primary Supabase DB
+    const PortalQueryCache = {
+      _cache: new Map(),
+      async getOrFetch(key, fetcher, ttlMs = 60000, force = false) {
+        const now = Date.now();
+        const cached = this._cache.get(key);
+        if (!force && cached && (now - cached.timestamp < ttlMs)) {
+          return cached.data;
+        }
+        const data = await fetcher();
+        this._cache.set(key, { data, timestamp: now });
+        return data;
+      },
+      invalidate(key) {
+        if (key) this._cache.delete(key);
+        else this._cache.clear();
+      }
+    };
+
     async function fetchMonitoringFleet(isManual = false) {
       const syncTimeEl = document.getElementById('mon-last-sync-time');
       if (syncTimeEl && isManual) syncTimeEl.innerText = 'Refreshing...';
 
       try {
-        const [storesRes, profilesRes, devicesRes] = await Promise.all([
-          supabaseClient.from('stores').select('*'),
-          supabaseClient.from('profiles').select('*'),
-          supabaseClient.from('devices').select('*').order('last_seen', { ascending: false })
+        const [stores, profiles, devices] = await Promise.all([
+          PortalQueryCache.getOrFetch('mon_stores', async () => {
+            const res = await supabaseClient.from('stores').select('*');
+            return res.data || [];
+          }, 60000, isManual),
+          PortalQueryCache.getOrFetch('mon_profiles', async () => {
+            const res = await supabaseClient.from('profiles').select('*');
+            return res.data || [];
+          }, 60000, isManual),
+          PortalQueryCache.getOrFetch('mon_devices', async () => {
+            const res = await supabaseClient.from('devices').select('*').order('last_seen', { ascending: false });
+            return res.data || [];
+          }, 30000, isManual)
         ]);
-
-        const stores = storesRes.data || [];
-        const profiles = profilesRes.data || [];
-        const devices = devicesRes.data || [];
 
         const now = Date.now();
 
