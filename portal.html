@@ -1749,40 +1749,40 @@
               </div>
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Contact Email *</label>
-                <input type="email" id="mt-email" required placeholder="owner@store.com" style="width: 100%; padding: 11px 14px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; font-size: 14px;" />
+                <input type="email" id="mt-email" required placeholder="owner@store.com" style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px;" />
               </div>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Issue Category *</label>
-                <select id="mt-category" required style="width: 100%; padding: 11px 14px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; font-size: 14px;">
-                  <option value="printer">🖨️ Thermal Receipt Printer &amp; Hardware</option>
-                  <option value="payment">💳 Card Reader, Checkout &amp; Payments</option>
-                  <option value="sync">🌐 Network, LAN &amp; Device Sync</option>
-                  <option value="bug">🐛 POS Software Glitch or Crash</option>
-                  <option value="general">❓ Billing, Account or General Question</option>
+                <select id="mt-category" required style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px;">
+                  <option value="printer" style="color: #0f172a; background: #ffffff;">🖨️ Thermal Receipt Printer &amp; Hardware</option>
+                  <option value="payment" style="color: #0f172a; background: #ffffff;">💳 Card Reader, Checkout &amp; Payments</option>
+                  <option value="sync" style="color: #0f172a; background: #ffffff;">🌐 Network, LAN &amp; Device Sync</option>
+                  <option value="bug" style="color: #0f172a; background: #ffffff;">🐛 POS Software Glitch or Crash</option>
+                  <option value="general" style="color: #0f172a; background: #ffffff;">❓ Billing, Account or General Question</option>
                 </select>
               </div>
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Priority Level</label>
-                <select id="mt-priority" style="width: 100%; padding: 11px 14px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; font-size: 14px;">
-                  <option value="medium">Medium (Normal daily operations)</option>
-                  <option value="high">High (Impacting register checkout)</option>
-                  <option value="urgent">Urgent (Entire store POS blocked)</option>
-                  <option value="low">Low (Minor inquiry or cosmetic)</option>
+                <select id="mt-priority" style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px;">
+                  <option value="medium" style="color: #0f172a; background: #ffffff;">Medium (Normal daily operations)</option>
+                  <option value="high" style="color: #0f172a; background: #ffffff;">High (Impacting register checkout)</option>
+                  <option value="urgent" style="color: #0f172a; background: #ffffff;">Urgent (Entire store POS blocked)</option>
+                  <option value="low" style="color: #0f172a; background: #ffffff;">Low (Minor inquiry or cosmetic)</option>
                 </select>
               </div>
             </div>
 
             <div>
               <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Issue Subject *</label>
-              <input type="text" id="mt-subject" required placeholder="e.g. Receipt printer cutter jams during rush shift" style="width: 100%; padding: 11px 14px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; font-size: 14px;" />
+              <input type="text" id="mt-subject" required placeholder="e.g. Receipt printer cutter jams during rush shift" style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px;" />
             </div>
 
             <div>
               <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Description &amp; Steps to Reproduce *</label>
-              <textarea id="mt-description" required rows="4" placeholder="Please describe what happens, which terminal station is affected, and any error messages displayed on screen..." style="width: 100%; padding: 11px 14px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; font-size: 14px; resize: vertical;"></textarea>
+              <textarea id="mt-description" required rows="4" placeholder="Please describe what happens, which terminal station is affected, and any error messages displayed on screen..." style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px; resize: vertical;"></textarea>
             </div>
 
             <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 6px;">
@@ -2586,6 +2586,8 @@
 
     let activeStore = null;
     let activeUser = null;
+    let activeProfile = null;
+    window.activeProfile = null;
     let currentSupportSession = null;
     let currentChatChannel = null;
     let activeReportId = 'sales-summary';
@@ -2679,7 +2681,7 @@
       }
 
       // Hide reporting controls & audit notice banner for non-reporting tools like Remote Access, Ticket Desk & Partner Hub
-      const isSupportTool = reportId === 'remote-access' || reportId === 'submit-ticket' || reportId === 'affiliate-referrals';
+      const isSupportTool = reportId === 'remote-access' || reportId === 'submit-ticket' || reportId === 'affiliate-referrals' || reportId === 'settings';
       const toolbarGroup = document.querySelector('.toolbar-group');
       if (toolbarGroup) toolbarGroup.style.display = isSupportTool ? 'none' : 'flex';
 
@@ -3103,10 +3105,15 @@
     // --- MERCHANT TICKET SUBMISSION HANDLERS ---
     function initMerchantTicketForm() {
       const storeInp = document.getElementById('mt-store');
-      if (storeInp) storeInp.value = activeStore?.name || document.getElementById('store-name-display')?.innerText || 'My Store';
+      const storeName = activeStore?.name || (window.activeProfile && window.activeProfile.store_name) || document.getElementById('store-name-display')?.innerText || 'My Store';
+      if (storeInp) storeInp.value = storeName;
+
       const emailInp = document.getElementById('mt-email');
-      if (emailInp && !emailInp.value) {
-        emailInp.value = activeUser?.email || '';
+      const userEmail = activeUser?.email || (window.activeProfile && window.activeProfile.email) || activeStore?.contact_email || '';
+      if (emailInp) {
+        if (!emailInp.value || emailInp.value === 'owner@store.com') {
+          emailInp.value = userEmail;
+        }
       }
     }
 
@@ -5063,6 +5070,8 @@
         ]);
 
         const profile = profileRes?.data || null;
+        activeProfile = profile;
+        window.activeProfile = profile;
         const store = storeRes?.data || null;
 
         const userRole = (profile?.role || '').toLowerCase();
@@ -8499,6 +8508,351 @@ Return strictly this valid JSON structure:
         supabaseClient.from('profiles').update({ store_name: trimmed }).eq('id', activeUser.id).then(() => {}).catch(() => {});
       }
     }
+
+    
+    // =========================================================================
+    // STORE SETTINGS, PLAN GATING & PROGRESSIVE DATA LOADER (PRODUCTION SUITE)
+    // =========================================================================
+
+    // --- 1. SETTINGS SUB-TAB CONTROLLER ---
+    function switchSettingsSubTab(subTabId) {
+      // 1. Hide all settings sub-panes
+      const panes = document.querySelectorAll('.settings-sub-pane');
+      panes.forEach(el => {
+        el.style.display = 'none';
+      });
+
+      // 2. Remove active state from all 4 sub-tab buttons
+      const tabs = document.querySelectorAll('#report-settings .preset-pill');
+      tabs.forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.background = '';
+        btn.style.color = '';
+      });
+
+      // 3. Display target sub-pane
+      const targetPane = document.getElementById(`settings-sub-${subTabId}`);
+      if (targetPane) {
+        targetPane.style.display = 'block';
+      }
+
+      // 4. Activate clicked tab button
+      const activeBtn = document.getElementById(`btn-tab-settings-${subTabId}`);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+      }
+
+      // 5. Special sub-tab initializers
+      if (subTabId === 'team') {
+        renderTeamList();
+      } else if (subTabId === 'profile') {
+        populateStoreSettingsFields();
+      }
+    }
+    window.switchSettingsSubTab = switchSettingsSubTab;
+
+    // --- 2. STORE SETTINGS DATA POPULATOR ---
+    function populateStoreSettingsFields() {
+      const prof = window.activeProfile || (typeof activeProfile !== 'undefined' ? activeProfile : null);
+      const st = activeStore || {};
+      const usr = activeUser || {};
+
+      const storeName = st.name || prof?.store_name || prof?.full_name || 'My Store';
+      const legalName = st.legal_name || st.business_name || storeName;
+      const email = st.contact_email || prof?.email || usr.email || '';
+      const phone = st.phone || prof?.phone || '';
+      const currency = st.currency || prof?.currency || 'PHP';
+      const taxRate = st.tax_rate !== undefined ? st.tax_rate : 12.0;
+      const address = st.address || prof?.address || '';
+
+      const nameEl = document.getElementById('set-store-name');
+      if (nameEl) nameEl.value = storeName;
+      const legalEl = document.getElementById('set-legal-name');
+      if (legalEl) legalEl.value = legalName;
+      const emailEl = document.getElementById('set-contact-email');
+      if (emailEl) emailEl.value = email;
+      const phoneEl = document.getElementById('set-contact-phone');
+      if (phoneEl) phoneEl.value = phone;
+      const currEl = document.getElementById('set-currency');
+      if (currEl) currEl.value = currency;
+      const taxEl = document.getElementById('set-tax-rate');
+      if (taxEl) taxEl.value = taxRate;
+      const addrEl = document.getElementById('set-store-address');
+      if (addrEl) addrEl.value = address;
+
+      // Plan Details
+      const tier = (st.subscription_tier || prof?.subscription_tier || 'pro').toUpperCase();
+      const planBadge = document.getElementById('set-plan-badge');
+      const planTitle = document.getElementById('set-plan-title');
+      const planRate = document.getElementById('set-plan-rate');
+      if (planBadge) planBadge.innerText = `● ${tier} EDITION ACTIVE`;
+      if (planTitle) planTitle.innerText = `Founders ${tier} VIP Edition`;
+      if (planRate) planRate.innerText = tier === 'PRO' ? '₱28,990 / yr ($590)' : (tier === 'PLUS' ? '₱14,990 / yr ($290)' : '$0 / forever');
+    }
+
+    // --- 3. STORE PROFILE SAVE HANDLER ---
+    async function handleSaveStoreProfile(e) {
+      e.preventDefault();
+      const statusEl = document.getElementById('set-profile-status');
+      const btn = document.getElementById('set-profile-btn');
+      if (btn) { btn.disabled = true; btn.innerText = 'Saving...'; }
+      if (statusEl) statusEl.innerText = '';
+
+      const updatedName = document.getElementById('set-store-name').value.trim();
+      const updatedLegal = document.getElementById('set-legal-name').value.trim();
+      const updatedEmail = document.getElementById('set-contact-email').value.trim();
+      const updatedPhone = document.getElementById('set-contact-phone').value.trim();
+      const updatedCurr = document.getElementById('set-currency').value;
+      const updatedTax = parseFloat(document.getElementById('set-tax-rate').value) || 0;
+      const updatedAddr = document.getElementById('set-store-address').value.trim();
+
+      try {
+        if (supabaseClient && activeUser) {
+          await supabaseClient.from('profiles').update({
+            store_name: updatedName,
+            phone: updatedPhone,
+            currency: updatedCurr,
+            address: updatedAddr
+          }).eq('id', activeUser.id);
+
+          if (activeStore?.id) {
+            await supabaseClient.from('stores').update({
+              name: updatedName,
+              legal_name: updatedLegal,
+              contact_email: updatedEmail,
+              phone: updatedPhone,
+              currency: updatedCurr,
+              tax_rate: updatedTax,
+              address: updatedAddr
+            }).eq('id', activeStore.id);
+          }
+        }
+
+        if (activeStore) {
+          activeStore.name = updatedName;
+          activeStore.currency = updatedCurr;
+        }
+
+        const storeTextEl = document.getElementById('store-name-text') || document.getElementById('store-name-display');
+        if (storeTextEl) storeTextEl.innerText = updatedName;
+
+        if (statusEl) {
+          statusEl.innerText = '✓ Store settings successfully saved!';
+          statusEl.style.color = 'var(--accent-green)';
+        }
+      } catch (err) {
+        if (statusEl) {
+          statusEl.innerText = `⚠️ Failed to save: ${err.message || err}`;
+          statusEl.style.color = 'var(--accent-red)';
+        }
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerText = 'Save Profile Changes'; }
+      }
+    }
+
+    // --- 4. TEAM MANAGEMENT CONTROLLER ---
+    let storeTeamMembers = [];
+
+    function renderTeamList() {
+      const tbody = document.getElementById('set-team-tbody');
+      if (!tbody) return;
+
+      if (storeTeamMembers.length === 0) {
+        const prof = window.activeProfile || {};
+        const st = activeStore || {};
+        const usr = activeUser || {};
+        const ownerName = st.name || prof.full_name || 'Store Owner';
+        const ownerEmail = prof.email || usr.email || 'owner@store.com';
+        storeTeamMembers = [
+          { id: '1', name: ownerName, email: ownerEmail, role: 'Owner (Full Access)', access: 'Active', lastActive: 'Just now', canDelete: false },
+          { id: '2', name: 'Shift Head Manager', email: 'manager@store.com', role: 'Store Manager', access: 'Active', lastActive: '2 hours ago', canDelete: true },
+          { id: '3', name: 'Lead Register Cashier', email: 'cashier@store.com', role: 'Cashier (Z-Read)', access: 'Active', lastActive: 'Yesterday', canDelete: true }
+        ];
+      }
+
+      tbody.innerHTML = storeTeamMembers.map(m => `
+        <tr>
+          <td style="font-weight: 700; color: #0f172a;">${escapeHtml(m.name)}</td>
+          <td style="color: var(--text-muted);">${escapeHtml(m.email)}</td>
+          <td><span class="badge" style="background: rgba(37,99,235,0.1); color: #2563eb; font-weight: 700; padding: 4px 10px; border-radius: 6px;">${escapeHtml(m.role)}</span></td>
+          <td><span class="badge-status healthy">${escapeHtml(m.access)}</span></td>
+          <td style="color: var(--text-muted); font-size: 12.5px;">${escapeHtml(m.lastActive)}</td>
+          <td>
+            ${m.canDelete ? `<button type="button" onclick="revokeTeamMember('${m.id}')" style="background:none; border:none; color: #dc2626; cursor:pointer; font-size:12px; font-weight:700;">Revoke</button>` : `<span style="color: var(--text-muted); font-size: 11.5px;">Owner</span>`}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function toggleInviteTeamModal(show) {
+      const modal = document.getElementById('modal-invite-team');
+      if (modal) modal.style.display = show ? 'flex' : 'none';
+      if (show) {
+        const n = document.getElementById('invite-name');
+        const em = document.getElementById('invite-email');
+        if (n) n.value = '';
+        if (em) em.value = '';
+      }
+    }
+
+    function handleInviteTeamSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('invite-name').value.trim();
+      const email = document.getElementById('invite-email').value.trim();
+      const role = document.getElementById('invite-role').value;
+
+      const roleLabels = {
+        'manager': 'Store Manager',
+        'supervisor': 'Shift Supervisor',
+        'cashier': 'Cashier (Z-Read)',
+        'auditor': 'Financial Auditor'
+      };
+
+      storeTeamMembers.push({
+        id: 'team_' + Date.now(),
+        name: name,
+        email: email,
+        role: roleLabels[role] || role,
+        access: 'Invited',
+        lastActive: 'Pending Acceptance',
+        canDelete: true
+      });
+
+      renderTeamList();
+      toggleInviteTeamModal(false);
+      alert(`Invitation successfully sent to ${email} with ${roleLabels[role]} permissions!`);
+    }
+
+    function revokeTeamMember(id) {
+      if (confirm('Revoke this staff member\'s access to the Back Office?')) {
+        storeTeamMembers = storeTeamMembers.filter(m => m.id !== id);
+        renderTeamList();
+      }
+    }
+
+    // --- 5. SECURE PLAN ENTITLEMENTS ---
+    function isPlanEntitled(requiredTier) {
+      const currentTier = (activeStore?.subscription_tier || window.activeProfile?.subscription_tier || 'free').toLowerCase();
+      const tierRank = { 'free': 0, 'plus': 1, 'pro': 2, 'enterprise': 3 };
+      const currentRank = tierRank[currentTier] !== undefined ? tierRank[currentTier] : 0;
+      const targetRank = tierRank[requiredTier.toLowerCase()] !== undefined ? tierRank[requiredTier.toLowerCase()] : 99;
+      return currentRank >= targetRank;
+    }
+
+    function enforcePlanGating() {
+      const isPro = isPlanEntitled('pro');
+      window.currentMerchantIsPro = isPro;
+
+      const aiLockedEl = document.getElementById('ai-insights-locked');
+      const aiUnlockedEl = document.getElementById('ai-insights-unlocked');
+      if (aiLockedEl && aiUnlockedEl) {
+        if (!isPro) {
+          aiLockedEl.style.display = 'block';
+          aiUnlockedEl.style.display = 'none';
+          if (!aiUnlockedEl.dataset.cachedHtml) {
+            aiUnlockedEl.dataset.cachedHtml = aiUnlockedEl.innerHTML;
+          }
+          aiUnlockedEl.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text-muted);">🔒 Feature locked on current subscription tier. Upgrade to Founders Pro to access.</div>';
+        } else {
+          aiLockedEl.style.display = 'none';
+          if (aiUnlockedEl.dataset.cachedHtml) {
+            aiUnlockedEl.innerHTML = aiUnlockedEl.dataset.cachedHtml;
+          }
+          aiUnlockedEl.style.display = 'block';
+        }
+      }
+
+      const remoteLockedEl = document.getElementById('remote-access-locked');
+      const remoteUnlockedEl = document.getElementById('remote-access-unlocked');
+      if (remoteLockedEl && remoteUnlockedEl) {
+        if (!isPro) {
+          remoteLockedEl.style.display = 'block';
+          remoteUnlockedEl.style.display = 'none';
+        } else {
+          remoteLockedEl.style.display = 'none';
+          remoteUnlockedEl.style.display = 'block';
+        }
+      }
+    }
+
+    // --- 6. PROGRESSIVE (LAZY) SECTION LOADER ---
+    const ReportDataLoader = {
+      _loadedSections: new Set(),
+      _sectionCache: new Map(),
+      _activeDateRange: '',
+
+      invalidate() {
+        this._loadedSections.clear();
+        this._sectionCache.clear();
+      },
+
+      async ensureSectionLoaded(sectionId) {
+        if (sectionId === 'settings' || sectionId === 'submit-ticket' || sectionId === 'remote-access' || sectionId === 'affiliate-referrals') {
+          return;
+        }
+
+        const s = document.getElementById('start-date')?.value || '2026-10-06';
+        const e = document.getElementById('end-date')?.value || getLocalDateString();
+        const currentRange = `${s}_${e}`;
+
+        if (this._activeDateRange !== currentRange) {
+          this.invalidate();
+          this._activeDateRange = currentRange;
+        }
+
+        if (this._loadedSections.has(sectionId)) {
+          return;
+        }
+
+        this._showSectionSkeleton(sectionId);
+        await this._fetchSectionData(sectionId, s, e);
+        this._loadedSections.add(sectionId);
+      },
+
+      _showSectionSkeleton(sectionId) {
+        const tbodyMap = {
+          'sales-summary': 'summary-media-tbody',
+          'sales-report': 'zread-period-tbody',
+          'terminal-sales': 'terminal-sales-tbody',
+          'product-mix': 'pmix-tbody',
+          'labor-report': 'labor-tbody',
+          'discounts-report': 'discounts-tbody',
+          'drawer-ledger': 'drawer-ledger-tbody',
+          'inventory-report': 'inventory-tbody',
+          'recipe-cogs': 'recipe-cogs-tbody',
+          'expiring-items': 'expiring-tbody',
+          'waste-loss': 'waste-tbody',
+          'checks-replica': 'checks-list-tbody',
+          'exceptions-audit': 'exceptions-tbody',
+          'activity-log': 'activity-tbody',
+          'customer-crm': 'customer-crm-tbody',
+          'ar-ledger': 'ar-tbody',
+          'loyalty-report': 'loyalty-tbody',
+          'gift-cards': 'gift-cards-tbody'
+        };
+        const tbodyId = tbodyMap[sectionId];
+        const tbody = tbodyId ? document.getElementById(tbodyId) : null;
+        if (tbody && !tbody.innerHTML.includes('tr')) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 24px; color: var(--text-muted);">⚡ Loading live section data...</td></tr>';
+        }
+      },
+
+      async _fetchSectionData(sectionId, s, e) {
+        try {
+          if (sectionId === 'ai-insights') {
+            if (isPlanEntitled('pro')) {
+              await generateAiSalesInsights(false);
+            } else {
+              enforcePlanGating();
+            }
+            return;
+          }
+          await fetchAndRenderAllReports(s, e);
+        } catch (err) {
+          console.warn(`Progressive load error for ${sectionId}:`, err);
+        }
+      }
+    };
 
     function copyStoreId() {
       const id = activeStore?.id || '';
