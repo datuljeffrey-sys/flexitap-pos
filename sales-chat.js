@@ -705,6 +705,16 @@
     return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   // Render a message
   function renderMessage(msg) {
     const box = document.getElementById('ft-chat-messages');
@@ -715,12 +725,13 @@
 
     let headerHtml = '';
     if (msg.sender === 'agent') {
-      headerHtml = `<div class="ft-msg agent-badge">🛡️ ${msg.staffName || 'FlexiTap Sales Engineer'}</div>`;
+      const safeStaffName = escapeHtml(msg.staffName || 'FlexiTap Sales Engineer');
+      headerHtml = `<div class="ft-msg agent-badge">🛡️ ${safeStaffName}</div>`;
     }
 
     div.innerHTML = `
       ${headerHtml}
-      <div class="ft-msg-content">${msg.text}</div>
+      <div class="ft-msg-content">${escapeHtml(msg.text)}</div>
       <span class="ft-msg-ts">${formatTime(msg.ts)}</span>
     `;
 
