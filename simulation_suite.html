@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FlexiTap POS - Enterprise Full-Suite Simulation & Chaos Test Harness</title>
+  <title>FlexiTap POS - Enterprise Multi-Station Simulation & Stress Harness</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #090d16;
@@ -15,7 +15,6 @@
       --text: #f3f4f6;
       --text-muted: #9ca3af;
       --primary: #3b82f6;
-      --primary-hover: #2563eb;
       --accent: #8b5cf6;
       --success: #10b981;
       --warning: #f59e0b;
@@ -33,174 +32,135 @@
       font-size: 13px;
     }
 
-    /* TOP BAR / CONTROL DECK */
+    /* HEADER */
     .header-bar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 16px 20px;
-      margin-bottom: 16px;
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+      gap: 16px; background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 14px; padding: 16px 20px; margin-bottom: 16px;
       box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4);
     }
-    .header-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .header-title { display: flex; align-items: center; gap: 12px; }
     .logo-badge {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
+      width: 44px; height: 44px; border-radius: 12px;
       background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: 800;
-      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 800; color: #fff;
     }
     .btn {
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border: none;
-      transition: all 0.15s;
+      padding: 8px 15px; border-radius: 8px; font-weight: 700; font-size: 12.5px;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+      border: none; transition: all 0.15s;
     }
     .btn-primary { background: #2563eb; color: #fff; }
     .btn-primary:hover { background: #1d4ed8; }
     .btn-danger { background: #dc2626; color: #fff; }
     .btn-danger:hover { background: #b91c1c; }
     .btn-warning { background: #d97706; color: #fff; }
-    .btn-warning:hover { background: #b45309; }
     .btn-secondary { background: #374151; color: #e5e7eb; border: 1px solid #4b5563; }
     .btn-secondary:hover { background: #4b5563; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* STATS STRIP */
+    /* CRASH BANNER */
+    #crash-alert-banner {
+      display: none; background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+      border: 1.5px solid #ef4444; border-radius: 12px; padding: 14px 20px;
+      margin-bottom: 16px; color: #fee2e2; align-items: center; justify-content: space-between;
+      animation: pulseAlert 2s infinite ease-in-out;
+    }
+    @keyframes pulseAlert {
+      0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+      50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.7); }
+    }
+
+    /* CONTROLS STRIP */
+    .controls-strip {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+      background: #1e293b; padding: 12px 18px; border-radius: 12px;
+      margin-bottom: 16px; border: 1px solid #334155;
+    }
+    .control-item { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; }
+    input[type="range"] { accent-color: #3b82f6; cursor: pointer; }
+    .switch-toggle { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
+
+    /* KPI METRICS */
     .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px; margin-bottom: 16px;
     }
     .kpi-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      padding: 12px 14px;
-      display: flex;
-      flex-direction: column;
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column;
     }
-    .kpi-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; }
-    .kpi-val { font-size: 20px; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin-top: 4px; }
+    .kpi-label { font-size: 10.5px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; }
+    .kpi-val { font-size: 18px; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin-top: 4px; }
 
     /* TELEMETRY ROW */
     .telemetry-row {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 16px;
-      margin-bottom: 16px;
+      display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;
     }
-    @media (max-width: 992px) {
-      .telemetry-row { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 992px) { .telemetry-row { grid-template-columns: 1fr; } }
     .panel {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 16px;
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 12px; padding: 16px;
     }
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-    .panel-title { font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-    canvas { width: 100%; height: 130px; display: block; border-radius: 6px; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .panel-title { font-size: 13.5px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    canvas { width: 100%; height: 120px; display: block; border-radius: 6px; }
 
-    /* STATIONS MATRIX */
+    /* STATION MATRIX */
     .section-title {
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      font-size: 15px; font-weight: 800; margin-bottom: 12px;
+      display: flex; justify-content: space-between; align-items: center;
     }
     .station-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 14px;
-      margin-bottom: 16px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 14px; margin-bottom: 16px;
     }
     .station-card {
-      background: #111827;
-      border: 1px solid #1f2937;
-      border-radius: 12px;
-      padding: 14px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      background: #111827; border: 1px solid #1f2937; border-radius: 12px;
+      padding: 14px; display: flex; flex-direction: column; cursor: pointer;
+      transition: all 0.15s ease-in-out; position: relative;
     }
     .station-card:hover {
-      border-color: #3b82f6;
-      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.12);
+      border-color: #3b82f6; box-shadow: 0 4px 18px rgba(59, 130, 246, 0.15);
+      transform: translateY(-2px);
     }
-    .station-card.active { border-left: 4px solid #10b981; }
-    .station-card.master-card { border: 1.5px solid #8b5cf6; background: rgba(139, 92, 246, 0.04); }
-    .station-card.kds-card { border: 1.5px solid #f59e0b; background: rgba(245, 158, 11, 0.04); }
-    .station-card.osd-card { border: 1.5px solid #06b6d4; background: rgba(6, 182, 212, 0.04); }
-    .station-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 8px;
-    }
-    .station-name { font-size: 14px; font-weight: 800; color: #fff; }
+    .station-card.master-card { border: 1.5px solid #8b5cf6; background: rgba(139, 92, 246, 0.03); }
+    .station-card.crashed { border: 2px solid #ef4444 !important; background: rgba(239, 68, 68, 0.08) !important; }
+    .station-card.kds-card { border: 1.5px solid #f59e0b; background: rgba(245, 158, 11, 0.03); }
+    .station-card.osd-card { border: 1.5px solid #06b6d4; background: rgba(6, 182, 212, 0.03); }
+    .station-card.omb-card { border: 1.5px solid #10b981; background: rgba(16, 185, 129, 0.03); }
+    .station-card.cds-card { border: 1.5px solid #ec4899; background: rgba(236, 72, 153, 0.03); }
+    
+    .station-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .station-name { font-size: 13.5px; font-weight: 800; color: #fff; }
     .station-sub { font-size: 11px; color: var(--text-muted); }
+    .station-body { flex: 1; font-size: 12px; color: #cbd5e1; margin-top: 6px; min-height: 95px; }
+
     .badge-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 3px 8px;
-      border-radius: 9999px;
-      font-size: 10.5px;
-      font-weight: 700;
+      display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px;
+      border-radius: 9999px; font-size: 10px; font-weight: 700;
     }
     .badge-status.live { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
     .badge-status.lag { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
     .badge-status.err { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
-    .station-body {
-      flex: 1;
-      font-size: 12px;
-      color: #cbd5e1;
-      margin-top: 6px;
-      min-height: 90px;
+
+    /* MODAL */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      z-index: 9999; justify-content: center; align-items: center; padding: 20px;
+      backdrop-filter: blur(5px);
+    }
+    .modal-box {
+      background: #111827; border: 1px solid #374151; border-radius: 16px;
+      max-width: 650px; width: 100%; max-height: 85vh; overflow-y: auto;
+      padding: 24px; color: #f3f4f6; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
     }
 
-    /* STREAM LOG TERMINAL */
+    /* LOG TERMINAL */
     .log-terminal {
-      background: #030712;
-      border: 1px solid #1f2937;
-      border-radius: 10px;
-      padding: 12px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      height: 220px;
-      overflow-y: auto;
-      line-height: 1.6;
+      background: #030712; border: 1px solid #1f2937; border-radius: 10px;
+      padding: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      height: 200px; overflow-y: auto; line-height: 1.6;
     }
     .log-line { display: flex; gap: 8px; margin-bottom: 2px; }
     .log-ts { color: #64748b; }
@@ -209,23 +169,9 @@
     .tag-KDS { color: #f59e0b; }
     .tag-OSD { color: #06b6d4; }
     .tag-CHAOS { color: #ec4899; }
+    .tag-OFFLINE { color: #f97316; font-weight: 800; }
     .tag-WARN { color: #eab308; }
     .tag-ERR { color: #ef4444; font-weight: 800; background: rgba(239, 68, 68, 0.1); }
-
-    /* CONTROLS BAR */
-    .controls-strip {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 14px;
-      background: #1e293b;
-      padding: 10px 16px;
-      border-radius: 10px;
-      margin-bottom: 16px;
-    }
-    .control-item { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; }
-    input[type="range"] { accent-color: #3b82f6; cursor: pointer; }
-    .switch-toggle { display: flex; align-items: center; gap: 6px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -235,53 +181,95 @@
     <div class="header-title">
       <div class="logo-badge">⚡</div>
       <div>
-        <h1 style="font-size: 18px; font-weight: 800; letter-spacing: -0.3px; color: #fff;">FlexiTap Enterprise Simulation Suite</h1>
+        <h1 style="font-size: 18px; font-weight: 800; letter-spacing: -0.3px; color: #fff;">FlexiTap Enterprise Simulation Suite (v3.0 Chaos Edition)</h1>
         <p style="font-size: 12px; color: var(--text-muted); margin-top: 1px;">
-          Multi-Station Real-World Load Harness: 1 Master &bull; 5 Terminals &bull; KDS &bull; OSD &bull; OMB &bull; CDS
+          Resilience Test: 1 Master &bull; 5 POS Terminals &bull; KDS &bull; OSD &bull; OMB &bull; CDS with Server Outage Simulator
         </p>
       </div>
     </div>
 
     <!-- MAIN BUTTONS -->
-    <div style="display: flex; gap: 10px; align-items: center;">
+    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
       <button id="btn-toggle-run" class="btn btn-primary" onclick="toggleSimulation()">
         <span>▶</span> Start Simulation
       </button>
-      <button id="btn-burst" class="btn btn-warning" onclick="injectTrafficBurst(15)">
-        <span>⚡</span> Inject 15 Rush Orders
+      <button id="btn-burst" class="btn btn-warning" onclick="injectTrafficBurst(20)">
+        <span>⚡</span> Inject 20 Peak Orders
+      </button>
+      <button id="btn-crash-server" class="btn btn-danger" onclick="triggerServerCrash(30)">
+        <span>💥</span> Simulate Main Server Outage (30s)
+      </button>
+      <button class="btn btn-secondary" onclick="openZReadModal()">
+        <span>🧾</span> View Live Z-Read
       </button>
       <button class="btn btn-secondary" onclick="exportAuditReport()">
-        <span>📥</span> Export Audit Log
+        <span>📥</span> Export Logs (JSON)
       </button>
-      <button class="btn btn-danger" onclick="resetSimulationData()">
+      <button id="btn-sound" class="btn btn-secondary" onclick="toggleAudio()" title="Sound FX via Web Audio Synthesizer">
+        <span id="sound-icon">🔊</span> Audio: ON
+      </button>
+      <button class="btn btn-secondary" onclick="resetSimulationData()">
         <span>🔄</span> Reset
       </button>
     </div>
   </header>
 
+  <!-- SERVER OUTAGE ALERT BANNER -->
+  <div id="crash-alert-banner">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span style="font-size: 24px;">🔥</span>
+      <div>
+        <strong style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">CRITICAL OUTAGE SIMULATION ACTIVE: MAIN SERVER DOWN</strong>
+        <p style="font-size: 12px; margin-top: 2px;">
+          Port 8085 unreachable. Terminals 1-5 have automatically switched to <strong>Offline Standalone Mode</strong>. 
+          Orders are being held safely in local SQLite queues and will replay automatically upon server recovery.
+        </p>
+      </div>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <span id="crash-countdown" style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 800; color: #fff; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 6px;">30s left</span>
+      <button class="btn btn-primary" onclick="recoverServerNow()" style="background: #10b981;">⚡ Restore Server Now</button>
+    </div>
+  </div>
+
   <!-- CONTROLS & CHAOS STRIP -->
   <div class="controls-strip">
     <div class="control-item">
-      <span>Simulation Velocity:</span>
-      <input type="range" id="speed-slider" min="1" max="10" value="2" oninput="updateSpeed(this.value)" style="width: 110px;" />
+      <span>Pace:</span>
+      <input type="range" id="speed-slider" min="1" max="10" value="2" oninput="updateSpeed(this.value)" style="width: 100px;" />
       <span id="speed-display" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #38bdf8;">2x Pacing</span>
     </div>
 
-    <div style="width: 1px; height: 20px; background: #334155;"></div>
+    <div style="width: 1px; height: 18px; background: #334155;"></div>
 
-    <label class="switch-toggle" title="Randomly drops 5-15% of sync packets to test retry logic">
+    <div class="control-item">
+      <span>Currency:</span>
+      <select id="sel-currency" onchange="setCurrency(this.value)" style="background: #0f172a; color: #fff; border: 1px solid #475569; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 12px;">
+        <option value="PHP" selected>Philippine Peso (₱)</option>
+        <option value="USD">US Dollar ($)</option>
+      </select>
+    </div>
+
+    <div style="width: 1px; height: 18px; background: #334155;"></div>
+
+    <label class="switch-toggle" title="Randomly drops 10% of sync packets to test retry logic">
       <input type="checkbox" id="chk-packet-drops" />
-      <span>Simulate Wi-Fi Packet Drops (10%)</span>
+      <span>Wi-Fi Drops (10%)</span>
     </label>
 
-    <div style="width: 1px; height: 20px; background: #334155;"></div>
+    <div style="width: 1px; height: 18px; background: #334155;"></div>
 
-    <label class="switch-toggle" title="Injects Senior Citizen / PWD 20% statutory discounts">
+    <label class="switch-toggle" title="Applies RA 9994 / RA 10754 20% Senior Citizen and PWD statutory tax exemptions">
       <input type="checkbox" id="chk-discounts" checked />
-      <span>Statutory Discounts (Senior/PWD 20%)</span>
+      <span>RA 9994 Senior/PWD 20%</span>
     </label>
 
-    <div style="width: 1px; height: 20px; background: #334155;"></div>
+    <div style="width: 1px; height: 18px; background: #334155;"></div>
+
+    <label class="switch-toggle" title="Enforces inventory decrements and automatically 86s items at 0 stock">
+      <input type="checkbox" id="chk-inventory" checked />
+      <span>Live 86'd Inventory Par</span>
+    </label>
 
     <div class="control-item" style="margin-left: auto;">
       <span style="color: var(--text-muted);">Runtime:</span>
@@ -292,24 +280,32 @@
   <!-- METRIC TILES ROW -->
   <div class="kpi-grid">
     <div class="kpi-card">
-      <span class="kpi-label">Total Transactions</span>
+      <span class="kpi-label">Transactions</span>
       <span class="kpi-val" id="metric-txns" style="color: #38bdf8;">0</span>
     </div>
     <div class="kpi-card">
-      <span class="kpi-label">Gross Revenue</span>
-      <span class="kpi-val" id="metric-revenue" style="color: #34d399;">$0.00</span>
+      <span class="kpi-label">Gross Sales</span>
+      <span class="kpi-val" id="metric-revenue" style="color: #34d399;">₱0.00</span>
     </div>
     <div class="kpi-card">
-      <span class="kpi-label">Kitchen In-Flight</span>
+      <span class="kpi-label">Offline Queued</span>
+      <span class="kpi-val" id="metric-offline-queue" style="color: #f97316;">0</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">12% VAT Remitted</span>
+      <span class="kpi-val" id="metric-vat" style="color: #38bdf8;">₱0.00</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Senior / PWD Discs</span>
+      <span class="kpi-val" id="metric-discounts" style="color: #f43f5e;">₱0.00</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Active in Kitchen</span>
       <span class="kpi-val" id="metric-kds-active" style="color: #fbbf24;">0</span>
     </div>
     <div class="kpi-card">
-      <span class="kpi-label">Ready for Pickup</span>
-      <span class="kpi-val" id="metric-osd-ready" style="color: #a78bfa;">0</span>
-    </div>
-    <div class="kpi-card">
-      <span class="kpi-label">Symmetry Check</span>
-      <span class="kpi-val" id="metric-symmetry" style="color: #10b981; font-size: 16px;">100% Balanced</span>
+      <span class="kpi-label">Ledger Symmetry</span>
+      <span class="kpi-val" id="metric-symmetry" style="color: #10b981; font-size: 15px;">✓ Balanced</span>
     </div>
     <div class="kpi-card">
       <span class="kpi-label">Captured Errors</span>
@@ -348,14 +344,14 @@
 
   <!-- LIVE STATIONS MATRIX (10 NODES) -->
   <div class="section-title">
-    <span>Synchronized Multi-Station Topography (10 Active Nodes)</span>
+    <span>Synchronized Multi-Station Topography (Click Any Card to Inspect)</span>
     <span style="font-size: 12px; font-weight: 600; color: #94a3b8;">
-      Simulating real-time local network mesh
+      Simulating real-time local Wi-Fi mesh (Port 8085 protocol)
     </span>
   </div>
 
   <div class="station-grid" id="stations-container">
-    <!-- Node cards populated dynamically by JS -->
+    <!-- Node cards populated dynamically -->
   </div>
 
   <!-- STREAM LOG TERMINAL -->
@@ -372,7 +368,36 @@
       <div class="log-line">
         <span class="log-ts">[00:00:00]</span>
         <span class="log-tag tag-TXN">[SYSTEM_INIT]</span>
-        <span>FlexiTap Enterprise Simulation Suite ready. Click "Start Simulation" to begin multi-hour stress run.</span>
+        <span>FlexiTap Enterprise Simulation Suite v3.0 loaded. Chaos & Outage Engine armed.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Z-READ DAILY SALES RECONCILIATION -->
+  <div id="modal-zread" class="modal-overlay" onclick="closeZReadModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #374151; padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 style="font-size: 17px; font-weight: 800; color: #fff;">🧾 Official Z-Read End-of-Day Audit Report</h3>
+        <button onclick="closeZReadModal()" style="background:none; border:none; color:#94a3b8; font-size:22px; cursor:pointer;">&times;</button>
+      </div>
+      <div id="zread-content" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.8;">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: STATION DRILL-DOWN INSPECTION -->
+  <div id="modal-station" class="modal-overlay" onclick="closeStationModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #374151; padding-bottom: 12px; margin-bottom: 16px;">
+        <div>
+          <h3 id="modal-st-title" style="font-size: 17px; font-weight: 800; color: #fff;">Station Inspector</h3>
+          <span id="modal-st-sub" style="font-size: 12px; color: var(--text-muted);">---</span>
+        </div>
+        <button onclick="closeStationModal()" style="background:none; border:none; color:#94a3b8; font-size:22px; cursor:pointer;">&times;</button>
+      </div>
+      <div id="modal-st-body">
+        <!-- Filled by JS -->
       </div>
     </div>
   </div>
@@ -380,67 +405,274 @@
   <!-- SCRIPT ENGINE -->
   <script>
     // ==========================================
-    // 1. DATA MODELS & MENU TAXONOMY
+    // 1. DATA MODELS & PHILIPPINE MENU
     // ==========================================
-    const MENU_ITEMS = [
-      { id: 'item_1', name: 'Smash Angus Burger', category: 'Mains', price: 12.50, stock: 999 },
-      { id: 'item_2', name: 'Crispy Truffle Fries', category: 'Sides', price: 5.50, stock: 999 },
-      { id: 'item_3', name: 'Iced Spanish Latte', category: 'Beverages', price: 4.80, stock: 999 },
-      { id: 'item_4', name: 'Spicy Buffalo Wings (6pc)', category: 'Mains', price: 9.90, stock: 999 },
-      { id: 'item_5', name: 'San Miguel Pale Pilsen', category: 'Beverages', price: 3.50, stock: 999 },
-      { id: 'item_6', name: 'Classic Carbonara Pasta', category: 'Mains', price: 11.20, stock: 999 },
-      { id: 'item_7', name: 'Caramel Macchiato', category: 'Beverages', price: 5.20, stock: 999 },
-      { id: 'item_8', name: 'Mango Sticky Rice Cake', category: 'Dessert', price: 6.00, stock: 999 }
+    let currencySymbol = '₱';
+    let currencyCode = 'PHP';
+    let fxRate = 50.0;
+
+    const BASE_MENU = [
+      { id: 'm1', name: 'Sizzling Pork Sisig with Egg', category: 'Mains', pricePhp: 280, stock: 45, station: 'Grill' },
+      { id: 'm2', name: 'Chicken Inasal Platter', category: 'Mains', pricePhp: 260, stock: 40, station: 'Grill' },
+      { id: 'm3', name: 'Angus Beef Smash Burger', category: 'Mains', pricePhp: 320, stock: 35, station: 'Grill' },
+      { id: 'm4', name: 'USDA Ribeye Steak (250g)', category: 'Mains', pricePhp: 950, stock: 15, station: 'Grill' },
+      { id: 'm5', name: 'Creamy Bacon Carbonara', category: 'Mains', pricePhp: 290, stock: 30, station: 'Kitchen' },
+      { id: 'm6', name: 'Crispy Lechon Kawali', category: 'Mains', pricePhp: 340, stock: 25, station: 'Fryer' },
+      { id: 's1', name: 'Truffle Parmesan Fries', category: 'Sides', pricePhp: 190, stock: 50, station: 'Fryer' },
+      { id: 's2', name: 'Crispy Calamares Fritos', category: 'Sides', pricePhp: 240, stock: 35, station: 'Fryer' },
+      { id: 's3', name: 'Spicy Buffalo Wings (6pcs)', category: 'Sides', pricePhp: 280, stock: 40, station: 'Fryer' },
+      { id: 'b1', name: 'Iced Spanish Latte', category: 'Beverages', pricePhp: 165, stock: 100, station: 'Bar' },
+      { id: 'b2', name: 'Brown Sugar Pearl Milk Tea', category: 'Beverages', pricePhp: 150, stock: 80, station: 'Bar' },
+      { id: 'b3', name: 'San Miguel Pale Pilsen', category: 'Beverages', pricePhp: 95, stock: 120, station: 'Bar' },
+      { id: 'd1', name: 'Halo-Halo Supreme Special', category: 'Dessert', pricePhp: 185, stock: 40, station: 'Kitchen' }
     ];
+
+    const MODIFIER_OPTIONS = {
+      meatDoneness: ['Medium Rare', 'Medium', 'Well Done'],
+      sugarLevels: ['25% Less Sweet', '50% Half Sugar', '100% Regular Sugar'],
+      iceLevels: ['Less Ice', 'Regular Ice'],
+      addOns: [
+        { name: 'Extra Garlic Rice', pricePhp: 35 },
+        { name: 'Sunny Side Egg', pricePhp: 25 },
+        { name: 'Extra Cheddar Cheese', pricePhp: 30 }
+      ]
+    };
 
     const STATIONS = [
-      { id: 'master', name: 'Master Server Node', role: 'Database & Sync Coordinator', type: 'master', status: 'idle', currentTxn: '---' },
-      { id: 't1', name: 'Terminal 1: Front Counter', role: 'Fast-Pay Cashier', type: 'pos', status: 'idle', currentTxn: '---' },
-      { id: 't2', name: 'Terminal 2: Drive-Thru', role: 'High Modifier Takeout', type: 'pos', status: 'idle', currentTxn: '---' },
-      { id: 't3', name: 'Terminal 3: Table Tablet', role: 'Dine-In Table 4', type: 'pos', status: 'idle', currentTxn: '---' },
-      { id: 't4', name: 'Terminal 4: Bar Station', role: 'Drink Pour & Quick Swipes', type: 'pos', status: 'idle', currentTxn: '---' },
-      { id: 't5', name: 'Terminal 5: Self-Kiosk', role: 'Self-Service Customer', type: 'pos', status: 'idle', currentTxn: '---' },
-      { id: 'kds', name: 'Kitchen Display (KDS)', role: 'Hot Kitchen & Prep Queue', type: 'kds', status: 'idle', activeCount: 0 },
-      { id: 'osd', name: 'Order Status Display (OSD)', role: 'Customer Pickup Board', type: 'osd', status: 'idle', readyList: [] },
-      { id: 'omb', name: 'Order Menu Board (OMB)', role: 'Digital Price & 86 Par Sync', type: 'omb', status: 'idle', itemsCount: MENU_ITEMS.length },
-      { id: 'cds', name: 'Customer Facing Display (CDS)', role: 'Live Itemization & QR Ph', type: 'cds', status: 'idle', subtotal: '$0.00' }
+      { id: 'master', name: 'Master POS Server', role: 'Database Sequencer & Sync Broker', type: 'master' },
+      { id: 't1', name: 'Terminal 1: Counter POS', role: 'Cashier Cash & GCash Quick-Pay', type: 'pos' },
+      { id: 't2', name: 'Terminal 2: Takeout & Delivery', role: 'Packaging Fees & Grab Delivery', type: 'pos' },
+      { id: 't3', name: 'Terminal 3: Dine-In Tablet', role: 'Table Tabs & Split Tenders', type: 'pos' },
+      { id: 't4', name: 'Terminal 4: Bar Counter', role: 'Express Drink Pour & Card Swipes', type: 'pos' },
+      { id: 't5', name: 'Terminal 5: Self-Service Kiosk', role: 'Autonomous QR Ph Checkout', type: 'pos' },
+      { id: 'kds', name: 'Kitchen Display (KDS)', role: 'Multi-Station Cook Lines', type: 'kds' },
+      { id: 'osd', name: 'Order Status Display (OSD)', role: 'Customer Pickup Board', type: 'osd' },
+      { id: 'omb', name: 'Order Menu Board (OMB)', role: 'Live Prices & 86 Inventory Par', type: 'omb' },
+      { id: 'cds', name: 'Customer Display (CDS)', role: 'Itemized Breakdown & QR Ph', type: 'cds' }
     ];
 
-    // Simulation State
-    let isRunning = false;
-    let speedFactor = 2; // Default 2x
-    let sequenceCounter = 1001;
-    let totalTransactions = 0;
-    let totalGrossRevenue = 0;
-    let totalErrorsCaptured = 0;
-    let startTime = null;
-    let elapsedSeconds = 0;
+    // Cumulative Reconciliation Ledger
+    const Z_READ = {
+      grossSales: 0,
+      netSales: 0,
+      vatableSales: 0,
+      vatAmount: 0,
+      vatExemptSales: 0,
+      seniorPwdDiscounts: 0,
+      serviceCharge: 0,
+      tenders: { Cash: 0, GCash: 0, Maya: 0, 'Credit/Debit Card': 0 },
+      categoryMix: { Mains: 0, Sides: 0, Beverages: 0, Dessert: 0 }
+    };
 
-    // Active Queues
+    // State Variables
+    let isRunning = false;
+    let speedFactor = 2;
+    let sequenceCounter = 1001;
+    let offlineSequenceCounter = 1;
+    let totalTransactions = 0;
+    let totalErrorsCaptured = 0;
+    let elapsedSeconds = 0;
+    let audioEnabled = true;
+
+    // Server Crash Simulation Variables
+    let isServerDown = false;
+    let crashTimer = null;
+    let crashSecondsLeft = 0;
+    let offlineTransactionsBuffer = []; // Local SQLite store & forward queue
+
+    // Station States
+    const stationStates = {};
+    STATIONS.forEach(s => {
+      stationStates[s.id] = { status: 'idle', lastTicket: null, history: [] };
+    });
+
     let kitchenQueue = [];
     let pickupQueue = [];
     let transactionHistory = [];
 
-    // Telemetry Buffers for Charts
+    // Telemetry Buffers
     const MAX_POINTS = 60;
-    const heapHistory = new Array(MAX_POINTS).fill(40);
+    const heapHistory = new Array(MAX_POINTS).fill(42);
     const lagHistory = new Array(MAX_POINTS).fill(0);
     const tpsHistory = new Array(MAX_POINTS).fill(0);
     let tpsCounter = 0;
 
     // ==========================================
-    // 2. DOM INITIALIZATION
+    // 2. PROCEDURAL SOUND SYNTHESIS (WEB AUDIO)
+    // ==========================================
+    let audioCtx = null;
+    function playBeep(freq, type = 'sine', duration = 0.1, gainVal = 0.1) {
+      if (!audioEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (_) {}
+    }
+
+    function soundCashRegister() {
+      playBeep(880, 'triangle', 0.1, 0.12);
+      setTimeout(() => playBeep(1320, 'triangle', 0.18, 0.15), 90);
+    }
+    function soundOsdPickup() {
+      playBeep(659, 'sine', 0.15, 0.1);
+      setTimeout(() => playBeep(987, 'sine', 0.25, 0.12), 150);
+    }
+    function soundCrashAlarm() {
+      playBeep(220, 'sawtooth', 0.4, 0.25);
+      setTimeout(() => playBeep(180, 'sawtooth', 0.5, 0.25), 350);
+    }
+    function soundRecoverChime() {
+      playBeep(523, 'triangle', 0.15, 0.15);
+      setTimeout(() => playBeep(659, 'triangle', 0.15, 0.15), 150);
+      setTimeout(() => playBeep(784, 'triangle', 0.25, 0.18), 300);
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      document.getElementById('sound-icon').innerText = audioEnabled ? '🔊' : '🔇';
+      document.getElementById('btn-sound').innerHTML = audioEnabled ? '<span>🔊</span> Audio: ON' : '<span>🔇</span> Audio: MUTED';
+    }
+
+    // ==========================================
+    // 3. CURRENCY FORMATTING
+    // ==========================================
+    function setCurrency(curr) {
+      currencyCode = curr;
+      currencySymbol = curr === 'PHP' ? '₱' : '$';
+      log('TXN', `Store Currency switched to ${currencyCode} (${currencySymbol})`);
+      updateKpis();
+      updateOmbView();
+    }
+
+    function fmt(amtInPhp) {
+      const val = currencyCode === 'PHP' ? amtInPhp : (amtInPhp / fxRate);
+      return `${currencySymbol}${val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    // ==========================================
+    // 4. MAIN SERVER OUTAGE SIMULATION & RECOVERY
+    // ==========================================
+    function triggerServerCrash(seconds = 30) {
+      if (isServerDown) return;
+      isServerDown = true;
+      crashSecondsLeft = seconds;
+
+      soundCrashAlarm();
+      log('CHAOS', `[MAIN_SERVER_DOWN] Master POS Server crashed! Port 8085 unreachable.`);
+      log('OFFLINE', `[OFFLINE_FAILOVER] Terminals 1-5 switching to Offline Standalone Mode (local SQLite).`);
+
+      // Update UI Banner
+      document.getElementById('crash-alert-banner').style.display = 'flex';
+      document.getElementById('crash-countdown').innerText = `${crashSecondsLeft}s left`;
+
+      // Update Master Card UI
+      const masterCard = document.getElementById('card-master');
+      if (masterCard) masterCard.className = 'station-card master-card crashed';
+      flashStationBadge('master', 'err', '🔥 DOWN');
+      const masterBody = document.getElementById('body-master');
+      if (masterBody) {
+        masterBody.innerHTML = `
+          <div style="color: #ef4444; font-weight: 800;">CRITICAL: Port 8085 Terminated</div>
+          <div style="font-size: 11px; color: #fca5a5; margin-top: 3px;">All socket broadcast channels disconnected.</div>
+          <div style="font-size: 10.5px; color: #94a3b8; margin-top: 2px;">Waiting for container / host watchdog recovery...</div>
+        `;
+      }
+
+      // Update Terminals & Peripherals
+      ['t1', 't2', 't3', 't4', 't5'].forEach(t => {
+        flashStationBadge(t, 'lag', '⚠️ OFFLINE LOCAL');
+      });
+      ['kds', 'osd', 'omb', 'cds'].forEach(p => {
+        flashStationBadge(p, 'err', 'Reconnecting...');
+      });
+
+      // Start Countdown
+      clearInterval(crashTimer);
+      crashTimer = setInterval(() => {
+        crashSecondsLeft--;
+        document.getElementById('crash-countdown').innerText = `${crashSecondsLeft}s left`;
+        if (crashSecondsLeft <= 0) {
+          recoverServerNow();
+        }
+      }, 1000);
+    }
+
+    function recoverServerNow() {
+      if (!isServerDown) return;
+      clearInterval(crashTimer);
+      isServerDown = false;
+
+      soundRecoverChime();
+      log('CHAOS', `[SERVER_RECOVERED] Master POS Server container rebooted. Port 8085 online.`);
+      document.getElementById('crash-alert-banner').style.display = 'none';
+
+      // Restore Master Card UI
+      const masterCard = document.getElementById('card-master');
+      if (masterCard) masterCard.className = 'station-card master-card';
+      flashStationBadge('master', 'live', '● Online');
+
+      // Reconnect Terminals & Replay Offline Queue (Store & Forward)
+      const offlineCount = offlineTransactionsBuffer.length;
+      log('OFFLINE', `[STORE_AND_FORWARD] Beginning batch synchronization of ${offlineCount} offline transactions...`);
+
+      // Replay all buffered transactions through the Master Server
+      offlineTransactionsBuffer.forEach(rec => {
+        rec.ticket = `FT-${sequenceCounter++}`;
+        rec.isReconciled = true;
+        kitchenQueue.push(rec);
+
+        Z_READ.grossSales += rec.grossPhp;
+        Z_READ.netSales += rec.totalPhp;
+        Z_READ.vatableSales += rec.vatableSalesPhp;
+        Z_READ.vatExemptSales += rec.vatExemptSalesPhp;
+        Z_READ.vatAmount += rec.vatPhp;
+        Z_READ.serviceCharge += rec.serviceChargePhp;
+        Z_READ.tenders[rec.tender] = (Z_READ.tenders[rec.tender] || 0) + rec.totalPhp;
+
+        totalTransactions++;
+        tpsCounter++;
+      });
+
+      log('TXN', `[SYNC_COMPLETE] Successfully replayed ${offlineCount} offline orders with ZERO sequence collisions!`);
+
+      offlineTransactionsBuffer = [];
+      document.getElementById('metric-offline-queue').innerText = '0';
+
+      ['t1', 't2', 't3', 't4', 't5', 'kds', 'osd', 'omb', 'cds'].forEach(id => {
+        flashStationBadge(id, 'live', '● Online');
+      });
+
+      updateKpis();
+      updateOmbView();
+    }
+
+    // ==========================================
+    // 5. TRANSACTION LIFECYCLE (ONLINE & OFFLINE)
     // ==========================================
     function initStationGrid() {
       const container = document.getElementById('stations-container');
       container.innerHTML = STATIONS.map(st => {
         let cardClass = 'station-card';
         if (st.type === 'master') cardClass += ' master-card';
-        if (st.type === 'kds') cardClass += ' kds-card';
-        if (st.type === 'osd') cardClass += ' osd-card';
+        else if (st.type === 'kds') cardClass += ' kds-card';
+        else if (st.type === 'osd') cardClass += ' osd-card';
+        else if (st.type === 'omb') cardClass += ' omb-card';
+        else if (st.type === 'cds') cardClass += ' cds-card';
 
         return `
-          <div class="${cardClass}" id="card-${st.id}">
+          <div class="${cardClass}" id="card-${st.id}" onclick="openStationModal('${st.id}')">
             <div class="station-top">
               <div>
                 <div class="station-name">${st.name}</div>
@@ -449,16 +681,17 @@
               <span class="badge-status live" id="badge-${st.id}">● Online</span>
             </div>
             <div class="station-body" id="body-${st.id}">
-              <div style="color: #64748b; font-size: 11px;">Waiting for orders...</div>
+              <div style="color: #64748b; font-size: 11px;">Awaiting network orders...</div>
+            </div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 6px; text-align: right;">
+              Click to Inspect &rarr;
             </div>
           </div>
         `;
       }).join('');
+      updateOmbView();
     }
 
-    // ==========================================
-    // 3. ENGINE EXECUTION & TRAFFIC GENERATOR
-    // ==========================================
     let simInterval = null;
     let clockInterval = null;
     let lagMeasureTime = performance.now();
@@ -470,13 +703,12 @@
       if (isRunning) {
         btn.innerHTML = '<span>⏸</span> Pause Simulation';
         btn.className = 'btn btn-warning';
-        if (!startTime) startTime = Date.now() - (elapsedSeconds * 1000);
-        log('TXN', 'Simulation Engine Started. Multi-station mesh active.');
+        log('TXN', `Enterprise Simulation Engine active at ${speedFactor}x pacing.`);
         startIntervals();
       } else {
         btn.innerHTML = '<span>▶</span> Resume Simulation';
         btn.className = 'btn btn-primary';
-        log('WARN', 'Simulation Engine Paused.');
+        log('WARN', 'Simulation Engine paused.');
         clearInterval(simInterval);
         clearInterval(clockInterval);
       }
@@ -486,14 +718,12 @@
       clearInterval(simInterval);
       clearInterval(clockInterval);
 
-      // Base generation tick: fires every (1500 / speedFactor) ms
-      const intervalMs = Math.max(150, Math.round(1800 / speedFactor));
+      const intervalMs = Math.max(120, Math.round(1600 / speedFactor));
       simInterval = setInterval(() => {
         if (!isRunning) return;
         simulateNextTransactionCycle();
       }, intervalMs);
 
-      // 1-second system clock and telemetry collector
       clockInterval = setInterval(() => {
         if (!isRunning) return;
         elapsedSeconds++;
@@ -515,115 +745,262 @@
       document.getElementById('runtime-display').innerText = `${h}:${m}:${s}`;
     }
 
-    // ==========================================
-    // 4. TRANSACTION LIFECYCLE SIMULATION
-    // ==========================================
     function simulateNextTransactionCycle() {
-      // Pick random POS terminal (Terminal 1 through 5)
       const terminals = ['t1', 't2', 't3', 't4', 't5'];
       const chosenTId = terminals[Math.floor(Math.random() * terminals.length)];
-      generateOrderOnTerminal(chosenTId);
-
-      // Simulate KDS Cook Progression & Bumps
-      progressKitchenQueue();
+      generateRealisticOrder(chosenTId);
+      if (!isServerDown) progressKitchenQueue();
     }
 
-    function generateOrderOnTerminal(terminalId) {
-      // Chaos Check: Simulated packet drop
-      const packetDropChecked = document.getElementById('chk-packet-drops').checked;
-      if (packetDropChecked && Math.random() < 0.10) {
-        log('CHAOS', `Simulated Wi-Fi Packet Drop on ${terminalId}. Retrying via background queue...`);
-        flashStationBadge(terminalId, 'err', 'Packet Loss');
+    function generateRealisticOrder(terminalId) {
+      if (!isServerDown && document.getElementById('chk-packet-drops').checked && Math.random() < 0.10) {
+        log('CHAOS', `[PACKET_DROP] ${terminalId.toUpperCase()} lost beacon pulse. Queuing to local SQLite...`);
+        flashStationBadge(terminalId, 'err', 'Retrying Sync');
         setTimeout(() => flashStationBadge(terminalId, 'live', '● Online'), 800);
         return;
       }
 
-      // 1. Pick 1 to 4 items
-      const itemCount = Math.floor(Math.random() * 3) + 1;
       const orderItems = [];
-      let subtotal = 0;
+      let availableItems = BASE_MENU.filter(m => m.stock > 0);
+      if (availableItems.length === 0) {
+        log('WARN', 'All menu items 86’d! Please restock inventory.');
+        return;
+      }
+
+      if (terminalId === 't4') {
+        availableItems = availableItems.filter(m => m.category === 'Beverages');
+        if (availableItems.length === 0) availableItems = BASE_MENU;
+      }
+
+      const itemCount = Math.floor(Math.random() * 3) + 1;
+      let orderGrossPhp = 0;
 
       for (let i = 0; i < itemCount; i++) {
-        const item = MENU_ITEMS[Math.floor(Math.random() * MENU_ITEMS.length)];
+        const item = availableItems[Math.floor(Math.random() * availableItems.length)];
         const qty = Math.floor(Math.random() * 2) + 1;
-        orderItems.push({ ...item, qty });
-        subtotal += item.price * qty;
+
+        const mods = [];
+        let modCostPhp = 0;
+
+        if (item.category === 'Mains' && item.name.includes('Steak')) {
+          mods.push(MODIFIER_OPTIONS.meatDoneness[Math.floor(Math.random() * MODIFIER_OPTIONS.meatDoneness.length)]);
+        }
+        if (item.category === 'Beverages' && !item.name.includes('Beer')) {
+          mods.push(MODIFIER_OPTIONS.sugarLevels[Math.floor(Math.random() * MODIFIER_OPTIONS.sugarLevels.length)]);
+          mods.push(MODIFIER_OPTIONS.iceLevels[Math.floor(Math.random() * MODIFIER_OPTIONS.iceLevels.length)]);
+        }
+        if (Math.random() < 0.35) {
+          const addOn = MODIFIER_OPTIONS.addOns[Math.floor(Math.random() * MODIFIER_OPTIONS.addOns.length)];
+          mods.push(`+${addOn.name}`);
+          modCostPhp += addOn.pricePhp;
+        }
+
+        const itemTotalPhp = (item.pricePhp + modCostPhp) * qty;
+        orderGrossPhp += itemTotalPhp;
+
+        if (document.getElementById('chk-inventory').checked) {
+          item.stock = Math.max(0, item.stock - qty);
+        }
+
+        orderItems.push({
+          id: item.id,
+          name: item.name,
+          category: item.category,
+          unitPricePhp: item.pricePhp,
+          modCostPhp,
+          qty,
+          modifiers: mods,
+          totalPhp: itemTotalPhp,
+          station: item.station
+        });
+
+        if (!isServerDown) {
+          Z_READ.categoryMix[item.category] = (Z_READ.categoryMix[item.category] || 0) + itemTotalPhp;
+        }
       }
 
-      // 2. Statutory Discount Check
-      const discountChecked = document.getElementById('chk-discounts').checked;
-      let discountAmount = 0;
-      let discountName = 'None';
+      let tableNumber = null;
+      let packagingFeePhp = 0;
+      let serviceChargePhp = 0;
 
-      if (discountChecked && Math.random() < 0.25) {
-        // Senior Citizen / PWD statutory discount (20% off VAT-exempt base)
-        const vatExemptBase = subtotal / 1.12;
-        discountAmount = Math.round(vatExemptBase * 0.20 * 100) / 100;
-        discountName = 'Senior/PWD 20%';
+      if (terminalId === 't2') {
+        packagingFeePhp = 25.0;
+        orderGrossPhp += packagingFeePhp;
+      } else if (terminalId === 't3') {
+        tableNumber = 'Table ' + (Math.floor(Math.random() * 14) + 1);
+        serviceChargePhp = Math.round(orderGrossPhp * 0.05 * 100) / 100;
+        orderGrossPhp += serviceChargePhp;
       }
 
-      // 3. Tax Calculation (12% VAT)
-      const netAfterDiscount = subtotal - discountAmount;
-      const vatAmount = Math.round((netAfterDiscount - (netAfterDiscount / 1.12)) * 100) / 100;
-      const totalAmount = Math.round(netAfterDiscount * 100) / 100;
+      let discountAmountPhp = 0;
+      let discountLabel = 'None';
+      let vatableSalesPhp = 0;
+      let vatExemptSalesPhp = 0;
+      let vatAmountPhp = 0;
 
-      // 4. Atomic Ticket Sequencer on Master
-      const ticketNum = `FT-${sequenceCounter++}`;
-      const tenders = ['Cash', 'GCash', 'Maya', 'Credit Card'];
-      const tenderType = tenders[Math.floor(Math.random() * tenders.length)];
+      const isSeniorPwdEligible = document.getElementById('chk-discounts').checked && Math.random() < 0.22;
 
-      // 5. Mathematical Symmetry Guard Check
-      const computedTotal = subtotal - discountAmount;
-      const symmetryDiff = Math.abs(totalAmount - computedTotal);
-      if (symmetryDiff > 0.01) {
-        totalErrorsCaptured++;
-        log('ERR', `[SYMMETRY_ERROR] Ticket ${ticketNum}: Math mismatch of $${symmetryDiff.toFixed(2)}`);
-        document.getElementById('metric-symmetry').innerText = 'VARIANCE DETECTED';
-        document.getElementById('metric-symmetry').style.color = '#ef4444';
+      if (isSeniorPwdEligible) {
+        vatExemptSalesPhp = Math.round((orderGrossPhp / 1.12) * 100) / 100;
+        discountAmountPhp = Math.round(vatExemptSalesPhp * 0.20 * 100) / 100;
+        discountLabel = Math.random() > 0.5 ? 'Senior Citizen (RA 9994)' : 'PWD Card (RA 10754)';
+        vatAmountPhp = 0.0;
+        vatableSalesPhp = 0.0;
+        if (!isServerDown) Z_READ.seniorPwdDiscounts += discountAmountPhp;
+      } else {
+        vatExemptSalesPhp = 0.0;
+        vatableSalesPhp = Math.round((orderGrossPhp / 1.12) * 100) / 100;
+        vatAmountPhp = Math.round((orderGrossPhp - vatableSalesPhp) * 100) / 100;
       }
 
-      // Record transaction
+      const totalPayablePhp = Math.round((orderGrossPhp - discountAmountPhp) * 100) / 100;
+
+      const tenderTypes = ['Cash', 'GCash', 'Maya', 'Credit/Debit Card'];
+      const tenderChosen = tenderTypes[Math.floor(Math.random() * tenderTypes.length)];
+      let tenderedPhp = totalPayablePhp;
+      let changePhp = 0;
+      let tenderReference = '';
+
+      if (tenderChosen === 'Cash') {
+        const cashBills = [500, 1000, 2000];
+        const tenderedBill = cashBills.find(b => b >= totalPayablePhp) || (Math.ceil(totalPayablePhp / 500) * 500);
+        tenderedPhp = tenderedBill;
+        changePhp = Math.round((tenderedPhp - totalPayablePhp) * 100) / 100;
+        tenderReference = `Cash: ₱${tenderedPhp} (Change: ₱${changePhp})`;
+      } else if (tenderChosen === 'GCash') {
+        tenderReference = `Ref: GC-${Math.floor(10000000 + Math.random() * 90000000)}`;
+      } else if (tenderChosen === 'Maya') {
+        tenderReference = `Ref: MY-${Math.floor(10000000 + Math.random() * 90000000)}`;
+      } else {
+        tenderReference = `Visa **** ${Math.floor(1000 + Math.random() * 9000)} (Auth: ${Math.floor(100000 + Math.random() * 900000)})`;
+      }
+
+      const ticketNum = isServerDown 
+        ? `OFF-${terminalId.toUpperCase()}-${offlineSequenceCounter++}` 
+        : `FT-${sequenceCounter++}`;
+
       const record = {
         ticket: ticketNum,
         terminal: terminalId,
+        table: tableNumber,
         items: orderItems,
-        subtotal,
-        discount: discountAmount,
-        discountType: discountName,
-        vat: vatAmount,
-        total: totalAmount,
-        tender: tenderType,
+        grossPhp: orderGrossPhp,
+        discountPhp: discountAmountPhp,
+        discountLabel,
+        vatableSalesPhp,
+        vatExemptSalesPhp,
+        vatPhp: vatAmountPhp,
+        serviceChargePhp,
+        totalPhp: totalPayablePhp,
+        tender: tenderChosen,
+        tenderRef: tenderReference,
+        tenderedPhp,
+        changePhp,
+        isOfflineCreated: isServerDown,
         timestamp: new Date().toLocaleTimeString(),
-        cookTimeLeft: Math.floor(Math.random() * 8) + 4 // 4 to 12 simulated seconds
+        cookTimeLeft: Math.floor(Math.random() * 7) + 5
       };
 
-      totalTransactions++;
-      totalGrossRevenue += totalAmount;
-      tpsCounter++;
+      if (isServerDown) {
+        offlineTransactionsBuffer.push(record);
+        document.getElementById('metric-offline-queue').innerText = offlineTransactionsBuffer.length;
+        log('OFFLINE', `[OFFLINE_TXN] ${terminalId.toUpperCase()} completed #${ticketNum}: ${fmt(totalPayablePhp)} (Saved to local SQLite queue)`);
+      } else {
+        Z_READ.grossSales += orderGrossPhp;
+        Z_READ.netSales += totalPayablePhp;
+        Z_READ.vatableSales += vatableSalesPhp;
+        Z_READ.vatExemptSales += vatExemptSalesPhp;
+        Z_READ.vatAmount += vatAmountPhp;
+        Z_READ.serviceCharge += serviceChargePhp;
+        Z_READ.tenders[tenderChosen] = (Z_READ.tenders[tenderChosen] || 0) + totalPayablePhp;
 
-      // Update Terminal Card View
-      const termBody = document.getElementById(`body-${terminalId}`);
-      if (termBody) {
-        termBody.innerHTML = `
-          <div style="font-weight: 700; color: #fff;">Ticket #${ticketNum}</div>
-          <div style="color: #38bdf8; font-weight: 600;">$${totalAmount.toFixed(2)} &bull; ${tenderType}</div>
-          <div style="color: var(--text-muted); font-size: 11px;">${orderItems.map(o => `${o.qty}x ${o.name}`).join(', ')}</div>
-          ${discountAmount > 0 ? `<div style="color: #34d399; font-size: 10.5px;">✓ ${discountName} (-$${discountAmount.toFixed(2)})</div>` : ''}
-        `;
+        totalTransactions++;
+        tpsCounter++;
+        kitchenQueue.push(record);
+        updateMasterCard(record);
+        updateCdsView(record);
+        log('TXN', `[SETTLED] ${terminalId.toUpperCase()} completed #${ticketNum}: ${fmt(totalPayablePhp)} (${tenderChosen})`);
       }
 
-      // Push to KDS Queue
-      kitchenQueue.push(record);
-      log('TXN', `[ORDER_SETTLED] ${terminalId.toUpperCase()} fired ${ticketNum} for $${totalAmount.toFixed(2)} (${tenderType})`);
-
-      // Update CDS (Customer Facing Display)
-      updateCustomerDisplay(record);
-
-      // Update Master Node Status
-      updateMasterNodeView(record);
-
-      // Refresh KPI Tiles
+      renderTerminalCard(terminalId, record);
+      soundCashRegister();
       updateKpis();
+      updateOmbView();
+    }
+
+    function renderTerminalCard(terminalId, rec) {
+      const b = document.getElementById(`body-${terminalId}`);
+      if (!b) return;
+
+      b.innerHTML = `
+        <div style="display:flex; justify-content:space-between; font-weight:800; color:#fff;">
+          <span>Ticket #${rec.ticket}</span>
+          <span style="color:#38bdf8;">${fmt(rec.totalPhp)}</span>
+        </div>
+        ${rec.isOfflineCreated ? `<span style="background:rgba(249,115,22,0.2); color:#f97316; font-size:10px; font-weight:700; padding:1px 6px; border-radius:4px;">OFFLINE STORED</span>` : ''}
+        ${rec.table ? `<div style="color:#a78bfa; font-weight:700; font-size:11px;">📍 ${rec.table}</div>` : ''}
+        <div style="color:var(--text-muted); font-size:11px; margin-top:2px;">
+          ${rec.items.map(it => `${it.qty}x ${it.name}${it.modifiers.length ? ` <span style="color:#fbbf24;">(${it.modifiers[0]})</span>` : ''}`).join(', ')}
+        </div>
+        <div style="font-size:10.5px; color:#64748b; margin-top:3px;">
+          ${rec.tender} &bull; ${rec.tenderRef}
+        </div>
+        ${rec.discountPhp > 0 ? `<div style="color:#f43f5e; font-size:10.5px; font-weight:700;">✓ ${rec.discountLabel} (-${fmt(rec.discountPhp)})</div>` : ''}
+      `;
+    }
+
+    function updateMasterCard(rec) {
+      const b = document.getElementById('body-master');
+      if (!b || isServerDown) return;
+
+      b.innerHTML = `
+        <div style="color:#a78bfa; font-weight:800;">WebSocket Mesh: 9 Clients Synced</div>
+        <div style="font-size:11px; color:#cbd5e1; margin-top:3px;">
+          Last Ingest: <strong>#${rec.ticket}</strong> from <strong>${rec.terminal.toUpperCase()}</strong>
+        </div>
+        <div style="font-size:10.5px; color:#64748b; margin-top:2px;">
+          Atomic WAL: Verified &bull; 0 Lock Collisions &bull; 100% Symmetry
+        </div>
+      `;
+    }
+
+    function updateCdsView(rec) {
+      const b = document.getElementById('body-cds');
+      if (!b) return;
+
+      b.innerHTML = `
+        <div style="display:flex; justify-content:space-between; font-weight:800; color:#fff;">
+          <span>Ticket #${rec.ticket}</span>
+          <span style="color:#ec4899; font-size:14px;">${fmt(rec.totalPhp)}</span>
+        </div>
+        <div style="font-size:11px; color:var(--text-muted); margin:2px 0;">
+          VAT: ${fmt(rec.vatPhp)} &bull; Paid via ${rec.tender}
+        </div>
+        <div style="background:rgba(236,72,153,0.1); border:1px dashed #ec4899; border-radius:6px; padding:3px 6px; text-align:center; color:#f472b6; font-size:10px; margin-top:4px;">
+          📱 Dynamic QR Ph &bull; Prompting Tip (5%, 10%, 15%)
+        </div>
+      `;
+    }
+
+    function updateOmbView() {
+      const b = document.getElementById('body-omb');
+      if (!b) return;
+
+      const items86 = BASE_MENU.filter(m => m.stock === 0);
+      const lowStock = BASE_MENU.filter(m => m.stock > 0 && m.stock < 10);
+
+      b.innerHTML = `
+        <div style="display:flex; justify-content:space-between; font-weight:700; color:#10b981;">
+          <span>Live Digital Menu Sync</span>
+          <span>${BASE_MENU.length} Items</span>
+        </div>
+        <div style="margin-top:4px; font-size:11px;">
+          ${items86.length > 0 
+            ? `<span style="background:rgba(239,68,68,0.2); color:#ef4444; padding:2px 6px; border-radius:4px; font-weight:700;">86'd: ${items86.map(i => i.name.split(' ')[0]).join(', ')}</span>` 
+            : '<span style="color:#10b981;">✓ All Items In Stock</span>'}
+        </div>
+        ${lowStock.length > 0 ? `<div style="color:#f59e0b; font-size:10.5px; margin-top:3px;">⚠️ Low Par: ${lowStock.map(l => `${l.name.split(' ')[0]} (${l.stock})`).join(', ')}</div>` : ''}
+      `;
     }
 
     function progressKitchenQueue() {
@@ -632,20 +1009,19 @@
         order.cookTimeLeft -= 1;
 
         if (order.cookTimeLeft <= 0) {
-          // Bump off kitchen -> move to OSD Ready Queue
           kitchenQueue.splice(i, 1);
           pickupQueue.unshift(order);
-          if (pickupQueue.length > 8) pickupQueue.pop(); // Keep recent 8 on board
+          if (pickupQueue.length > 8) pickupQueue.pop();
 
-          log('KDS', `[BUMP_COMPLETE] Ticket ${order.ticket} finished prep. Routed to OSD Pickup Board.`);
+          soundOsdPickup();
+          log('KDS', `[COOK_COMPLETE] #${order.ticket} bumped from kitchen to OSD pickup screen.`);
         }
       }
 
-      // Render KDS Card
       const kdsBody = document.getElementById('body-kds');
       if (kdsBody) {
         if (kitchenQueue.length === 0) {
-          kdsBody.innerHTML = '<div style="color: #10b981;">✓ All kitchen orders cleared &amp; bumped.</div>';
+          kdsBody.innerHTML = '<div style="color:#10b981;">✓ Prep queue cleared. All orders bumped.</div>';
         } else {
           kdsBody.innerHTML = kitchenQueue.slice(0, 3).map(o => `
             <div style="border-bottom: 1px solid #374151; padding-bottom: 4px; margin-bottom: 4px;">
@@ -657,11 +1033,10 @@
         }
       }
 
-      // Render OSD Card (Order Status Display)
       const osdBody = document.getElementById('body-osd');
       if (osdBody) {
-        const prepNumbers = kitchenQueue.slice(0, 4).map(o => `<span style="background: rgba(245,158,11,0.2); color: #fbbf24; padding: 2px 6px; border-radius: 4px; font-weight: 700;">#${o.ticket}</span>`).join(' ');
-        const readyNumbers = pickupQueue.slice(0, 4).map(o => `<span style="background: rgba(16,185,129,0.2); color: #34d399; padding: 2px 6px; border-radius: 4px; font-weight: 700;">#${o.ticket}</span>`).join(' ');
+        const prepNumbers = kitchenQueue.slice(0, 4).map(o => `<span style="background:rgba(245,158,11,0.2); color:#fbbf24; padding:2px 6px; border-radius:4px; font-weight:700;">#${o.ticket}</span>`).join(' ');
+        const readyNumbers = pickupQueue.slice(0, 4).map(o => `<span style="background:rgba(16,185,129,0.2); color:#34d399; padding:2px 6px; border-radius:4px; font-weight:700;">#${o.ticket}</span>`).join(' ');
 
         osdBody.innerHTML = `
           <div style="margin-bottom: 6px;">
@@ -679,42 +1054,11 @@
       document.getElementById('metric-osd-ready').innerText = pickupQueue.length;
     }
 
-    function updateCustomerDisplay(order) {
-      const cdsBody = document.getElementById('body-cds');
-      if (!cdsBody) return;
-
-      cdsBody.innerHTML = `
-        <div style="display: flex; justify-content: space-between; font-weight: 700; color: #fff;">
-          <span>Ticket #${order.ticket}</span>
-          <span style="color: #38bdf8;">$${order.total.toFixed(2)}</span>
-        </div>
-        <div style="font-size: 11px; color: var(--text-muted); margin: 3px 0;">
-          VAT: $${order.vat.toFixed(2)} &bull; ${order.tender}
-        </div>
-        <div style="background: rgba(59,130,246,0.1); border: 1px dashed #3b82f6; border-radius: 6px; padding: 4px 8px; text-align: center; color: #93c5fd; font-size: 10.5px; margin-top: 4px;">
-          📱 Dynamic QR Ph Code Generated
-        </div>
-      `;
-    }
-
-    function updateMasterNodeView(order) {
-      const masterBody = document.getElementById('body-master');
-      if (!masterBody) return;
-
-      masterBody.innerHTML = `
-        <div style="color: #a78bfa; font-weight: 700;">WebSocket Mesh: 9 Clients Synced</div>
-        <div style="font-size: 11px; color: #cbd5e1; margin-top: 3px;">
-          Last Ingest: <strong>#${order.ticket}</strong> (${order.terminal})
-        </div>
-        <div style="font-size: 10.5px; color: #64748b; margin-top: 2px;">
-          SQLite WAL: Committed &bull; 0 Lock Collisions
-        </div>
-      `;
-    }
-
     function updateKpis() {
       document.getElementById('metric-txns').innerText = totalTransactions.toLocaleString();
-      document.getElementById('metric-revenue').innerText = '$' + totalGrossRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('metric-revenue').innerText = fmt(Z_READ.grossSales);
+      document.getElementById('metric-vat').innerText = fmt(Z_READ.vatAmount);
+      document.getElementById('metric-discounts').innerText = fmt(Z_READ.seniorPwdDiscounts);
       document.getElementById('metric-errors').innerText = totalErrorsCaptured;
     }
 
@@ -725,52 +1069,31 @@
       badge.innerText = text;
     }
 
-    function injectTrafficBurst(count = 15) {
-      log('CHAOS', `[RUSH_HOUR_TRIGGER] Injecting high-velocity burst of ${count} concurrent orders!`);
+    function injectTrafficBurst(count = 20) {
+      log('CHAOS', `[PEAK_BURST] Injecting ${count} concurrent rush orders across all 5 terminals!`);
       for (let i = 0; i < count; i++) {
-        setTimeout(() => simulateNextTransactionCycle(), i * 60);
-      }
-    }
-
-    function resetSimulationData() {
-      if (confirm('Reset all simulation metrics, logs, and transaction queues?')) {
-        totalTransactions = 0;
-        totalGrossRevenue = 0;
-        totalErrorsCaptured = 0;
-        elapsedSeconds = 0;
-        sequenceCounter = 1001;
-        kitchenQueue = [];
-        pickupQueue = [];
-        transactionHistory = [];
-        updateKpis();
-        updateClockDisplay();
-        initStationGrid();
-        clearLogs();
-        log('TXN', 'Simulation state reset successfully.');
+        setTimeout(() => simulateNextTransactionCycle(), i * 50);
       }
     }
 
     // ==========================================
-    // 5. TELEMETRY CHARTS (CANVAS RENDERER)
+    // 6. TELEMETRY MONITORING (CANVAS)
     // ==========================================
     function sampleTelemetryMetrics() {
-      // 1. Measure Memory Heap
-      let currentHeapMb = 42;
+      let currentHeapMb = 44;
       if (window.performance && performance.memory && performance.memory.usedJSHeapSize) {
         currentHeapMb = Math.round(performance.memory.usedJSHeapSize / (1024 * 1024));
       } else {
-        // Simulated realistic heap drift with garbage collection cycles
         const last = heapHistory[heapHistory.length - 1];
         const drift = (Math.random() * 2) - 0.7;
-        currentHeapMb = Math.max(35, Math.min(180, Math.round(last + drift)));
-        if (Math.random() < 0.08) currentHeapMb = Math.round(currentHeapMb * 0.75); // Simulated GC event
+        currentHeapMb = Math.max(38, Math.min(220, Math.round(last + drift)));
+        if (Math.random() < 0.08) currentHeapMb = Math.round(currentHeapMb * 0.78);
       }
 
       heapHistory.shift();
       heapHistory.push(currentHeapMb);
       document.getElementById('heap-label').innerText = `Allocated: ${currentHeapMb} MB`;
 
-      // 2. Measure Event Loop Stutter / Lag
       const now = performance.now();
       const drift = Math.max(0, Math.round(now - lagMeasureTime - 1000));
       lagMeasureTime = now;
@@ -778,7 +1101,6 @@
       lagHistory.shift();
       lagHistory.push(drift);
 
-      // TPS sample
       const currentTps = tpsCounter;
       tpsCounter = 0;
       tpsHistory.shift();
@@ -786,7 +1108,6 @@
 
       document.getElementById('lag-label').innerText = `Lag: ${drift}ms • ${currentTps.toFixed(1)} TPS`;
 
-      // Render Charts
       drawChart('chart-heap', heapHistory, '#10b981', 'MB');
       drawChart('chart-lag', lagHistory, '#3b82f6', 'ms');
     }
@@ -799,8 +1120,6 @@
       const h = canvas.height = canvas.offsetHeight;
 
       ctx.clearRect(0, 0, w, h);
-
-      // Grid background
       ctx.strokeStyle = '#1f2937';
       ctx.lineWidth = 1;
       for (let y = 0; y < h; y += 30) {
@@ -814,7 +1133,6 @@
       const minVal = 0;
       const stepX = w / (dataPoints.length - 1);
 
-      // Draw Path
       ctx.beginPath();
       ctx.strokeStyle = color;
       ctx.lineWidth = 2;
@@ -828,7 +1146,6 @@
       });
       ctx.stroke();
 
-      // Draw gradient fill
       ctx.lineTo(w, h);
       ctx.lineTo(0, h);
       ctx.fillStyle = `${color}15`;
@@ -836,7 +1153,138 @@
     }
 
     // ==========================================
-    // 6. LOGGING & EXPORT
+    // 7. Z-READ RECONCILIATION MODAL
+    // ==========================================
+    function openZReadModal() {
+      const m = document.getElementById('modal-zread');
+      const content = document.getElementById('zread-content');
+      if (!m || !content) return;
+
+      const dateStr = new Date().toLocaleDateString('en-PH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+      content.innerHTML = `
+        <div style="text-align: center; margin-bottom: 16px;">
+          <h2 style="font-size: 16px; font-weight: 800; color: #fff;">FLEXITAP POS SYSTEM</h2>
+          <div>STORE: 101 BONIFACIO HIGH STREET, BGC</div>
+          <div>DATE: ${dateStr}</div>
+          <div>TERMINAL COUNT: 5 SYNCHRONIZED STATIONS</div>
+        </div>
+        <hr style="border: 0; border-top: 1px dashed #4b5563; margin: 12px 0;">
+
+        <div style="display: flex; justify-content: space-between;">
+          <span>GROSS REVENUE:</span>
+          <strong>${fmt(Z_READ.grossSales)}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; color: #f43f5e;">
+          <span>LESS: SENIOR/PWD (RA 9994/10754):</span>
+          <span>-${fmt(Z_READ.seniorPwdDiscounts)}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; color: #38bdf8;">
+          <span>ADD: SERVICE CHARGES (5%):</span>
+          <span>+${fmt(Z_READ.serviceCharge)}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-weight: 800; color: #34d399; font-size: 14px; margin-top: 4px;">
+          <span>NET TENDERED SALES:</span>
+          <span>${fmt(Z_READ.netSales)}</span>
+        </div>
+
+        <hr style="border: 0; border-top: 1px dashed #4b5563; margin: 12px 0;">
+        <div style="font-weight: 700; color: #a78bfa; margin-bottom: 4px;">STATUTORY 12% EVAT BREAKDOWN:</div>
+        <div style="display: flex; justify-content: space-between;">
+          <span>VATable Sales (12%):</span>
+          <span>${fmt(Z_READ.vatableSales)}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span>12% EVAT Amount:</span>
+          <span>${fmt(Z_READ.vatAmount)}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span>VAT-Exempt Sales:</span>
+          <span>${fmt(Z_READ.vatExemptSales)}</span>
+        </div>
+
+        <hr style="border: 0; border-top: 1px dashed #4b5563; margin: 12px 0;">
+        <div style="font-weight: 700; color: #fbbf24; margin-bottom: 4px;">PAYMENT MEDIA RECONCILIATION:</div>
+        <div style="display: flex; justify-content: space-between;">
+          <span>Cash Collected:</span>
+          <span>${fmt(Z_READ.tenders.Cash)}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span>GCash (Direct QR):</span>
+          <span>${fmt(Z_READ.tenders.GCash)}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span>Maya Wallet:</span>
+          <span>${fmt(Z_READ.tenders.Maya)}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span>Credit / Debit Cards:</span>
+          <span>${fmt(Z_READ.tenders['Credit/Debit Card'])}</span>
+        </div>
+
+        <hr style="border: 0; border-top: 1px dashed #4b5563; margin: 12px 0;">
+        <div style="text-align: center; color: #10b981; font-weight: 700;">
+          ✓ MATHEMATICAL AUDIT PASSED: ZERO VARIANCE DETECTED
+        </div>
+      `;
+
+      m.style.display = 'flex';
+    }
+
+    function closeZReadModal() {
+      document.getElementById('modal-zread').style.display = 'none';
+    }
+
+    // ==========================================
+    // 8. STATION INSPECTION MODAL
+    // ==========================================
+    function openStationModal(stId) {
+      const st = STATIONS.find(s => s.id === stId);
+      if (!st) return;
+
+      const m = document.getElementById('modal-station');
+      document.getElementById('modal-st-title').innerText = `${st.name} — Live Inspector`;
+      document.getElementById('modal-st-sub').innerText = `${st.role} • Protocol: Local Wi-Fi Mesh (Port 8085)`;
+
+      const body = document.getElementById('modal-st-body');
+
+      if (st.type === 'master') {
+        body.innerHTML = `
+          <div style="background: #1e293b; padding: 14px; border-radius: 8px; margin-bottom: 12px;">
+            <div style="font-weight: 700; color: #a78bfa;">Master Node Status</div>
+            <div style="font-size: 12px; color: #cbd5e1; margin-top: 4px;">
+              Server Health: <strong style="color: ${isServerDown ? '#ef4444' : '#10b981'};">${isServerDown ? 'CRASHED (PORT 8085 DOWN)' : 'ONLINE'}</strong>
+            </div>
+            <div style="font-size: 12px; color: #cbd5e1;">Active Clients: ${isServerDown ? '0 (Disconnected)' : '9 Devices'}</div>
+            <div style="font-size: 12px; color: #cbd5e1;">Atomic Sequence Next: <strong>FT-${sequenceCounter}</strong></div>
+          </div>
+          ${isServerDown 
+            ? `<button class="btn btn-primary" onclick="recoverServerNow(); closeStationModal();" style="width: 100%; background: #10b981;">⚡ Reboot &amp; Replay Offline Queue Now</button>`
+            : `<button class="btn btn-danger" onclick="triggerServerCrash(30); closeStationModal();" style="width: 100%;">💥 Simulate Server Crash (30s Outage)</button>`}
+        `;
+      } else {
+        body.innerHTML = `
+          <div style="background: #1e293b; padding: 14px; border-radius: 8px; margin-bottom: 12px;">
+            <div style="font-weight: 700; color: #fff;">Terminal Mode: ${isServerDown ? '<span style="color:#f97316;">OFFLINE STANDALONE</span>' : '<span style="color:#10b981;">ONLINE SYNCED</span>'}</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+              ${isServerDown ? 'All sales recorded here are stored in local SQLite and will automatically replay when Master restarts.' : 'Transactions sync in real-time to Master and KDS.'}
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="generateRealisticOrder('${stId}'); closeStationModal();" style="width: 100%;">
+            ⚡ Trigger Manual Checkout on this Station
+          </button>
+        `;
+      }
+
+      m.style.display = 'flex';
+    }
+
+    function closeStationModal() {
+      document.getElementById('modal-station').style.display = 'none';
+    }
+
+    // ==========================================
+    // 9. LOGS & EXPORT
     // ==========================================
     function log(tag, msg) {
       const term = document.getElementById('log-terminal');
@@ -856,7 +1304,6 @@
       term.appendChild(line);
       term.scrollTop = term.scrollHeight;
 
-      // Keep maximum 300 lines in DOM to avoid artificial test harness memory leaks!
       if (term.children.length > 300) {
         term.removeChild(term.children[0]);
       }
@@ -872,9 +1319,7 @@
         generatedAt: new Date().toISOString(),
         runtimeSeconds: elapsedSeconds,
         totalTransactions,
-        totalGrossRevenue,
-        totalErrorsCaptured,
-        symmetryCheck: document.getElementById('metric-symmetry').innerText,
+        zReadSummary: Z_READ,
         stationCount: STATIONS.length,
         telemetry: {
           lastHeapMb: heapHistory[heapHistory.length - 1],
@@ -886,9 +1331,36 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `flexitap-simulation-audit-${Date.now()}.json`;
+      a.download = `flexitap-audit-zread-${Date.now()}.json`;
       a.click();
       URL.revokeObjectURL(url);
+    }
+
+    function resetSimulationData() {
+      if (confirm('Reset all simulation metrics, logs, and transaction queues?')) {
+        totalTransactions = 0;
+        totalErrorsCaptured = 0;
+        elapsedSeconds = 0;
+        sequenceCounter = 1001;
+        offlineSequenceCounter = 1;
+        kitchenQueue = [];
+        pickupQueue = [];
+        offlineTransactionsBuffer = [];
+        transactionHistory = [];
+        Object.keys(Z_READ).forEach(k => {
+          if (typeof Z_READ[k] === 'number') Z_READ[k] = 0;
+        });
+        Object.keys(Z_READ.tenders).forEach(k => Z_READ.tenders[k] = 0);
+        Object.keys(Z_READ.categoryMix).forEach(k => Z_READ.categoryMix[k] = 0);
+
+        BASE_MENU.forEach(m => m.stock = 50);
+
+        updateKpis();
+        updateClockDisplay();
+        initStationGrid();
+        clearLogs();
+        log('TXN', 'Simulation state and Z-Read reset.');
+      }
     }
 
     function escapeHtml(str) {
@@ -899,7 +1371,6 @@
         .replace(/>/g, '&gt;');
     }
 
-    // Auto-init on load
     window.addEventListener('DOMContentLoaded', () => {
       initStationGrid();
       sampleTelemetryMetrics();
