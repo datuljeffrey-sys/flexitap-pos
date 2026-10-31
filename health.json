@@ -1,0 +1,12 @@
+{
+  "status": "healthy",
+  "service": "FlexiTap Web Portal & Marketing Dashboard",
+  "version": "1.0.0",
+  "uptime": "nominal",
+  "timestamp": "2026-10-30T22:00:00.000Z",
+  "dependencies": {
+    "cdn": "healthy",
+    "dns": "healthy",
+    "assets": "healthy"
+  }
+}

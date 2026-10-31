@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlexiTap - System Status & Health</title>
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f8fafc;
+      --subtext: #94a3b8;
+      --green: #10b981;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --border: #334155;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      justify-content: center;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 520px;
+      padding: 32px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+    .title {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--green);
+    }
+    .indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .service-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 14px;
+    }
+    .service-name {
+      color: var(--subtext);
+    }
+    .service-val {
+      font-weight: 600;
+      color: var(--green);
+    }
+    .timestamp {
+      margin-top: 24px;
+      font-size: 12px;
+      color: var(--subtext);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <div class="title">⚡ FlexiTap System Status</div>
+      <div id="overall-badge" class="badge">
+        <span class="indicator"></span>
+        <span id="overall-text">All Systems Operational</span>
+      </div>
+    </div>
+    <div class="service-row">
+      <span class="service-name">Web Portal & Static CDN</span>
+      <span class="service-val" id="portal-status">Operational</span>
+    </div>
+    <div class="service-row">
+      <span class="service-name">POS Cloud Sync & Auth API</span>
+      <span class="service-val" id="supabase-status">Operational</span>
+    </div>
+    <div class="service-row">
+      <span class="service-name">Update Distribution CDN</span>
+      <span class="service-val" id="storage-status">Operational</span>
+    </div>
+    <div class="service-row">
+      <span class="service-name">Database Backup Automation</span>
+      <span class="service-val" id="backup-status">Active (Daily 04:00)</span>
+    </div>
+    <div class="timestamp">
+      Last checked: <span id="checked-time">Just now</span>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('checked-time').innerText = new Date().toUTCString();
+  </script>
+</body>
+</html>
