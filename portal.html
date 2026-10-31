@@ -2367,35 +2367,41 @@
                     <li>✓ Unlimited transactions</li>
                     <li>✗ No Cloud Back Office Sync</li>
                   </ul>
-                  <button type="button" class="btn-action" disabled style="width: 100%; opacity: 0.6;">Included Baseline</button>
+                  <div id="plan-btn-container-free">
+                    <button type="button" class="btn-action" disabled style="width: 100%; opacity: 0.6; cursor: default;">Included Baseline</button>
+                  </div>
                 </div>
 
                 <!-- Plus Plan Card -->
-                <div style="border: 1px solid #3b82f6; border-radius: 12px; padding: 20px; background: rgba(59, 130, 246, 0.02); position: relative;">
-                  <span class="badge" style="position: absolute; top: 12px; right: 12px; background: #3b82f6; color: #fff; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 9999px;">POPULAR</span>
+                <div id="card-plan-plus" style="border: 1px solid #3b82f6; border-radius: 12px; padding: 20px; background: rgba(59, 130, 246, 0.02); position: relative;">
+                  <span class="badge" id="badge-plan-plus" style="position: absolute; top: 12px; right: 12px; background: #3b82f6; color: #fff; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 9999px;">POPULAR</span>
                   <h4 style="font-size: 16px; font-weight: 800; margin-bottom: 4px;">Founders Plus VIP</h4>
-                  <div style="font-size: 20px; font-weight: 800; color: #2563eb; margin-bottom: 12px;">₱14,990 <span style="font-size: 12px; font-weight: 500;">/ yr ($290)</span></div>
+                  <div class="plan-price" id="plan-price-plus" style="font-size: 20px; font-weight: 800; color: #2563eb; margin-bottom: 12px;">$290 <span style="font-size: 12px; font-weight: 500;">/ yr</span></div>
                   <ul style="font-size: 12.5px; color: var(--text-muted); list-style: none; padding: 0; line-height: 1.8; margin-bottom: 16px;">
                     <li>✓ Up to 10 synced devices</li>
                     <li>✓ Real-Time Cloud Back Office</li>
                     <li>✓ Kitchen Display (KDS) &amp; CDS</li>
                     <li>✓ Automated Cloud Backups</li>
                   </ul>
-                  <a href="pricing.html" target="_blank" class="btn-action btn-primary-action" style="display: block; text-align: center; width: 100%; font-weight: 700;">Manage / Upgrade &rarr;</a>
+                  <div id="plan-btn-container-plus">
+                    <a href="pricing.html" target="_blank" class="btn-action btn-primary-action" style="display: block; text-align: center; width: 100%; font-weight: 700;">Manage / Upgrade &rarr;</a>
+                  </div>
                 </div>
 
                 <!-- Pro Plan Card -->
-                <div style="border: 1px solid #9333ea; border-radius: 12px; padding: 20px; background: rgba(147, 51, 234, 0.02); position: relative;">
-                  <span class="badge" style="position: absolute; top: 12px; right: 12px; background: #9333ea; color: #fff; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 9999px;">FLAGSHIP</span>
+                <div id="card-plan-pro" style="border: 1.5px solid #9333ea; border-radius: 12px; padding: 20px; background: rgba(147, 51, 234, 0.02); position: relative;">
+                  <span class="badge" id="badge-plan-pro" style="position: absolute; top: 12px; right: 12px; background: #9333ea; color: #fff; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 9999px;">FLAGSHIP</span>
                   <h4 style="font-size: 16px; font-weight: 800; margin-bottom: 4px;">Founders Pro VIP</h4>
-                  <div style="font-size: 20px; font-weight: 800; color: #9333ea; margin-bottom: 12px;">₱28,990 <span style="font-size: 12px; font-weight: 500;">/ yr ($590)</span></div>
+                  <div class="plan-price" id="plan-price-pro" style="font-size: 20px; font-weight: 800; color: #9333ea; margin-bottom: 12px;">$590 <span style="font-size: 12px; font-weight: 500;">/ yr</span></div>
                   <ul style="font-size: 12.5px; color: var(--text-muted); list-style: none; padding: 0; line-height: 1.8; margin-bottom: 16px;">
                     <li>✓ Unlimited Synced POS Terminals</li>
                     <li>✓ AI Sales Insights &amp; Forecasting</li>
                     <li>✓ Recipe COGS &amp; Inventory Par</li>
                     <li>✓ Ad-Hoc Remote Support (RustDesk)</li>
                   </ul>
-                  <a href="pricing.html" target="_blank" class="btn-action" style="display: block; text-align: center; width: 100%; font-weight: 700; background: #9333ea; color: #fff; border-color: #9333ea;">Manage / Upgrade &rarr;</a>
+                  <div id="plan-btn-container-pro">
+                    <button type="button" class="btn-action" disabled style="display: block; text-align: center; width: 100%; font-weight: 800; background: rgba(16, 185, 129, 0.12); color: #059669; border: 1.5px solid #10b981; cursor: default;">✓ Current Active Plan</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2490,6 +2496,59 @@
                 </table>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- DELETE ACCOUNT & PRIVACY CLAUSE 6 MODAL -->
+        <div id="modal-delete-account" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.82); z-index: 2600; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(6px);">
+          <div class="login-box" style="position: relative; max-width: 480px; width: 100%; text-align: left; background: #ffffff; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); padding: 28px; border: 1px solid #fee2e2;">
+            <button onclick="closeDeleteAccountModal()" type="button" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 22px; line-height: 1; cursor: pointer; color: #94a3b8;" title="Close">&times;</button>
+            
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+              <div style="width: 42px; height: 42px; border-radius: 10px; background: #fee2e2; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                🗑️
+              </div>
+              <div>
+                <h3 style="font-size: 18px; font-weight: 800; color: #991b1b; margin: 0;">Permanent Account Deletion</h3>
+                <span style="font-size: 11px; font-weight: 700; color: #dc2626; text-transform: uppercase; letter-spacing: 0.5px;">Statutory Privacy Clause 6</span>
+              </div>
+            </div>
+
+            <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; font-size: 12.5px; color: #9f1239; line-height: 1.5;">
+              ⚠️ <strong>Warning:</strong> Initiating this request will immediately revoke Back Office sessions and initiate a <strong>30-day statutory cool-down window</strong>. After 30 days, all cloud transaction ledgers, daily sales summaries, and store metadata are irreversibly purged. Local SQLite POS databases will operate in detached offline mode.
+            </div>
+
+            <div id="modal-del-error" style="display: none; background: #fef2f2; border: 1px solid #ef4444; color: #b91c1c; font-size: 12.5px; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-weight: 600;"></div>
+
+            <form id="form-delete-account" onsubmit="handlePortalAccountDeletion(event)">
+              <div style="margin-bottom: 14px;">
+                <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">Confirmation Word *</label>
+                <p style="font-size: 11.5px; color: #64748b; margin-top: 0; margin-bottom: 6px;">Please type <strong style="color: #0f172a;">DELETE</strong> to confirm intent:</p>
+                <input type="text" id="portal-del-confirm" required placeholder="Type DELETE" autocomplete="off" style="width: 100%; padding: 10px 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-weight: 700; color: #0f172a;" />
+              </div>
+
+              <div style="margin-bottom: 14px;">
+                <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">Current Account Password *</label>
+                <input type="password" id="portal-del-pw" required placeholder="Verify account password" autocomplete="current-password" style="width: 100%; padding: 10px 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; color: #0f172a;" />
+              </div>
+
+              <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">Primary Reason for Deletion</label>
+                <select id="portal-del-reason" style="width: 100%; padding: 10px 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; color: #0f172a;">
+                  <option value="closing_business">Closing business / Store shutdown</option>
+                  <option value="switching_pos">Switching to another POS provider</option>
+                  <option value="missing_features">Missing operational features</option>
+                  <option value="cost">Subscription cost / Pricing</option>
+                  <option value="temporary">Temporary / Seasonal hiatus</option>
+                  <option value="other" selected>Other / Privacy preference</option>
+                </select>
+              </div>
+
+              <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" onclick="closeDeleteAccountModal()" class="btn-action" style="padding: 10px 18px; font-size: 13px; font-weight: 600; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;">Cancel</button>
+                <button type="submit" id="btn-portal-del-submit" class="btn-action" style="padding: 10px 18px; font-size: 13px; font-weight: 700; background: #dc2626; color: #fff; border: 1px solid #b91c1c;">⚠️ Schedule Erasure (30-Day Window)</button>
+              </div>
+            </form>
           </div>
         </div>
 
@@ -7976,7 +8035,7 @@
       const baseEstimate = netToday > 0 ? (netToday * cal.multiplier) : 38500 * cal.multiplier;
       const sym = activeStore?.currency_symbol || '₱';
 
-      bannerEl.innerHTML = `Tomorrow (${cal.dayOfWeek}) Forecast: <strong style="color: #c084fc;">${sym}${formatMoney(baseEstimate)}</strong> &bull; ${cal.primaryLabel} &bull; Peak window: <strong>12:00 PM – 2:00 PM</strong>`;
+      bannerEl.innerHTML = `Tomorrow (${cal.dayOfWeek}) Forecast: <strong style="color: #c084fc;">${formatMoney(baseEstimate)}</strong> &bull; ${cal.primaryLabel} &bull; Peak window: <strong>12:00 PM – 2:00 PM</strong>`;
     }
 
     /**
@@ -8304,14 +8363,14 @@ Return strictly this valid JSON structure:
 
       // Card 1: Tomorrow Net Sales
       const tomorrowSalesEl = document.getElementById('ai-tomorrow-sales');
-      if (tomorrowSalesEl) tomorrowSalesEl.innerText = `${sym}${formatMoney(forecast.tomorrow.expected)}`;
+      if (tomorrowSalesEl) tomorrowSalesEl.innerText = formatMoney(forecast.tomorrow.expected);
 
       const tomorrowDowEl = document.getElementById('ai-tomorrow-dow-badge');
       if (tomorrowDowEl) tomorrowDowEl.innerText = calendar.dayOfWeek;
 
       const tomorrowRangeEl = document.getElementById('ai-tomorrow-range');
       if (tomorrowRangeEl) {
-        tomorrowRangeEl.innerHTML = `<span>Range: <strong>${sym}${formatMoney(forecast.tomorrow.conservative)}</strong> – <strong>${sym}${formatMoney(forecast.tomorrow.optimistic)}</strong></span>`;
+        tomorrowRangeEl.innerHTML = `<span>Range: <strong>${formatMoney(forecast.tomorrow.conservative)}</strong> – <strong>${formatMoney(forecast.tomorrow.optimistic)}</strong></span>`;
       }
 
       // Card 2: Peak Rush Hour
@@ -8550,6 +8609,9 @@ Return strictly this valid JSON structure:
       }
     }
     window.switchSettingsSubTab = switchSettingsSubTab;
+      window.openDeleteAccountModal = openDeleteAccountModal;
+      window.closeDeleteAccountModal = closeDeleteAccountModal;
+      window.handlePortalAccountDeletion = handlePortalAccountDeletion;
 
     // --- 2. STORE SETTINGS DATA POPULATOR ---
     function populateStoreSettingsFields() {
@@ -8580,14 +8642,59 @@ Return strictly this valid JSON structure:
       const addrEl = document.getElementById('set-store-address');
       if (addrEl) addrEl.value = address;
 
-      // Plan Details
+      // Plan Details & Currency Harmonization
       const tier = (st.subscription_tier || prof?.subscription_tier || 'pro').toUpperCase();
+      const currVal = (document.getElementById('set-currency')?.value || currency || 'USD').toUpperCase();
+      const isPhp = currVal === 'PHP';
+
       const planBadge = document.getElementById('set-plan-badge');
       const planTitle = document.getElementById('set-plan-title');
       const planRate = document.getElementById('set-plan-rate');
       if (planBadge) planBadge.innerText = `● ${tier} EDITION ACTIVE`;
       if (planTitle) planTitle.innerText = `Founders ${tier} VIP Edition`;
-      if (planRate) planRate.innerText = tier === 'PRO' ? '₱28,990 / yr ($590)' : (tier === 'PLUS' ? '₱14,990 / yr ($290)' : '$0 / forever');
+      if (planRate) {
+        if (tier === 'PRO') {
+          planRate.innerText = isPhp ? '₱28,990 / yr' : '$590 / yr';
+        } else if (tier === 'PLUS') {
+          planRate.innerText = isPhp ? '₱14,990 / yr' : '$290 / yr';
+        } else {
+          planRate.innerText = '$0 / forever';
+        }
+      }
+
+      // Dynamic Card Pricing based on Store Currency
+      const pricePlusEl = document.getElementById('plan-price-plus');
+      if (pricePlusEl) {
+        pricePlusEl.innerHTML = isPhp
+          ? '₱14,990 <span style="font-size: 12px; font-weight: 500;">/ yr</span>'
+          : '$290 <span style="font-size: 12px; font-weight: 500;">/ yr</span>';
+      }
+
+      const priceProEl = document.getElementById('plan-price-pro');
+      if (priceProEl) {
+        priceProEl.innerHTML = isPhp
+          ? '₱28,990 <span style="font-size: 12px; font-weight: 500;">/ yr</span>'
+          : '$590 <span style="font-size: 12px; font-weight: 500;">/ yr</span>';
+      }
+
+      // Dynamic Plan Action Buttons (No redundant upgrade buttons when already on Pro)
+      const btnFree = document.getElementById('plan-btn-container-free');
+      const btnPlus = document.getElementById('plan-btn-container-plus');
+      const btnPro = document.getElementById('plan-btn-container-pro');
+
+      if (tier === 'PRO') {
+        if (btnFree) btnFree.innerHTML = '<button type="button" class="btn-action" disabled style="width: 100%; opacity: 0.6; cursor: default;">Included Baseline</button>';
+        if (btnPlus) btnPlus.innerHTML = '<button type="button" class="btn-action" disabled style="display: block; text-align: center; width: 100%; font-weight: 600; background: #f8fafc; color: #64748b; border: 1px solid #cbd5e1; cursor: default;">✓ Included in Pro Tier</button>';
+        if (btnPro) btnPro.innerHTML = '<button type="button" class="btn-action" disabled style="display: block; text-align: center; width: 100%; font-weight: 800; background: rgba(16, 185, 129, 0.12); color: #059669; border: 1.5px solid #10b981; cursor: default;">✓ Current Active Plan</button>';
+      } else if (tier === 'PLUS') {
+        if (btnFree) btnFree.innerHTML = '<button type="button" class="btn-action" disabled style="width: 100%; opacity: 0.6; cursor: default;">Included Baseline</button>';
+        if (btnPlus) btnPlus.innerHTML = '<button type="button" class="btn-action" disabled style="display: block; text-align: center; width: 100%; font-weight: 800; background: rgba(16, 185, 129, 0.12); color: #059669; border: 1.5px solid #10b981; cursor: default;">✓ Current Active Plan</button>';
+        if (btnPro) btnPro.innerHTML = '<a href="pricing.html" target="_blank" class="btn-action" style="display: block; text-align: center; width: 100%; font-weight: 700; background: #9333ea; color: #fff; border-color: #9333ea;">Upgrade to Pro &rarr;</a>';
+      } else {
+        if (btnFree) btnFree.innerHTML = '<button type="button" class="btn-action" disabled style="display: block; text-align: center; width: 100%; font-weight: 800; background: rgba(16, 185, 129, 0.12); color: #059669; border: 1.5px solid #10b981; cursor: default;">✓ Current Active Plan</button>';
+        if (btnPlus) btnPlus.innerHTML = '<a href="pricing.html" target="_blank" class="btn-action btn-primary-action" style="display: block; text-align: center; width: 100%; font-weight: 700;">Upgrade to Plus &rarr;</a>';
+        if (btnPro) btnPro.innerHTML = '<a href="pricing.html" target="_blank" class="btn-action" style="display: block; text-align: center; width: 100%; font-weight: 700; background: #9333ea; color: #fff; border-color: #9333ea;">Upgrade to Pro &rarr;</a>';
+      }
     }
 
     // --- 3. STORE PROFILE SAVE HANDLER ---
