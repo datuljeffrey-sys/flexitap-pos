@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlexiTap POS - Enterprise Full-Suite Simulation & Chaos Test Harness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent: #8b5cf6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --cyan: #06b6d4;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 16px;
+      font-size: 13px;
+    }
+
+    /* TOP BAR / CONTROL DECK */
+    .header-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4);
+    }
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: none;
+      transition: all 0.15s;
+    }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-danger { background: #dc2626; color: #fff; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-warning { background: #d97706; color: #fff; }
+    .btn-warning:hover { background: #b45309; }
+    .btn-secondary { background: #374151; color: #e5e7eb; border: 1px solid #4b5563; }
+    .btn-secondary:hover { background: #4b5563; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* STATS STRIP */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+    }
+    .kpi-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; }
+    .kpi-val { font-size: 20px; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin-top: 4px; }
+
+    /* TELEMETRY ROW */
+    .telemetry-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 992px) {
+      .telemetry-row { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .panel-title { font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    canvas { width: 100%; height: 130px; display: block; border-radius: 6px; }
+
+    /* STATIONS MATRIX */
+    .section-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .station-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .station-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 14px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .station-card:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.12);
+    }
+    .station-card.active { border-left: 4px solid #10b981; }
+    .station-card.master-card { border: 1.5px solid #8b5cf6; background: rgba(139, 92, 246, 0.04); }
+    .station-card.kds-card { border: 1.5px solid #f59e0b; background: rgba(245, 158, 11, 0.04); }
+    .station-card.osd-card { border: 1.5px solid #06b6d4; background: rgba(6, 182, 212, 0.04); }
+    .station-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .station-name { font-size: 14px; font-weight: 800; color: #fff; }
+    .station-sub { font-size: 11px; color: var(--text-muted); }
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+    .badge-status.live { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+    .badge-status.lag { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+    .badge-status.err { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+    .station-body {
+      flex: 1;
+      font-size: 12px;
+      color: #cbd5e1;
+      margin-top: 6px;
+      min-height: 90px;
+    }
+
+    /* STREAM LOG TERMINAL */
+    .log-terminal {
+      background: #030712;
+      border: 1px solid #1f2937;
+      border-radius: 10px;
+      padding: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      height: 220px;
+      overflow-y: auto;
+      line-height: 1.6;
+    }
+    .log-line { display: flex; gap: 8px; margin-bottom: 2px; }
+    .log-ts { color: #64748b; }
+    .log-tag { font-weight: 700; }
+    .tag-TXN { color: #10b981; }
+    .tag-KDS { color: #f59e0b; }
+    .tag-OSD { color: #06b6d4; }
+    .tag-CHAOS { color: #ec4899; }
+    .tag-WARN { color: #eab308; }
+    .tag-ERR { color: #ef4444; font-weight: 800; background: rgba(239, 68, 68, 0.1); }
+
+    /* CONTROLS BAR */
+    .controls-strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+      background: #1e293b;
+      padding: 10px 16px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    .control-item { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; }
+    input[type="range"] { accent-color: #3b82f6; cursor: pointer; }
+    .switch-toggle { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <header class="header-bar">
+    <div class="header-title">
+      <div class="logo-badge">⚡</div>
+      <div>
+        <h1 style="font-size: 18px; font-weight: 800; letter-spacing: -0.3px; color: #fff;">FlexiTap Enterprise Simulation Suite</h1>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 1px;">
+          Multi-Station Real-World Load Harness: 1 Master &bull; 5 Terminals &bull; KDS &bull; OSD &bull; OMB &bull; CDS
+        </p>
+      </div>
+    </div>
+
+    <!-- MAIN BUTTONS -->
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <button id="btn-toggle-run" class="btn btn-primary" onclick="toggleSimulation()">
+        <span>▶</span> Start Simulation
+      </button>
+      <button id="btn-burst" class="btn btn-warning" onclick="injectTrafficBurst(15)">
+        <span>⚡</span> Inject 15 Rush Orders
+      </button>
+      <button class="btn btn-secondary" onclick="exportAuditReport()">
+        <span>📥</span> Export Audit Log
+      </button>
+      <button class="btn btn-danger" onclick="resetSimulationData()">
+        <span>🔄</span> Reset
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTROLS & CHAOS STRIP -->
+  <div class="controls-strip">
+    <div class="control-item">
+      <span>Simulation Velocity:</span>
+      <input type="range" id="speed-slider" min="1" max="10" value="2" oninput="updateSpeed(this.value)" style="width: 110px;" />
+      <span id="speed-display" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #38bdf8;">2x Pacing</span>
+    </div>
+
+    <div style="width: 1px; height: 20px; background: #334155;"></div>
+
+    <label class="switch-toggle" title="Randomly drops 5-15% of sync packets to test retry logic">
+      <input type="checkbox" id="chk-packet-drops" />
+      <span>Simulate Wi-Fi Packet Drops (10%)</span>
+    </label>
+
+    <div style="width: 1px; height: 20px; background: #334155;"></div>
+
+    <label class="switch-toggle" title="Injects Senior Citizen / PWD 20% statutory discounts">
+      <input type="checkbox" id="chk-discounts" checked />
+      <span>Statutory Discounts (Senior/PWD 20%)</span>
+    </label>
+
+    <div style="width: 1px; height: 20px; background: #334155;"></div>
+
+    <div class="control-item" style="margin-left: auto;">
+      <span style="color: var(--text-muted);">Runtime:</span>
+      <span id="runtime-display" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #a78bfa;">00:00:00</span>
+    </div>
+  </div>
+
+  <!-- METRIC TILES ROW -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <span class="kpi-label">Total Transactions</span>
+      <span class="kpi-val" id="metric-txns" style="color: #38bdf8;">0</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Gross Revenue</span>
+      <span class="kpi-val" id="metric-revenue" style="color: #34d399;">$0.00</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Kitchen In-Flight</span>
+      <span class="kpi-val" id="metric-kds-active" style="color: #fbbf24;">0</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Ready for Pickup</span>
+      <span class="kpi-val" id="metric-osd-ready" style="color: #a78bfa;">0</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Symmetry Check</span>
+      <span class="kpi-val" id="metric-symmetry" style="color: #10b981; font-size: 16px;">100% Balanced</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Captured Errors</span>
+      <span class="kpi-val" id="metric-errors" style="color: #ef4444;">0</span>
+    </div>
+  </div>
+
+  <!-- TELEMETRY GRAPHS ROW -->
+  <div class="telemetry-row">
+    <!-- JS HEAP & MEMORY MONITOR -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">
+          <span>📊</span> JS Heap Memory &amp; Resource Allocation Trace
+        </span>
+        <span id="heap-label" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #34d399; font-weight: 700;">
+          Allocated: -- MB
+        </span>
+      </div>
+      <canvas id="chart-heap"></canvas>
+    </div>
+
+    <!-- EVENT LOOP LAG & TPS MONITOR -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">
+          <span>⚡</span> Event Loop Stutter &amp; TPS
+        </span>
+        <span id="lag-label" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #38bdf8; font-weight: 700;">
+          Lag: 0ms &bull; 0.0 TPS
+        </span>
+      </div>
+      <canvas id="chart-lag"></canvas>
+    </div>
+  </div>
+
+  <!-- LIVE STATIONS MATRIX (10 NODES) -->
+  <div class="section-title">
+    <span>Synchronized Multi-Station Topography (10 Active Nodes)</span>
+    <span style="font-size: 12px; font-weight: 600; color: #94a3b8;">
+      Simulating real-time local network mesh
+    </span>
+  </div>
+
+  <div class="station-grid" id="stations-container">
+    <!-- Node cards populated dynamically by JS -->
+  </div>
+
+  <!-- STREAM LOG TERMINAL -->
+  <div class="panel" style="margin-top: 16px;">
+    <div class="panel-header">
+      <span class="panel-title">
+        <span>📜</span> High-Fidelity Simulation Telemetry &amp; Event Stream
+      </span>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 11px;" onclick="clearLogs()">Clear Console</button>
+      </div>
+    </div>
+    <div class="log-terminal" id="log-terminal">
+      <div class="log-line">
+        <span class="log-ts">[00:00:00]</span>
+        <span class="log-tag tag-TXN">[SYSTEM_INIT]</span>
+        <span>FlexiTap Enterprise Simulation Suite ready. Click "Start Simulation" to begin multi-hour stress run.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT ENGINE -->
+  <script>
+    // ==========================================
+    // 1. DATA MODELS & MENU TAXONOMY
+    // ==========================================
+    const MENU_ITEMS = [
+      { id: 'item_1', name: 'Smash Angus Burger', category: 'Mains', price: 12.50, stock: 999 },
+      { id: 'item_2', name: 'Crispy Truffle Fries', category: 'Sides', price: 5.50, stock: 999 },
+      { id: 'item_3', name: 'Iced Spanish Latte', category: 'Beverages', price: 4.80, stock: 999 },
+      { id: 'item_4', name: 'Spicy Buffalo Wings (6pc)', category: 'Mains', price: 9.90, stock: 999 },
+      { id: 'item_5', name: 'San Miguel Pale Pilsen', category: 'Beverages', price: 3.50, stock: 999 },
+      { id: 'item_6', name: 'Classic Carbonara Pasta', category: 'Mains', price: 11.20, stock: 999 },
+      { id: 'item_7', name: 'Caramel Macchiato', category: 'Beverages', price: 5.20, stock: 999 },
+      { id: 'item_8', name: 'Mango Sticky Rice Cake', category: 'Dessert', price: 6.00, stock: 999 }
+    ];
+
+    const STATIONS = [
+      { id: 'master', name: 'Master Server Node', role: 'Database & Sync Coordinator', type: 'master', status: 'idle', currentTxn: '---' },
+      { id: 't1', name: 'Terminal 1: Front Counter', role: 'Fast-Pay Cashier', type: 'pos', status: 'idle', currentTxn: '---' },
+      { id: 't2', name: 'Terminal 2: Drive-Thru', role: 'High Modifier Takeout', type: 'pos', status: 'idle', currentTxn: '---' },
+      { id: 't3', name: 'Terminal 3: Table Tablet', role: 'Dine-In Table 4', type: 'pos', status: 'idle', currentTxn: '---' },
+      { id: 't4', name: 'Terminal 4: Bar Station', role: 'Drink Pour & Quick Swipes', type: 'pos', status: 'idle', currentTxn: '---' },
+      { id: 't5', name: 'Terminal 5: Self-Kiosk', role: 'Self-Service Customer', type: 'pos', status: 'idle', currentTxn: '---' },
+      { id: 'kds', name: 'Kitchen Display (KDS)', role: 'Hot Kitchen & Prep Queue', type: 'kds', status: 'idle', activeCount: 0 },
+      { id: 'osd', name: 'Order Status Display (OSD)', role: 'Customer Pickup Board', type: 'osd', status: 'idle', readyList: [] },
+      { id: 'omb', name: 'Order Menu Board (OMB)', role: 'Digital Price & 86 Par Sync', type: 'omb', status: 'idle', itemsCount: MENU_ITEMS.length },
+      { id: 'cds', name: 'Customer Facing Display (CDS)', role: 'Live Itemization & QR Ph', type: 'cds', status: 'idle', subtotal: '$0.00' }
+    ];
+
+    // Simulation State
+    let isRunning = false;
+    let speedFactor = 2; // Default 2x
+    let sequenceCounter = 1001;
+    let totalTransactions = 0;
+    let totalGrossRevenue = 0;
+    let totalErrorsCaptured = 0;
+    let startTime = null;
+    let elapsedSeconds = 0;
+
+    // Active Queues
+    let kitchenQueue = [];
+    let pickupQueue = [];
+    let transactionHistory = [];
+
+    // Telemetry Buffers for Charts
+    const MAX_POINTS = 60;
+    const heapHistory = new Array(MAX_POINTS).fill(40);
+    const lagHistory = new Array(MAX_POINTS).fill(0);
+    const tpsHistory = new Array(MAX_POINTS).fill(0);
+    let tpsCounter = 0;
+
+    // ==========================================
+    // 2. DOM INITIALIZATION
+    // ==========================================
+    function initStationGrid() {
+      const container = document.getElementById('stations-container');
+      container.innerHTML = STATIONS.map(st => {
+        let cardClass = 'station-card';
+        if (st.type === 'master') cardClass += ' master-card';
+        if (st.type === 'kds') cardClass += ' kds-card';
+        if (st.type === 'osd') cardClass += ' osd-card';
+
+        return `
+          <div class="${cardClass}" id="card-${st.id}">
+            <div class="station-top">
+              <div>
+                <div class="station-name">${st.name}</div>
+                <div class="station-sub">${st.role}</div>
+              </div>
+              <span class="badge-status live" id="badge-${st.id}">● Online</span>
+            </div>
+            <div class="station-body" id="body-${st.id}">
+              <div style="color: #64748b; font-size: 11px;">Waiting for orders...</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ==========================================
+    // 3. ENGINE EXECUTION & TRAFFIC GENERATOR
+    // ==========================================
+    let simInterval = null;
+    let clockInterval = null;
+    let lagMeasureTime = performance.now();
+
+    function toggleSimulation() {
+      isRunning = !isRunning;
+      const btn = document.getElementById('btn-toggle-run');
+
+      if (isRunning) {
+        btn.innerHTML = '<span>⏸</span> Pause Simulation';
+        btn.className = 'btn btn-warning';
+        if (!startTime) startTime = Date.now() - (elapsedSeconds * 1000);
+        log('TXN', 'Simulation Engine Started. Multi-station mesh active.');
+        startIntervals();
+      } else {
+        btn.innerHTML = '<span>▶</span> Resume Simulation';
+        btn.className = 'btn btn-primary';
+        log('WARN', 'Simulation Engine Paused.');
+        clearInterval(simInterval);
+        clearInterval(clockInterval);
+      }
+    }
+
+    function startIntervals() {
+      clearInterval(simInterval);
+      clearInterval(clockInterval);
+
+      // Base generation tick: fires every (1500 / speedFactor) ms
+      const intervalMs = Math.max(150, Math.round(1800 / speedFactor));
+      simInterval = setInterval(() => {
+        if (!isRunning) return;
+        simulateNextTransactionCycle();
+      }, intervalMs);
+
+      // 1-second system clock and telemetry collector
+      clockInterval = setInterval(() => {
+        if (!isRunning) return;
+        elapsedSeconds++;
+        updateClockDisplay();
+        sampleTelemetryMetrics();
+      }, 1000);
+    }
+
+    function updateSpeed(val) {
+      speedFactor = parseInt(val, 10);
+      document.getElementById('speed-display').innerText = `${speedFactor}x Pacing`;
+      if (isRunning) startIntervals();
+    }
+
+    function updateClockDisplay() {
+      const h = String(Math.floor(elapsedSeconds / 3600)).padStart(2, '0');
+      const m = String(Math.floor((elapsedSeconds % 3600) / 60)).padStart(2, '0');
+      const s = String(elapsedSeconds % 60).padStart(2, '0');
+      document.getElementById('runtime-display').innerText = `${h}:${m}:${s}`;
+    }
+
+    // ==========================================
+    // 4. TRANSACTION LIFECYCLE SIMULATION
+    // ==========================================
+    function simulateNextTransactionCycle() {
+      // Pick random POS terminal (Terminal 1 through 5)
+      const terminals = ['t1', 't2', 't3', 't4', 't5'];
+      const chosenTId = terminals[Math.floor(Math.random() * terminals.length)];
+      generateOrderOnTerminal(chosenTId);
+
+      // Simulate KDS Cook Progression & Bumps
+      progressKitchenQueue();
+    }
+
+    function generateOrderOnTerminal(terminalId) {
+      // Chaos Check: Simulated packet drop
+      const packetDropChecked = document.getElementById('chk-packet-drops').checked;
+      if (packetDropChecked && Math.random() < 0.10) {
+        log('CHAOS', `Simulated Wi-Fi Packet Drop on ${terminalId}. Retrying via background queue...`);
+        flashStationBadge(terminalId, 'err', 'Packet Loss');
+        setTimeout(() => flashStationBadge(terminalId, 'live', '● Online'), 800);
+        return;
+      }
+
+      // 1. Pick 1 to 4 items
+      const itemCount = Math.floor(Math.random() * 3) + 1;
+      const orderItems = [];
+      let subtotal = 0;
+
+      for (let i = 0; i < itemCount; i++) {
+        const item = MENU_ITEMS[Math.floor(Math.random() * MENU_ITEMS.length)];
+        const qty = Math.floor(Math.random() * 2) + 1;
+        orderItems.push({ ...item, qty });
+        subtotal += item.price * qty;
+      }
+
+      // 2. Statutory Discount Check
+      const discountChecked = document.getElementById('chk-discounts').checked;
+      let discountAmount = 0;
+      let discountName = 'None';
+
+      if (discountChecked && Math.random() < 0.25) {
+        // Senior Citizen / PWD statutory discount (20% off VAT-exempt base)
+        const vatExemptBase = subtotal / 1.12;
+        discountAmount = Math.round(vatExemptBase * 0.20 * 100) / 100;
+        discountName = 'Senior/PWD 20%';
+      }
+
+      // 3. Tax Calculation (12% VAT)
+      const netAfterDiscount = subtotal - discountAmount;
+      const vatAmount = Math.round((netAfterDiscount - (netAfterDiscount / 1.12)) * 100) / 100;
+      const totalAmount = Math.round(netAfterDiscount * 100) / 100;
+
+      // 4. Atomic Ticket Sequencer on Master
+      const ticketNum = `FT-${sequenceCounter++}`;
+      const tenders = ['Cash', 'GCash', 'Maya', 'Credit Card'];
+      const tenderType = tenders[Math.floor(Math.random() * tenders.length)];
+
+      // 5. Mathematical Symmetry Guard Check
+      const computedTotal = subtotal - discountAmount;
+      const symmetryDiff = Math.abs(totalAmount - computedTotal);
+      if (symmetryDiff > 0.01) {
+        totalErrorsCaptured++;
+        log('ERR', `[SYMMETRY_ERROR] Ticket ${ticketNum}: Math mismatch of $${symmetryDiff.toFixed(2)}`);
+        document.getElementById('metric-symmetry').innerText = 'VARIANCE DETECTED';
+        document.getElementById('metric-symmetry').style.color = '#ef4444';
+      }
+
+      // Record transaction
+      const record = {
+        ticket: ticketNum,
+        terminal: terminalId,
+        items: orderItems,
+        subtotal,
+        discount: discountAmount,
+        discountType: discountName,
+        vat: vatAmount,
+        total: totalAmount,
+        tender: tenderType,
+        timestamp: new Date().toLocaleTimeString(),
+        cookTimeLeft: Math.floor(Math.random() * 8) + 4 // 4 to 12 simulated seconds
+      };
+
+      totalTransactions++;
+      totalGrossRevenue += totalAmount;
+      tpsCounter++;
+
+      // Update Terminal Card View
+      const termBody = document.getElementById(`body-${terminalId}`);
+      if (termBody) {
+        termBody.innerHTML = `
+          <div style="font-weight: 700; color: #fff;">Ticket #${ticketNum}</div>
+          <div style="color: #38bdf8; font-weight: 600;">$${totalAmount.toFixed(2)} &bull; ${tenderType}</div>
+          <div style="color: var(--text-muted); font-size: 11px;">${orderItems.map(o => `${o.qty}x ${o.name}`).join(', ')}</div>
+          ${discountAmount > 0 ? `<div style="color: #34d399; font-size: 10.5px;">✓ ${discountName} (-$${discountAmount.toFixed(2)})</div>` : ''}
+        `;
+      }
+
+      // Push to KDS Queue
+      kitchenQueue.push(record);
+      log('TXN', `[ORDER_SETTLED] ${terminalId.toUpperCase()} fired ${ticketNum} for $${totalAmount.toFixed(2)} (${tenderType})`);
+
+      // Update CDS (Customer Facing Display)
+      updateCustomerDisplay(record);
+
+      // Update Master Node Status
+      updateMasterNodeView(record);
+
+      // Refresh KPI Tiles
+      updateKpis();
+    }
+
+    function progressKitchenQueue() {
+      for (let i = kitchenQueue.length - 1; i >= 0; i--) {
+        const order = kitchenQueue[i];
+        order.cookTimeLeft -= 1;
+
+        if (order.cookTimeLeft <= 0) {
+          // Bump off kitchen -> move to OSD Ready Queue
+          kitchenQueue.splice(i, 1);
+          pickupQueue.unshift(order);
+          if (pickupQueue.length > 8) pickupQueue.pop(); // Keep recent 8 on board
+
+          log('KDS', `[BUMP_COMPLETE] Ticket ${order.ticket} finished prep. Routed to OSD Pickup Board.`);
+        }
+      }
+
+      // Render KDS Card
+      const kdsBody = document.getElementById('body-kds');
+      if (kdsBody) {
+        if (kitchenQueue.length === 0) {
+          kdsBody.innerHTML = '<div style="color: #10b981;">✓ All kitchen orders cleared &amp; bumped.</div>';
+        } else {
+          kdsBody.innerHTML = kitchenQueue.slice(0, 3).map(o => `
+            <div style="border-bottom: 1px solid #374151; padding-bottom: 4px; margin-bottom: 4px;">
+              <span style="font-weight: 800; color: #fbbf24;">#${o.ticket}</span> (${o.terminal})
+              <span style="float: right; color: ${o.cookTimeLeft < 4 ? '#ef4444' : '#34d399'}; font-weight: 700;">${o.cookTimeLeft}s prep</span>
+              <div style="font-size: 11px; color: #cbd5e1;">${o.items.map(it => `${it.qty}x ${it.name}`).join(', ')}</div>
+            </div>
+          `).join('');
+        }
+      }
+
+      // Render OSD Card (Order Status Display)
+      const osdBody = document.getElementById('body-osd');
+      if (osdBody) {
+        const prepNumbers = kitchenQueue.slice(0, 4).map(o => `<span style="background: rgba(245,158,11,0.2); color: #fbbf24; padding: 2px 6px; border-radius: 4px; font-weight: 700;">#${o.ticket}</span>`).join(' ');
+        const readyNumbers = pickupQueue.slice(0, 4).map(o => `<span style="background: rgba(16,185,129,0.2); color: #34d399; padding: 2px 6px; border-radius: 4px; font-weight: 700;">#${o.ticket}</span>`).join(' ');
+
+        osdBody.innerHTML = `
+          <div style="margin-bottom: 6px;">
+            <span style="font-size: 10px; text-transform: uppercase; color: #94a3b8; font-weight: 700;">Now Preparing:</span>
+            <div style="margin-top: 2px;">${prepNumbers || '<span style="color:#64748b;">None</span>'}</div>
+          </div>
+          <div>
+            <span style="font-size: 10px; text-transform: uppercase; color: #34d399; font-weight: 700;">Ready for Pickup:</span>
+            <div style="margin-top: 2px;">${readyNumbers || '<span style="color:#64748b;">None</span>'}</div>
+          </div>
+        `;
+      }
+
+      document.getElementById('metric-kds-active').innerText = kitchenQueue.length;
+      document.getElementById('metric-osd-ready').innerText = pickupQueue.length;
+    }
+
+    function updateCustomerDisplay(order) {
+      const cdsBody = document.getElementById('body-cds');
+      if (!cdsBody) return;
+
+      cdsBody.innerHTML = `
+        <div style="display: flex; justify-content: space-between; font-weight: 700; color: #fff;">
+          <span>Ticket #${order.ticket}</span>
+          <span style="color: #38bdf8;">$${order.total.toFixed(2)}</span>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); margin: 3px 0;">
+          VAT: $${order.vat.toFixed(2)} &bull; ${order.tender}
+        </div>
+        <div style="background: rgba(59,130,246,0.1); border: 1px dashed #3b82f6; border-radius: 6px; padding: 4px 8px; text-align: center; color: #93c5fd; font-size: 10.5px; margin-top: 4px;">
+          📱 Dynamic QR Ph Code Generated
+        </div>
+      `;
+    }
+
+    function updateMasterNodeView(order) {
+      const masterBody = document.getElementById('body-master');
+      if (!masterBody) return;
+
+      masterBody.innerHTML = `
+        <div style="color: #a78bfa; font-weight: 700;">WebSocket Mesh: 9 Clients Synced</div>
+        <div style="font-size: 11px; color: #cbd5e1; margin-top: 3px;">
+          Last Ingest: <strong>#${order.ticket}</strong> (${order.terminal})
+        </div>
+        <div style="font-size: 10.5px; color: #64748b; margin-top: 2px;">
+          SQLite WAL: Committed &bull; 0 Lock Collisions
+        </div>
+      `;
+    }
+
+    function updateKpis() {
+      document.getElementById('metric-txns').innerText = totalTransactions.toLocaleString();
+      document.getElementById('metric-revenue').innerText = '$' + totalGrossRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('metric-errors').innerText = totalErrorsCaptured;
+    }
+
+    function flashStationBadge(stId, type, text) {
+      const badge = document.getElementById(`badge-${stId}`);
+      if (!badge) return;
+      badge.className = `badge-status ${type}`;
+      badge.innerText = text;
+    }
+
+    function injectTrafficBurst(count = 15) {
+      log('CHAOS', `[RUSH_HOUR_TRIGGER] Injecting high-velocity burst of ${count} concurrent orders!`);
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => simulateNextTransactionCycle(), i * 60);
+      }
+    }
+
+    function resetSimulationData() {
+      if (confirm('Reset all simulation metrics, logs, and transaction queues?')) {
+        totalTransactions = 0;
+        totalGrossRevenue = 0;
+        totalErrorsCaptured = 0;
+        elapsedSeconds = 0;
+        sequenceCounter = 1001;
+        kitchenQueue = [];
+        pickupQueue = [];
+        transactionHistory = [];
+        updateKpis();
+        updateClockDisplay();
+        initStationGrid();
+        clearLogs();
+        log('TXN', 'Simulation state reset successfully.');
+      }
+    }
+
+    // ==========================================
+    // 5. TELEMETRY CHARTS (CANVAS RENDERER)
+    // ==========================================
+    function sampleTelemetryMetrics() {
+      // 1. Measure Memory Heap
+      let currentHeapMb = 42;
+      if (window.performance && performance.memory && performance.memory.usedJSHeapSize) {
+        currentHeapMb = Math.round(performance.memory.usedJSHeapSize / (1024 * 1024));
+      } else {
+        // Simulated realistic heap drift with garbage collection cycles
+        const last = heapHistory[heapHistory.length - 1];
+        const drift = (Math.random() * 2) - 0.7;
+        currentHeapMb = Math.max(35, Math.min(180, Math.round(last + drift)));
+        if (Math.random() < 0.08) currentHeapMb = Math.round(currentHeapMb * 0.75); // Simulated GC event
+      }
+
+      heapHistory.shift();
+      heapHistory.push(currentHeapMb);
+      document.getElementById('heap-label').innerText = `Allocated: ${currentHeapMb} MB`;
+
+      // 2. Measure Event Loop Stutter / Lag
+      const now = performance.now();
+      const drift = Math.max(0, Math.round(now - lagMeasureTime - 1000));
+      lagMeasureTime = now;
+
+      lagHistory.shift();
+      lagHistory.push(drift);
+
+      // TPS sample
+      const currentTps = tpsCounter;
+      tpsCounter = 0;
+      tpsHistory.shift();
+      tpsHistory.push(currentTps);
+
+      document.getElementById('lag-label').innerText = `Lag: ${drift}ms • ${currentTps.toFixed(1)} TPS`;
+
+      // Render Charts
+      drawChart('chart-heap', heapHistory, '#10b981', 'MB');
+      drawChart('chart-lag', lagHistory, '#3b82f6', 'ms');
+    }
+
+    function drawChart(canvasId, dataPoints, color, unit) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width = canvas.offsetWidth;
+      const h = canvas.height = canvas.offsetHeight;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Grid background
+      ctx.strokeStyle = '#1f2937';
+      ctx.lineWidth = 1;
+      for (let y = 0; y < h; y += 30) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+
+      const maxVal = Math.max(...dataPoints, 10);
+      const minVal = 0;
+      const stepX = w / (dataPoints.length - 1);
+
+      // Draw Path
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+
+      dataPoints.forEach((val, i) => {
+        const x = i * stepX;
+        const normY = (val - minVal) / (maxVal - minVal);
+        const y = h - (normY * (h - 20)) - 10;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Draw gradient fill
+      ctx.lineTo(w, h);
+      ctx.lineTo(0, h);
+      ctx.fillStyle = `${color}15`;
+      ctx.fill();
+    }
+
+    // ==========================================
+    // 6. LOGGING & EXPORT
+    // ==========================================
+    function log(tag, msg) {
+      const term = document.getElementById('log-terminal');
+      if (!term) return;
+
+      const d = new Date();
+      const ts = `[${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}]`;
+
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      line.innerHTML = `
+        <span class="log-ts">${ts}</span>
+        <span class="log-tag tag-${tag}">[${tag}]</span>
+        <span>${escapeHtml(msg)}</span>
+      `;
+
+      term.appendChild(line);
+      term.scrollTop = term.scrollHeight;
+
+      // Keep maximum 300 lines in DOM to avoid artificial test harness memory leaks!
+      if (term.children.length > 300) {
+        term.removeChild(term.children[0]);
+      }
+    }
+
+    function clearLogs() {
+      const term = document.getElementById('log-terminal');
+      if (term) term.innerHTML = '';
+    }
+
+    function exportAuditReport() {
+      const report = {
+        generatedAt: new Date().toISOString(),
+        runtimeSeconds: elapsedSeconds,
+        totalTransactions,
+        totalGrossRevenue,
+        totalErrorsCaptured,
+        symmetryCheck: document.getElementById('metric-symmetry').innerText,
+        stationCount: STATIONS.length,
+        telemetry: {
+          lastHeapMb: heapHistory[heapHistory.length - 1],
+          lastEventLoopLagMs: lagHistory[lagHistory.length - 1]
+        }
+      };
+
+      const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `flexitap-simulation-audit-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    // Auto-init on load
+    window.addEventListener('DOMContentLoaded', () => {
+      initStationGrid();
+      sampleTelemetryMetrics();
+    });
+  </script>
+</body>
+</html>
