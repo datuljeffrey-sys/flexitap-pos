@@ -862,7 +862,10 @@
         <button class="nav-item" data-report="remote-access" onclick="switchReport('remote-access', this)">
           <span class="icon">🛠️</span> Remote Access <span class="badge">Live</span>
         </button>
-        <button class="nav-item" data-report="submit-ticket" onclick="switchReport('submit-ticket', this)">
+                  <button class="nav-item" data-report="settings" onclick="switchReport('settings', this)">
+            <span class="icon">⚙️</span> Store Settings &amp; Team <span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">Hub</span>
+          </button>
+          <button class="nav-item" data-report="submit-ticket" onclick="switchReport('submit-ticket', this)">
           <span class="icon">🎫</span> Submit a Ticket <span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">Help Desk</span>
         </button>
         <button class="nav-item" data-report="delete-account" onclick="openDeleteAccountModal()" style="color: #f87171;">
@@ -2252,7 +2255,277 @@
         </div>
       </div>
 
-    </main>
+            <!-- ================= 9. SETTINGS & TEAM MANAGEMENT ================= -->
+        <div id="report-settings" class="tab-content">
+          <!-- Settings Navigation Sub-Tabs -->
+          <div style="display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; flex-wrap: wrap;">
+            <button class="preset-pill active" id="btn-tab-settings-profile" onclick="switchSettingsSubTab('profile')">🏢 Store Profile</button>
+            <button class="preset-pill" id="btn-tab-settings-plan" onclick="switchSettingsSubTab('plan')">💎 Subscription Plan</button>
+            <button class="preset-pill" id="btn-tab-settings-billing" onclick="switchSettingsSubTab('billing')">💳 Payment Methods</button>
+            <button class="preset-pill" id="btn-tab-settings-team" onclick="switchSettingsSubTab('team')">👥 Team &amp; Staff</button>
+          </div>
+
+          <!-- SUB-TAB 1: STORE PROFILE -->
+          <div id="settings-sub-profile" class="settings-sub-pane">
+            <div class="panel-card" style="max-width: 820px; margin: 0 auto 24px;">
+              <div class="panel-header-row" style="margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 14px;">
+                <div class="panel-header-title">
+                  <span style="font-size: 20px;">🏢</span>
+                  <span>Store Profile &amp; Business Information</span>
+                </div>
+                <span class="status-badge">● Live Synced</span>
+              </div>
+              <form id="form-settings-profile" onsubmit="handleSaveStoreProfile(event)" style="display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+                  <div>
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Store / DBA Name *</label>
+                    <input type="text" id="set-store-name" required placeholder="e.g. Cafe Manila" style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px;" />
+                  </div>
+                  <div>
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Legal Business Name</label>
+                    <input type="text" id="set-legal-name" placeholder="e.g. Manila Hospitality Corp." style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px;" />
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+                  <div>
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Business Contact Email *</label>
+                    <input type="email" id="set-contact-email" required placeholder="owner@store.com" style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px;" />
+                  </div>
+                  <div>
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Contact Phone / WhatsApp</label>
+                    <input type="tel" id="set-contact-phone" placeholder="+63 917 123 4567" style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px;" />
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+                  <div>
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Store Currency</label>
+                    <select id="set-currency" style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px;">
+                      <option value="PHP">Philippine Peso (PHP ₱)</option>
+                      <option value="USD">US Dollar (USD $)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Tax / VAT Percentage (%)</label>
+                    <input type="number" step="0.01" id="set-tax-rate" placeholder="12.00" style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px;" />
+                  </div>
+                </div>
+
+                <div>
+                  <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Store Address &amp; Location</label>
+                  <input type="text" id="set-store-address" placeholder="Unit 101, Bonifacio High Street, Taguig City, Philippines" style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid var(--card-border); border-radius: 8px; color: #0f172a; font-size: 14px;" />
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                  <span id="set-profile-status" style="font-size: 13px; font-weight: 600; color: var(--accent-green);"></span>
+                  <button type="submit" class="btn-action btn-primary-action" id="set-profile-btn" style="padding: 10px 24px; font-size: 14px; font-weight: 700;">
+                    Save Profile Changes
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 2: PLAN MANAGEMENT -->
+          <div id="settings-sub-plan" class="settings-sub-pane" style="display: none;">
+            <div class="panel-card" style="max-width: 900px; margin: 0 auto 24px;">
+              <div class="panel-header-row" style="margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 14px;">
+                <div class="panel-header-title">
+                  <span style="font-size: 20px;">💎</span>
+                  <span>SaaS Subscription &amp; Tier Entitlements</span>
+                </div>
+                <div id="set-plan-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #059669; font-weight: 800; padding: 6px 14px; border-radius: 9999px;">
+                  ● ACTIVE PLAN
+                </div>
+              </div>
+
+              <!-- Current Plan Card -->
+              <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; border-radius: 14px; padding: 24px; margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+                  <div>
+                    <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; font-weight: 700;">Active Subscription</span>
+                    <h2 id="set-plan-title" style="font-size: 24px; font-weight: 800; color: #fff; margin-top: 4px;">Founders Pro VIP Edition</h2>
+                    <p id="set-plan-subtitle" style="font-size: 13.5px; color: #cbd5e1; margin-top: 4px;">Unlimited POS terminals, Real-time Cloud Sync, AI Forecast, and White-Glove Support.</p>
+                  </div>
+                  <div style="text-align: right;">
+                    <div id="set-plan-rate" style="font-size: 26px; font-weight: 800; color: #38bdf8; font-family: 'JetBrains Mono', monospace;">₱28,990 / yr</div>
+                    <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Fixed Lifetime Rate Lock</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Available Upgrades Grid -->
+              <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 16px;">Available Subscription Plans</h3>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+                <!-- Free Plan Card -->
+                <div style="border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; background: #fff;">
+                  <h4 style="font-size: 16px; font-weight: 800; margin-bottom: 4px;">Free Community</h4>
+                  <div style="font-size: 20px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px;">$0 <span style="font-size: 12px; font-weight: 500;">/ forever</span></div>
+                  <ul style="font-size: 12.5px; color: var(--text-muted); list-style: none; padding: 0; line-height: 1.8; margin-bottom: 16px;">
+                    <li>✓ 100% Offline Local POS</li>
+                    <li>✓ Unlimited transactions</li>
+                    <li>✗ No Cloud Back Office Sync</li>
+                  </ul>
+                  <button type="button" class="btn-action" disabled style="width: 100%; opacity: 0.6;">Included Baseline</button>
+                </div>
+
+                <!-- Plus Plan Card -->
+                <div style="border: 1px solid #3b82f6; border-radius: 12px; padding: 20px; background: rgba(59, 130, 246, 0.02); position: relative;">
+                  <span class="badge" style="position: absolute; top: 12px; right: 12px; background: #3b82f6; color: #fff; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 9999px;">POPULAR</span>
+                  <h4 style="font-size: 16px; font-weight: 800; margin-bottom: 4px;">Founders Plus VIP</h4>
+                  <div style="font-size: 20px; font-weight: 800; color: #2563eb; margin-bottom: 12px;">₱14,990 <span style="font-size: 12px; font-weight: 500;">/ yr ($290)</span></div>
+                  <ul style="font-size: 12.5px; color: var(--text-muted); list-style: none; padding: 0; line-height: 1.8; margin-bottom: 16px;">
+                    <li>✓ Up to 10 synced devices</li>
+                    <li>✓ Real-Time Cloud Back Office</li>
+                    <li>✓ Kitchen Display (KDS) &amp; CDS</li>
+                    <li>✓ Automated Cloud Backups</li>
+                  </ul>
+                  <a href="pricing.html" target="_blank" class="btn-action btn-primary-action" style="display: block; text-align: center; width: 100%; font-weight: 700;">Manage / Upgrade &rarr;</a>
+                </div>
+
+                <!-- Pro Plan Card -->
+                <div style="border: 1px solid #9333ea; border-radius: 12px; padding: 20px; background: rgba(147, 51, 234, 0.02); position: relative;">
+                  <span class="badge" style="position: absolute; top: 12px; right: 12px; background: #9333ea; color: #fff; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 9999px;">FLAGSHIP</span>
+                  <h4 style="font-size: 16px; font-weight: 800; margin-bottom: 4px;">Founders Pro VIP</h4>
+                  <div style="font-size: 20px; font-weight: 800; color: #9333ea; margin-bottom: 12px;">₱28,990 <span style="font-size: 12px; font-weight: 500;">/ yr ($590)</span></div>
+                  <ul style="font-size: 12.5px; color: var(--text-muted); list-style: none; padding: 0; line-height: 1.8; margin-bottom: 16px;">
+                    <li>✓ Unlimited Synced POS Terminals</li>
+                    <li>✓ AI Sales Insights &amp; Forecasting</li>
+                    <li>✓ Recipe COGS &amp; Inventory Par</li>
+                    <li>✓ Ad-Hoc Remote Support (RustDesk)</li>
+                  </ul>
+                  <a href="pricing.html" target="_blank" class="btn-action" style="display: block; text-align: center; width: 100%; font-weight: 700; background: #9333ea; color: #fff; border-color: #9333ea;">Manage / Upgrade &rarr;</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 3: PAYMENT METHODS & BILLING -->
+          <div id="settings-sub-billing" class="settings-sub-pane" style="display: none;">
+            <div class="panel-card" style="max-width: 820px; margin: 0 auto 24px;">
+              <div class="panel-header-row" style="margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 14px;">
+                <div class="panel-header-title">
+                  <span style="font-size: 20px;">💳</span>
+                  <span>Payment Methods &amp; Invoices</span>
+                </div>
+                <span class="badge-status healthy">Verified Gateway</span>
+              </div>
+
+              <!-- Payment Method Display Card -->
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px; border: 1px solid var(--card-border); border-radius: 12px; margin-bottom: 20px; background: #f8fafc;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                  <div style="width: 44px; height: 44px; border-radius: 10px; background: #0056b3; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff;">
+                    💳
+                  </div>
+                  <div>
+                    <h4 id="set-billing-method-title" style="font-size: 14.5px; font-weight: 800; color: #0f172a; margin-bottom: 2px;">GCash Verified Merchant Account</h4>
+                    <p id="set-billing-method-sub" style="font-size: 12.5px; color: var(--text-muted); margin: 0;">Billed annually • Auto-renewal protected with 7-Day Money-Back Guarantee</p>
+                  </div>
+                </div>
+                <a href="pricing.html" target="_blank" class="btn-action" style="font-size: 12px; padding: 8px 14px;">Update Method</a>
+              </div>
+
+              <!-- Invoices Table -->
+              <h4 style="font-size: 14px; font-weight: 800; margin-bottom: 12px;">Billing Receipt History</h4>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Invoice ID</th>
+                      <th>Billing Date</th>
+                      <th>Plan Entitlement</th>
+                      <th class="th-num">Amount Paid</th>
+                      <th>Status</th>
+                      <th>Receipt</th>
+                    </tr>
+                  </thead>
+                  <tbody id="set-invoices-tbody">
+                    <tr>
+                      <td style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">INV-2026-FT90</td>
+                      <td>2026-10-30</td>
+                      <td><strong>Founders Edition</strong></td>
+                      <td class="num" style="font-weight: 700; color: #059669;">₱14,990.00</td>
+                      <td><span class="badge-status healthy">Paid</span></td>
+                      <td><a href="javascript:void(0)" onclick="exportReportToPDF()" style="color: var(--primary); font-size: 12px; text-decoration: none; font-weight: 700;">Download PDF</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 4: TEAM MANAGEMENT -->
+          <div id="settings-sub-team" class="settings-sub-pane" style="display: none;">
+            <div class="panel-card" style="max-width: 900px; margin: 0 auto 24px;">
+              <div class="panel-header-row" style="margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 14px; flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <div class="panel-header-title">
+                    <span style="font-size: 20px;">👥</span>
+                    <span>Staff Team &amp; Access Control</span>
+                  </div>
+                  <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px;">Assign roles and permissions for store managers and cashiers accessing Back Office.</p>
+                </div>
+                <button type="button" class="btn-action btn-primary-action" onclick="toggleInviteTeamModal(true)" style="font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>➕</span> Invite Team Member
+                </button>
+              </div>
+
+              <!-- Team Members Table -->
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Member Name</th>
+                      <th>Work Email</th>
+                      <th>Role &amp; Permissions</th>
+                      <th>Portal Access</th>
+                      <th>Last Active</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="set-team-tbody">
+                    <!-- Populated dynamically via renderTeamList() -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INVITE TEAM MEMBER MODAL -->
+        <div id="modal-invite-team" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); z-index: 2500; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(4px);">
+          <div class="login-box" style="position: relative; max-width: 440px; text-align: left;">
+            <button onclick="toggleInviteTeamModal(false)" type="button" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; cursor: pointer; color: #64748b;">&times;</button>
+            <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">Invite Team Member</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Send a Back Office invitation with pre-configured role permissions.</p>
+            <form id="form-invite-team" onsubmit="handleInviteTeamSubmit(event)">
+              <div style="margin-bottom: 14px;">
+                <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">Full Name *</label>
+                <input type="text" id="invite-name" required placeholder="e.g. Maria Santos" style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
+              </div>
+              <div style="margin-bottom: 14px;">
+                <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">Work Email Address *</label>
+                <input type="email" id="invite-email" required placeholder="staff@store.com" style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
+              </div>
+              <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">Assigned Role *</label>
+                <select id="invite-role" style="width: 100%; padding: 11px 14px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;">
+                  <option value="manager">Store Manager (Full Report &amp; Staff Access)</option>
+                  <option value="supervisor">Shift Supervisor (Sales &amp; Cash Drawer Only)</option>
+                  <option value="cashier">Cashier (View personal shift Z-Read only)</option>
+                  <option value="auditor">Financial Auditor (Read-only Accounting &amp; Ledger)</option>
+                </select>
+              </div>
+              <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" class="btn-action" onclick="toggleInviteTeamModal(false)">Cancel</button>
+                <button type="submit" class="btn-action btn-primary-action" id="invite-submit-btn">Send Invitation</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </main>
   </div>
 
   <!-- FLOATING PRIORITY TECH SUPPORT BUTTON -->
@@ -2388,11 +2661,19 @@
         'gift-cards': ['Gift Cards & Vouchers', 'Issued vouchers, card activations, remaining balances, and store liability.'],
         'remote-access': ['Remote Access & Support', 'Live customer support assistance, diagnostic sessions, and screen share.'],
         'submit-ticket': ['Merchant Support & Tickets', 'Open a diagnostic support ticket, report hardware issues, or track open resolutions.'],
-        'affiliate-referrals': ['Refer & Earn (Partner Program)', 'Earn ₱3,000 to ₱6,000 flat cash bounty for every restaurant or café you refer to FlexiTap.']
+        'affiliate-referrals': ['Refer & Earn (Partner Program)', 'Earn ₱3,000 to ₱6,000 flat cash bounty for every restaurant or café you refer to FlexiTap.'],
+        'settings': ['Store Settings & Team Management', 'Configure store DBA profile, manage SaaS subscription tier, billing, and staff permissions.']
       };
 
+      if (reportId === 'settings') {
+        populateStoreSettingsFields();
+        renderTeamList();
+      }
+      // Progressive on-demand loader for the selected section
+      ReportDataLoader.ensureSectionLoaded(reportId);
+
       if (titleMap[reportId]) {
-        const badge = reportId === 'submit-ticket' ? '● Help Desk' : (reportId === 'remote-access' ? '● Tech Support' : (reportId === 'affiliate-referrals' ? '● Partner Hub' : '● Live Synced'));
+        const badge = reportId === 'submit-ticket' ? '● Help Desk' : (reportId === 'remote-access' ? '● Tech Support' : (reportId === 'affiliate-referrals' ? '● Partner Hub' : (reportId === 'settings' ? '● Config Hub' : '● Live Synced')));
         document.getElementById('active-report-title').innerHTML = `${titleMap[reportId][0]} <span class="status-badge">${badge}</span>`;
         document.getElementById('active-report-subtitle').innerText = titleMap[reportId][1];
       }
@@ -7788,7 +8069,12 @@
      */
     async function generateAiSalesInsights(forceRefresh = false) {
       // Check Pro Tier
-      const isPro = window.currentMerchantIsPro !== false;
+      if (!isPlanEntitled('pro')) {
+        console.warn('AI Insights generation rejected: Merchant is not on Pro tier.');
+        enforcePlanGating();
+        return;
+      }
+      const isPro = true;
       const lockedEl = document.getElementById('ai-insights-locked');
       const unlockedEl = document.getElementById('ai-insights-unlocked');
       if (!isPro) {
