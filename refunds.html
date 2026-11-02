@@ -72,7 +72,7 @@
     .logo { display: flex; align-items: center; gap: clamp(8px, 1vw, 12px); font-size: clamp(18px, 1.4vw, 22px); font-weight: 800; color: #ffffff; text-decoration: none; letter-spacing: -0.5px; flex-shrink: 0;  white-space: nowrap; }
     .brand-logo-svg { width: clamp(30px, 2.4vw, 36px); height: clamp(30px, 2.4vw, 36px); flex-shrink: 0; display: block; border-radius: 50%; object-fit: contain; }
     
-    .nav-links { display: flex; align-items: center; justify-content: center; gap: clamp(14px, 1.8vw, 26px); flex: 1; margin: 0; }
+    .nav-links { display: flex; align-items: center; justify-content: center; gap: clamp(8px, 1.1vw, 16px); flex: 1; margin: 0; }
     .nav-link { color: #cbd5e1; text-decoration: none; font-size: clamp(13.5px, 0.95vw, 15px); font-weight: 600; transition: color 0.2s, transform 0.2s; white-space: nowrap; }
     .nav-link:hover, .nav-link.active { color: #fff; }
     .mobile-menu-toggle { display: none; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--card-border); padding: 8px 12px; border-radius: 10px; color: #fff; font-size: 22px; cursor: pointer; line-height: 1; }
@@ -438,10 +438,9 @@
       <div class="nav-links" id="navLinksContainer">
         <a href="features.html" class="nav-link" onclick="toggleMobileMenu()">Capabilities</a>
         <a href="pricing.html" class="nav-link" onclick="toggleMobileMenu()">Pricing</a>
-        <a href="about.html" class="nav-link" onclick="toggleMobileMenu()">About Us & FAQ</a>
+        <a href="about.html" class="nav-link" onclick="toggleMobileMenu()">About &amp; FAQ</a>
         <a href="insights.html" class="nav-link" onclick="toggleMobileMenu()">Insights</a>
-        <a href="support.html" class="nav-link" onclick="toggleMobileMenu()">Support & Download</a>
-        <a href="dev-portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
+        <a href="support.html" class="nav-link" onclick="toggleMobileMenu()">Support</a>
         <button class="btn-login mobile-only-login" onclick="openModal('login-modal'); toggleMobileMenu();">Merchant Login</button>
       </div>
 
@@ -524,7 +523,7 @@
             <li><a href="pricing.html">Pricing</a></li>
             <li><a href="about.html">FAQ</a></li>
             <li><a href="insights.html">Insights &amp; News</a></li>
-            <li><a href="support.html">Support &amp; Download</a></li>
+            <li><a href="support.html">Support</a></li>
             <li><a href="remote-support.html">Remote Support</a></li>
             <li><a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer">Merchant Community (FB Group) ↗</a></li>
             <li><a href="affiliate.html">Affiliate &amp; Partner Program</a></li>
