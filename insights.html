@@ -4,7 +4,7 @@
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
   <meta charset="UTF-8">
-  <title>FlexiTap POS Insights | Retail News, Engineering & Merchant Playbooks</title>
+  <title>FlexiTap Insights — Retail POS & Merchant News</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -654,7 +654,7 @@
     .social-icon-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-2px); }
     .social-icon-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
-    .footer-col h4 { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+    .footer-col h4, .footer-col .footer-title { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
     .footer-col ul { list-style: none; }
     .footer-col ul li { margin-bottom: 12px; }
     .footer-col ul li a { color: var(--text-muted); text-decoration: none; font-size: 14px; cursor: pointer; transition: 0.2s; }
@@ -991,8 +991,7 @@
           </div>
         </div>
 
-        <div class="footer-col">
-          <h4>Product</h4>
+        <div class="footer-col"><div class="footer-title">Product</div>
           <ul>
             <li><a href="pos-for-cafes.html">POS for Cafes &amp; Bakeries</a></li>
             <li><a href="features.html">Capabilities</a></li>
@@ -1007,8 +1006,7 @@
           </ul>
         </div>
 
-        <div class="footer-col">
-          <h4>Legal</h4>
+        <div class="footer-col"><div class="footer-title">Legal</div>
           <ul>
             <li><a href="privacy.html">Privacy Policy</a></li>
             <li><a href="terms.html">Terms of Service</a></li>
@@ -1082,10 +1080,10 @@
           <div class="reader-callout">
             "According to the National Restaurant Association, a 2-hour POS blackout during peak shift costs a typical fast-casual restaurant between $2,800 and $7,500 in lost revenue, walkouts, and ruined reputation."
           </div>
-          <h4>The Difference: Cloud-Tethered vs. Local-First</h4>
+          <h3>The Difference: Cloud-Tethered vs. Local-First</h3>
           <p>Cloud-tethered POS systems treat each screen as a thin web client that asks a distant Amazon AWS or Google Cloud server permission for every tap. When latency climbs or connection dies, the UI locks up.</p>
           <p>FlexiTap is engineered from the silicon up as an <strong>offline-first local register</strong>. All menu data, pricing rules, customer records, and receipt numbering reside in an ultra-compact embedded SQLite database running directly in the RAM of your tablet, iPad, or Windows terminal.</p>
-          <h4>Zero Network Round-Trips on Taps</h4>
+          <h3>Zero Network Round-Trips on Taps</h3>
           <p>When your cashier taps an espresso or scans a barcode, the transaction executes in <strong>0.2 milliseconds</strong> locally. Kitchen printers fire via local network sockets (ESC/POS) immediately. When your internet recovers 30 minutes or 3 days later, FlexiTap's background sync engine quietly pushes batched audit logs to the cloud with full collision resolution.</p>
         `
       },
@@ -1096,9 +1094,9 @@
         title: "How High-Volume Coffee Bars Cut Peak Checkout Time from 45s to 12s",
         content: `
           <p>In the specialty coffee and quick-service morning rush, customer patience has a strict 3-minute threshold. If prospective customers see a line stretching past your door with a queue moving slower than one order per 40 seconds, up to 35% will turn around and walk away.</p>
-          <h4>Eliminating Screen Navigations</h4>
+          <h3>Eliminating Screen Navigations</h3>
           <p>Most legacy POS interfaces require 4 to 6 screen taps for a simple latte: Category > Espresso > Latte > Milk Modifier > Cup Size > Checkout > Payment Method. In FlexiTap, our one-touch QuickTap layout nests common milk and syrup modifiers into rapid long-press gestures and sticky favorite buttons.</p>
-          <h4>NFC Tap-to-Pay Acceleration</h4>
+          <h3>NFC Tap-to-Pay Acceleration</h3>
           <p>By pairing contactless Tap-to-Pay with instant visual confirmations, customers tap their Apple Pay, Google Wallet, or contactless chip card and receive their receipt via SMS or QR instantly without waiting for a cloud round-trip delay.</p>
           <div class="reader-callout">
             "Cutting checkout latency from 45s to 12s lets a single cashier process an extra 42 morning orders per hour—worth an additional $290 daily in top-line revenue."
@@ -1112,9 +1110,9 @@
         title: "Building Zero-Latency Local Peer Sync with SQLite & Event Sourcing",
         content: `
           <p>When running a multi-terminal venue—such as a rooftop bar with 3 registers and 2 service bars—merchants frequently encounter the problem of concurrent order updates when the internet is unavailable.</p>
-          <h4>Local Area Network Discovery (mDNS)</h4>
+          <h3>Local Area Network Discovery (mDNS)</h3>
           <p>FlexiTap POS terminals use local multicast DNS to discover other FlexiTap instances on the local WiFi subnet automatically. If the store's internet cable is severed, the internal Wi-Fi network still operates flawlessly.</p>
-          <h4>Event-Sourced Delta Replication</h4>
+          <h3>Event-Sourced Delta Replication</h3>
           <p>Instead of sending entire table objects, FlexiTap streams compact transactional deltas (e.g., <code>AddOrderItemEvent</code>, <code>SplitCheckEvent</code>). Each event includes a deterministic monotonic timestamp and station UUID. This guarantees mathematical state convergence with zero check collisions.</p>
         `
       },
@@ -1125,9 +1123,9 @@
         title: "Introducing Multi-Station Kitchen Display (KDS) Routing for Fast-Casual",
         content: `
           <p>Paper tickets get lost, oil-stained, and jammed. Today, FlexiTap launches full digital multi-station Kitchen Display Systems (KDS) support built directly into the core app.</p>
-          <h4>Intelligent Category Routing</h4>
+          <h3>Intelligent Category Routing</h3>
           <p>Any tablet running FlexiTap can be designated as a Kitchen Station, Barista Screen, or Cold Bar Display with a single toggle. Drink items automatically route to the bar screen, while sandwiches and hot dishes route to the line cook station.</p>
-          <h4>Visual Timer Escalation</h4>
+          <h3>Visual Timer Escalation</h3>
           <p>Orders highlight green for the first 3 minutes, shift to amber at 6 minutes, and flash alert red when reaching 10 minutes, giving floor managers instant visual situational awareness.</p>
         `
       },
@@ -1138,9 +1136,9 @@
         title: "ESC/POS Thermal Receipt Printer Benchmark: USB, Bluetooth, & Ethernet",
         content: `
           <p>We stress-tested over a dozen popular thermal printers across 50,000 simulated transactions. Here is the verdict on which printer interfaces you should choose for your venue.</p>
-          <h4>Ethernet (LAN) Printers: The Gold Standard</h4>
+          <h3>Ethernet (LAN) Printers: The Gold Standard</h3>
           <p>Printers connected directly via CAT6 cable to your local router (e.g., Epson TM-T88VI, Star TSP143III LAN) delivered 99.99% packet delivery reliability with cut times under 0.4 seconds.</p>
-          <h4>Bluetooth: Best for Mobile & Food Trucks</h4>
+          <h3>Bluetooth: Best for Mobile & Food Trucks</h3>
           <p>For pop-ups and outdoor markets where cables are impractical, modern Bluetooth Low Energy (BLE) printers pair instantly with Android tablets and iPads, operating completely untethered from AC power.</p>
         `
       },
