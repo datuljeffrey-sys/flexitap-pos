@@ -103,7 +103,7 @@
       text-decoration: none; 
       letter-spacing: -0.5px; 
       flex-shrink: 0; 
-    }
+     white-space: nowrap; }
     .brand-logo-svg { 
       width: clamp(32px, 2.4vw, 38px); 
       height: clamp(32px, 2.4vw, 38px); 
@@ -147,7 +147,7 @@
       align-items: center; 
       gap: clamp(8px, 1vw, 12px); 
       flex-shrink: 0; 
-    }
+     }
     .btn-login { 
       background: #ffffff; 
       color: #1d4ed8; 
@@ -236,10 +236,10 @@
     .chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 13px; }
     .chat-msg { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; color: #f8fafc; }
 
-    @media (max-width: 1023px) {
+    @media (max-width: 1140px) {
       header .container { position: relative; }
-      .logo { order: 1; }
-      .nav-actions { order: 2; }
+      .logo { order: 1;  white-space: nowrap; flex-shrink: 0; }
+      .nav-actions { order: 2;  flex-shrink: 0; }
       .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; order: 3; }
       .nav-links {
         display: none;

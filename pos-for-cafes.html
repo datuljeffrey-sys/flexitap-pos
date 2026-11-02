@@ -114,7 +114,7 @@
       width: 100%; 
     }
     header .container { display: flex; align-items: center; justify-content: space-between; }
-    .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 19px; color: #fff; text-decoration: none; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 19px; color: #fff; text-decoration: none;  white-space: nowrap; flex-shrink: 0; }
     .brand-logo-svg { width: 30px; height: 30px; border-radius: 6px; }
 
     .nav-links { display: flex; align-items: center; gap: clamp(14px, 1.8vw, 24px); }
@@ -122,7 +122,7 @@
     .nav-link:hover, .nav-link.active { color: #fff; }
     .nav-link.active { color: var(--primary); }
 
-    .nav-actions { display: flex; align-items: center; gap: 12px; }
+    .nav-actions { display: flex; align-items: center; gap: 12px;  flex-shrink: 0; }
     .btn-login { background: transparent; border: 1px solid var(--card-border); color: #fff; padding: 8px 18px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; }
     .btn-login:hover { background: rgba(255,255,255,0.06); }
     .btn-signup { background: var(--primary); color: white; border: none; padding: 9px 20px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-flex; align-items: center; }
@@ -224,8 +224,11 @@
     input, select { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; color: white; font-size: 15px; }
     .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; }
 
-    @media (max-width: 1023px) {
-      .mobile-menu-toggle { display: block; }
+    @media (max-width: 1140px) {
+      .logo { order: 1; }
+      .nav-actions { order: 2; }
+      .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; order: 3; }
+
       .nav-links {
         display: none;
         position: absolute;
@@ -244,6 +247,10 @@
       .nav-link { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
       .kot-box { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+    }
+    @media (max-width: 640px) {
+      .nav-actions .btn-login { display: none; }
+      .mobile-only-login { display: inline-flex; width: 100%; justify-content: center; margin-top: 8px; }
     }
   </style>
 

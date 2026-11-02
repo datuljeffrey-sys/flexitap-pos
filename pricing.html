@@ -95,7 +95,7 @@
       text-decoration: none; 
       letter-spacing: -0.5px; 
       flex-shrink: 0; 
-    }
+     white-space: nowrap; }
     .brand-logo-svg { 
       width: clamp(32px, 2.4vw, 38px); 
       height: clamp(32px, 2.4vw, 38px); 
@@ -139,7 +139,7 @@
       align-items: center; 
       gap: clamp(8px, 1vw, 12px); 
       flex-shrink: 0; 
-    }
+     }
     .btn-login { 
       background: #ffffff; 
       color: #1d4ed8; 
@@ -321,9 +321,9 @@
     .step-desc { font-size: 12px; color: #94a3b8; line-height: 1.5; }
 
     /* DYNAMIC RESPONSIVE RULES (Mobile, Tablet, Desktop) */
-    @media (max-width: 1023px) {
-      .logo { order: 1; }
-      .nav-actions { order: 2; }
+    @media (max-width: 1140px) {
+      .logo { order: 1;  white-space: nowrap; flex-shrink: 0; }
+      .nav-actions { order: 2;  flex-shrink: 0; }
       .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; order: 3; }
       .nav-links {
         display: none;
