@@ -729,9 +729,21 @@
       headerHtml = `<div class="ft-msg agent-badge">🛡️ ${safeStaffName}</div>`;
     }
 
+    let contentHtml = '';
+    if (msg.sender === 'bot') {
+      // Bot messages contain trusted interactive UI templates (chips, buttons, links, cards)
+      contentHtml = msg.text;
+    } else if (msg.sender === 'agent') {
+      // Live staff messages: escape HTML and preserve line breaks
+      contentHtml = escapeHtml(msg.text).replace(/\n/g, '<br>');
+    } else {
+      // Visitor user input: sanitize against XSS and preserve line breaks
+      contentHtml = escapeHtml(msg.text).replace(/\n/g, '<br>');
+    }
+
     div.innerHTML = `
       ${headerHtml}
-      <div class="ft-msg-content">${escapeHtml(msg.text)}</div>
+      <div class="ft-msg-content">${contentHtml}</div>
       <span class="ft-msg-ts">${formatTime(msg.ts)}</span>
     `;
 
@@ -971,7 +983,7 @@
 
     addMessage('visitor', `My contact details: ${name} (${email}${phone ? ', Tel: ' + phone : ''})`);
     addMessage('bot', `
-      🎉 <strong>Thank you, ${name}!</strong>
+      🎉 <strong>Thank you, ${escapeHtml(name)}!</strong>
       <br>Your configuration is locked in and your inquiry is routed to our live sales &amp; engineering desk.
       <br><br>You can now type any questions directly below — a team member will reply here in real-time!
     `);
