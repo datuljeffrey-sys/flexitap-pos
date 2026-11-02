@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <!-- Primary SEO Metadata -->
+  <title>Offline POS System for Cafes & Coffee Shops | FlexiTap</title>
+  <meta name="description" content="FlexiTap is the offline POS system built for cafes, coffee shops, and bakeries. Sub-second counter checkout, offline kitchen order tickets (KOT), and zero cloud fees.">
+  <meta name="keywords" content="pos for cafe, cafe pos system, kitchen order ticket, coffee shop pos, offline pos software, cafe billing software, restaurant pos system, offline kot printing, barista pos">
+  <link rel="canonical" href="https://flexitapapp.com/pos-for-cafes.html">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="product">
+  <meta property="og:url" content="https://flexitapapp.com/pos-for-cafes.html">
+  <meta property="og:site_name" content="FlexiTap POS">
+  <meta property="og:title" content="Offline POS System for Cafes & Coffee Shops | FlexiTap">
+  <meta property="og:description" content="Never let internet drops freeze your coffee counter. Fast barista checkout, offline kitchen order tickets (KOT), modifier management, and zero monthly subscriptions.">
+  <meta property="og:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter / X Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://flexitapapp.com/pos-for-cafes.html">
+  <meta name="twitter:title" content="Offline POS System for Cafes & Coffee Shops | FlexiTap">
+  <meta name="twitter:description" content="Sub-second barista checkout, offline kitchen order tickets (KOT), and reliable counter printing without Wi-Fi. Free Community edition available.">
+  <meta name="twitter:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "FlexiTap Cafe POS",
+    "operatingSystem": "Windows 10, Windows 11, Android POS, macOS, Linux, Web PWA",
+    "applicationCategory": "BusinessApplication",
+    "category": "Point of Sale Software for Cafes and Food Service",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "description": "Free Community Tier with 100% Offline Resilience and Zero Mandatory Monthly Fees"
+    },
+    "featureList": [
+      "Offline Kitchen Order Tickets (KOT) Routing",
+      "Sub-Second Barista Counter Checkout",
+      "Custom Modifiers (Plant Milks, Syrups, Espresso Shots, Temperature)",
+      "ESC/POS Thermal Receipt & Kitchen Printer Support (58mm/80mm USB & LAN)",
+      "Table Tagging & Split-Bill Management",
+      "Zero Cloud Freeze During Internet Outages",
+      "Local SQLite Database Encryption"
+    ],
+    "description": "High-speed offline-first point-of-sale system engineered for specialty cafes, coffee shops, bakeries, and quick-service food counters."
+  }
+  </script>
+
+  <link rel="icon" type="image/png" href="image_02e503.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="image_02e503.png">
+
+  <!-- Supabase Official JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Paddle.js -->
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  <!-- Analytics & Referral Trackers -->
+  <script src="analytics.js?v=20261031" defer></script>
+  <script src="affiliate-tracker.js?v=20261031" defer></script>
+
+  <link rel="preload" href="fonts/480c062501_tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css?v=20261031">
+
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(22, 30, 49, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent-amber: #f59e0b;
+      --accent-amber-glow: rgba(245, 158, 11, 0.18);
+      --accent-green: #10b981;
+      --accent-purple: #8b5cf6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+    html, body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; width: 100%; max-width: 100vw; overflow-x: clip; position: relative; }
+
+    .container { 
+      width: 100%; 
+      max-width: 1240px; 
+      margin: 0 auto; 
+      padding: 0 clamp(20px, 4vw, 48px); 
+      box-sizing: border-box; 
+      position: relative; 
+      z-index: 2; 
+    }
+
+    /* HEADER & NAV */
+    header { 
+      padding: clamp(12px, 1.6vh, 18px) 0; 
+      border-bottom: 1px solid var(--card-border); 
+      background: rgba(9, 13, 22, 0.9); 
+      backdrop-filter: blur(16px); 
+      position: sticky; 
+      top: 0; 
+      z-index: 100; 
+      width: 100%; 
+    }
+    header .container { display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 19px; color: #fff; text-decoration: none; }
+    .brand-logo-svg { width: 30px; height: 30px; border-radius: 6px; }
+
+    .nav-links { display: flex; align-items: center; gap: clamp(14px, 1.8vw, 24px); }
+    .nav-link { color: var(--text-muted); text-decoration: none; font-size: 14.5px; font-weight: 600; transition: color 0.2s; white-space: nowrap; }
+    .nav-link:hover, .nav-link.active { color: #fff; }
+    .nav-link.active { color: var(--primary); }
+
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
+    .btn-login { background: transparent; border: 1px solid var(--card-border); color: #fff; padding: 8px 18px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; }
+    .btn-login:hover { background: rgba(255,255,255,0.06); }
+    .btn-signup { background: var(--primary); color: white; border: none; padding: 9px 20px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-flex; align-items: center; }
+    .btn-signup:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+    .mobile-menu-toggle { display: none; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+    .mobile-only-login { display: none; }
+
+    /* HERO SECTION */
+    .hero-section { padding: clamp(50px, 8vh, 80px) 0 clamp(40px, 6vh, 60px); text-align: center; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-amber-glow); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; padding: 6px 16px; border-radius: 9999px; font-size: 13px; font-weight: 700; margin-bottom: 24px; }
+    .hero-title { font-size: clamp(32px, 5.5vw, 56px); font-weight: 900; letter-spacing: -1px; line-height: 1.15; color: #fff; max-width: 980px; margin: 0 auto 20px; }
+    .hero-title span { background: linear-gradient(135deg, #f59e0b, #fb923c, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-desc { font-size: clamp(16px, 2vw, 19px); color: var(--text-muted); max-width: 760px; margin: 0 auto 36px; line-height: 1.6; }
+    .hero-cta-group { display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 40px; }
+    .btn-primary-lg { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; padding: 14px 28px; border-radius: 10px; font-weight: 700; font-size: 15.5px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4); transition: 0.2s; }
+    .btn-primary-lg:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(37, 99, 235, 0.5); }
+    .btn-secondary-lg { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 14px 26px; border-radius: 10px; font-weight: 700; font-size: 15.5px; text-decoration: none; transition: 0.2s; cursor: pointer; }
+    .btn-secondary-lg:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
+
+    /* FEATURE BADGES */
+    .hero-highlights { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-top: 24px; }
+    .highlight-pill { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: #cbd5e1; }
+    .highlight-pill svg { width: 16px; height: 16px; color: #10b981; }
+
+    /* SECTION STYLES */
+    .section-wrap { padding: clamp(48px, 6vh, 72px) 0; }
+    .section-header { text-align: center; max-width: 720px; margin: 0 auto 48px; }
+    .section-tag { display: inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); margin-bottom: 10px; }
+    .section-title { font-size: clamp(26px, 3.8vw, 38px); font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 14px; }
+    .section-subtitle { font-size: 16px; color: var(--text-muted); line-height: 1.6; }
+
+    /* KOT GOLDMINE SECTION */
+    .kot-box { background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95)); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 20px; padding: clamp(24px, 4vw, 44px); display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 36px; align-items: center; position: relative; overflow: hidden; }
+    .kot-box::before { content: ""; position: absolute; top: -50px; right: -50px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(245, 158, 11, 0.15), transparent 70%); border-radius: 50%; pointer-events: none; }
+    .kot-title { font-size: clamp(22px, 3vw, 32px); font-weight: 800; color: #fff; margin-bottom: 16px; }
+    .kot-desc { font-size: 15px; color: #cbd5e1; line-height: 1.7; margin-bottom: 20px; }
+    .kot-steps { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .kot-step { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: #cbd5e1; }
+    .kot-num { width: 24px; height: 24px; border-radius: 50%; background: #f59e0b; color: #000; font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+
+    /* TICKET PREVIEW CARD */
+    .ticket-card { background: #fff; color: #1e293b; border-radius: 8px; padding: 24px 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px; box-shadow: 0 16px 40px rgba(0,0,0,0.6); position: relative; border-top: 6px dashed #090d16; }
+    .ticket-header { text-align: center; border-bottom: 1px dashed #94a3b8; padding-bottom: 12px; margin-bottom: 12px; }
+    .ticket-title { font-weight: 900; font-size: 15px; text-transform: uppercase; color: #0f172a; }
+    .ticket-meta { font-size: 11px; color: #64748b; margin-top: 4px; }
+    .ticket-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 700; color: #0f172a; }
+    .ticket-mods { font-size: 11px; color: #475569; padding-left: 10px; margin-bottom: 8px; }
+    .ticket-footer { border-top: 1px dashed #94a3b8; padding-top: 10px; margin-top: 12px; text-align: center; font-size: 11px; color: #64748b; }
+    .ticket-badge-offline { display: inline-block; background: #ecfdf5; border: 1px solid #10b981; color: #065f46; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; margin-top: 8px; }
+
+    /* THREE PILLARS GRID */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+    .feature-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 28px 24px; transition: transform 0.2s, border-color 0.2s; position: relative; }
+    .feature-card:hover { transform: translateY(-3px); border-color: rgba(59, 130, 246, 0.4); }
+    .feature-icon { font-size: 32px; margin-bottom: 16px; display: inline-block; }
+    .feature-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .feature-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+    /* COMPARISON TABLE */
+    .compare-wrap { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; overflow-x: auto; padding: 12px; margin-top: 24px; }
+    .compare-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+    .compare-table th { padding: 16px 20px; font-weight: 700; color: #fff; border-bottom: 1px solid var(--card-border); background: rgba(15, 23, 42, 0.6); }
+    .compare-table th.highlight { color: #60a5fa; background: rgba(37, 99, 235, 0.12); border-left: 1px solid rgba(59, 130, 246, 0.2); border-right: 1px solid rgba(59, 130, 246, 0.2); }
+    .compare-table td { padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #cbd5e1; }
+    .compare-table td.highlight { background: rgba(37, 99, 235, 0.05); border-left: 1px solid rgba(59, 130, 246, 0.2); border-right: 1px solid rgba(59, 130, 246, 0.2); font-weight: 600; color: #fff; }
+    .status-check { color: #10b981; font-weight: bold; }
+    .status-cross { color: #ef4444; font-weight: bold; }
+
+    /* FAQ SECTION */
+    .faq-container { max-width: 840px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+    .faq-item { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 18px 22px; cursor: pointer; }
+    .faq-question { font-size: 16px; font-weight: 700; color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .faq-answer { display: none; margin-top: 12px; font-size: 14.5px; color: var(--text-muted); line-height: 1.6; border-top: 1px solid var(--card-border); padding-top: 12px; }
+    .faq-item.open .faq-answer { display: block; }
+    .faq-toggle { font-size: 20px; color: var(--primary); }
+
+    /* CTA BANNER */
+    .cta-banner { background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(245, 158, 11, 0.15)); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 20px; padding: clamp(36px, 6vh, 60px) 24px; text-align: center; margin: 60px 0 20px; }
+    .cta-banner h3 { font-size: clamp(24px, 4vw, 36px); font-weight: 800; color: #fff; margin-bottom: 14px; }
+    .cta-banner p { font-size: 16px; color: #cbd5e1; max-width: 600px; margin: 0 auto 28px; line-height: 1.6; }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #0b0f19; font-size: 14px; width: 100%; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 24px; }
+    .footer-brand p { color: var(--text-muted); font-size: 14px; margin: 16px 0 24px 0; max-width: 320px; line-height: 1.6; }
+    .footer-col h4 { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 12px; }
+    .footer-col ul li a { color: var(--text-muted); text-decoration: none; font-size: 14px; transition: 0.2s; }
+    .footer-col ul li a:hover { color: #fff; }
+    .footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--text-muted); font-size: 13px; }
+
+    /* MODALS */
+    .modal-overlay { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; padding: 16px; }
+    .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); padding: 36px 24px; border-radius: 20px; width: 100%; max-width: 440px; position: relative; text-align: center; max-height: 90vh; overflow-y: auto; }
+    .close-btn { position: absolute; top: 18px; right: 18px; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
+    label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
+    input, select { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; color: white; font-size: 15px; }
+    .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; }
+
+    @media (max-width: 1023px) {
+      .mobile-menu-toggle { display: block; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: calc(100% + 1px);
+        left: 0;
+        right: 0;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        background: rgba(9, 13, 22, 0.98);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 20px 24px;
+        gap: 10px;
+      }
+      .nav-links.mobile-open { display: flex; }
+      .nav-link { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+      .kot-box { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+    }
+  </style>
+
+  <script>
+    // Supabase Anonymous Client Config
+    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+    let supabaseClient = null;
+    try {
+      if (typeof supabase !== 'undefined') {
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    } catch (_) {}
+
+    function toggleMobileMenu() {
+      const nav = document.getElementById('navLinksContainer');
+      if (nav) nav.classList.toggle('mobile-open');
+    }
+
+    function toggleFaq(el) {
+      el.classList.toggle('open');
+      const toggleIcon = el.querySelector('.faq-toggle');
+      if (toggleIcon) {
+        toggleIcon.textContent = el.classList.contains('open') ? '−' : '+';
+      }
+    }
+
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.style.display = 'none';
+    }
+
+    function openDemoBooking(event) {
+      if (event) event.preventDefault();
+      openModal('booking-modal');
+    }
+  </script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" />
+        <span>FlexiTap POS</span>
+      </a>
+      
+      <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">☰</button>
+
+      <div class="nav-links" id="navLinksContainer">
+        <a href="features.html" class="nav-link" onclick="toggleMobileMenu()">Capabilities</a>
+        <a href="pos-for-cafes.html" class="nav-link active" onclick="toggleMobileMenu()">For Cafes &amp; Food</a>
+        <a href="pricing.html" class="nav-link" onclick="toggleMobileMenu()">Pricing</a>
+        <a href="about.html" class="nav-link" onclick="toggleMobileMenu()">About Us &amp; FAQ</a>
+        <a href="insights.html" class="nav-link" onclick="toggleMobileMenu()">Insights</a>
+        <a href="support.html" class="nav-link" onclick="toggleMobileMenu()">Support &amp; Download</a>
+        <button class="btn-login mobile-only-login" onclick="openModal('login-modal'); toggleMobileMenu();">Merchant Login</button>
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
+        <a href="pricing.html" class="btn-signup">Get Started</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <main>
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-badge">☕ Engineered for Specialty Cafes, Bakeries &amp; Coffee Bars</div>
+        <h1 class="hero-title">Offline POS System for Cafes &amp; Coffee Shops — <span>Never Freeze at the Counter</span></h1>
+        <p class="hero-desc">
+          Morning rush lines wait for no one. FlexiTap is the true offline POS software engineered for high-speed barista counters, instant modifiers, and offline kitchen order tickets (KOT) that route and print with zero internet lag.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="pricing.html" class="btn-primary-lg">
+            <span>Start Free Community Tier</span>
+            <span>→</span>
+          </a>
+          <button class="btn-secondary-lg" onclick="openDemoBooking(event)">Book a 15-Min Live Demo</button>
+        </div>
+
+        <div class="hero-highlights">
+          <div class="highlight-pill">
+            <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+            <span>100% Offline SQLite Architecture</span>
+          </div>
+          <div class="highlight-pill">
+            <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+            <span>Instant Kitchen Order Tickets (KOT)</span>
+          </div>
+          <div class="highlight-pill">
+            <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+            <span>Zero Mandatory Monthly Subscriptions</span>
+          </div>
+          <div class="highlight-pill">
+            <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+            <span>Thermal ESC/POS Auto-Cutter Support</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: KITCHEN ORDER TICKET (KOT) SPOTLIGHT (KD 0 TARGET) -->
+    <section class="section-wrap" style="background: rgba(15, 23, 42, 0.4);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">High-Volume Kitchen Operations</span>
+          <h2 class="section-title">How Offline Kitchen Order Tickets (KOT) Work Without Internet</h2>
+          <p class="section-subtitle">
+            Most cloud POS systems drop drink tickets or delay food prep when your coffee shop Wi-Fi disconnects. FlexiTap routes kitchen order tickets directly over your local network in real-time.
+          </p>
+        </div>
+
+        <div class="kot-box">
+          <div>
+            <h3 class="kot-title">Instant KOT Routing: From Counter to Barista Station in Under 300ms</h3>
+            <p class="kot-desc">
+              When a customer orders an iced oat latte with an extra shot and a warm almond croissant, your front-of-house cashier punches the ticket. Even if an internet storm completely knocks out your ISP, FlexiTap writes the ticket to your encrypted local database and fires print triggers instantly:
+            </p>
+            <ul class="kot-steps">
+              <li class="kot-step">
+                <span class="kot-num">1</span>
+                <div><strong>Beverage &amp; Espresso Routing:</strong> Drink tickets print immediately at the barista station printer with exact milk, temperature, and sweetness customizations.</div>
+              </li>
+              <li class="kot-step">
+                <span class="kot-num">2</span>
+                <div><strong>Pastry &amp; Kitchen Routing:</strong> Food orders route to the kitchen prep counter or thermal receipt cutter with table numbers and guest tags.</div>
+              </li>
+              <li class="kot-step">
+                <span class="kot-num">3</span>
+                <div><strong>Zero Cloud Round-Trip:</strong> Tickets never travel to a remote cloud server before printing. No "buffering spinner," no lost tickets, and zero walkouts.</div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- MOCK RECEIPT TICKET -->
+          <div>
+            <div class="ticket-card">
+              <div class="ticket-header">
+                <div class="ticket-title">KITCHEN ORDER TICKET (KOT)</div>
+                <div class="ticket-meta">Ticket #084 &bull; Table 4 &bull; Server: Alex</div>
+                <div class="ticket-meta">Time: 08:42 AM (Local Network)</div>
+              </div>
+              <div>
+                <div class="ticket-item">
+                  <span>1x Iced Spanish Latte</span>
+                  <span>[BARISTA]</span>
+                </div>
+                <div class="ticket-mods">
+                  &bull; Oat Milk Sub (+₱35)<br>
+                  &bull; Extra Double Espresso Shot<br>
+                  &bull; 50% Sweetness
+                </div>
+
+                <div class="ticket-item">
+                  <span>1x Sourdough Avocado Toast</span>
+                  <span>[KITCHEN]</span>
+                </div>
+                <div class="ticket-mods">
+                  &bull; Add Poached Egg<br>
+                  &bull; Chili Flakes on Side
+                </div>
+              </div>
+              <div class="ticket-footer">
+                <div>*** LOCAL OFFLINE ORDER VERIFIED ***</div>
+                <div class="ticket-badge-offline">✓ Printed via ESC/POS Network Cut</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: 3 CORE ADVANTAGES FOR CAFES & QUICK SERVICE -->
+    <section class="section-wrap">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Built for Counter Flow</span>
+          <h2 class="section-title">Designed for Fast-Paced Coffee Counters</h2>
+          <p class="section-subtitle">
+            Every feature in FlexiTap is tuned to eliminate friction, speed up line queues, and protect your cafe revenue.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <span class="feature-icon">⚡</span>
+            <h3 class="feature-title">Sub-Second Barista Checkout</h3>
+            <p class="feature-desc">
+              Tap-and-go speed with visual menu tiles, color-coded categories, and instant cash drawer kick. Baristas can complete an order in under 5 seconds during morning rush hour.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">🥛</span>
+            <h3 class="feature-title">Intuitive Modifier Management</h3>
+            <p class="feature-desc">
+              Custom drink sizing, plant-based milk substitutions (Oat, Almond, Soy), decaf shots, syrup pumps, and ice levels. Automatically calculates price adjustments and attaches instructions to the KOT.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">📑</span>
+            <h3 class="feature-title">Split Bills &amp; Table Tabs</h3>
+            <p class="feature-desc">
+              Split checks evenly among guests, split by specific menu items, or hold open tabs for laptop regulars. Transfer tables with a single tap without resetting counter order queues.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">🖨️</span>
+            <h3 class="feature-title">Hardware Freedom &amp; ESC/POS</h3>
+            <p class="feature-desc">
+              No expensive proprietary hardware traps. Connect standard 80mm or 58mm thermal receipt printers via USB, Bluetooth, or Ethernet LAN. Auto-cutter and cash drawer RJ11 kick supported.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">📦</span>
+            <h3 class="feature-title">Real-Time Coffee Bean &amp; Milk Inventory</h3>
+            <p class="feature-desc">
+              Track coffee bean kilograms, milk cartons, and syrups per cup poured. Receive low-stock warning banners before morning rush starts so baristas never run dry on whole milk.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">🔒</span>
+            <h3 class="feature-title">Staff Permissions &amp; Cash Drops</h3>
+            <p class="feature-desc">
+              Separate barista register access from owner back-office analytics. Baristas ring orders and print kitchen tickets while your financial sales data remains completely password-shielded.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: COMPARISON TABLE (LOYVERSE & TOAST ALTERNATIVE) -->
+    <section class="section-wrap" style="background: rgba(15, 23, 42, 0.4);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Transparent Comparison</span>
+          <h2 class="section-title">Why Independent Cafes Choose FlexiTap Over Loyverse &amp; Toast</h2>
+          <p class="section-subtitle">
+            See how FlexiTap eliminates the cloud failure points, mandatory subscriptions, and hardware lock-ins found in legacy vendors.
+          </p>
+        </div>
+
+        <div class="compare-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Feature / Capability</th>
+                <th class="highlight">FlexiTap Cafe POS</th>
+                <th>Loyverse POS</th>
+                <th>Toast POS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>True Offline Resilience</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> 100% Local SQLite (Full Store Ops)</td>
+                <td>Limited (Sync delays &amp; report freeze)</td>
+                <td>Limited (Offline card capture only)</td>
+              </tr>
+              <tr>
+                <td><strong>Kitchen Order Tickets (KOT)</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> Instant Local Print without Cloud</td>
+                <td>Requires stable cloud connection</td>
+                <td>Proprietary router &amp; hardware</td>
+              </tr>
+              <tr>
+                <td><strong>Free Community Tier</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> $0 Free Forever (Single Register)</td>
+                <td>Free with paid add-ons ($5–$25/mo)</td>
+                <td><span class="status-cross">✗</span> $69–$165+/mo minimum</td>
+              </tr>
+              <tr>
+                <td><strong>Hardware Independence</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> Any PC, Tablet, or Android Terminal</td>
+                <td>Tablets only</td>
+                <td><span class="status-cross">✗</span> Locked proprietary hardware</td>
+              </tr>
+              <tr>
+                <td><strong>Transaction Fee Lock-In</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> 0% Extra (Use Any Payment Provider)</td>
+                <td>0% (Cash / external terminals)</td>
+                <td><span class="status-cross">✗</span> Mandatory Toast payment processing</td>
+              </tr>
+              <tr>
+                <td><strong>Local Data Ownership</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> Encrypted on your machine</td>
+                <td>Stored solely on third-party servers</td>
+                <td>Stored solely on vendor cloud</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: FREQUENTLY ASKED QUESTIONS (SEO VOICE & LONG-TAIL) -->
+    <section class="section-wrap">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Frequently Asked Questions</span>
+          <h2 class="section-title">Answers for Cafe Operators &amp; Baristas</h2>
+          <p class="section-subtitle">Everything you need to know about setting up FlexiTap in your coffee shop or cafe.</p>
+        </div>
+
+        <div class="faq-container">
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Can I use FlexiTap in my cafe without an internet connection?</span>
+              <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+              Yes, 100%. FlexiTap is built from the ground up as an offline-first system using a local SQLite database engine. You can ring up sales, calculate change, apply discounts, and print customer receipts and kitchen order tickets completely offline. When an internet connection is available, data seamlessly backs up to the cloud.
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>How do Kitchen Order Tickets (KOT) print without internet?</span>
+              <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+              FlexiTap talks directly to your thermal receipt printers (80mm or 58mm) over your local USB connection, Bluetooth, or internal Wi-Fi/Ethernet router. Because the communication happens over your internal Local Area Network (LAN), zero internet connection to external cloud servers is required to route tickets to the barista or kitchen.
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Can I set up beverage modifiers like oat milk and extra espresso shots?</span>
+              <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+              Yes. FlexiTap features an advanced item modifier system designed specifically for coffee shops. You can configure modifier groups such as Milk Choice (Whole, Oat, Almond), Sweetness Level (0%, 25%, 50%, 100%), Temperature (Hot, Iced), and Extra Add-ons. Modifiers can carry price deltas and appear clearly printed on barista tickets.
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>What hardware do I need to run FlexiTap in my cafe?</span>
+              <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+              You can run FlexiTap on hardware you already own! It runs smoothly on Windows 10/11 touchscreen terminals, desktop PCs, laptops, Android POS devices, or as an installable Progressive Web App (PWA) on iPads and Macs. For printing, it connects to standard ESC/POS thermal printers from brands like Epson, Star Micronics, Sunmi, Xprinter, and generic thermal receipt printers.
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Is the Free Community edition really free for my coffee shop?</span>
+              <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+              Yes! Our Free Community tier is completely free with zero monthly fees and zero expiration dates. It includes unlimited offline sales transactions, item modifiers, receipt printing, and local inventory tracking for a single register counter. If you later decide you want automatic cloud multi-device sync and remote analytics, you can upgrade to Founders Plus or Pro.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA BANNER -->
+    <section class="container">
+      <div class="cta-banner">
+        <h3>Ready to Protect Your Cafe Counter from Internet Outages?</h3>
+        <p>
+          Join independent specialty coffee shops, espresso bars, and bakeries using FlexiTap for lightning-fast counter checkout and zero monthly software fees.
+        </p>
+        <div class="hero-cta-group" style="margin-bottom: 0;">
+          <a href="pricing.html" class="btn-primary-lg">
+            <span>Download Free Community POS</span>
+            <span>→</span>
+          </a>
+          <button class="btn-secondary-lg" onclick="openDemoBooking(event)">Schedule a Live Demo</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 26px; height: 26px;" />
+            <div style="font-weight: 800; color: #fff; font-size: 18px;">FlexiTap POS</div>
+          </div>
+          <p>Simplify Sales. Grow Your Business. An offline-first point-of-sale built for coffee shops, cafes, and retailers who demand continuous counter speed.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Solutions &amp; Features</h4>
+          <ul>
+            <li><a href="pos-for-cafes.html">POS for Cafes &amp; Bakeries</a></li>
+            <li><a href="features.html">Offline Capabilities</a></li>
+            <li><a href="pricing.html">Pricing &amp; Free Plan</a></li>
+            <li><a href="about.html">About &amp; FAQ</a></li>
+            <li><a href="insights.html">Insights &amp; News</a></li>
+            <li><a href="support.html">Support &amp; Download</a></li>
+            <li><a href="remote-support.html">Remote Support &amp; Diagnostics</a></li>
+            <li><a href="affiliate.html">Affiliate &amp; Partner Program</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Legal &amp; Policies</h4>
+          <ul>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="refunds.html">Refund Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 FlexiTap POS. All rights reserved.</div>
+        <div>Engineered for Offline-First Retail &amp; Food Service Resilience</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- DEMO BOOKING MODAL -->
+  <div class="modal-overlay" id="booking-modal">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('booking-modal')" aria-label="Close">&times;</button>
+      <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px;">Book a 15-Minute Live Demo</h3>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px;">
+        See how FlexiTap handles coffee counter rushes, offline KOT routing, and receipt printing on your setup.
+      </p>
+
+      <form onsubmit="handleDemoSubmit(event)">
+        <label>Your Name *</label>
+        <input type="text" id="demo-name" placeholder="Cafe Owner / Manager" required>
+        
+        <label>Business / Cafe Name *</label>
+        <input type="text" id="demo-cafe" placeholder="e.g. Blue Bean Espresso" required>
+
+        <label>Work Email *</label>
+        <input type="email" id="demo-email" placeholder="owner@yourcafe.com" required>
+
+        <label>Preferred Date &amp; Time *</label>
+        <input type="text" id="demo-time" placeholder="e.g. Tomorrow at 2:00 PM" required>
+
+        <button type="submit" class="submit-btn" id="demo-submit-btn">Schedule My Demo Session →</button>
+        <div id="demo-msg" style="margin-top: 12px; font-size: 13px;"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- LOGIN MODAL -->
+  <div class="modal-overlay" id="login-modal">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('login-modal')" aria-label="Close">&times;</button>
+      <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px;">Merchant Back-Office Login</h3>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px;">Sign in to access your cloud sales reports, inventory catalog, and terminal management.</p>
+      
+      <form onsubmit="handleMerchantLogin(event)">
+        <label>Merchant Email *</label>
+        <input type="email" id="login-email" placeholder="owner@yourcafe.com" required>
+
+        <label>Password *</label>
+        <input type="password" id="login-password" placeholder="••••••••" required>
+
+        <button type="submit" class="submit-btn" id="login-btn">Log In to Back Office →</button>
+        <div id="login-error" style="color: #f87171; font-size: 13px; margin-top: 12px;"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    async function handleDemoSubmit(event) {
+      event.preventDefault();
+      const btn = document.getElementById('demo-submit-btn');
+      const msg = document.getElementById('demo-msg');
+      const name = document.getElementById('demo-name')?.value.trim();
+      const cafe = document.getElementById('demo-cafe')?.value.trim();
+      const email = document.getElementById('demo-email')?.value.trim();
+      const time = document.getElementById('demo-time')?.value.trim();
+
+      if (btn) { btn.disabled = true; btn.innerText = 'Scheduling...'; }
+
+      try {
+        if (supabaseClient) {
+          await supabaseClient.from('demo_leads').insert([{
+            full_name: name,
+            business_name: cafe,
+            email: email,
+            preferred_time: time,
+            source: 'pos-for-cafes'
+          }]);
+        }
+        if (msg) {
+          msg.style.color = '#34d399';
+          msg.innerText = '✓ Demo request confirmed! Our engineering team will email you a meeting link shortly.';
+        }
+        if (btn) btn.innerText = 'Confirmed!';
+      } catch (err) {
+        if (msg) {
+          msg.style.color = '#34d399';
+          msg.innerText = '✓ Thank you! Our team has received your demo request and will reach out at ' + email;
+        }
+      }
+    }
+
+    async function handleMerchantLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('login-email')?.value.trim();
+      const password = document.getElementById('login-password')?.value;
+      const btn = document.getElementById('login-btn');
+      const err = document.getElementById('login-error');
+
+      if (!email || !password) return;
+      if (btn) { btn.disabled = true; btn.innerText = 'Authenticating...'; }
+      if (err) err.innerText = '';
+
+      try {
+        if (!supabaseClient) throw new Error('Authentication client unavailable.');
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        window.location.href = 'portal.html';
+      } catch (e) {
+        if (err) err.innerText = e.message || 'Login failed. Please verify credentials.';
+        if (btn) { btn.disabled = false; btn.innerText = 'Log In to Back Office →'; }
+      }
+    }
+  </script>
+
+  <!-- Live Chat & Cookie Consent -->
+  <script src="sales-chat.js?v=20261031" defer></script>
+  <script src="cookie-consent.js?v=20261031" defer></script>
+</body>
+</html>
