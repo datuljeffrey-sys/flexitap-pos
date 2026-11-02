@@ -524,10 +524,14 @@
     let supabaseClient;
 
     // =========================================================================
-    // FLEXITAP DYNAMIC PRICING & LOCALIZED PH GCASH ENGINE
+    // FLEXITAP DYNAMIC PRICING & LOCALIZED BILLING ENGINE
     // =========================================================================
-    let currentCurrency = 'PHP'; // Default to PHP for local market, verified dynamically
-    let currentBillingCycle = 'monthly'; // 'monthly' or 'annual'
+    // FEATURE FLAGS: Disabled until Launch Day (November 13, 2026)
+    const ENABLE_MONTHLY_BILLING = false; // Turn on during launch day
+    const ENABLE_PH_PRICING = false;      // Turn on during launch day (US pricing only for now)
+
+    let currentCurrency = 'USD'; // Default to USD (US pricing active)
+    let currentBillingCycle = 'annual'; // Locked to Annual VIP Pass
     let activeGcashPayment = null;
 
     const PRICING_CONFIG = {
@@ -636,6 +640,11 @@
     };
 
     async function detectVisitorCountry() {
+      if (!ENABLE_PH_PRICING) {
+        setCurrency('USD', false, false);
+        return;
+      }
+
       const saved = localStorage.getItem('flexitap_currency');
       if (saved === 'PHP' || saved === 'USD') {
         setCurrency(saved, false, false);
@@ -678,9 +687,16 @@
     }
 
     function setCurrency(currency, isManual = true, isAutoDetected = false) {
-      currentCurrency = (currency === 'USD') ? 'USD' : 'PHP';
-      if (isManual) {
+      if (!ENABLE_PH_PRICING) {
+        currentCurrency = 'USD';
+      } else {
+        currentCurrency = (currency === 'USD') ? 'USD' : 'PHP';
+      }
+
+      if (isManual && ENABLE_PH_PRICING) {
         localStorage.setItem('flexitap_currency', currentCurrency);
+      } else if (!ENABLE_PH_PRICING) {
+        localStorage.removeItem('flexitap_currency');
       }
 
       // Update pills
@@ -694,7 +710,9 @@
       // Update geo tag
       const geoTag = document.getElementById('geo-location-tag');
       if (geoTag) {
-        if (currentCurrency === 'PHP') {
+        if (!ENABLE_PH_PRICING) {
+          geoTag.style.display = 'none';
+        } else if (currentCurrency === 'PHP') {
           geoTag.style.display = 'inline-flex';
           geoTag.innerHTML = isAutoDetected 
             ? '📍 Detected Location: <strong>Philippines</strong> — Local Rates (₱) &amp; GCash Active'
@@ -710,7 +728,11 @@
     }
 
     function setBillingCycle(cycle) {
-      currentBillingCycle = (cycle === 'annual') ? 'annual' : 'monthly';
+      if (!ENABLE_MONTHLY_BILLING) {
+        currentBillingCycle = 'annual';
+      } else {
+        currentBillingCycle = (cycle === 'annual') ? 'annual' : 'monthly';
+      }
 
       const mBtn = document.getElementById('btn-cycle-monthly');
       const aBtn = document.getElementById('btn-cycle-annual');
@@ -770,7 +792,13 @@
 
       const previousVal = selectedKey || selectEl.value || 'free';
 
-      if (currentCurrency === 'PHP') {
+      if (!ENABLE_PH_PRICING || currentCurrency === 'USD') {
+        selectEl.innerHTML = `
+          <option value="free">Free Launch Waitlist ($0 / mo)</option>
+          <option value="pri_01m1pb8szpcf4vapm28yfzw9aq">Plus Founders VIP ($290 / year fixed)</option>
+          <option value="pri_01m1pb6ba15axyr7acv0hswynd">Pro Founders VIP ($590 / year fixed)</option>
+        `;
+      } else if (ENABLE_MONTHLY_BILLING) {
         selectEl.innerHTML = `
           <option value="free">Free Launch Waitlist (₱0 / mo)</option>
           <option value="php_plus_monthly">Plus Plan (₱1,299 / month via GCash)</option>
@@ -780,9 +808,9 @@
         `;
       } else {
         selectEl.innerHTML = `
-          <option value="free">Free Launch Waitlist ($0 / mo)</option>
-          <option value="pri_01m1pb8szpcf4vapm28yfzw9aq">Plus Founders VIP ($290 / year fixed)</option>
-          <option value="pri_01m1pb6ba15axyr7acv0hswynd">Pro Founders VIP ($590 / year fixed)</option>
+          <option value="free">Free Launch Waitlist (₱0 / mo)</option>
+          <option value="php_plus_annual">Plus Founders Annual (₱14,990 / year via GCash)</option>
+          <option value="php_pro_annual">Pro Founders Annual (₱28,990 / year via GCash)</option>
         `;
       }
 
@@ -790,13 +818,13 @@
       if (pVal === 'free') {
         selectEl.value = 'free';
       } else if (pVal.includes('pro') || pVal === 'pri_01m1pb6ba15axyr7acv0hswynd') {
-        selectEl.value = (currentCurrency === 'PHP') 
-          ? ((pVal.includes('annual') || currentBillingCycle === 'annual') ? 'php_pro_annual' : 'php_pro_monthly') 
-          : 'pri_01m1pb6ba15axyr7acv0hswynd';
+        selectEl.value = (!ENABLE_PH_PRICING || currentCurrency === 'USD')
+          ? 'pri_01m1pb6ba15axyr7acv0hswynd'
+          : ((pVal.includes('annual') || currentBillingCycle === 'annual' || !ENABLE_MONTHLY_BILLING) ? 'php_pro_annual' : 'php_pro_monthly');
       } else if (pVal.includes('plus') || pVal === 'pri_01m1pb8szpcf4vapm28yfzw9aq') {
-        selectEl.value = (currentCurrency === 'PHP') 
-          ? ((pVal.includes('annual') || currentBillingCycle === 'annual') ? 'php_plus_annual' : 'php_plus_monthly') 
-          : 'pri_01m1pb8szpcf4vapm28yfzw9aq';
+        selectEl.value = (!ENABLE_PH_PRICING || currentCurrency === 'USD')
+          ? 'pri_01m1pb8szpcf4vapm28yfzw9aq'
+          : ((pVal.includes('annual') || currentBillingCycle === 'annual' || !ENABLE_MONTHLY_BILLING) ? 'php_plus_annual' : 'php_plus_monthly');
       } else {
         selectEl.value = 'free';
       }
@@ -850,13 +878,13 @@
       const isPlus = keyStr === 'plus' || keyStr.includes('plus') || keyStr === 'pri_01m1pb8szpcf4vapm28yfzw9aq';
 
       if (isPro) {
-        targetVal = (currentCurrency === 'PHP') 
-          ? (currentBillingCycle === 'annual' ? 'php_pro_annual' : 'php_pro_monthly') 
-          : 'pri_01m1pb6ba15axyr7acv0hswynd';
+        targetVal = (!ENABLE_PH_PRICING || currentCurrency === 'USD')
+          ? 'pri_01m1pb6ba15axyr7acv0hswynd'
+          : (currentBillingCycle === 'annual' || !ENABLE_MONTHLY_BILLING ? 'php_pro_annual' : 'php_pro_monthly');
       } else if (isPlus) {
-        targetVal = (currentCurrency === 'PHP') 
-          ? (currentBillingCycle === 'annual' ? 'php_plus_annual' : 'php_plus_monthly') 
-          : 'pri_01m1pb8szpcf4vapm28yfzw9aq';
+        targetVal = (!ENABLE_PH_PRICING || currentCurrency === 'USD')
+          ? 'pri_01m1pb8szpcf4vapm28yfzw9aq'
+          : (currentBillingCycle === 'annual' || !ENABLE_MONTHLY_BILLING ? 'php_plus_annual' : 'php_plus_monthly');
       } else {
         targetVal = 'free';
       }
@@ -1392,7 +1420,7 @@
         return;
       }
 
-      if (currentCurrency === 'PHP' || (priceId && priceId.startsWith('php_'))) {
+      if (ENABLE_PH_PRICING && (currentCurrency === 'PHP' || (priceId && priceId.startsWith('php_')))) {
         const isAnnual = (priceId && priceId.includes('annual')) || currentBillingCycle === 'annual';
         const amt = (tierName === 'plus') 
           ? (isAnnual ? 14990 : 1299) 
@@ -1693,9 +1721,9 @@
       </div>
 
       <div class="nav-actions">
-        <div class="currency-switch-wrap" title="Switch Billing Currency">
-          <button type="button" class="currency-pill active" id="btn-currency-ph" onclick="setCurrency('PHP')">🇵🇭 PHP (₱)</button>
-          <button type="button" class="currency-pill" id="btn-currency-us" onclick="setCurrency('USD')">🌐 USD ($)</button>
+        <div class="currency-switch-wrap" id="currency-switch-wrapper" style="display: none;" title="Switch Billing Currency">
+          <button type="button" class="currency-pill" id="btn-currency-ph" onclick="setCurrency('PHP')">🇵🇭 PHP (₱)</button>
+          <button type="button" class="currency-pill active" id="btn-currency-us" onclick="setCurrency('USD')">🌐 USD ($)</button>
         </div>
         <button class="btn-login"  onclick="openModal('login-modal')">Merchant Login</button>
         <button class="btn-signup" onclick="openSignupModalWithPlan('free')">Join Waitlist</button>
@@ -1720,13 +1748,17 @@
           📍 Detected Location: <strong>Philippines</strong> — Local Rates (₱) &amp; GCash Checkout Active
         </div>
 
-        <div class="billing-cycle-switch" id="billing-cycle-wrapper">
-          <button type="button" class="cycle-btn active" id="btn-cycle-monthly" onclick="setBillingCycle('monthly')">
+        <div class="billing-cycle-switch" id="billing-cycle-wrapper" style="display: none;">
+          <button type="button" class="cycle-btn" id="btn-cycle-monthly" onclick="setBillingCycle('monthly')">
             Monthly Billing
           </button>
-          <button type="button" class="cycle-btn" id="btn-cycle-annual" onclick="setBillingCycle('annual')">
+          <button type="button" class="cycle-btn active" id="btn-cycle-annual" onclick="setBillingCycle('annual')">
             Annual VIP Pass <span class="cycle-badge-save" id="cycle-save-badge">Save Up to 20%</span>
           </button>
+        </div>
+
+        <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(37, 99, 235, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); color: #93c5fd; padding: 7px 20px; border-radius: 9999px; font-size: 13px; font-weight: 700; margin: 6px 0 20px;">
+          <span>🎟️</span> Founders Pre-Launch: Annual VIP Passes Only <span style="background: rgba(255, 255, 255, 0.1); color: #cbd5e1; font-size: 11px; padding: 2px 8px; border-radius: 9999px; margin-left: 4px;">Monthly Unlocks Launch Day (Nov 13)</span>
         </div>
       </div>
       
@@ -1749,8 +1781,8 @@
             <p class="tier-target">For solo pop-ups, markets & kiosks</p>
             
             <div class="price-container">
-              <div class="price" id="price-display-free">₱0 <span>/ mo</span></div>
-              <div class="vat-note" id="vat-note-free">Walang bayad habang-buhay • No card required</div>
+              <div class="price" id="price-display-free">$0 <span>/ mo</span></div>
+              <div class="vat-note" id="vat-note-free">No credit card required to reserve</div>
             </div>
 
             <ul class="pricing-list">
@@ -1784,9 +1816,9 @@
             <p class="tier-target">For growing cafes & food trucks</p>
             
             <div class="price-container">
-              <span class="original-price" id="original-price-plus">₱2,490</span>
-              <div class="price" id="price-display-plus">₱1,299 <span>/ mo</span></div>
-              <div class="vat-note" id="vat-note-plus">🔒 Fixed lock-in rate • Direct GCash or Card</div>
+              <span class="original-price" id="original-price-plus">$490</span>
+              <div class="price" id="price-display-plus">$290 <span>/ year fixed</span></div>
+              <div class="vat-note" id="vat-note-plus">🔒 Lifetime rate lock • VAT calculated at checkout</div>
             </div>
 
             <ul class="pricing-list">
@@ -1805,7 +1837,7 @@
           </div>
 
           <div>
-            <button class="btn-card-action primary" id="btn-action-plus" onclick="openSignupModalWithPlan('plus')">Get Founders Plus (₱1,299/mo)</button>
+            <button class="btn-card-action primary" id="btn-action-plus" onclick="openSignupModalWithPlan('plus')">Claim Founders Plus ($290)</button>
             <div class="guarantee-micro">Backed by 7-Day Live Shift Money-Back Guarantee</div>
           </div>
         </div>
@@ -1818,9 +1850,9 @@
             <p class="tier-target">For multi-station restaurants</p>
             
             <div class="price-container">
-              <span class="original-price" id="original-price-pro">₱4,990</span>
-              <div class="price" style="color: var(--accent-purple);" id="price-display-pro">₱2,499 <span>/ mo</span></div>
-              <div class="vat-note" id="vat-note-pro">🔒 Fixed lock-in rate • Dedicated Standby</div>
+              <span class="original-price" id="original-price-pro">$990</span>
+              <div class="price" style="color: var(--accent-purple);" id="price-display-pro">$590 <span>/ year fixed</span></div>
+              <div class="vat-note" id="vat-note-pro">🔒 Lifetime rate lock • White-Glove Setup Included</div>
             </div>
 
             <ul class="pricing-list">
@@ -1838,7 +1870,7 @@
           </div>
 
           <div>
-            <button class="btn-card-action purple" id="btn-action-pro" onclick="openSignupModalWithPlan('pro')">Get Founders Pro (₱2,499/mo)</button>
+            <button class="btn-card-action purple" id="btn-action-pro" onclick="openSignupModalWithPlan('pro')">Claim Founders Pro ($590)</button>
             <div class="guarantee-micro">Priority onboarding &amp; direct engineer standby</div>
           </div>
         </div>
@@ -1892,9 +1924,9 @@
           <thead>
             <tr>
               <th style="width: 40%;">Core Feature / Capability</th>
-              <th class="col-center" style="width: 20%;" id="th-tier-free">Free (₱0)</th>
-              <th class="col-center" style="width: 20%; color: #60a5fa;" id="th-tier-plus">Plus (₱1,299/mo)</th>
-              <th class="col-center" style="width: 20%; color: #a855f7;" id="th-tier-pro">Pro (₱2,499/mo)</th>
+              <th class="col-center" style="width: 20%;" id="th-tier-free">Free ($0)</th>
+              <th class="col-center" style="width: 20%; color: #60a5fa;" id="th-tier-plus">Plus ($290/yr)</th>
+              <th class="col-center" style="width: 20%; color: #a855f7;" id="th-tier-pro">Pro ($590/yr)</th>
             </tr>
           </thead>
           <tbody>
@@ -1989,11 +2021,9 @@
         
         <label>Select Plan</label>
         <select id="signup-tier" required>
-          <option value="free">Free Launch Waitlist (₱0 / mo)</option>
-          <option value="php_plus_monthly">Plus Plan (₱1,299 / month via GCash)</option>
-          <option value="php_plus_annual">Plus Founders Annual (₱14,990 / year via GCash)</option>
-          <option value="php_pro_monthly">Pro Plan (₱2,499 / month via GCash)</option>
-          <option value="php_pro_annual">Pro Founders Annual (₱28,990 / year via GCash)</option>
+          <option value="free">Free Launch Waitlist ($0 / mo)</option>
+          <option value="pri_01m1pb8szpcf4vapm28yfzw9aq">Plus Founders VIP ($290 / year fixed)</option>
+          <option value="pri_01m1pb6ba15axyr7acv0hswynd">Pro Founders VIP ($590 / year fixed)</option>
         </select>
 
         <div class="checkbox-wrap">
