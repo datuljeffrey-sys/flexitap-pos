@@ -2049,7 +2049,7 @@
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     
-    function toggleDropdown(e) {
+        function toggleDropdown(e) {
       if (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -2066,19 +2066,6 @@
         dd.classList.remove('active');
       }
     });
-      const dd = document.getElementById('industriesDropdown');
-      if (dd) {
-        dd.classList.toggle('active');
-      }
-    }
-
-    document.addEventListener('click', function(e) {
-      const dd = document.getElementById('industriesDropdown');
-      if (dd && !dd.contains(e.target)) {
-        dd.classList.remove('active');
-      }
-    });
-    }
 
     function toggleMobileMenu() { document.getElementById('navLinksContainer').classList.toggle('mobile-open'); }
   </script>

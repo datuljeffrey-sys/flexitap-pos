@@ -693,7 +693,11 @@
       }
     } catch (_) {}
 
-    
+    function toggleMobileMenu() {
+      const nav = document.getElementById('navLinksContainer');
+      if (nav) nav.classList.toggle('mobile-open');
+    }
+
     function toggleDropdown(e) {
       if (e) {
         e.preventDefault();
@@ -711,24 +715,6 @@
         dd.classList.remove('active');
       }
     });
-      const dd = document.getElementById('industriesDropdown');
-      if (dd) {
-        dd.classList.toggle('active');
-      }
-    }
-
-    document.addEventListener('click', function(e) {
-      const dd = document.getElementById('industriesDropdown');
-      if (dd && !dd.contains(e.target)) {
-        dd.classList.remove('active');
-      }
-    });
-    }
-
-    function toggleMobileMenu() {
-      const nav = document.getElementById('navLinksContainer');
-      if (nav) nav.classList.toggle('mobile-open');
-    }
 
     function toggleFaq(el) {
       el.classList.toggle('open');
@@ -752,6 +738,7 @@
       if (event) event.preventDefault();
       openModal('booking-modal');
     }
+
   </script>
 </head>
 <body>
