@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FlexiTap Graphic</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 1280px;
+      height: 720px;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background: #f8fafc;
+      position: relative;
+    }
+
+    /* Ambient Soft Background */
+    .bg-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1280px;
+      height: 720px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Centered Header */
+    .header {
+      position: relative;
+      z-index: 20;
+      padding-top: 32px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 38px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.7px;
+      line-height: 1.15;
+    }
+
+    .header h1 span {
+      color: #059669;
+    }
+
+    .header p {
+      font-size: 15px;
+      color: #64748b;
+      font-weight: 500;
+      margin-top: 6px;
+    }
+
+    /* Central Tablet Stage */
+    .tablet-wrapper {
+      position: absolute;
+      top: 146px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 660px;
+      height: 422px;
+      z-index: 10;
+    }
+
+    .tablet-device {
+      width: 100%;
+      height: 100%;
+      background: #0f172a;
+      border-radius: 26px;
+      padding: 9px;
+      box-shadow: 
+        0 25px 50px -12px rgba(15, 23, 42, 0.2),
+        0 0 0 1px rgba(0, 0, 0, 0.08);
+      position: relative;
+    }
+
+    .tablet-camera {
+      position: absolute;
+      top: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #334155;
+    }
+
+    .tablet-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #ffffff;
+      position: relative;
+    }
+
+    .tablet-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      display: block;
+    }
+
+    .tablet-shadow {
+      position: absolute;
+      bottom: -16px;
+      left: 5%;
+      width: 90%;
+      height: 28px;
+      background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.22) 0%, rgba(15, 23, 42, 0) 70%);
+      filter: blur(8px);
+      z-index: 5;
+    }
+
+    /* 4 Callout Cards - Strictly Aligned */
+    .callout-card {
+      position: absolute;
+      z-index: 25;
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 13px 18px;
+      box-shadow: 
+        0 12px 28px -4px rgba(15, 23, 42, 0.08),
+        0 4px 6px -2px rgba(15, 23, 42, 0.02);
+      border: 1px solid #edf2f7;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 252px;
+    }
+
+    .card-tl { left: 36px; top: 180px; }
+    .card-bl { left: 36px; top: 500px; }
+    .card-tr { right: 36px; top: 180px; }
+    .card-br { right: 36px; top: 500px; }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #d1fae5;
+      color: #059669;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .card-text {
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.25;
+      margin-bottom: 3px;
+    }
+
+    .card-sub {
+      font-size: 11.5px;
+      color: #64748b;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+
+    /* SVG Connecting Arrows */
+    .arrows-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1280px;
+      height: 720px;
+      z-index: 35;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Light Background -->
+  <svg class="bg-layer" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="80" r="300" fill="url(#grad-tl)" opacity="0.55" />
+    <circle cx="1180" cy="640" r="340" fill="url(#grad-br)" opacity="0.45" />
+
+    <circle cx="90" cy="350" r="2.5" fill="#cbd5e1" /><circle cx="108" cy="350" r="2.5" fill="#cbd5e1" /><circle cx="126" cy="350" r="2.5" fill="#cbd5e1" />
+    <circle cx="90" cy="368" r="2.5" fill="#cbd5e1" /><circle cx="108" cy="368" r="2.5" fill="#cbd5e1" /><circle cx="126" cy="368" r="2.5" fill="#cbd5e1" />
+    <circle cx="1154" cy="350" r="2.5" fill="#cbd5e1" /><circle cx="1172" cy="350" r="2.5" fill="#cbd5e1" /><circle cx="1190" cy="350" r="2.5" fill="#cbd5e1" />
+    <circle cx="1154" cy="368" r="2.5" fill="#cbd5e1" /><circle cx="1172" cy="368" r="2.5" fill="#cbd5e1" /><circle cx="1190" cy="368" r="2.5" fill="#cbd5e1" />
+
+    <path d="M-20 260 C 120 220, 200 320, 290 300" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4 8" opacity="0.25" />
+    <path d="M990 410 C 1080 390, 1160 480, 1300 450" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4 8" opacity="0.25" />
+
+    <defs>
+      <radialGradient id="grad-tl" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(100 80) rotate(90) scale(300)">
+        <stop stop-color="#a7f3d0" />
+        <stop offset="1" stop-color="#a7f3d0" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="grad-br" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1180 640) rotate(90) scale(340)">
+        <stop stop-color="#bae6fd" />
+        <stop offset="1" stop-color="#bae6fd" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+  </svg>
+
+  <!-- Centered Header -->
+  <div class="header">
+    <h1>Executive Back Office <span>Reports Hub</span></h1>
+    <p>Stay on top of store performance with comprehensive revenue trend curves, product mix, and audit exports.</p>
+  </div>
+
+  <!-- Central Tablet Stage -->
+  <div class="tablet-wrapper">
+    <div class="tablet-device">
+      <div class="tablet-camera"></div>
+      <div class="tablet-screen">
+        <img src="file:///c:/FlexiTap/backoffice.png" alt="Executive Back Office Reports Hub" />
+      </div>
+    </div>
+    <div class="tablet-shadow"></div>
+  </div>
+
+  <!-- 4 Aligned Callout Cards -->
+  <div class="callout-card card-tl">
+    <div class="card-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+    <div class="card-text">
+      <div class="card-title">Executive KPI Summary</div>
+      <div class="card-sub">Gross revenue, net sales & basket</div>
+    </div>
+  </div>
+
+  <div class="callout-card card-bl">
+    <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 2v4M4.93 4.93l2.83 2.83M2 12h4M4.93 19.07l2.83-2.83M12 22v-4M19.07 19.07l-2.83-2.83M22 12h-4M19.07 4.93l-2.83 2.83"/><circle cx="12" cy="12" r="3"/></svg></div>
+    <div class="card-text">
+      <div class="card-title">Hourly Rush Curves</div>
+      <div class="card-sub">Detect peak sales & rush hours</div>
+    </div>
+  </div>
+
+  <div class="callout-card card-tr">
+    <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+    <div class="card-text">
+      <div class="card-title">1-Click Report Export</div>
+      <div class="card-sub">One-tap PDF & CSV audit export</div>
+    </div>
+  </div>
+
+  <div class="callout-card card-br">
+    <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></div>
+    <div class="card-text">
+      <div class="card-title">Product Category Mix</div>
+      <div class="card-sub">Visual revenue distribution donut</div>
+    </div>
+  </div>
+
+  <!-- SVG Connecting Arrows Pointing Directly to the Exact Screen Elements -->
+  <svg class="arrows-svg" viewBox="0 0 1280 720">
+    <defs>
+      <marker id="arrowhead" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+        <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#059669" />
+      </marker>
+    </defs>
+    
+    <!-- Top-Left: Card (288, 215) -> Target (380, 385) -->
+    <path d="M 288 215 C 320 215, 365 385, 380 385" stroke="#059669" stroke-width="2.6" fill="none" stroke-linecap="round" marker-end="url(#arrowhead)" />
+
+    <!-- Bottom-Left: Card (288, 535) -> Target (420, 490) -->
+    <path d="M 288 535 C 320 535, 405 490, 420 490" stroke="#059669" stroke-width="2.6" fill="none" stroke-linecap="round" marker-end="url(#arrowhead)" />
+
+    <!-- Top-Right: Card (992, 215) -> Target (880, 260) -->
+    <path d="M 992 215 C 920 215, 895 260, 880 260" stroke="#059669" stroke-width="2.6" fill="none" stroke-linecap="round" marker-end="url(#arrowhead)" />
+
+    <!-- Bottom-Right: Card (992, 535) -> Target (600, 500) -->
+    <path d="M 992 535 C 920 535, 615 500, 600 500" stroke="#059669" stroke-width="2.6" fill="none" stroke-linecap="round" marker-end="url(#arrowhead)" />
+  </svg>
+
+</body>
+</html>

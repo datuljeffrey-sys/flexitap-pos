@@ -132,40 +132,131 @@
     .mobile-only-login { display: none; }
 
     /* HERO SECTION */
-    .hero-section { padding: clamp(50px, 8vh, 80px) 0 clamp(40px, 6vh, 60px); text-align: center; }
-    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-amber-glow); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; padding: 6px 16px; border-radius: 9999px; font-size: 13px; font-weight: 700; margin-bottom: 24px; }
-    .hero-title { font-size: clamp(32px, 5.5vw, 56px); font-weight: 900; letter-spacing: -1px; line-height: 1.15; color: #fff; max-width: 980px; margin: 0 auto 20px; }
+    .hero-section { padding: clamp(40px, 6vh, 70px) 0 clamp(40px, 6vh, 60px); position: relative; }
+    .hero-ambient-glow {
+      position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 500px;
+      background: radial-gradient(ellipse at center, rgba(245, 158, 11, 0.12) 0%, rgba(37, 99, 235, 0.08) 50%, transparent 70%);
+      filter: blur(80px); pointer-events: none; z-index: 1;
+    }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-amber-glow); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; padding: 6px 16px; border-radius: 9999px; font-size: 13px; font-weight: 700; margin-bottom: 20px; }
+    .hero-title { font-size: clamp(30px, 4.2vw, 50px); font-weight: 900; letter-spacing: -1px; line-height: 1.15; color: #fff; margin-bottom: 18px; }
     .hero-title span { background: linear-gradient(135deg, #f59e0b, #fb923c, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero-desc { font-size: clamp(16px, 2vw, 19px); color: var(--text-muted); max-width: 760px; margin: 0 auto 36px; line-height: 1.6; }
-    .hero-cta-group { display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 40px; }
-    .btn-primary-lg { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; padding: 14px 28px; border-radius: 10px; font-weight: 700; font-size: 15.5px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4); transition: 0.2s; }
+    .hero-desc { font-size: clamp(15.5px, 1.8vw, 17.5px); color: var(--text-muted); line-height: 1.65; margin-bottom: 30px; }
+    .hero-cta-group { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 30px; }
+    .btn-primary-lg { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; padding: 13px 26px; border-radius: 10px; font-weight: 700; font-size: 15px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4); transition: 0.2s; }
     .btn-primary-lg:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(37, 99, 235, 0.5); }
-    .btn-secondary-lg { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 14px 26px; border-radius: 10px; font-weight: 700; font-size: 15.5px; text-decoration: none; transition: 0.2s; cursor: pointer; }
+    .btn-secondary-lg { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 13px 24px; border-radius: 10px; font-weight: 700; font-size: 15px; text-decoration: none; transition: 0.2s; cursor: pointer; }
     .btn-secondary-lg:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
 
     /* FEATURE BADGES */
-    .hero-highlights { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-top: 24px; }
-    .highlight-pill { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: #cbd5e1; }
-    .highlight-pill svg { width: 16px; height: 16px; color: #10b981; }
+    .hero-highlights { display: flex; gap: 18px; flex-wrap: wrap; }
+    .highlight-pill { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #cbd5e1; }
+    .highlight-pill svg { width: 16px; height: 16px; color: #10b981; flex-shrink: 0; }
+
+    /* HERO MEDIA SHOWCASE */
+    .hero-media-wrapper { position: relative; }
+    .hero-img-card {
+      position: relative; border-radius: 24px; overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(245, 158, 11, 0.2);
+      background: #0f172a;
+    }
+    .hero-img-card img { width: 100%; height: auto; display: block; object-fit: cover; aspect-ratio: 16/10; transition: transform 0.5s ease; }
+    .hero-img-card:hover img { transform: scale(1.02); }
+    .hero-overlay-pill-top {
+      position: absolute; top: 16px; right: 16px;
+      background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 30px;
+      padding: 7px 14px; font-size: 12px; font-weight: 700; color: #ffffff;
+      display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+    .hero-overlay-card-bottom {
+      position: absolute; bottom: 16px; left: 16px; right: 16px;
+      background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(12px);
+      border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 16px;
+      padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+    }
+    .hero-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; animation: pulse-green 2s infinite; }
+    .hero-stat-badge { font-size: 11px; font-weight: 800; background: #059669; color: #fff; padding: 4px 10px; border-radius: 6px; }
 
     /* SECTION STYLES */
-    .section-wrap { padding: clamp(48px, 6vh, 72px) 0; }
+    .section-wrap { padding: clamp(52px, 7vh, 80px) 0; }
     .section-header { text-align: center; max-width: 720px; margin: 0 auto 48px; }
     .section-tag { display: inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); margin-bottom: 10px; }
     .section-title { font-size: clamp(26px, 3.8vw, 38px); font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 14px; }
     .section-subtitle { font-size: 16px; color: var(--text-muted); line-height: 1.6; }
 
+    /* CAFE STATIONS 3-COLUMN VISUAL GRID */
+    .stations-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: 10px; }
+    .station-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .station-card:hover {
+      transform: translateY(-5px); border-color: rgba(59, 130, 246, 0.45);
+      box-shadow: 0 18px 40px -10px rgba(0,0,0,0.6);
+    }
+    .station-img-box { position: relative; width: 100%; aspect-ratio: 16/10; overflow: hidden; background: #111827; }
+    .station-img-box img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+    .station-card:hover .station-img-box img { transform: scale(1.04); }
+    .station-tag-pill {
+      position: absolute; top: 12px; left: 12px;
+      background: rgba(9, 13, 22, 0.85); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 20px;
+      padding: 4px 12px; font-size: 11px; font-weight: 800; color: #fbbf24; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .station-body { padding: 22px 22px 26px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .station-title { font-size: 18.5px; font-weight: 800; color: #fff; margin-bottom: 8px; line-height: 1.3; }
+    .station-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 18px; }
+    .station-stat {
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 14px;
+      font-size: 12.5px; color: #cbd5e1; font-weight: 600;
+    }
+    .station-stat strong { color: #10b981; font-weight: 800; font-size: 13.5px; }
+
     /* KOT GOLDMINE SECTION */
-    .kot-box { background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95)); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 20px; padding: clamp(24px, 4vw, 44px); display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 36px; align-items: center; position: relative; overflow: hidden; }
-    .kot-box::before { content: ""; position: absolute; top: -50px; right: -50px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(245, 158, 11, 0.15), transparent 70%); border-radius: 50%; pointer-events: none; }
+    .kot-box {
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 22px;
+      padding: clamp(24px, 4vw, 44px); display: grid; grid-template-columns: 1.15fr 0.85fr;
+      gap: 40px; align-items: center; position: relative; overflow: hidden;
+    }
+    .kot-box::before {
+      content: ""; position: absolute; top: -50px; right: -50px; width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.15), transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
     .kot-title { font-size: clamp(22px, 3vw, 32px); font-weight: 800; color: #fff; margin-bottom: 16px; }
-    .kot-desc { font-size: 15px; color: #cbd5e1; line-height: 1.7; margin-bottom: 20px; }
+    .kot-desc { font-size: 15px; color: #cbd5e1; line-height: 1.7; margin-bottom: 22px; }
     .kot-steps { list-style: none; display: flex; flex-direction: column; gap: 14px; }
     .kot-step { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: #cbd5e1; }
-    .kot-num { width: 24px; height: 24px; border-radius: 50%; background: #f59e0b; color: #000; font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .kot-num {
+      width: 24px; height: 24px; border-radius: 50%; background: #f59e0b; color: #000;
+      font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+
+    /* KOT DUAL SHOWCASE */
+    .kot-visual-showcase { display: flex; flex-direction: column; gap: 18px; }
+    .kot-photo-frame {
+      border-radius: 14px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.5); position: relative; background: #0f172a;
+    }
+    .kot-photo-frame img { width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover; }
+    .kot-photo-tag {
+      position: absolute; bottom: 10px; right: 10px;
+      background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px);
+      border: 1px solid #10b981; color: #34d399; font-size: 10.5px; font-weight: 800;
+      padding: 4px 10px; border-radius: 6px; text-transform: uppercase;
+    }
 
     /* TICKET PREVIEW CARD */
-    .ticket-card { background: #fff; color: #1e293b; border-radius: 8px; padding: 24px 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px; box-shadow: 0 16px 40px rgba(0,0,0,0.6); position: relative; border-top: 6px dashed #090d16; }
+    .ticket-card { background: #fff; color: #1e293b; border-radius: 8px; padding: 22px 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px; box-shadow: 0 16px 40px rgba(0,0,0,0.6); position: relative; border-top: 6px dashed #090d16; }
     .ticket-header { text-align: center; border-bottom: 1px dashed #94a3b8; padding-bottom: 12px; margin-bottom: 12px; }
     .ticket-title { font-weight: 900; font-size: 15px; text-transform: uppercase; color: #0f172a; }
     .ticket-meta { font-size: 11px; color: #64748b; margin-top: 4px; }
@@ -224,6 +315,12 @@
     input, select { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; color: white; font-size: 15px; }
     .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; }
 
+    @keyframes pulse-green {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
     @media (max-width: 1140px) {
       .logo { order: 1; }
       .nav-actions { order: 2; }
@@ -245,12 +342,17 @@
       }
       .nav-links.mobile-open { display: flex; }
       .nav-link { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+      .hero-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+      .hero-highlights { justify-content: center; }
+      .hero-cta-group { justify-content: center; }
+      .stations-grid { grid-template-columns: 1fr; }
       .kot-box { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; gap: 32px; }
     }
     @media (max-width: 640px) {
       .nav-actions .btn-login { display: none; }
       .mobile-only-login { display: inline-flex; width: 100%; justify-content: center; margin-top: 8px; }
+      .hero-overlay-card-bottom { flex-direction: column; gap: 8px; align-items: flex-start; }
     }
   </style>
 
@@ -323,47 +425,167 @@
     </div>
   </header>
 
-  <!-- HERO SECTION -->
+  <!-- HERO SECTION WITH LIVE PEOPLE CAFE PHOTOGRAPHY -->
   <main>
     <section class="hero-section">
+      <div class="hero-ambient-glow"></div>
       <div class="container">
-        <div class="hero-badge">☕ Engineered for Specialty Cafes, Bakeries &amp; Coffee Bars</div>
-        <h1 class="hero-title">Offline POS System for Cafes &amp; Coffee Shops — <span>Never Freeze at the Counter</span></h1>
-        <p class="hero-desc">
-          Morning rush lines wait for no one. FlexiTap is the true offline POS software engineered for high-speed barista counters, instant modifiers, and offline kitchen order tickets (KOT) that route and print with zero internet lag.
-        </p>
+        <div class="hero-grid">
+          
+          <!-- LEFT: HERO MESSAGING & CTAS -->
+          <div>
+            <div class="hero-badge">☕ Engineered for Specialty Cafes, Bakeries &amp; Coffee Bars</div>
+            <h1 class="hero-title">Offline POS System for Cafes &amp; Coffee Shops — <span>Never Freeze at the Counter</span></h1>
+            <p class="hero-desc">
+              Morning rush lines wait for no one. FlexiTap is the true offline POS software engineered for high-speed barista counters, instant modifiers, and offline kitchen order tickets (KOT) that route and print with zero internet lag.
+            </p>
 
-        <div class="hero-cta-group">
-          <a href="pricing.html" class="btn-primary-lg">
-            <span>Start Free Community Tier</span>
-            <span>→</span>
-          </a>
-          <button class="btn-secondary-lg" onclick="openDemoBooking(event)">Book a 15-Min Live Demo</button>
-        </div>
+            <div class="hero-cta-group">
+              <a href="pricing.html" class="btn-primary-lg">
+                <span>Start Free Community Tier</span>
+                <span>→</span>
+              </a>
+              <button class="btn-secondary-lg" onclick="openDemoBooking(event)">Book a 15-Min Live Demo</button>
+            </div>
 
-        <div class="hero-highlights">
-          <div class="highlight-pill">
-            <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-            <span>100% Offline SQLite Architecture</span>
+            <div class="hero-highlights">
+              <div class="highlight-pill">
+                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                <span>100% Offline SQLite</span>
+              </div>
+              <div class="highlight-pill">
+                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                <span>Instant KOT Auto-Cut</span>
+              </div>
+              <div class="highlight-pill">
+                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                <span>Zero Monthly Fees</span>
+              </div>
+              <div class="highlight-pill">
+                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                <span>BYOD Any Device</span>
+              </div>
+            </div>
           </div>
-          <div class="highlight-pill">
-            <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-            <span>Instant Kitchen Order Tickets (KOT)</span>
+
+          <!-- RIGHT: AUTHENTIC COUNTER POS PHOTOGRAPHY SHOWCASE -->
+          <div class="hero-media-wrapper">
+            <div class="hero-img-card">
+              <picture>
+                <source srcset="images/cafe_barista_counter_pos.webp" type="image/webp">
+                <img src="images/cafe_barista_counter_pos.jpg" alt="Barista operating FlexiTap POS touchscreen terminal on coffee counter" loading="eager" width="600" height="375" />
+              </picture>
+
+              <div class="hero-overlay-pill-top">
+                <span class="hero-status-dot"></span>
+                <span>Sub-15ms Barista Speed</span>
+              </div>
+
+              <div class="hero-overlay-card-bottom">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 18px;">🛡️</span>
+                  <div>
+                    <div style="font-size: 12.5px; font-weight: 800; color: #fff;">100% Offline SQLite Engine</div>
+                    <div style="font-size: 11px; color: #94a3b8;">Zero freeze when Wi-Fi drops</div>
+                  </div>
+                </div>
+                <span class="hero-stat-badge">&lt; 0.8s Checkout</span>
+              </div>
+            </div>
           </div>
-          <div class="highlight-pill">
-            <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-            <span>Zero Mandatory Monthly Subscriptions</span>
-          </div>
-          <div class="highlight-pill">
-            <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-            <span>Thermal ESC/POS Auto-Cutter Support</span>
-          </div>
+
         </div>
       </div>
     </section>
 
-    <!-- SECTION 1: KITCHEN ORDER TICKET (KOT) SPOTLIGHT (KD 0 TARGET) -->
-    <section class="section-wrap" style="background: rgba(15, 23, 42, 0.4);">
+    <!-- NEW SECTION: REAL-WORLD CAFE OPERATIONS (3 STATIONS WITH REAL PEOPLE PHOTOGRAPHY) -->
+    <section class="section-wrap" style="background: rgba(15, 23, 42, 0.45); border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Shift Workflow in Action</span>
+          <h2 class="section-title">Engineered for Every Station in Your Cafe</h2>
+          <p class="section-subtitle">
+            See how baristas, floor servers, and kitchen prep cooks stay synchronized seamlessly without cloud buffering or internet dropouts.
+          </p>
+        </div>
+
+        <div class="stations-grid">
+          
+          <!-- STATION 1: FRONT COUNTER -->
+          <div class="station-card">
+            <div class="station-img-box">
+              <span class="station-tag-pill">Front Counter</span>
+              <picture>
+                <source srcset="images/cafe_barista_counter_pos.webp" type="image/webp">
+                <img src="images/cafe_barista_counter_pos.jpg" alt="Barista taking orders with high-speed POS at cafe counter" loading="lazy" width="400" height="250" />
+              </picture>
+            </div>
+            <div class="station-body">
+              <div>
+                <h3 class="station-title">Sub-Second Barista Checkout</h3>
+                <p class="station-desc">
+                  Tap-and-go speed with visual menu tiles, custom milk/syrup modifiers, and instant RJ11 cash drawer kick. Baristas ring up orders in under 5 seconds during morning rush hour.
+                </p>
+              </div>
+              <div class="station-stat">
+                <span>Rush Ring-Up Velocity</span>
+                <strong>&lt; 5s per Ticket</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- STATION 2: TABLE SERVICE -->
+          <div class="station-card">
+            <div class="station-img-box">
+              <span class="station-tag-pill">Dining &amp; Patio</span>
+              <picture>
+                <source srcset="images/cafe_table_service_pos.webp" type="image/webp">
+                <img src="images/cafe_table_service_pos.jpg" alt="Friendly server taking tableside customer orders on wireless tablet" loading="lazy" width="400" height="250" />
+              </picture>
+            </div>
+            <div class="station-body">
+              <div>
+                <h3 class="station-title">Wireless Table Orders &amp; Tabs</h3>
+                <p class="station-desc">
+                  Floor servers take orders tableside on any iPad or Android tablet. Tag open tabs, assign guest seats, and split checks evenly or by specific drink items with zero table confusion.
+                </p>
+              </div>
+              <div class="station-stat">
+                <span>Table Turn Efficiency</span>
+                <strong>+30% Faster Turns</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- STATION 3: KITCHEN & BARISTA PREP -->
+          <div class="station-card">
+            <div class="station-img-box">
+              <span class="station-tag-pill">Espresso &amp; Prep</span>
+              <picture>
+                <source srcset="images/cafe_barista_kot_ticket.webp" type="image/webp">
+                <img src="images/cafe_barista_kot_ticket.jpg" alt="Barista checking freshly printed thermal kitchen order ticket at coffee workstation" loading="lazy" width="400" height="250" />
+              </picture>
+            </div>
+            <div class="station-body">
+              <div>
+                <h3 class="station-title">Instant ESC/POS Kitchen Tickets</h3>
+                <p class="station-desc">
+                  Drink tickets route directly to the espresso station printer while pastry tickets route to the kitchen prep counter over your local network. Zero reliance on remote cloud servers.
+                </p>
+              </div>
+              <div class="station-stat">
+                <span>LAN Routing Latency</span>
+                <strong>&lt; 300ms Auto-Cut</strong>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: KITCHEN ORDER TICKET (KOT) SPOTLIGHT (ENHANCED WITH REAL WORKSTATION PHOTO) -->
+    <section class="section-wrap">
       <div class="container">
         <div class="section-header">
           <span class="section-tag">High-Volume Kitchen Operations</span>
@@ -395,8 +617,16 @@
             </ul>
           </div>
 
-          <!-- MOCK RECEIPT TICKET -->
-          <div>
+          <!-- DUAL SHOWCASE: REAL WORKSTATION PHOTO + THERMAL TICKET FORMAT -->
+          <div class="kot-visual-showcase">
+            <div class="kot-photo-frame">
+              <picture>
+                <source srcset="images/cafe_barista_kot_ticket.webp" type="image/webp">
+                <img src="images/cafe_barista_kot_ticket.jpg" alt="Thermal printer cutting instant kitchen order ticket at coffee prep station" loading="lazy" width="450" height="253" />
+              </picture>
+              <span class="kot-photo-tag">ESC/POS Auto-Cutter in Action</span>
+            </div>
+
             <div class="ticket-card">
               <div class="ticket-header">
                 <div class="ticket-title">KITCHEN ORDER TICKET (KOT)</div>
@@ -429,12 +659,13 @@
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </section>
 
     <!-- SECTION 2: 3 CORE ADVANTAGES FOR CAFES & QUICK SERVICE -->
-    <section class="section-wrap">
+    <section class="section-wrap" style="background: rgba(15, 23, 42, 0.4);">
       <div class="container">
         <div class="section-header">
           <span class="section-tag">Built for Counter Flow</span>
@@ -497,7 +728,7 @@
     </section>
 
     <!-- SECTION 3: COMPARISON TABLE (LOYVERSE & TOAST ALTERNATIVE) -->
-    <section class="section-wrap" style="background: rgba(15, 23, 42, 0.4);">
+    <section class="section-wrap">
       <div class="container">
         <div class="section-header">
           <span class="section-tag">Transparent Comparison</span>
@@ -561,7 +792,7 @@
     </section>
 
     <!-- SECTION 4: FREQUENTLY ASKED QUESTIONS (SEO VOICE & LONG-TAIL) -->
-    <section class="section-wrap">
+    <section class="section-wrap" style="background: rgba(15, 23, 42, 0.4);">
       <div class="container">
         <div class="section-header">
           <span class="section-tag">Frequently Asked Questions</span>
@@ -665,6 +896,7 @@
             <li><a href="remote-support.html">Remote Support &amp; Diagnostics</a></li>
             <li><a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer">Merchant Community (FB Group) ↗</a></li>
             <li><a href="affiliate.html">Affiliate &amp; Partner Program</a></li>
+            <li><a href="dev-portal.html" rel="nofollow">Staff &amp; Dev Portal</a></li>
           </ul>
         </div>
 

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FlexiTap Graphic</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 1280px;
+      height: 720px;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background: #f8fafc;
+      position: relative;
+    }
+
+    /* Ambient Soft Background */
+    .bg-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1280px;
+      height: 720px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Centered Header */
+    .header {
+      position: relative;
+      z-index: 20;
+      padding-top: 32px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 38px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.7px;
+      line-height: 1.15;
+    }
+
+    .header h1 span {
+      color: #059669;
+    }
+
+    .header p {
+      font-size: 15px;
+      color: #64748b;
+      font-weight: 500;
+      margin-top: 6px;
+    }
+
+    /* Central Tablet Stage */
+    .tablet-wrapper {
+      position: absolute;
+      top: 146px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 660px;
+      height: 422px;
+      z-index: 10;
+    }
+
+    .tablet-device {
+      width: 100%;
+      height: 100%;
+      background: #0f172a;
+      border-radius: 26px;
+      padding: 9px;
+      box-shadow: 
+        0 25px 50px -12px rgba(15, 23, 42, 0.2),
+        0 0 0 1px rgba(0, 0, 0, 0.08);
+      position: relative;
+    }
+
+    .tablet-camera {
+      position: absolute;
+      top: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #334155;
+    }
+
+    .tablet-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #ffffff;
+      position: relative;
+    }
+
+    .tablet-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      display: block;
+    }
+
+    .tablet-shadow {
+      position: absolute;
+      bottom: -16px;
+      left: 5%;
+      width: 90%;
+      height: 28px;
+      background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.22) 0%, rgba(15, 23, 42, 0) 70%);
+      filter: blur(8px);
+      z-index: 5;
+    }
+
+    /* 4 Callout Cards - Strictly Aligned */
+    .callout-card {
+      position: absolute;
+      z-index: 25;
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 13px 18px;
+      box-shadow: 
+        0 12px 28px -4px rgba(15, 23, 42, 0.08),
+        0 4px 6px -2px rgba(15, 23, 42, 0.02);
+      border: 1px solid #edf2f7;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 252px;
+    }
+
+    .card-tl { left: 36px; top: 180px; }
+    .card-bl { left: 36px; top: 500px; }
+    .card-tr { right: 36px; top: 180px; }
+    .card-br { right: 36px; top: 500px; }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #d1fae5;
+      color: #059669;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .card-text {
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.25;
+      margin-bottom: 3px;
+    }
+
+    .card-sub {
+      font-size: 11.5px;
+      color: #64748b;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+
+    /* SVG Connecting Arrows */
+    .arrows-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1280px;
+      height: 720px;
+      z-index: 35;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Light Background -->
+  <svg class="bg-layer" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="80" r="300" fill="url(#grad-tl)" opacity="0.55" />
+    <circle cx="1180" cy="640" r="340" fill="url(#grad-br)" opacity="0.45" />
+
+    <circle cx="90" cy="350" r="2.5" fill="#cbd5e1" /><circle cx="108" cy="350" r="2.5" fill="#cbd5e1" /><circle cx="126" cy="350" r="2.5" fill="#cbd5e1" />
+    <circle cx="90" cy="368" r="2.5" fill="#cbd5e1" /><circle cx="108" cy="368" r="2.5" fill="#cbd5e1" /><circle cx="126" cy="368" r="2.5" fill="#cbd5e1" />
+    <circle cx="1154" cy="350" r="2.5" fill="#cbd5e1" /><circle cx="1172" cy="350" r="2.5" fill="#cbd5e1" /><circle cx="1190" cy="350" r="2.5" fill="#cbd5e1" />
+    <circle cx="1154" cy="368" r="2.5" fill="#cbd5e1" /><circle cx="1172" cy="368" r="2.5" fill="#cbd5e1" /><circle cx="1190" cy="368" r="2.5" fill="#cbd5e1" />
+
+    <path d="M-20 260 C 120 220, 200 320, 290 300" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4 8" opacity="0.25" />
+    <path d="M990 410 C 1080 390, 1160 480, 1300 450" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4 8" opacity="0.25" />
+
+    <defs>
+      <radialGradient id="grad-tl" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(100 80) rotate(90) scale(300)">
+        <stop stop-color="#a7f3d0" />
+        <stop offset="1" stop-color="#a7f3d0" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="grad-br" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1180 640) rotate(90) scale(340)">
+        <stop stop-color="#bae6fd" />
+        <stop offset="1" stop-color="#bae6fd" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+  </svg>
+
+  <!-- Centered Header -->
+  <div class="header">
+    <h1>Dynamic Digital Menu <span>Boards (DMB)</span></h1>
+    <p>Mount any TV or screen overhead to broadcast live categories, real-time pricing, and promotional tickers.</p>
+  </div>
+
+  <!-- Central Tablet Stage -->
+  <div class="tablet-wrapper">
+    <div class="tablet-device">
+      <div class="tablet-camera"></div>
+      <div class="tablet-screen">
+        <img src="file:///c:/FlexiTap/menuboard.png" alt="Dynamic Digital Menu Boards (DMB)" />
+      </div>
+    </div>
+    <div class="tablet-shadow"></div>
+  </div>
+
+  <!-- 4 Aligned Callout Cards -->
+  <div class="callout-card card-tl">
+    <div class="card-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg></div>
+    <div class="card-text">
+      <div class="card-title">High-Impact Visuals</div>
+      <div class="card-sub">High-res photos & category tabs</div>
+    </div>
+  </div>
+
+  <div class="callout-card card-bl">
+    <div class="card-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+    <div class="card-text">
+      <div class="card-title">Zero Cloud Subscriptions</div>
+      <div class="card-sub">Direct LAN TV & HDMI broadcast</div>
+    </div>
+  </div>
+
+  <div class="callout-card card-tr">
+    <div class="card-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+    <div class="card-text">
+      <div class="card-title">Live Price Updates</div>
+      <div class="card-sub">Price changes sync immediately</div>
+    </div>
+  </div>
+
+  <div class="callout-card card-br">
+    <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+    <div class="card-text">
+      <div class="card-title">Dynamic Promo Ticker</div>
+      <div class="card-sub">Announce specials & ticker news</div>
+    </div>
+  </div>
+
+  <!-- SVG Connecting Arrows Pointing Directly to the Exact Screen Elements -->
+  <svg class="arrows-svg" viewBox="0 0 1280 720">
+    <defs>
+      <marker id="arrowhead" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+        <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#059669" />
+      </marker>
+    </defs>
+    
+    <!-- Top-Left: Card (288, 215) -> Target (400, 240) -->
+    <path d="M 288 215 C 320 215, 385 240, 400 240" stroke="#059669" stroke-width="2.6" fill="none" stroke-linecap="round" marker-end="url(#arrowhead)" />
+
+    <!-- Bottom-Left: Card (288, 535) -> Target (400, 520) -->
+    <path d="M 288 535 C 320 535, 385 520, 400 520" stroke="#059669" stroke-width="2.6" fill="none" stroke-linecap="round" marker-end="url(#arrowhead)" />
+
+    <!-- Top-Right: Card (992, 215) -> Target (860, 240) -->
+    <path d="M 992 215 C 920 215, 875 240, 860 240" stroke="#059669" stroke-width="2.6" fill="none" stroke-linecap="round" marker-end="url(#arrowhead)" />
+
+    <!-- Bottom-Right: Card (992, 535) -> Target (860, 510) -->
+    <path d="M 992 535 C 920 535, 875 510, 860 510" stroke="#059669" stroke-width="2.6" fill="none" stroke-linecap="round" marker-end="url(#arrowhead)" />
+  </svg>
+
+</body>
+</html>
