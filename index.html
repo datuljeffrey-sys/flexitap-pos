@@ -609,7 +609,14 @@
 
     /* FOOTER & SOCIAL ICONS */
     footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #0b0f19; font-size: 14px; width: 100%; }
-    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 24px; }
+    /* 4-COLUMN RESPONSIVE FOOTER GRID */
+    .footer-grid { display: grid; grid-template-columns: 1.8fr 1.2fr 1.2fr 0.9fr; gap: 36px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 24px; }
+    @media (max-width: 960px) {
+      .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    }
+    @media (max-width: 600px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+    }
     .footer-brand p { color: var(--text-muted); font-size: 14px; margin: 16px 0 24px 0; max-width: 320px; line-height: 1.6; }
     
     .social-links { display: flex; gap: 12px; margin-top: 16px; }
@@ -740,7 +747,14 @@
       }
     }
     @media (max-width: 768px) {
-      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+      /* 4-COLUMN RESPONSIVE FOOTER GRID */
+    .footer-grid { display: grid; grid-template-columns: 1.8fr 1.2fr 1.2fr 0.9fr; gap: 36px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 24px; }
+    @media (max-width: 960px) {
+      .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    }
+    @media (max-width: 600px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+    }
       .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 8px; }
       .pillars-grid { grid-template-columns: 1fr; gap: 20px; }
     }
@@ -751,41 +765,342 @@
       .btn-primary, .btn-demo { width: 100%; justify-content: center; }
     }
   
-    /* INDUSTRIES DROPDOWN */
+    /* INDUSTRIES DROPDOWN - ROCK-SOLID HOVER & CLICK */
     .nav-dropdown { position: relative; display: inline-flex; align-items: center; }
     .nav-dropdown-btn {
       background: none; border: none; color: var(--text-muted); font-size: 14.5px; font-weight: 600;
-      cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 6px 0;
-      transition: color 0.2s; font-family: inherit;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px;
+      transition: color 0.2s, background 0.2s; font-family: inherit;
     }
-    .nav-dropdown:hover .nav-dropdown-btn, .nav-dropdown.active .nav-dropdown-btn { color: #fff; }
-    .nav-dropdown-btn svg { width: 14px; height: 14px; transition: transform 0.2s; }
-    .nav-dropdown:hover .nav-dropdown-btn svg { transform: rotate(180deg); }
+    .nav-dropdown:hover .nav-dropdown-btn,
+    .nav-dropdown.active .nav-dropdown-btn { color: #fff; background: rgba(255, 255, 255, 0.08); }
+    .dropdown-chevron { width: 14px; height: 14px; transition: transform 0.2s; pointer-events: none; }
+    .nav-dropdown:hover .dropdown-chevron,
+    .nav-dropdown.active .dropdown-chevron { transform: rotate(180deg); }
 
     .dropdown-menu {
-      display: none; position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%);
-      width: 320px; background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; padding: 10px;
-      box-shadow: 0 20px 45px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06);
-      z-index: 200; flex-direction: column; gap: 4px;
+      display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      width: 320px; background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px; padding: 8px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.08);
+      z-index: 9999; flex-direction: column; gap: 4px; margin-top: 6px;
+      pointer-events: auto;
     }
-    .nav-dropdown:hover .dropdown-menu { display: flex; }
+    /* Invisible hover bridge to eliminate gap dropping */
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: -14px; left: 0; right: 0; height: 14px; background: transparent;
+    }
+    
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown.active .dropdown-menu { display: flex; }
     
     .dropdown-item {
       display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px;
-      text-decoration: none; color: #fff; transition: background 0.15s;
+      text-decoration: none; color: #fff; transition: background 0.15s, transform 0.1s;
+      cursor: pointer; position: relative; z-index: 10000;
     }
-    .dropdown-item:hover { background: rgba(255, 255, 255, 0.08); }
-    .dropdown-item.active { background: rgba(37, 99, 235, 0.16); border: 1px solid rgba(59, 130, 246, 0.35); }
-    .dropdown-icon { font-size: 20px; width: 34px; height: 34px; border-radius: 8px; background: rgba(255, 255, 255, 0.06); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .dropdown-item * { pointer-events: none; }
+    .dropdown-item:hover { background: rgba(255, 255, 255, 0.1); transform: translateX(2px); }
+    .dropdown-item.active { background: rgba(37, 99, 235, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); }
+    .dropdown-icon { font-size: 20px; width: 34px; height: 34px; border-radius: 8px; background: rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .dropdown-title { font-size: 13.5px; font-weight: 700; color: #fff; line-height: 1.2; }
     .dropdown-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
     @media (max-width: 1140px) {
+      .dropdown-menu { position: static; transform: none; width: 100%; box-shadow: none; background: rgba(15, 23, 42, 0.6); margin-top: 0; }
+      .dropdown-menu::before { display: none; }
+      .nav-dropdown { flex-direction: column; align-items: stretch; width: 100%; }
+      .nav-dropdown-btn { justify-content: space-between; width: 100%; padding: 10px 0; }
+      .dropdown-menu { display: none !important; }
+      .nav-dropdown.active .dropdown-menu { display: flex !important; }
+    }
+@media (max-width: 1140px) {
       .dropdown-menu { position: static; transform: none; width: 100%; box-shadow: none; background: rgba(15, 23, 42, 0.6); }
       .nav-dropdown { flex-direction: column; align-items: stretch; width: 100%; }
       .nav-dropdown-btn { justify-content: space-between; width: 100%; padding: 10px 0; }
       .nav-dropdown.active .dropdown-menu { display: flex; }
+    }
+
+  
+    /* UNIFIED NAVIGATION & HEADER (MATCHING HOMEPAGE EXACTLY) */
+    header { 
+      padding: clamp(12px, 1.6vh, 18px) 0; 
+      border-bottom: 1px solid var(--card-border); 
+      position: sticky; 
+      top: 0; 
+      background: rgba(9, 13, 22, 0.94); 
+      backdrop-filter: blur(14px); 
+      z-index: 1000; 
+      width: 100%; 
+    }
+    header .container { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      width: 100%; 
+      gap: clamp(12px, 1.8vw, 24px); 
+      position: relative;
+    }
+    .logo { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      font-size: clamp(19px, 1.6vw, 22px); 
+      font-weight: 800; 
+      color: #ffffff; 
+      text-decoration: none; 
+      letter-spacing: -0.5px; 
+      flex-shrink: 0; 
+      white-space: nowrap; 
+    }
+    .brand-logo-svg { 
+      width: clamp(32px, 2.4vw, 38px); 
+      height: clamp(32px, 2.4vw, 38px); 
+      flex-shrink: 0; 
+      display: block; 
+      border-radius: 50%; 
+      object-fit: contain; 
+    }
+    
+    .nav-links { 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: clamp(8px, 1.1vw, 16px); 
+      flex: 1; 
+      margin: 0; 
+    }
+    .nav-link { 
+      color: #cbd5e1; 
+      text-decoration: none; 
+      font-size: clamp(13.5px, 0.95vw, 15px); 
+      font-weight: 600; 
+      transition: color 0.2s, transform 0.2s; 
+      white-space: nowrap; 
+    }
+    .nav-link:hover, .nav-link.active { 
+      color: #ffffff; 
+    }
+    .mobile-menu-toggle { 
+      display: none; 
+      background: rgba(255, 255, 255, 0.06); 
+      border: 1px solid var(--card-border); 
+      padding: 8px 12px; 
+      border-radius: 10px; 
+      color: #fff; 
+      font-size: 22px; 
+      cursor: pointer; 
+      line-height: 1; 
+    }
+
+    .nav-actions { 
+      display: flex; 
+      align-items: center; 
+      gap: clamp(8px, 1vw, 12px); 
+      flex-shrink: 0; 
+    }
+    .btn-login { 
+      background: #ffffff !important; 
+      color: #1d4ed8 !important; 
+      border: none !important; 
+      padding: clamp(8px, 1vh, 10px) clamp(16px, 1.3vw, 22px) !important; 
+      border-radius: 8px !important; 
+      font-weight: 700 !important; 
+      font-size: clamp(13.5px, 0.95vw, 14.5px) !important; 
+      cursor: pointer; 
+      transition: 0.2s ease; 
+      text-decoration: none; 
+      display: inline-flex; 
+      align-items: center; 
+      white-space: nowrap; 
+    }
+    .btn-login:hover { 
+      background: #f1f5f9 !important; 
+      transform: translateY(-1px); 
+    }
+    .btn-signup { 
+      background: #2563eb !important; 
+      border: none !important; 
+      color: #fff !important; 
+      padding: clamp(8px, 1vh, 10px) clamp(16px, 1.4vw, 22px) !important; 
+      border-radius: 8px !important; 
+      font-weight: 700 !important; 
+      font-size: clamp(13.5px, 0.95vw, 14.5px) !important; 
+      cursor: pointer; 
+      transition: 0.2s ease; 
+      text-decoration: none; 
+      display: inline-flex; 
+      align-items: center; 
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); 
+      white-space: nowrap; 
+    }
+    .btn-signup:hover { 
+      background: #1d4ed8 !important; 
+      transform: translateY(-1px); 
+    }
+    .mobile-only-login { display: none; }
+
+    /* INDUSTRIES DROPDOWN - ROCK SOLID HOVER BRIDGE & CLICK */
+    .nav-dropdown { 
+      position: relative; 
+      display: inline-flex; 
+      align-items: center; 
+    }
+    .nav-dropdown-btn {
+      background: none; 
+      border: none; 
+      color: #cbd5e1; 
+      font-size: clamp(13.5px, 0.95vw, 15px); 
+      font-weight: 600;
+      cursor: pointer; 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 6px; 
+      padding: 6px 4px;
+      transition: color 0.2s; 
+      font-family: inherit;
+    }
+    .nav-dropdown:hover .nav-dropdown-btn, 
+    .nav-dropdown.active .nav-dropdown-btn { 
+      color: #ffffff; 
+    }
+    .dropdown-chevron { 
+      width: 14px; 
+      height: 14px; 
+      transition: transform 0.2s; 
+      pointer-events: none; 
+    }
+    .nav-dropdown:hover .dropdown-chevron,
+    .nav-dropdown.active .dropdown-chevron { 
+      transform: rotate(180deg); 
+    }
+
+    .dropdown-menu {
+      display: none; 
+      position: absolute; 
+      top: 100%; 
+      left: 50%; 
+      transform: translateX(-50%);
+      width: 330px; 
+      background: #0f172a; 
+      border: 1px solid rgba(255, 255, 255, 0.16); 
+      border-radius: 16px; 
+      padding: 8px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.08);
+      z-index: 9999; 
+      flex-direction: column; 
+      gap: 4px; 
+      margin-top: 8px;
+      pointer-events: auto;
+    }
+    /* Invisible hover bridge to eliminate gap dropping */
+    .dropdown-menu::before {
+      content: ''; 
+      position: absolute; 
+      top: -16px; 
+      left: 0; 
+      right: 0; 
+      height: 16px; 
+      background: transparent;
+    }
+    
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown.active .dropdown-menu { 
+      display: flex; 
+    }
+    
+    .dropdown-item {
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      padding: 10px 12px; 
+      border-radius: 10px;
+      text-decoration: none; 
+      color: #fff; 
+      transition: background 0.15s, transform 0.1s;
+      cursor: pointer; 
+      position: relative; 
+      z-index: 10000;
+    }
+    .dropdown-item * { 
+      pointer-events: none; 
+    }
+    .dropdown-item:hover { 
+      background: rgba(255, 255, 255, 0.1); 
+      transform: translateX(3px); 
+    }
+    .dropdown-item.active { 
+      background: rgba(37, 99, 235, 0.22); 
+      border: 1px solid rgba(59, 130, 246, 0.45); 
+    }
+    .dropdown-icon { 
+      font-size: 20px; 
+      width: 36px; 
+      height: 36px; 
+      border-radius: 8px; 
+      background: rgba(255, 255, 255, 0.08); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      flex-shrink: 0; 
+    }
+    .dropdown-title { 
+      font-size: 13.5px; 
+      font-weight: 700; 
+      color: #fff; 
+      line-height: 1.2; 
+    }
+    .dropdown-desc { 
+      font-size: 11px; 
+      color: #94a3b8; 
+      margin-top: 2px; 
+    }
+
+    /* 4-COLUMN FOOTER GRID */
+    .footer-grid { 
+      display: grid; 
+      grid-template-columns: 1.8fr 1.2fr 1.2fr 0.9fr; 
+      gap: 36px; 
+      padding-bottom: 40px; 
+      border-bottom: 1px solid rgba(255,255,255,0.05); 
+      margin-bottom: 24px; 
+    }
+    @media (max-width: 960px) {
+      .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    }
+    @media (max-width: 600px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+    }
+
+    @media (max-width: 1140px) {
+      .logo { order: 1; }
+      .nav-actions { order: 2; }
+      .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; order: 3; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: calc(100% + 1px);
+        left: 0;
+        right: 0;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        background: rgba(9, 13, 22, 0.98);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 20px 24px;
+        gap: 10px;
+        box-sizing: border-box;
+      }
+      .nav-links.mobile-open { display: flex; }
+      .nav-link { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+      .dropdown-menu { position: static; transform: none; width: 100%; box-shadow: none; background: rgba(15, 23, 42, 0.6); margin-top: 0; }
+      .dropdown-menu::before { display: none; }
+      .nav-dropdown { flex-direction: column; align-items: stretch; width: 100%; }
+      .nav-dropdown-btn { justify-content: space-between; width: 100%; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+      .dropdown-menu { display: none !important; }
+      .nav-dropdown.active .dropdown-menu { display: flex !important; }
+      .nav-actions .btn-login { display: none; }
+      .mobile-only-login { display: inline-flex; width: 100%; justify-content: center; margin-top: 8px; }
     }
 
   </style>
@@ -812,10 +1127,10 @@
       
       <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">☰</button>
 
-            <div class="nav-links" id="navLinksContainer">
+                  <div class="nav-links" id="navLinksContainer">
         <!-- INDUSTRIES DROPDOWN -->
         <div class="nav-dropdown" id="industriesDropdown">
-          <button class="nav-link nav-dropdown-btn" onclick="toggleDropdown(event)">
+          <button type="button" class="nav-link nav-dropdown-btn" onclick="toggleDropdown(event)">
             <span>Industries</span>
             <svg class="dropdown-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
           </button>
@@ -858,16 +1173,16 @@
           </div>
         </div>
 
-        <a href="features.html" class="nav-link" onclick="toggleMobileMenu()">Capabilities</a>
-        <a href="pricing.html" class="nav-link" onclick="toggleMobileMenu()">Pricing</a>
-        <a href="about.html" class="nav-link" onclick="toggleMobileMenu()">About &amp; FAQ</a>
-        <a href="insights.html" class="nav-link" onclick="toggleMobileMenu()">Insights</a>
-        <a href="support.html" class="nav-link" onclick="toggleMobileMenu()">Support</a>
-        <button class="btn-login mobile-only-login" onclick="openModal('login-modal'); toggleMobileMenu();">Merchant Login</button>
+        <a href="features.html" class="nav-link " onclick="toggleMobileMenu()">Capabilities</a>
+        <a href="pricing.html" class="nav-link " onclick="toggleMobileMenu()">Pricing</a>
+        <a href="about.html" class="nav-link " onclick="toggleMobileMenu()">About &amp; FAQ</a>
+        <a href="insights.html" class="nav-link " onclick="toggleMobileMenu()">Insights</a>
+        <a href="support.html" class="nav-link " onclick="toggleMobileMenu()">Support</a>
+        <button type="button" class="btn-login mobile-only-login" onclick="openModal('login-modal'); toggleMobileMenu();">Merchant Login</button>
       </div>
 
       <div class="nav-actions">
-        <button class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
+        <button type="button" class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
         <a href="pricing.html" class="btn-signup">Get Started</a>
       </div>
     </div>
@@ -991,10 +1306,20 @@
           </div>
         </div>
 
+                        <div class="footer-col">
+          <h4>Industry Solutions</h4>
+          <ul>
+            <li><a href="pos-for-cafes.html">Cafes &amp; Bakeries</a></li>
+            <li><a href="pos-for-retail.html">Retail &amp; Boutiques</a></li>
+            <li><a href="pos-for-quick-service.html">Quick-Serve &amp; Food Trucks</a></li>
+            <li><a href="pos-for-fine-dining.html">Fine Dining &amp; Full Service</a></li>
+            <li><a href="pos-for-professional-services.html">Professional Services &amp; Salons</a></li>
+          </ul>
+        </div>
+
         <div class="footer-col">
           <h4>Product</h4>
           <ul>
-            <li><a href="pos-for-cafes.html">POS for Cafes &amp; Bakeries</a></li>
             <li><a href="features.html">Capabilities</a></li>
             <li><a href="pricing.html">Pricing</a></li>
             <li><a href="about.html">FAQ</a></li>
@@ -1396,11 +1721,34 @@
 
     
     function toggleDropdown(e) {
-      if (window.innerWidth <= 1140) {
+      if (e) {
         e.preventDefault();
-        const dd = document.getElementById('industriesDropdown');
-        if (dd) dd.classList.toggle('active');
+        e.stopPropagation();
       }
+      const dd = document.getElementById('industriesDropdown');
+      if (dd) {
+        dd.classList.toggle('active');
+      }
+    }
+
+    document.addEventListener('click', function(e) {
+      const dd = document.getElementById('industriesDropdown');
+      if (dd && !dd.contains(e.target)) {
+        dd.classList.remove('active');
+      }
+    });
+      const dd = document.getElementById('industriesDropdown');
+      if (dd) {
+        dd.classList.toggle('active');
+      }
+    }
+
+    document.addEventListener('click', function(e) {
+      const dd = document.getElementById('industriesDropdown');
+      if (dd && !dd.contains(e.target)) {
+        dd.classList.remove('active');
+      }
+    });
     }
 
     function toggleMobileMenu() {
