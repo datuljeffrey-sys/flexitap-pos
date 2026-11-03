@@ -33,6 +33,9 @@
   <meta name="theme-color" content="#080c14">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Google reCAPTCHA v2 -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
   <script src="analytics.js?v=20261031" defer></script>
   <!-- In-House Philippine Affiliate & Referral Tracker -->
   <script src="affiliate-tracker.js?v=20261031" defer></script>
@@ -733,6 +736,21 @@
       .mobile-only-login { display: inline-flex; width: 100%; justify-content: center; margin-top: 8px; }
     }
 
+  
+    /* GOOGLE RECAPTCHA WIDGET ALIGNMENT */
+    .recaptcha-group {
+      margin: 16px 0 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    @media (max-width: 480px) {
+      .recaptcha-group {
+        transform: scale(0.88);
+        transform-origin: left top;
+      }
+    }
+
   </style>
 
   <script>
@@ -917,6 +935,14 @@
         return;
       }
 
+      // Security Verification Check (reCAPTCHA)
+      const recaptchaResponse = (typeof grecaptcha !== 'undefined') ? grecaptcha.getResponse() : '';
+      if (!recaptchaResponse) {
+        errorDiv.innerText = 'Security Verification: Please check the "I\'m not a robot" box before submitting.';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
       errorDiv.style.display = 'none';
       errorDiv.innerText = '';
       btn.disabled = true;
@@ -933,6 +959,7 @@
         subject: subject,
         description: description,
         status: 'open',
+        recaptcha_token: recaptchaResponse,
         assigned_to: autoAssign.assigned_to,
         device_telemetry: {
           app_version: 'Web Support v2.4.1',
@@ -960,6 +987,7 @@
           errorDiv.style.display = 'block';
           btn.disabled = false;
           btn.innerHTML = 'Submit Support Ticket';
+          if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
           return;
         }
 
@@ -1013,6 +1041,7 @@
       const btn = document.getElementById('ticket-submit-btn');
       
       formEl.reset();
+      if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
       formEl.style.display = 'block';
       successBox.style.display = 'none';
       btn.disabled = false;
@@ -1587,6 +1616,12 @@
               <label for="t-description">Detailed Description &amp; Error Notes *</label>
               <textarea id="t-description" required placeholder="Please describe the steps to reproduce, device model, and any error message displayed on your terminal..."></textarea>
               <div class="field-hint">Hardware telemetry and browser details will be attached automatically to accelerate diagnosis.</div>
+            </div>
+
+            
+            <!-- Google reCAPTCHA Security Verification -->
+            <div class="form-group recaptcha-group">
+              <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" data-theme="dark"></div>
             </div>
 
             <div id="ticket-error-msg" class="error-msg" style="display:none; text-align:left; margin-bottom:12px;"></div>
