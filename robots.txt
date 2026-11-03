@@ -1,6 +1,11 @@
-# FlexiTap POS - Search Engine Crawler Directive
+# FlexiTap POS - Search Engine & AI Agent Crawler Directives
 User-agent: *
 Allow: /
+Allow: /pos-for-cafes.html
+Allow: /pos-for-retail.html
+Allow: /pos-for-quick-service.html
+Allow: /pos-for-fine-dining.html
+Allow: /pos-for-professional-services.html
 Allow: /features.html
 Allow: /pricing.html
 Allow: /about.html
@@ -11,13 +16,33 @@ Allow: /affiliate.html
 Allow: /terms.html
 Allow: /privacy.html
 Allow: /refunds.html
+Allow: /llms.txt
 
-# Disallow internal apps, portals and account deletion endpoints
+# Disallow internal apps, portals and account endpoints
 Disallow: /portal.html
 Disallow: /dev-portal.html
 Disallow: /dev_portal.html
 Disallow: /partner-portal.html
 Disallow: /flexi-app.html
 Disallow: /account/
+
+# Welcome AI Answer Engines (AEO)
+User-agent: GPTBot
+Allow: /
+Allow: /llms.txt
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /llms.txt
+
+User-agent: ClaudeBot
+Allow: /
+Allow: /llms.txt
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
 
 Sitemap: https://flexitapapp.com/sitemap.xml

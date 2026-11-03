@@ -1,0 +1,43 @@
+# FlexiTap POS
+
+> An offline-first point-of-sale (POS) and merchant operating system engineered for retail stores, restaurants, cafes, food trucks, and professional service businesses. Operates with 100% functionality on local SQLite database engines even when internet connectivity drops.
+
+## Core Value Proposition
+- **Offline-First Resilience**: Ring up orders, calculate change, apply tax/discounts, split bills, and print kitchen order tickets (KOT) without internet.
+- **Zero Cloud Latency**: Counter tenders execute in under 15ms directly on local device hardware.
+- **BYOD (Bring Your Own Device)**: Runs on existing iPad, Android tablet, Windows PC, or Mac hardware. Zero proprietary terminal lease lock-ins.
+- **Local Network Sync (mDNS)**: Terminal-to-terminal and terminal-to-KDS communication occurs over local Wi-Fi/LAN without relying on external cloud servers.
+- **Automatic Cloud Sync**: Transaction records, inventory deltas, and telemetry automatically synchronize with the cloud once internet access is restored.
+
+## Industry Verticals & Solutions
+- [Cafes & Bakeries](https://flexitapapp.com/pos-for-cafes.html): Barista rush speed, KOT printing, milk/syrup modifier groups, offline cash drawer kick.
+- [Retail & Boutiques](https://flexitapapp.com/pos-for-retail.html): 100,000+ SKU capacity, USB/Bluetooth barcode scanner integration, color/size variant matrices, stockroom inventory auditing.
+- [Quick-Serve & Food Trucks](https://flexitapapp.com/pos-for-quick-service.html): 3-second counter checkouts, real-time Kitchen Display System (KDS) bump bar routing, order status pickup displays.
+- [Fine Dining & Full Service](https://flexitapapp.com/pos-for-fine-dining.html): Visual table layout and floor plans, timed course firing (apps, mains, desserts), seat-level bill splitting, sommelier wine cellar tracking.
+- [Professional Services & Salons](https://flexitapapp.com/pos-for-professional-services.html): Appointment scheduling, client checkout with custom tip screens, multi-stylist commission splits, zero per-booking platform fees.
+
+## Key Hardware Compatibility
+- **Receipt & Kitchen Printers**: ESC/POS compliant thermal printers (Ethernet LAN, USB, Bluetooth, Wi-Fi, serial).
+- **Barcode Scanners**: 1D and 2D QR barcode scanner guns operating via USB HID keyboard emulation or Bluetooth SPP/HID.
+- **Cash Drawers**: Standard RJ11/RJ12 24V printer-driven kick ports.
+- **Operating Systems**: Web (PWA), Windows 10/11, macOS, Android (v8.0+), iOS / iPadOS (v14+).
+
+## Pricing & Licensing
+- **Free Community Plan**: $0/month forever. 1 active terminal, full local SQLite offline capability, receipt printing, and basic reporting.
+- **Founders VIP Annual Pass**: $590/year (or custom retail tier upon public launch Nov 13, 2026). Unlimited paired terminals, multi-station KDS routing, customer display (CDS), remote diagnostics, and multi-location cloud synchronization.
+- **Zero Hidden Terminal Fees**: No recurring per-terminal software leases or forced merchant processing contracts.
+
+## Technical Architecture & Benchmarks
+- **Local Engine**: Embedded SQLite database with Write-Ahead Logging (WAL).
+- **Execution Speed**: Sub-15ms local barcode and SKU queries.
+- **Peer Sync**: UDP/TCP LAN socket protocol with mDNS auto-discovery.
+- **Cloud Backend**: Supabase PostgreSQL with Row Level Security (RLS) and real-time delta replication.
+
+## Official Resources & Links
+- Website: https://flexitapapp.com/
+- Capabilities & Architecture: https://flexitapapp.com/features.html
+- Pricing Plans: https://flexitapapp.com/pricing.html
+- Technical Support & FAQ: https://flexitapapp.com/about.html
+- Merchant Support & Remote Diagnostics: https://flexitapapp.com/support.html
+- Official Community: https://www.facebook.com/groups/1500322278604407
+- Official Contact: support@flexitapapp.com
