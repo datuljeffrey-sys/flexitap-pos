@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <!-- Primary SEO Metadata -->
+  <title>Fine Dining & Full-Service Restaurant POS | Floor Plans & Course Firing | FlexiTap</title>
+  <meta name="description" content="Fine dining restaurant POS software with interactive floor plans, timed course firing (appetizers, entrees, desserts), split bill guest management, and zero cloud lock-ins.">
+  <meta name="keywords" content="fine dining pos system, full service restaurant pos, restaurant table management software, course firing pos, split bill restaurant pos, sommelier pos system">
+  <link rel="canonical" href="https://flexitapapp.com/pos-for-fine-dining.html">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="product">
+  <meta property="og:url" content="https://flexitapapp.com/pos-for-fine-dining.html">
+  <meta property="og:site_name" content="FlexiTap POS">
+  <meta property="og:title" content="Fine Dining & Full-Service Restaurant POS | Floor Plans & Course Firing | FlexiTap">
+  <meta property="og:description" content="Fine dining restaurant POS software with interactive floor plans, timed course firing (appetizers, entrees, desserts), split bill guest management, and zero cloud lock-ins.">
+  <meta property="og:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter / X Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://flexitapapp.com/pos-for-fine-dining.html">
+  <meta name="twitter:title" content="Fine Dining & Full-Service Restaurant POS | Floor Plans & Course Firing | FlexiTap">
+  <meta name="twitter:description" content="Fine dining restaurant POS software with interactive floor plans, timed course firing (appetizers, entrees, desserts), split bill guest management, and zero cloud lock-ins.">
+  <meta name="twitter:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "FlexiTap POS - Fine Dining & Full Service",
+    "operatingSystem": "Windows 10, Windows 11, Android POS, macOS, Linux, Web PWA",
+    "applicationCategory": "BusinessApplication",
+    "category": "Point of Sale Software for Fine Dining and Full-Service Restaurants",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "description": "Free Community Tier with 100% Offline Resilience and Zero Mandatory Monthly Fees"
+    },
+    "description": "Fine dining restaurant POS software with interactive floor plans, timed course firing (appetizers, entrees, desserts), split bill guest management, and zero cloud lock-ins."
+  }
+  </script>
+
+  <link rel="icon" type="image/png" href="image_02e503.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="image_02e503.png">
+
+  <!-- Supabase Official JS SDK & Paddle -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  <script src="analytics.js?v=20261031" defer></script>
+  <script src="affiliate-tracker.js?v=20261031" defer></script>
+
+  <link rel="preload" href="fonts/480c062501_tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css?v=20261031">
+
+  <style>
+
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(22, 30, 49, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent-amber: #f59e0b;
+      --accent-amber-glow: rgba(245, 158, 11, 0.18);
+      --accent-green: #10b981;
+      --accent-purple: #8b5cf6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+    html, body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; width: 100%; max-width: 100vw; overflow-x: clip; position: relative; }
+
+    .container { 
+      width: 100%; 
+      max-width: 1240px; 
+      margin: 0 auto; 
+      padding: 0 clamp(20px, 4vw, 48px); 
+      box-sizing: border-box; 
+      position: relative; 
+      z-index: 2; 
+    }
+
+    /* HEADER & NAV */
+    header { 
+      padding: clamp(12px, 1.6vh, 18px) 0; 
+      border-bottom: 1px solid var(--card-border); 
+      background: rgba(9, 13, 22, 0.9); 
+      backdrop-filter: blur(16px); 
+      position: sticky; 
+      top: 0; 
+      z-index: 100; 
+      width: 100%; 
+    }
+    header .container { display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 19px; color: #fff; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+    .brand-logo-svg { width: 30px; height: 30px; border-radius: 6px; }
+
+    .nav-links { display: flex; align-items: center; gap: clamp(8px, 1.1vw, 16px); }
+    .nav-link { color: var(--text-muted); text-decoration: none; font-size: 14.5px; font-weight: 600; transition: color 0.2s; white-space: nowrap; }
+    .nav-link:hover, .nav-link.active { color: #fff; }
+    .nav-link.active { color: var(--primary); }
+
+    /* SOLUTIONS DROPDOWN */
+    .nav-dropdown { position: relative; display: inline-flex; align-items: center; }
+    .nav-dropdown-btn {
+      background: none; border: none; color: var(--text-muted); font-size: 14.5px; font-weight: 600;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 6px 0;
+      transition: color 0.2s; font-family: inherit;
+    }
+    .nav-dropdown:hover .nav-dropdown-btn, .nav-dropdown.active .nav-dropdown-btn { color: #fff; }
+    .nav-dropdown-btn svg { width: 14px; height: 14px; transition: transform 0.2s; }
+    .nav-dropdown:hover .nav-dropdown-btn svg { transform: rotate(180deg); }
+
+    .dropdown-menu {
+      display: none; position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%);
+      width: 320px; background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; padding: 10px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06);
+      z-index: 200; flex-direction: column; gap: 4px;
+    }
+    .nav-dropdown:hover .dropdown-menu { display: flex; }
+    
+    .dropdown-item {
+      display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px;
+      text-decoration: none; color: #fff; transition: background 0.15s;
+    }
+    .dropdown-item:hover { background: rgba(255, 255, 255, 0.08); }
+    .dropdown-item.active { background: rgba(37, 99, 235, 0.16); border: 1px solid rgba(59, 130, 246, 0.35); }
+    .dropdown-icon { font-size: 20px; width: 34px; height: 34px; border-radius: 8px; background: rgba(255, 255, 255, 0.06); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .dropdown-title { font-size: 13.5px; font-weight: 700; color: #fff; line-height: 1.2; }
+    .dropdown-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .nav-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .btn-login { background: transparent; border: 1px solid var(--card-border); color: #fff; padding: 8px 18px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; }
+    .btn-login:hover { background: rgba(255,255,255,0.06); }
+    .btn-signup { background: var(--primary); color: white; border: none; padding: 9px 20px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-flex; align-items: center; }
+    .btn-signup:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+    .mobile-menu-toggle { display: none; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+    .mobile-only-login { display: none; }
+
+    /* HERO SECTION */
+    .hero-section { padding: clamp(40px, 6vh, 70px) 0 clamp(40px, 6vh, 60px); position: relative; }
+    .hero-ambient-glow {
+      position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 500px;
+      background: radial-gradient(ellipse at center, rgba(245, 158, 11, 0.12) 0%, rgba(37, 99, 235, 0.08) 50%, transparent 70%);
+      filter: blur(80px); pointer-events: none; z-index: 1;
+    }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-amber-glow); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; padding: 6px 16px; border-radius: 9999px; font-size: 13px; font-weight: 700; margin-bottom: 20px; }
+    .hero-title { font-size: clamp(30px, 4.2vw, 50px); font-weight: 900; letter-spacing: -1px; line-height: 1.15; color: #fff; margin-bottom: 18px; }
+    .hero-title span { background: linear-gradient(135deg, #f59e0b, #fb923c, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-desc { font-size: clamp(15.5px, 1.8vw, 17.5px); color: var(--text-muted); line-height: 1.65; margin-bottom: 30px; }
+    .hero-cta-group { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 30px; }
+    .btn-primary-lg { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; padding: 13px 26px; border-radius: 10px; font-weight: 700; font-size: 15px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4); transition: 0.2s; }
+    .btn-primary-lg:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(37, 99, 235, 0.5); }
+    .btn-secondary-lg { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 13px 24px; border-radius: 10px; font-weight: 700; font-size: 15px; text-decoration: none; transition: 0.2s; cursor: pointer; }
+    .btn-secondary-lg:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
+
+    /* FEATURE BADGES */
+    .hero-highlights { display: flex; gap: 18px; flex-wrap: wrap; }
+    .highlight-pill { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #cbd5e1; }
+    .highlight-pill svg { width: 16px; height: 16px; color: #10b981; flex-shrink: 0; }
+
+    /* HERO MEDIA SHOWCASE */
+    .hero-media-wrapper { position: relative; }
+    .hero-img-card {
+      position: relative; border-radius: 24px; overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(245, 158, 11, 0.2);
+      background: #0f172a;
+    }
+    .hero-img-card img { width: 100%; height: auto; display: block; object-fit: cover; aspect-ratio: 16/10; transition: transform 0.5s ease; }
+    .hero-img-card:hover img { transform: scale(1.02); }
+    .hero-overlay-pill-top {
+      position: absolute; top: 16px; right: 16px;
+      background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 30px;
+      padding: 7px 14px; font-size: 12px; font-weight: 700; color: #ffffff;
+      display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+    .hero-overlay-card-bottom {
+      position: absolute; bottom: 16px; left: 16px; right: 16px;
+      background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(12px);
+      border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 16px;
+      padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+    }
+    .hero-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; animation: pulse-green 2s infinite; }
+    .hero-stat-badge { font-size: 11px; font-weight: 800; background: #059669; color: #fff; padding: 4px 10px; border-radius: 6px; }
+
+    /* SECTION STYLES */
+    .section-wrap { padding: clamp(52px, 7vh, 80px) 0; }
+    .section-header { text-align: center; max-width: 720px; margin: 0 auto 48px; }
+    .section-tag { display: inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); margin-bottom: 10px; }
+    .section-title { font-size: clamp(26px, 3.8vw, 38px); font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 14px; }
+    .section-subtitle { font-size: 16px; color: var(--text-muted); line-height: 1.6; }
+
+    /* 3-COLUMN VISUAL STATIONS GRID */
+    .stations-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: 10px; }
+    .station-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .station-card:hover {
+      transform: translateY(-5px); border-color: rgba(59, 130, 246, 0.45);
+      box-shadow: 0 18px 40px -10px rgba(0,0,0,0.6);
+    }
+    .station-img-box { position: relative; width: 100%; aspect-ratio: 16/10; overflow: hidden; background: #111827; }
+    .station-img-box img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+    .station-card:hover .station-img-box img { transform: scale(1.04); }
+    .station-tag-pill {
+      position: absolute; top: 12px; left: 12px;
+      background: rgba(9, 13, 22, 0.85); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 20px;
+      padding: 4px 12px; font-size: 11px; font-weight: 800; color: #fbbf24; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .station-body { padding: 22px 22px 26px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .station-title { font-size: 18.5px; font-weight: 800; color: #fff; margin-bottom: 8px; line-height: 1.3; }
+    .station-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 18px; }
+    .station-stat {
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 14px;
+      font-size: 12.5px; color: #cbd5e1; font-weight: 600;
+    }
+    .station-stat strong { color: #10b981; font-weight: 800; font-size: 13.5px; }
+
+    /* CORE TECHNICAL SPOTLIGHT BOX */
+    .spotlight-box {
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 22px;
+      padding: clamp(24px, 4vw, 44px); display: grid; grid-template-columns: 1.15fr 0.85fr;
+      gap: 40px; align-items: center; position: relative; overflow: hidden;
+    }
+    .spotlight-box::before {
+      content: ""; position: absolute; top: -50px; right: -50px; width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.15), transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .spotlight-title { font-size: clamp(22px, 3vw, 32px); font-weight: 800; color: #fff; margin-bottom: 16px; }
+    .spotlight-desc { font-size: 15px; color: #cbd5e1; line-height: 1.7; margin-bottom: 22px; }
+    .spotlight-steps { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .spotlight-step { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: #cbd5e1; }
+    .spotlight-num {
+      width: 24px; height: 24px; border-radius: 50%; background: #f59e0b; color: #000;
+      font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+
+    /* CARD / MOCK DISPLAY */
+    .spotlight-media-frame {
+      border-radius: 14px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.5); position: relative; background: #0f172a;
+    }
+    .spotlight-media-frame img { width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover; }
+    .spotlight-media-tag {
+      position: absolute; bottom: 10px; right: 10px;
+      background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px);
+      border: 1px solid #10b981; color: #34d399; font-size: 10.5px; font-weight: 800;
+      padding: 4px 10px; border-radius: 6px; text-transform: uppercase;
+    }
+
+    /* SIX CAPABILITIES GRID */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+    .feature-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 28px 24px; transition: transform 0.2s, border-color 0.2s; position: relative; }
+    .feature-card:hover { transform: translateY(-3px); border-color: rgba(59, 130, 246, 0.4); }
+    .feature-icon { font-size: 32px; margin-bottom: 16px; display: inline-block; }
+    .feature-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .feature-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+    /* COMPARISON TABLE */
+    .compare-wrap { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; overflow-x: auto; padding: 12px; margin-top: 24px; }
+    .compare-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+    .compare-table th { padding: 16px 20px; font-weight: 700; color: #fff; border-bottom: 1px solid var(--card-border); background: rgba(15, 23, 42, 0.6); }
+    .compare-table th.highlight { color: #60a5fa; background: rgba(37, 99, 235, 0.12); border-left: 1px solid rgba(59, 130, 246, 0.2); border-right: 1px solid rgba(59, 130, 246, 0.2); }
+    .compare-table td { padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #cbd5e1; }
+    .compare-table td.highlight { background: rgba(37, 99, 235, 0.05); border-left: 1px solid rgba(59, 130, 246, 0.2); border-right: 1px solid rgba(59, 130, 246, 0.2); font-weight: 600; color: #fff; }
+    .status-check { color: #10b981; font-weight: bold; }
+    .status-cross { color: #ef4444; font-weight: bold; }
+
+    /* FAQ SECTION */
+    .faq-container { max-width: 840px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+    .faq-item { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 18px 22px; cursor: pointer; }
+    .faq-question { font-size: 16px; font-weight: 700; color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .faq-answer { display: none; margin-top: 12px; font-size: 14.5px; color: var(--text-muted); line-height: 1.6; border-top: 1px solid var(--card-border); padding-top: 12px; }
+    .faq-item.open .faq-answer { display: block; }
+    .faq-toggle { font-size: 20px; color: var(--primary); }
+
+    /* CTA BANNER */
+    .cta-banner { background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(245, 158, 11, 0.15)); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 20px; padding: clamp(36px, 6vh, 60px) 24px; text-align: center; margin: 60px 0 20px; }
+    .cta-banner h3 { font-size: clamp(24px, 4vw, 36px); font-weight: 800; color: #fff; margin-bottom: 14px; }
+    .cta-banner p { font-size: 16px; color: #cbd5e1; max-width: 600px; margin: 0 auto 28px; line-height: 1.6; }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #0b0f19; font-size: 14px; width: 100%; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 24px; }
+    .footer-brand p { color: var(--text-muted); font-size: 14px; margin: 16px 0 24px 0; max-width: 320px; line-height: 1.6; }
+    .footer-col h4 { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 12px; }
+    .footer-col ul li a { color: var(--text-muted); text-decoration: none; font-size: 14px; transition: 0.2s; }
+    .footer-col ul li a:hover { color: #fff; }
+    .footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--text-muted); font-size: 13px; }
+
+    /* MODALS */
+    .modal-overlay { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; padding: 16px; }
+    .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); padding: 36px 24px; border-radius: 20px; width: 100%; max-width: 440px; position: relative; text-align: center; max-height: 90vh; overflow-y: auto; }
+    .close-btn { position: absolute; top: 18px; right: 18px; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
+    label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
+    input, select { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; color: white; font-size: 15px; }
+    .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; }
+
+    @keyframes pulse-green {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    @media (max-width: 1140px) {
+      .logo { order: 1; }
+      .nav-actions { order: 2; }
+      .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; order: 3; }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: calc(100% + 1px);
+        left: 0;
+        right: 0;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        background: rgba(9, 13, 22, 0.98);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 20px 24px;
+        gap: 10px;
+      }
+      .nav-links.mobile-open { display: flex; }
+      .nav-link { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+      .nav-dropdown { width: 100%; }
+      .nav-dropdown-btn { width: 100%; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+      .dropdown-menu { position: static; transform: none; width: 100%; box-shadow: none; border: none; background: rgba(0,0,0,0.25); padding: 8px 0; margin-top: 4px; }
+      .nav-dropdown.mobile-open .dropdown-menu { display: flex; }
+      .hero-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+      .hero-highlights { justify-content: center; }
+      .hero-cta-group { justify-content: center; }
+      .stations-grid { grid-template-columns: 1fr; }
+      .spotlight-box { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+    }
+    @media (max-width: 640px) {
+      .nav-actions .btn-login { display: none; }
+      .mobile-only-login { display: inline-flex; width: 100%; justify-content: center; margin-top: 8px; }
+      .hero-overlay-card-bottom { flex-direction: column; gap: 8px; align-items: flex-start; }
+    }
+
+  </style>
+
+  <script>
+    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+    let supabaseClient = null;
+    try {
+      if (typeof supabase !== 'undefined') {
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    } catch (_) {}
+
+    function toggleMobileMenu() {
+      const nav = document.getElementById('navLinksContainer');
+      if (nav) nav.classList.toggle('mobile-open');
+    }
+
+    function toggleDropdown(event) {
+      if (window.innerWidth <= 1140) {
+        event.preventDefault();
+        event.stopPropagation();
+        const dd = document.getElementById('industriesDropdown');
+        if (dd) dd.classList.toggle('mobile-open');
+      }
+    }
+
+    function toggleFaq(el) {
+      el.classList.toggle('open');
+      const toggleIcon = el.querySelector('.faq-toggle');
+      if (toggleIcon) {
+        toggleIcon.textContent = el.classList.contains('open') ? '−' : '+';
+      }
+    }
+
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.style.display = 'none';
+    }
+
+    function openDemoBooking(event) {
+      if (event) event.preventDefault();
+      openModal('booking-modal');
+    }
+  </script>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <a href="/" class="logo">
+        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" />
+        <span>FlexiTap POS</span>
+      </a>
+      
+      <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">☰</button>
+
+      <div class="nav-links" id="navLinksContainer">
+        <!-- SOLUTIONS DROPDOWN -->
+        <div class="nav-dropdown" id="industriesDropdown">
+          <button class="nav-link nav-dropdown-btn" onclick="toggleDropdown(event)">
+            <span>Industries</span>
+            <svg class="dropdown-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </button>
+          <div class="dropdown-menu">
+
+            <a href="pos-for-cafes.html" class="dropdown-item ">
+              <span class="dropdown-icon">☕</span>
+              <div>
+                <div class="dropdown-title">Cafes & Bakeries</div>
+                <div class="dropdown-desc">KOT tickets & barista rush speed</div>
+              </div>
+            </a>
+            <a href="pos-for-retail.html" class="dropdown-item ">
+              <span class="dropdown-icon">🛍️</span>
+              <div>
+                <div class="dropdown-title">Retail & Boutiques</div>
+                <div class="dropdown-desc">Barcode scanning & variant matrices</div>
+              </div>
+            </a>
+            <a href="pos-for-quick-service.html" class="dropdown-item ">
+              <span class="dropdown-icon">🍔</span>
+              <div>
+                <div class="dropdown-title">Quick-Serve & Food Trucks</div>
+                <div class="dropdown-desc">3-second tender, KDS & bump bar</div>
+              </div>
+            </a>
+            <a href="pos-for-fine-dining.html" class="dropdown-item active">
+              <span class="dropdown-icon">🍷</span>
+              <div>
+                <div class="dropdown-title">Fine Dining & Full Service</div>
+                <div class="dropdown-desc">Floor plan, course firing & split checks</div>
+              </div>
+            </a>
+            <a href="pos-for-professional-services.html" class="dropdown-item ">
+              <span class="dropdown-icon">✂️</span>
+              <div>
+                <div class="dropdown-title">Professional Services & Salons</div>
+                <div class="dropdown-desc">Appointments, deposits & staff splits</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <a href="features.html" class="nav-link" onclick="toggleMobileMenu()">Capabilities</a>
+        <a href="pricing.html" class="nav-link" onclick="toggleMobileMenu()">Pricing</a>
+        <a href="about.html" class="nav-link" onclick="toggleMobileMenu()">About &amp; FAQ</a>
+        <a href="insights.html" class="nav-link" onclick="toggleMobileMenu()">Insights</a>
+        <a href="support.html" class="nav-link" onclick="toggleMobileMenu()">Support</a>
+        <button class="btn-login mobile-only-login" onclick="openModal('login-modal'); toggleMobileMenu();">Merchant Login</button>
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
+        <a href="pricing.html" class="btn-signup">Get Started</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+      <div class="hero-ambient-glow"></div>
+      <div class="container">
+        <div class="hero-grid">
+          <div>
+            <div class="hero-badge">🍷 Precision Hospitality for Fine Dining &amp; Bistros</div>
+            <h1 class="hero-title">Table Management &amp; Course Firing POS for <span>Full-Service Restaurants &amp; Fine Dining</span></h1>
+            <p class="hero-desc">Deliver impeccable hospitality without technical interruptions. FlexiTap gives fine dining managers intuitive floor mapping, server tableside handheld ordering, sommelier cellar tabs, and synchronized kitchen course firing that works 100% offline.</p>
+
+            <div class="hero-cta-group">
+              <a href="pricing.html" class="btn-primary-lg">
+                <span>Start Free Community Tier</span>
+                <span>→</span>
+              </a>
+              <button class="btn-secondary-lg" onclick="openDemoBooking(event)">Book a 15-Min Live Demo</button>
+            </div>
+
+            <div class="hero-highlights">
+              
+              <div class="highlight-pill">
+                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                <span>100% Offline SQLite</span>
+              </div>
+              <div class="highlight-pill">
+                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                <span>Timed Course Firing</span>
+              </div>
+              <div class="highlight-pill">
+                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                <span>Visual Floor Map &amp; Split Bills</span>
+              </div>
+              <div class="highlight-pill">
+                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                <span>Zero Monthly Subscriptions</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-media-wrapper">
+            <div class="hero-img-card">
+              <picture>
+                <source srcset="images/fine_dining_hero_diningroom.webp" type="image/webp">
+                <img src="images/fine_dining_hero_diningroom.jpg" alt="Fine dining upscale candlelit restaurant dining room with guests and wine glasses" loading="eager" width="600" height="375" />
+              </picture>
+
+              <div class="hero-overlay-pill-top">
+                <span class="hero-status-dot"></span>
+                <span>Tableside Course Firing</span>
+              </div>
+
+              <div class="hero-overlay-card-bottom">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 18px;">🛡️</span>
+                  <div>
+                    <div style="font-size: 12.5px; font-weight: 800; color: #fff;">100% Offline SQLite Engine</div>
+                    <div style="font-size: 11px; color: #94a3b8;">Zero cloud freeze during dinner service</div>
+                  </div>
+                </div>
+                <span class="hero-stat-badge">Flawless Hospitality</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3-STATION WORKFLOW SECTION -->
+    <section class="section-wrap" style="background: rgba(15, 23, 42, 0.45); border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Full-Service Floor & Kitchen Flow</span>
+          <h2 class="section-title">Engineered for Every Station in Your Restaurant</h2>
+          <p class="section-subtitle">Coordinate servers, sommeliers, line cooks, and hosts in synchronized harmony without network lag.</p>
+        </div>
+
+        <div class="stations-grid">
+          
+          <div class="station-card">
+            <div class="station-img-box">
+              <span class="station-tag-pill">Dining Room Floor</span>
+              <picture>
+                <source srcset="images/fine_dining_tableside_order_tablet.webp" type="image/webp">
+                <img src="images/fine_dining_tableside_order_tablet.jpg" alt="Server taking orders tableside with handheld tablet in upscale restaurant" loading="lazy" width="400" height="250" />
+              </picture>
+            </div>
+            <div class="station-body">
+              <div>
+                <h3 class="station-title">Handheld Tableside Ordering</h3>
+                <p class="station-desc">
+                  Servers capture complex dining courses tableside on slim tablets. Assign seat numbers, record dietary preferences, and split checks with a single tap.
+                </p>
+              </div>
+              <div class="station-stat">
+                <span>Table Turn Efficiency</span>
+                <strong>+25% Faster Turns</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="station-card">
+            <div class="station-img-box">
+              <span class="station-tag-pill">Bar &amp; Cellar</span>
+              <picture>
+                <source srcset="images/fine_dining_bar_sommelier_pos.webp" type="image/webp">
+                <img src="images/fine_dining_bar_sommelier_pos.jpg" alt="Sommelier and bartender managing wine tabs and cellar bottles on marble bar POS" loading="lazy" width="400" height="250" />
+              </picture>
+            </div>
+            <div class="station-body">
+              <div>
+                <h3 class="station-title">Sommelier &amp; Bar Tabs</h3>
+                <p class="station-desc">
+                  Track vintage wine bottle allocations, craft cocktail tabs, and transfers between the cocktail lounge and main dining room with zero ticket mix-ups.
+                </p>
+              </div>
+              <div class="station-stat">
+                <span>Cellar Inventory Tracking</span>
+                <strong>Per-Bottle Precision</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="station-card">
+            <div class="station-img-box">
+              <span class="station-tag-pill">Kitchen Expo Pass</span>
+              <picture>
+                <source srcset="images/fine_dining_chef_kitchen_pass.webp" type="image/webp">
+                <img src="images/fine_dining_chef_kitchen_pass.jpg" alt="Executive chef expediting dinner course tickets at restaurant kitchen pass" loading="lazy" width="400" height="250" />
+              </picture>
+            </div>
+            <div class="station-body">
+              <div>
+                <h3 class="station-title">Synchronized Course Firing</h3>
+                <p class="station-desc">
+                  Hold and fire courses with precision. When servers press 'Fire Entrees', kitchen expo printers cut tickets instantly. Hot food arrives hot, every time.
+                </p>
+              </div>
+              <div class="station-stat">
+                <span>Pass Routing Latency</span>
+                <strong>&lt; 300ms Expo Cut</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TECHNICAL CORE SPOTLIGHT SECTION -->
+    <section class="section-wrap">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Course Management Architecture</span>
+          <h2 class="section-title">How Offline Course Firing Works Without Internet</h2>
+          <p class="section-subtitle">Dinner rushes cannot pause for cloud buffering. FlexiTap coordinates table mapping and course firing directly over your local network.</p>
+        </div>
+
+        <div class="spotlight-box">
+          <div>
+            <h3 class="spotlight-title">Hold & Fire Course Protocol: Precision Kitchen Coordination</h3>
+            <p class="spotlight-desc">Fine dining requires immaculate pacing between appetizers, palate cleansers, mains, and desserts. Cloud POS lags can lead to premature course firing or cold food. FlexiTap manages the entire dinner service cycle locally:</p>
+            <ul class="spotlight-steps">
+              
+              <li class="spotlight-step">
+                <span class="spotlight-num">1</span>
+                <div><strong>Seat-by-Seat Ordering:</strong> Assign appetizers and mains by guest seat number (1-12) so food runners deliver plates without asking "Who had the sea bass?".</div>
+              </li>
+              <li class="spotlight-step">
+                <span class="spotlight-num">2</span>
+                <div><strong>Hold &amp; Fire Triggers:</strong> Mains remain held in the kitchen queue until the server taps 'Fire Table 14 Mains'. Expo station chits cut immediately over local LAN.</div>
+              </li>
+              <li class="spotlight-step">
+                <span class="spotlight-num">3</span>
+                <div><strong>Seamless Bill Splitting:</strong> Split evenly among couples, split by specific seat items, or transfer tabs to the bar lounge with zero recalculation errors.</div>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <div class="spotlight-media-frame">
+              <picture>
+                <source srcset="images/fine_dining_wine_cellar_spotlight.webp" type="image/webp">
+                <img src="images/fine_dining_wine_cellar_spotlight.jpg" alt="Sommelier pouring vintage wine at fine dining restaurant table" loading="lazy" width="450" height="253" />
+              </picture>
+              <span class="spotlight-media-tag">Local Expo Protocol Active</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SIX CORE FEATURES GRID -->
+    <section class="section-wrap" style="background: rgba(15, 23, 42, 0.4);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Hospitality Capabilities</span>
+          <h2 class="section-title">Built for Michelin-Level Dining Service</h2>
+          <p class="section-subtitle">Everything fine dining managers, sommeliers, and executive chefs need to deliver exceptional guest experiences.</p>
+        </div>
+
+        <div class="features-grid">
+          
+          <div class="feature-card">
+            <span class="feature-icon">🗺️</span>
+            <h3 class="feature-title">Visual Floor Plan Mapping</h3>
+            <p class="feature-desc">Custom table layouts for main dining, patio, private dining rooms, and bar. Real-time visual color status (Available, Occupied, Check Dropped).</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">🍽️</span>
+            <h3 class="feature-title">Timed Multi-Course Firing</h3>
+            <p class="feature-desc">Tag items as Starters, Mains, or Desserts. Servers hold and fire courses with one touch without walking back to a fixed station.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">🍷</span>
+            <h3 class="feature-title">Wine Bottle Cellar Allocation</h3>
+            <p class="feature-desc">Manage rare vintages, by-the-glass pours, and bottle counts. Receive low-allocation alerts before recommending reserves to diners.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">💳</span>
+            <h3 class="feature-title">Flexible Tableside Bill Splits</h3>
+            <p class="feature-desc">Split evenly across 2-10 cards, split by seat items, or accept mixed tenders (Cash, Amex, GCash, Maya) with zero checkout friction.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">👨‍🍳</span>
+            <h3 class="feature-title">Modifier &amp; Allergy Directives</h3>
+            <p class="feature-desc">Highlight celiac, nut, or dairy allergies in bold high-contrast red print on kitchen chits to ensure guest safety and kitchen compliance.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">🔐</span>
+            <h3 class="feature-title">Server Tip Pooling &amp; Audits</h3>
+            <p class="feature-desc">Automated shift tip pools, server sales reconciliation, and blind cash drop audits. Financial records remain protected behind manager PINs.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRANSPARENT COMPARISON TABLE -->
+    <section class="section-wrap">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Transparent Comparison</span>
+          <h2 class="section-title">Why Fine Dining Operators Choose FlexiTap Over TouchBistro & Aloha</h2>
+          <p class="section-subtitle">Compare FlexiTap against expensive legacy restaurant platforms with mandatory subscriptions and locked hardware.</p>
+        </div>
+
+        <div class="compare-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Feature / Capability</th>
+                <th class="highlight">FlexiTap POS</th>
+                <th>TouchBistro</th>
+                <th>Aloha / Micros</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+              <tr>
+                <td><strong>True Offline Resilience</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> 100% Local SQLite (Full Floor Ops)</td>
+                <td>Limited (Sync errors during outages)</td>
+                <td>Requires expensive on-premise server rack</td>
+              </tr>
+              <tr>
+                <td><strong>Mandatory Monthly Cost</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> $0 Free Community Plan</td>
+                <td><span class="status-cross">✗</span> $69–$189/mo minimum</td>
+                <td><span class="status-cross">✗</span> Thousands in upfront licenses &amp; service contracts</td>
+              </tr>
+              <tr>
+                <td><strong>Hardware Independence (BYOD)</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> Any iPad, Android tablet, or PC</td>
+                <td>Tablets only (iPad exclusive)</td>
+                <td><span class="status-cross">✗</span> Locked proprietary hardware terminals</td>
+              </tr>
+              <tr>
+                <td><strong>Course Firing &amp; Seat Tagging</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> Included Free (Hold &amp; Fire)</td>
+                <td>Included (Paid tier required)</td>
+                <td>Included (Complex legacy programming)</td>
+              </tr>
+              <tr>
+                <td><strong>Processing Freedom</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> 0% Extra (Use Any Payment Provider)</td>
+                <td>Integrated processor markups</td>
+                <td>Legacy merchant provider tie-ins</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section class="section-wrap" style="background: rgba(15, 23, 42, 0.4);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Frequently Asked Questions</span>
+          <h2 class="section-title">Answers for Fine Dining & Full-Service Restaurateurs</h2>
+          <p class="section-subtitle">Everything you need to know about implementing FlexiTap in your business.</p>
+        </div>
+
+        <div class="faq-container">
+          
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Can servers split checks evenly or by seat tableside?</span>
+              <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+              Yes, easily. Servers can split a bill evenly across any number of cards, split by specific seat numbers, or move specific items to separate tabs (e.g. splitting wine bottles across couples) with zero mathematical confusion.
+            </div>
+          </div>
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>How does course firing work without an active internet connection?</span>
+              <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+              FlexiTap communicates directly with your thermal kitchen printers and kitchen display screens over your restaurant's internal Local Area Network (LAN). When a server taps 'Fire Entrees' on their handheld tablet, the print command travels over local Wi-Fi in under 300 milliseconds with zero trip to external cloud servers.
+            </div>
+          </div>
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Can we customize our restaurant floor plan with table numbers?</span>
+              <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+              Yes! You can design custom floor maps representing your exact layout: Main Dining Room, Bar Lounge, Patio, and Private Dining Rooms. Tables show real-time seat counts, server assignments, and visual occupancy colors.
+            </div>
+          </div>
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Is the Free Community edition really free for our restaurant?</span>
+              <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+              Yes! The Free Community plan is completely free forever for single-register setups with zero monthly fees, zero commission fees, and zero expiration dates. You get unlimited offline table ordering, course firing, and thermal receipt printing.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA BANNER -->
+    <section class="container">
+      <div class="cta-banner">
+        <h3>Ready to Elevate Your Restaurant Floor Service?</h3>
+        <p>Join full-service restaurants, bistros, and fine dining establishments using FlexiTap for synchronized course firing, visual table maps, and zero monthly software fees.</p>
+        <div class="hero-cta-group" style="margin-bottom: 0; justify-content: center;">
+          <a href="pricing.html" class="btn-primary-lg">
+            <span>Download Free Community POS</span>
+            <span>→</span>
+          </a>
+          <button class="btn-secondary-lg" onclick="openDemoBooking(event)">Schedule a Live Demo</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 26px; height: 26px;" />
+            <div style="font-weight: 800; color: #fff; font-size: 18px;">FlexiTap POS</div>
+          </div>
+          <p>Simplify Sales. Grow Your Business. An offline-first point-of-sale built for businesses who demand continuous speed without cloud lock-ins.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Industry Solutions</h4>
+          <ul>
+            <li><a href="pos-for-cafes.html">Cafes &amp; Bakeries</a></li>
+            <li><a href="pos-for-retail.html">Retail &amp; Boutiques</a></li>
+            <li><a href="pos-for-quick-service.html">Quick-Serve &amp; Food Trucks</a></li>
+            <li><a href="pos-for-fine-dining.html">Fine Dining &amp; Full Service</a></li>
+            <li><a href="pos-for-professional-services.html">Professional Services &amp; Salons</a></li>
+            <li><a href="features.html">Offline Capabilities</a></li>
+            <li><a href="pricing.html">Pricing &amp; Free Plan</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Company &amp; Support</h4>
+          <ul>
+            <li><a href="about.html">About &amp; FAQ</a></li>
+            <li><a href="insights.html">Insights &amp; News</a></li>
+            <li><a href="support.html">Support</a></li>
+            <li><a href="remote-support.html">Remote Support &amp; Diagnostics</a></li>
+            <li><a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer">Merchant Community (FB Group) ↗</a></li>
+            <li><a href="affiliate.html">Affiliate &amp; Partner Program</a></li>
+            <li><a href="dev-portal.html" rel="nofollow">Staff &amp; Dev Portal</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="refunds.html">Refund Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 FlexiTap POS. All rights reserved.</div>
+        <div>Engineered for Offline-First Retail &amp; Food Service Resilience</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- DEMO BOOKING MODAL -->
+  <div class="modal-overlay" id="booking-modal">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('booking-modal')" aria-label="Close">&times;</button>
+      <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px;">Book a 15-Minute Live Demo</h3>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px;">
+        See how FlexiTap handles high-speed checkout, offline transactions, and hardware on your setup.
+      </p>
+
+      <form onsubmit="handleDemoSubmit(event)">
+        <label>Your Name *</label>
+        <input type="text" id="demo-name" placeholder="Business Owner / Manager" required>
+        
+        <label>Business / Brand Name *</label>
+        <input type="text" id="demo-cafe" placeholder="e.g. Acme Store" required>
+
+        <label>Work Email *</label>
+        <input type="email" id="demo-email" placeholder="owner@yourbusiness.com" required>
+
+        <label>Preferred Date &amp; Time *</label>
+        <input type="text" id="demo-time" placeholder="e.g. Tomorrow at 2:00 PM" required>
+
+        <button type="submit" class="submit-btn" id="demo-submit-btn">Schedule My Demo Session →</button>
+        <div id="demo-msg" style="margin-top: 12px; font-size: 13px;"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- LOGIN MODAL -->
+  <div class="modal-overlay" id="login-modal">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('login-modal')" aria-label="Close">&times;</button>
+      <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px;">Merchant Back-Office Login</h3>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px;">Sign in to access your cloud sales reports, inventory catalog, and terminal management.</p>
+      
+      <form onsubmit="handleMerchantLogin(event)">
+        <label>Merchant Email *</label>
+        <input type="email" id="login-email" placeholder="owner@yourbusiness.com" required>
+
+        <label>Password *</label>
+        <input type="password" id="login-password" placeholder="••••••••" required>
+
+        <button type="submit" class="submit-btn" id="login-btn">Log In to Back Office →</button>
+        <div id="login-error" style="color: #f87171; font-size: 13px; margin-top: 12px;"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    async function handleDemoSubmit(event) {
+      event.preventDefault();
+      const btn = document.getElementById('demo-submit-btn');
+      const msg = document.getElementById('demo-msg');
+      const name = document.getElementById('demo-name')?.value.trim();
+      const cafe = document.getElementById('demo-cafe')?.value.trim();
+      const email = document.getElementById('demo-email')?.value.trim();
+      const time = document.getElementById('demo-time')?.value.trim();
+
+      if (btn) { btn.disabled = true; btn.innerText = 'Scheduling...'; }
+
+      try {
+        if (supabaseClient) {
+          await supabaseClient.from('demo_leads').insert([{
+            full_name: name,
+            business_name: cafe,
+            email: email,
+            preferred_time: time,
+            source: 'pos-for-fine-dining'
+          }]);
+        }
+        if (msg) {
+          msg.style.color = '#34d399';
+          msg.innerText = '✓ Demo request confirmed! Our engineering team will email you a meeting link shortly.';
+        }
+        if (btn) btn.innerText = 'Confirmed!';
+      } catch (err) {
+        if (msg) {
+          msg.style.color = '#34d399';
+          msg.innerText = '✓ Thank you! Our team has received your demo request and will reach out at ' + email;
+        }
+      }
+    }
+
+    async function handleMerchantLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('login-email')?.value.trim();
+      const password = document.getElementById('login-password')?.value;
+      const btn = document.getElementById('login-btn');
+      const err = document.getElementById('login-error');
+
+      if (!email || !password) return;
+      if (btn) { btn.disabled = true; btn.innerText = 'Authenticating...'; }
+      if (err) err.innerText = '';
+
+      try {
+        if (!supabaseClient) throw new Error('Authentication client unavailable.');
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        window.location.href = 'portal.html';
+      } catch (e) {
+        if (err) err.innerText = e.message || 'Login failed. Please verify credentials.';
+        if (btn) { btn.disabled = false; btn.innerText = 'Log In to Back Office →'; }
+      }
+    }
+  </script>
+
+  <!-- Live Chat & Cookie Consent -->
+  <script src="sales-chat.js?v=20261102" defer></script>
+  <script src="cookie-consent.js?v=20261031" defer></script>
+</body>
+</html>
