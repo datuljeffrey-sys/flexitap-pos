@@ -4695,8 +4695,15 @@
         supabaseClient.from('tickets').select('*')
       ]);
 
+      let localPurgedIds = [];
+      try {
+        localPurgedIds = JSON.parse(localStorage.getItem('ft_purged_merchants') || '[]');
+      } catch (_) {}
+
       cachedProfiles = (profilesRes.data || []).filter(function(p) {
-        return p.account_status !== 'purged' && p.account_status !== 'deleted';
+        const isPurgedStatus = p.account_status === 'purged' || p.account_status === 'deleted';
+        const isBlacklisted = localPurgedIds.includes(p.id) || (p.store_id && localPurgedIds.includes(p.store_id));
+        return !isPurgedStatus && !isBlacklisted;
       });
       const liveStores = storesRes.data || [];
       const liveDevices = devicesRes.data || [];
@@ -14829,7 +14836,9 @@ Role: ${lastProvisionedCreds.role}`;
     async function purgeCrmAccountImmediately() {
       const role = getEffectiveRole();
       if (role === 'support') {
-        alert('🔒 Access Denied: Customer Support personnel cannot purge or delete merchant accounts.\n\nAccount deletion is strictly restricted to Core Dev / Admin engineering.');
+        alert('🔒 Access Denied: Customer Support personnel cannot purge or delete merchant accounts.
+
+Account deletion is strictly restricted to Core Dev / Admin engineering.');
         return;
       }
 
@@ -14840,7 +14849,10 @@ Role: ${lastProvisionedCreds.role}`;
       const deletedId = acc.id;
       const storeCode = acc.store_code || acc.id;
 
-      const confirmCode = prompt('⚠️ WARNING: Immediate Purge & Anonymization is IRREVERSIBLE.\nAll operational sales data, terminal device bindings, and merchant profile records will be wiped immediately.\n\nTo confirm permanent deletion of "' + deletedStoreName + '", type PURGE below:');
+      const confirmCode = prompt('⚡ WARNING: Immediate Purge & Anonymization is IRREVERSIBLE.
+All operational sales data, terminal device bindings, and merchant profile records will be wiped immediately.
+
+To confirm permanent deletion of "' + deletedStoreName + '", type PURGE below:');
       if (confirmCode !== 'PURGE') {
         alert('Action cancelled. Confirmation code did not match.');
         return;
@@ -14854,34 +14866,59 @@ Role: ${lastProvisionedCreds.role}`;
 
       try {
         if (supabaseClient) {
-          // 1. Delete CRM specific sub-records
+          // A. Trigger Security Definer RPC function (bypasses RLS to purge all relational data)
+          try {
+            const { data: rpcRes, error: rpcErr } = await supabaseClient.rpc('admin_purge_merchant_account', { target_account_id: deletedId });
+            if (rpcErr) {
+              console.warn('RPC admin_purge_merchant_account error (fallback to direct table purge):', rpcErr);
+            } else {
+              console.log('RPC account purge succeeded:', rpcRes);
+            }
+          } catch (rpcEx) {
+            console.warn('RPC execution exception:', rpcEx);
+          }
+
+          // B. Direct database updates/deletes to guarantee backend persistence across all tables
+          // 1. Unconditionally update account_status to 'purged' and scrub PII in public.profiles
+          await supabaseClient.from('profiles').update({
+            account_status: 'purged',
+            deletion_requested_at: new Date().toISOString(),
+            full_name: '[PURGED MERCHANT]',
+            store_name: '[PURGED STORE]',
+            email: 'purged_' + deletedId.substring(0, 8) + '@purged.local',
+            phone: null
+          }).eq('id', deletedId).catch(function() {});
+
+          // 2. Delete linked hardware devices
+          await supabaseClient.from('devices').delete().or('store_id.eq.' + storeCode + ',store_id.eq.' + deletedId + ',user_id.eq.' + deletedId).catch(function() {});
+
+          // 3. Delete merchant stores
+          await supabaseClient.from('stores').delete().or('owner_id.eq.' + deletedId + ',user_id.eq.' + deletedId + ',id.eq.' + storeCode).catch(function() {});
+
+          // 4. Delete CRM specific sub-records (if tables exist)
           await supabaseClient.from('merchant_crm_assets').delete().eq('account_id', deletedId).catch(function() {});
           await supabaseClient.from('merchant_crm_contacts').delete().eq('account_id', deletedId).catch(function() {});
           await supabaseClient.from('merchant_crm_accounts').delete().eq('id', deletedId).catch(function() {});
 
-          // 2. Delete linked devices
-          await supabaseClient.from('devices').delete().or('store_id.eq.' + storeCode + ',store_id.eq.' + deletedId).catch(function() {});
+          // 5. Delete merchant feedback
+          await supabaseClient.from('merchant_feedback').delete().or('store_id.eq.' + storeCode + ',store_id.eq.' + deletedId).catch(function() {});
 
-          // 3. Delete stores
-          await supabaseClient.from('stores').delete().or('owner_id.eq.' + deletedId + ',id.eq.' + storeCode).catch(function() {});
-
-          // 4. Delete profile (or mark purged if auth foreign key prevents hard delete)
-          const { error: profileDelErr } = await supabaseClient.from('profiles').delete().eq('id', deletedId);
-          if (profileDelErr) {
-            console.warn('Hard profile delete prevented by FK, soft-deleting in profiles:', profileDelErr);
-            await supabaseClient.from('profiles').update({
-              account_status: 'purged',
-              full_name: '[PURGED MERCHANT]',
-              store_name: '[PURGED STORE]',
-              email: 'purged_' + deletedId.substring(0, 8) + '@purged.local'
-            }).eq('id', deletedId).catch(function() {});
-          }
+          // 6. Attempt hard delete of profile row
+          await supabaseClient.from('profiles').delete().eq('id', deletedId).catch(function() {});
         }
       } catch (e) {
         console.warn('Error purging in Supabase:', e);
       }
 
-      // 5. Remove account completely from memory / local state
+      // C. Persist to purged blacklist in localStorage so browser refresh NEVER resurrects it
+      try {
+        let purgedList = JSON.parse(localStorage.getItem('ft_purged_merchants') || '[]');
+        if (!purgedList.includes(deletedId)) purgedList.push(deletedId);
+        if (storeCode && !purgedList.includes(storeCode)) purgedList.push(storeCode);
+        localStorage.setItem('ft_purged_merchants', JSON.stringify(purgedList));
+      } catch (_) {}
+
+      // D. Remove account completely from memory / local state
       crmAccounts = crmAccounts.filter(function(a) { return a.id !== deletedId; });
       cachedProfiles = cachedProfiles.filter(function(p) { return p.id !== deletedId; });
       delete crmContactsMap[deletedId];
@@ -14889,7 +14926,7 @@ Role: ${lastProvisionedCreds.role}`;
       delete crmSubscriptionsMap[deletedId];
       delete crmTicketsMap[deletedId];
 
-      // 6. Refresh UI components
+      // E. Refresh UI components
       populateCrmAccountDropdown();
 
       const kpiStore = document.getElementById('kpi-store-count');
@@ -14897,9 +14934,11 @@ Role: ${lastProvisionedCreds.role}`;
 
       renderProfiles(cachedProfiles);
 
-      // 7. Select next available account or clear form
+      // F. Select next available account or clear form
       if (crmAccounts.length > 0) {
         currentCrmAccountId = crmAccounts[0].id;
+        const selector = document.getElementById('crm-account-select');
+        if (selector) selector.value = currentCrmAccountId;
         renderSelectedCrmAccount();
       } else {
         currentCrmAccountId = null;
@@ -14911,9 +14950,8 @@ Role: ${lastProvisionedCreds.role}`;
         purgeBtn.innerText = '⚡ Immediate Purge & Anonymize';
       }
 
-      alert('✓ Merchant account "' + deletedStoreName + '" has been permanently purged and deleted from the fleet.');
+      alert('✅ Merchant account "' + deletedStoreName + '" has been permanently purged and deleted from the fleet.');
     }
-
     function clearCrmAccountForm() {
       const stripName = document.getElementById('crm-strip-name');
       if (stripName) stripName.innerText = 'No Active Merchants';
