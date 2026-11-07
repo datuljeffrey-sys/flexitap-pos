@@ -5,6 +5,8 @@
   <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>FlexiTap Remote Support & Live Diagnostics</title>
@@ -732,53 +734,42 @@
 
       if (isAndroid) {
         helperBox.innerHTML = `
-          <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 10px;">
-            1. If RustDesk is not installed, install it from the 
-            <a href="https://play.google.com/store/apps/details?id=com.carriez.flutter_hbb" target="_blank" rel="noopener" style="color: #38bdf8; text-decoration: underline; font-weight: 700;">Google Play Store</a>.
+          <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 12px;">
+            If RustDesk is already installed, open it and find your 9-digit ID. If not yet installed:
           </p>
-          <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 10px;">
-            2. Open RustDesk → Tap <strong>⋮ (Menu)</strong> → <strong>Settings</strong> → <strong>ID/Relay Server</strong> and enter:
-          </p>
-          <div class="server-config-box">
-            <div class="server-config-row">
-              <span class="server-config-label">ID / Relay Server:</span>
-              <span class="server-config-val">${FLEXITAP_SERVER_ID}</span>
-            </div>
-            <div class="server-config-row">
-              <span class="server-config-label">Public Key:</span>
-              <span class="server-config-val">${FLEXITAP_SERVER_KEY}</span>
-            </div>
-          </div>
-          <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">
-            Return to RustDesk's main screen to find your 9-digit device ID.
+          <a href="https://play.google.com/store/apps/details?id=com.carriez.flutter_hbb" target="_blank" rel="noopener" class="download-btn">
+            <span>📥 Get RustDesk on Google Play Store</span>
+          </a>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
+            Launch the app, then enter the 9-digit ID shown on your screen in the field below.
           </p>`;
         return;
       }
 
       if (isMac) {
         helperBox.innerHTML = `
-          <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 10px;">
-            Download and run our automated Mac configuration script:
+          <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 12px;">
+            If RustDesk is already installed, open it to view your 9-digit ID. If not yet installed:
           </p>
-          <a href="/install-flexitap-support.sh" download class="download-btn">
-            <span>📥 Download Support Helper for Mac (.sh)</span>
+          <a href="https://github.com/rustdesk/rustdesk/releases/latest/download/rustdesk-x86_64.dmg" target="_blank" rel="noopener" class="download-btn">
+            <span>📥 Download RustDesk for Mac (.dmg)</span>
           </a>
-          <p style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">
-            After downloading, open Terminal and execute: <code>sudo bash ~/Downloads/install-flexitap-support.sh</code>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
+            Open the installer, launch RustDesk, and enter your 9-digit ID in the field below.
           </p>`;
         return;
       }
 
       // Default: Windows POS Terminal
       helperBox.innerHTML = `
-        <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 10px;">
-          If RustDesk is already open on this POS, enter your 9-digit ID below. If not yet installed, download our one-click support helper:
+        <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 12px;">
+          If RustDesk is already open on this POS, enter your 9-digit ID below. If not yet installed:
         </p>
-        <a href="/Install-FlexiTapSupport.ps1" download class="download-btn">
-          <span>📥 Download FlexiTap Support Helper (Windows .ps1)</span>
+        <a href="https://github.com/rustdesk/rustdesk/releases/latest/download/rustdesk-x86_64.exe" target="_blank" rel="noopener" class="download-btn">
+          <span>📥 Download RustDesk for Windows (.exe)</span>
         </a>
-        <p style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">
-          Right-click the downloaded <strong>Install-FlexiTapSupport.ps1</strong> and click <strong>"Run with PowerShell"</strong>. It will automatically download, launch, and configure RustDesk for you.
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
+          Run the downloaded <strong>rustdesk-x86_64.exe</strong> installer, then enter the 9-digit ID shown on your screen below.
         </p>`;
     }
 

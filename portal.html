@@ -5559,9 +5559,9 @@
       if (isMac) {
         return {
           kind: 'download',
-          label: 'Download for Mac (.sh)',
-          href: '/install-flexitap-support.sh',
-          note: 'After downloading, open Terminal and run: <code>sudo bash ~/Downloads/install-flexitap-support.sh</code>',
+          label: 'Download RustDesk for Mac (.dmg)',
+          href: 'https://github.com/rustdesk/rustdesk/releases/latest/download/rustdesk-x86_64.dmg',
+          note: 'Install the downloaded package, then enter the 9-digit ID shown on your screen.',
         };
       }
       if (isAndroid) {
@@ -5569,9 +5569,9 @@
       }
       return {
         kind: 'download',
-        label: 'Download Support Helper (Windows .ps1)',
-        href: '/Install-FlexiTapSupport.ps1',
-        note: 'After downloading, right-click the file and choose <strong>"Run with PowerShell"</strong> (as Administrator).',
+        label: 'Download RustDesk for Windows (.exe)',
+        href: 'https://github.com/rustdesk/rustdesk/releases/latest/download/rustdesk-x86_64.exe',
+        note: 'Run the downloaded installer, then enter the 9-digit ID shown on your screen.',
       };
     }
 

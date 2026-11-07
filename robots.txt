@@ -10,7 +10,6 @@ Allow: /features.html
 Allow: /pricing.html
 Allow: /about.html
 Allow: /support.html
-Allow: /remote-support.html
 Allow: /insights.html
 Allow: /affiliate.html
 Allow: /terms.html
@@ -24,6 +23,7 @@ Disallow: /dev-portal.html
 Disallow: /dev_portal.html
 Disallow: /partner-portal.html
 Disallow: /flexi-app.html
+Disallow: /remote-support.html
 Disallow: /account/
 
 # Welcome AI Answer Engines (AEO)
