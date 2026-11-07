@@ -1679,36 +1679,76 @@
 
         <!-- Shown to Pro merchants -->
         <div id="remote-access-unlocked" style="display:none;">
-          <div class="panel-card">
-            <div class="panel-header-row">
+          <div class="panel-card" style="max-width: 820px; margin: 0 auto 24px;">
+            <div class="panel-header-row" style="margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 14px;">
               <div class="panel-header-title">
-                <span style="font-size: 20px;">🛠️</span>
-                <span>Ad-hoc Remote Support Session</span>
+                <span style="font-size: 22px;">🛠️</span>
+                <span style="font-size: 1.15rem; font-weight: 800;">Ad-hoc Remote Support & Screen Share</span>
               </div>
             </div>
 
-            <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 18px;">
-              During a support call, our agent will give you a 6-character code. Enter it below to start the session — no need to leave this page.
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 22px; line-height: 1.6;">
+              Let our certified technical engineers diagnose your register, receipt printer, payment terminals, or scanner issues directly. No technical setup required.
             </p>
 
-            <div style="display:flex; gap: 10px; max-width: 420px;">
-              <input
-                type="text"
-                id="support-code-input"
-                placeholder="Enter code e.g. 6MGPA7"
-                maxlength="6"
-                onkeydown="if(event.key==='Enter') checkSupportCode()"
-                style="flex:1; padding: 12px 14px; border: 1px solid var(--card-border); border-radius: 8px; font-size: 15px; text-transform: uppercase; letter-spacing: 2px; font-family: 'JetBrains Mono', monospace;"
-              />
-              <button class="btn-action btn-primary-action" onclick="checkSupportCode()" id="support-code-btn">
-                Connect
-              </button>
+            <!-- STEP 1: DOWNLOAD CLIENT -->
+            <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+              <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                <span style="background: var(--primary); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px;">1</span>
+                <span>Download & Launch Support Client</span>
+              </div>
+              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                Download our pre-configured support client for Windows. Double-click the downloaded file to run — it connects directly to our private FlexiTap relay.
+              </p>
+              <div>
+                <a href="/downloads/rustdesk-host=rustdesk.flexitapapp.com,key=DupmnPdDGeoTy26tsw0JqfcU9rmh5hBotMp8mQMsqAg=,.exe" class="btn-action btn-primary-action" style="display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; font-size: 14px; text-decoration: none; font-weight: 700; border-radius: 8px;">
+                  <span>📥</span> Download FlexiTap Remote Support (Windows .exe)
+                </a>
+              </div>
+              <div style="margin-top: 12px; font-size: 12px; color: var(--text-muted);">
+                ⚡ Already have RustDesk open? <a href="rustdesk://config/9JiI6ISawFmIsISPnFUcz1UUthDcNR3bChWNo1mc5U1YmFnSwc3c0ZjM5R1bldERkBlbtBXdEJiOikXZrJCLi02bj5CcwFGchRXa4VGbm5yazVGZ0NXdyJiOikXYsVmciwiIt92YuAHchBXY0lGelxmZus2clRGdzVnciojI0N3boJye" style="color: #60a5fa; text-decoration: underline;">Click here to auto-connect to FlexiTap server</a>
+              </div>
             </div>
 
-            <div id="support-code-status" style="margin-top: 18px;"></div>
+            <!-- STEP 2: ENTER 9-DIGIT ID -->
+            <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+              <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                <span style="background: var(--primary); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px;">2</span>
+                <span>Enter Your 9-Digit RustDesk ID</span>
+              </div>
+              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+                Once RustDesk is running on your screen, enter your 9-digit device ID below, or simply read it directly to your technician over the phone or chat:
+              </p>
+              
+              <div style="display: flex; gap: 10px; max-width: 480px; margin-bottom: 12px;">
+                <input
+                  type="text"
+                  id="portal-rustdesk-id-input"
+                  placeholder="e.g. 793 024 246"
+                  inputmode="numeric"
+                  maxlength="16"
+                  onkeydown="if(event.key==='Enter') submitPortalRustdeskId()"
+                  style="flex: 1; padding: 12px 14px; border: 1px solid var(--card-border); background: rgba(15, 23, 42, 0.7); color: #fff; border-radius: 8px; font-size: 16px; text-align: center; font-family: 'JetBrains Mono', monospace; font-weight: 700; letter-spacing: 2px;"
+                />
+                <button class="btn-action btn-primary-action" onclick="submitPortalRustdeskId()" id="portal-share-id-btn" style="padding: 12px 20px; font-weight: 700;">
+                  Share with Technician
+                </button>
+              </div>
+
+              <!-- LIVE SESSION STATUS BADGE -->
+              <div id="portal-rustdesk-status-msg" style="margin-top: 14px; display: none;"></div>
+
+              <div id="portal-live-status-card" style="display: none; margin-top: 16px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 16px; align-items: center; gap: 14px;">
+                <div style="width: 12px; height: 12px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981; flex-shrink: 0;" class="live-pulse-dot"></div>
+                <div>
+                  <div id="portal-session-status-headline" style="font-weight: 700; font-size: 14px; color: #fff;">ID Shared • Awaiting Technician</div>
+                  <div id="portal-session-status-subline" style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">Keep RustDesk open on your screen. The technician is connecting.</div>
+                </div>
+              </div>
+            </div>
 
             <!-- Submit a Ticket Callout Below Remote Access -->
-            <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 12px; padding: 18px 20px;">
+            <div style="padding-top: 20px; border-top: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 12px; padding: 18px 20px;">
               <div>
                 <h4 style="font-size: 14.5px; font-weight: 700; color: #fff; margin-bottom: 3px;">Need Dev or Customer Support assistance?</h4>
                 <p style="font-size: 13px; color: var(--text-muted); margin: 0;">Submit an issue ticket directly to our Tier 3 engineering and customer support desk.</p>
@@ -5631,6 +5671,120 @@
           </div>
           <div id="rustdesk-id-result" style="margin-top:10px;"></div>
         </div>`;
+    }
+
+    
+    // ---- Streamlined Merchant Remote Support ----
+    async function submitPortalRustdeskId() {
+      const idInput = document.getElementById('portal-rustdesk-id-input');
+      const statusMsg = document.getElementById('portal-rustdesk-status-msg');
+      const shareBtn = document.getElementById('portal-share-id-btn');
+      const liveCard = document.getElementById('portal-live-status-card');
+      const headline = document.getElementById('portal-session-status-headline');
+      const subline = document.getElementById('portal-session-status-subline');
+
+      const rustdeskId = (idInput ? idInput.value : '').replace(/\s+/g, '').trim();
+
+      if (!rustdeskId) {
+        if (statusMsg) {
+          statusMsg.style.display = 'block';
+          statusMsg.innerHTML = '<span style="color:#ef4444; font-size:13px; font-weight:600;">⚠️ Please enter your 9-digit RustDesk ID.</span>';
+        }
+        return;
+      }
+
+      shareBtn.disabled = true;
+      shareBtn.innerText = 'Sharing…';
+      if (statusMsg) statusMsg.style.display = 'none';
+
+      try {
+        const params = new URLSearchParams(window.location.search);
+        let sessionCode = (params.get('code') || params.get('session') || '').trim().toUpperCase();
+
+        // If no code in URL, find the most recent pending session
+        if (!sessionCode) {
+          try {
+            const { data: latestPending } = await supabaseClient
+              .from('remote_support_sessions')
+              .select('code')
+              .in('status', ['pending', 'client_ready'])
+              .order('created_at', { ascending: false })
+              .limit(1);
+            if (latestPending && latestPending.length > 0) {
+              sessionCode = latestPending[0].code;
+            }
+          } catch (_) {}
+        }
+
+        // Submit to remote_support_sessions via RPC
+        if (sessionCode) {
+          await supabaseClient.rpc('submit_rustdesk_id', {
+            p_code: sessionCode,
+            p_rustdesk_id: rustdeskId
+          });
+        }
+
+        // Also post into current support session chat if open
+        if (typeof currentSupportSession !== 'undefined' && currentSupportSession && currentSupportSession.id) {
+          try {
+            await supabaseClient.from('support_messages').insert([{
+              session_id: currentSupportSession.id,
+              sender_id: activeUser?.id || null,
+              sender_role: 'merchant',
+              message: '🖥️ [Remote Support] Customer terminal RustDesk ID shared: ' + rustdeskId
+            }]);
+          } catch (_) {}
+        }
+
+        if (statusMsg) {
+          statusMsg.style.display = 'block';
+          statusMsg.innerHTML = '<span style="color:#10b981; font-size:13px; font-weight:700;">✓ RustDesk ID shared with technician! Waiting for connection...</span>';
+        }
+
+        if (liveCard) liveCard.style.display = 'flex';
+        if (headline) headline.textContent = 'ID Shared • Awaiting Technician';
+        if (subline) subline.textContent = 'RustDesk ID (' + rustdeskId + ') transmitted. Keep RustDesk open on your screen.';
+
+        if (sessionCode) {
+          watchPortalSessionStatus(sessionCode);
+        }
+      } catch (err) {
+        console.error('Error submitting RustDesk ID in portal:', err);
+        if (statusMsg) {
+          statusMsg.style.display = 'block';
+          statusMsg.innerHTML = '<span style="color:#ef4444; font-size:13px; font-weight:600;">❌ Network error. Please read your 9-digit ID to your support agent directly.</span>';
+        }
+      } finally {
+        shareBtn.disabled = false;
+        shareBtn.innerText = 'Share with Technician';
+      }
+    }
+
+    let portalStatusPollInterval = null;
+    function watchPortalSessionStatus(code) {
+      if (portalStatusPollInterval) clearInterval(portalStatusPollInterval);
+
+      portalStatusPollInterval = setInterval(async () => {
+        try {
+          const { data, error } = await supabaseClient.rpc('get_support_session_status', { p_code: code });
+          let row = null;
+          if (!error && data) {
+            row = Array.isArray(data) ? data[0] : data;
+          }
+          if (row && row.status) {
+            const headline = document.getElementById('portal-session-status-headline');
+            const subline = document.getElementById('portal-session-status-subline');
+            if (row.status === 'active') {
+              if (headline) headline.textContent = '🟢 Support Technician Connected';
+              if (subline) subline.textContent = 'Technician is actively viewing your terminal. Support session in progress.';
+            } else if (row.status === 'ended') {
+              if (headline) headline.textContent = 'Session Concluded';
+              if (subline) subline.textContent = 'Remote screen-sharing has concluded. Thank you!';
+              clearInterval(portalStatusPollInterval);
+            }
+          }
+        } catch (_) {}
+      }, 3000);
     }
 
     async function submitRustdeskId(sessionId, sessionCode) {

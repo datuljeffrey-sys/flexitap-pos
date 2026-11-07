@@ -2182,15 +2182,32 @@
         <!-- ================= 4. REMOTE ACCESS VIEW ================= -->
         <div id="view-remote" class="tab-view">
           <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title">Ad-hoc Remote Support Session</div>
-              <button class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary);" onclick="createRemoteSupportSession()" id="new-session-btn">
-                + New Support Session
-              </button>
+            <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 22px;">
+              <div>
+                <div class="panel-title" style="font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+                  <span>🖥️</span> Live Ad-hoc Remote Support Sessions
+                </div>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                  Real-time incoming screen-sharing requests from POS floor staff and merchant portal. Click <strong>⚡ Connect</strong> to initiate instant remote control.
+                </div>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <button class="action-btn" style="background: rgba(255,255,255,0.06); color: #fff; border-color: rgba(255,255,255,0.15);" onclick="loadRemoteSupportSessions()" id="refresh-remote-btn">
+                  🔄 Refresh Queue
+                </button>
+                <button class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700;" onclick="createRemoteSupportSession()" id="new-session-btn">
+                  + New Support Session
+                </button>
+              </div>
             </div>
+
+            <!-- Toast / Copy Link Notification -->
+            <div id="remote-toast-notice" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 8px; padding: 12px 16px; margin-bottom: 18px; color: #34d399; font-size: 13px; font-weight: 600;"></div>
+
+            <!-- Real-time Queue Container -->
             <div id="remote-session-panel">
               <div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 40px;">
-                No active session. During a support call, click "New Support Session" above to generate a code and read it to the merchant.
+                Loading live remote support sessions...
               </div>
             </div>
           </div>
@@ -3950,6 +3967,7 @@
       if (key === 'clients') loadDevData();
       if (key === 'partners') loadPartnersAdminData();
       if (key === 'support') loadSupportDeskSessions();
+      if (key === 'remote') loadRemoteSupportSessions();
       if (key === 'feedback') {
         fetchMerchantFeedback();
       }
@@ -7175,8 +7193,72 @@
 
     
     // ---- Ad-hoc remote support session (staff side) ----
-    let activeRemoteSession = null; // { id, code, status, rustdeskId }
-    let remoteSessionChannel = null;
+    let allRemoteSessions = [];
+    let remoteSessionsRealtimeChannel = null;
+    let remoteSessionsPollInterval = null;
+
+    async function loadRemoteSupportSessions(isBackgroundSync = false) {
+      const refreshBtn = document.getElementById('refresh-remote-btn');
+      if (refreshBtn && !isBackgroundSync) {
+        refreshBtn.disabled = true;
+        refreshBtn.innerText = 'Refreshing…';
+      }
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('remote_support_sessions')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(30);
+
+        if (error) {
+          console.warn('Could not load remote support sessions:', error);
+          if (!isBackgroundSync) renderRemoteSessionsQueueError(error.message);
+          return;
+        }
+
+        allRemoteSessions = data || [];
+        renderRemoteSessionsQueue();
+        initRemoteSessionsRealtime();
+      } catch (err) {
+        console.error('Error fetching remote support sessions:', err);
+        if (!isBackgroundSync) renderRemoteSessionsQueueError(err.message);
+      } finally {
+        if (refreshBtn && !isBackgroundSync) {
+          refreshBtn.disabled = false;
+          refreshBtn.innerText = '🔄 Refresh Queue';
+        }
+      }
+    }
+
+    function initRemoteSessionsRealtime() {
+      if (remoteSessionsRealtimeChannel) return;
+
+      try {
+        remoteSessionsRealtimeChannel = supabaseClient
+          .channel('remote-support-global-queue')
+          .on('postgres_changes', {
+            event: '*',
+            schema: 'public',
+            table: 'remote_support_sessions'
+          }, (payload) => {
+            console.log('Realtime remote session event:', payload.eventType);
+            loadRemoteSupportSessions(true);
+          })
+          .subscribe();
+      } catch (err) {
+        console.warn('Realtime subscription error on remote support sessions:', err);
+      }
+
+      if (!remoteSessionsPollInterval) {
+        remoteSessionsPollInterval = setInterval(() => {
+          const remoteTab = document.getElementById('view-remote');
+          if (remoteTab && remoteTab.classList.contains('active')) {
+            loadRemoteSupportSessions(true);
+          }
+        }, 3500);
+      }
+    }
 
     async function createRemoteSupportSession() {
       const btn = document.getElementById('new-session-btn');
@@ -7192,14 +7274,16 @@
           return;
         }
         const row = Array.isArray(data) ? data[0] : data;
-        activeRemoteSession = {
-          id: row.id,
-          code: row.code,
-          status: 'pending',
-          rustdeskId: null,
-        };
-        renderRemoteSessionPanel();
-        watchRemoteSession(row.id);
+        const code = row.code;
+        const supportUrl = 'https://flexitapapp.com/remote-support.html?code=' + code;
+
+        // Automatically copy 1-click link to clipboard for convenience
+        try {
+          await navigator.clipboard.writeText(supportUrl);
+        } catch (_) {}
+
+        showRemoteToast('✓ Session #' + code + ' created! Link copied: ' + supportUrl + ' — Send this directly to your merchant.');
+        await loadRemoteSupportSessions();
       } catch (e) {
         alert('Error creating session: ' + e.message);
       } finally {
@@ -7210,139 +7294,204 @@
       }
     }
 
-    let remoteSessionPollInterval = null;
-
-    function watchRemoteSession(sessionId) {
-      if (remoteSessionChannel) {
-        try { supabaseClient.removeChannel(remoteSessionChannel); } catch (_) {}
-      }
-      if (remoteSessionPollInterval) {
-        clearInterval(remoteSessionPollInterval);
-      }
-
-      async function pollRemoteSession() {
-        if (!activeRemoteSession || activeRemoteSession.id !== sessionId) {
-          if (remoteSessionPollInterval) clearInterval(remoteSessionPollInterval);
-          return;
-        }
-        try {
-          let row = null;
-          const { data: rpcData, error: rpcError } = await supabaseClient.rpc('get_support_session_status', { p_code: sessionId });
-          if (!rpcError && rpcData) {
-            row = Array.isArray(rpcData) ? rpcData[0] : rpcData;
-          } else {
-            const { data: tblData } = await supabaseClient
-              .from('remote_support_sessions')
-              .select('id, status, rustdesk_id')
-              .eq('id', sessionId)
-              .maybeSingle();
-            if (tblData) row = tblData;
-          }
-
-          if (row && activeRemoteSession && activeRemoteSession.id === sessionId) {
-            let changed = false;
-            if (row.status && row.status !== activeRemoteSession.status) {
-              activeRemoteSession.status = row.status;
-              changed = true;
-            }
-            if (row.rustdesk_id && row.rustdesk_id !== activeRemoteSession.rustdeskId) {
-              activeRemoteSession.rustdeskId = row.rustdesk_id;
-              changed = true;
-            }
-            if (changed) {
-              renderRemoteSessionPanel();
-            }
-          }
-        } catch (e) {
-          console.warn('Poll error for remote session:', e);
-        }
-      }
-
-      remoteSessionPollInterval = setInterval(pollRemoteSession, 2000);
-      pollRemoteSession();
-
-      remoteSessionChannel = supabaseClient
-        .channel('remote-session-' + sessionId)
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'remote_support_sessions',
-            filter: 'id=eq.' + sessionId,
-          },
-          function (payload) {
-            if (!activeRemoteSession || activeRemoteSession.id !== sessionId) return;
-            activeRemoteSession.status = payload.new.status;
-            activeRemoteSession.rustdeskId = payload.new.rustdesk_id;
-            renderRemoteSessionPanel();
-          }
-        )
-        .subscribe();
+    function showRemoteToast(msg) {
+      const toast = document.getElementById('remote-toast-notice');
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 7000);
     }
 
-    async function staffConnectRemoteSession() {
-      if (!activeRemoteSession) return;
-      try {
-        await supabaseClient.rpc('staff_start_session', { p_session_id: activeRemoteSession.id });
-      } catch (e) {
-        alert('Could not start session: ' + e.message);
-      }
-    }
-
-    function copyRemoteId() {
-      if (!activeRemoteSession || !activeRemoteSession.rustdeskId) return;
-      const cleanId = String(activeRemoteSession.rustdeskId).replace(/\s+/g, '');
-      navigator.clipboard.writeText(cleanId).then(function () {
-        const note = document.getElementById('remote-id-copied-note');
-        if (note) {
-          note.style.display = 'inline';
-          setTimeout(function () { note.style.display = 'none'; }, 1500);
-        }
+    function copySupportLink(code) {
+      const supportUrl = 'https://flexitapapp.com/remote-support.html?code=' + code;
+      navigator.clipboard.writeText(supportUrl).then(() => {
+        showRemoteToast('✓ Support link copied: ' + supportUrl);
       });
     }
 
-    function renderRemoteSessionPanel() {
+    function copyRustdeskId(id) {
+      const cleanId = String(id).replace(/\s+/g, '');
+      navigator.clipboard.writeText(cleanId).then(() => {
+        showRemoteToast('✓ RustDesk ID ' + cleanId + ' copied to clipboard!');
+      });
+    }
+
+    async function staffConnectRemoteSession(sessionId) {
+      try {
+        await supabaseClient.rpc('staff_start_session', { p_session_id: sessionId });
+        setTimeout(() => loadRemoteSupportSessions(true), 500);
+      } catch (e) {
+        console.warn('Could not mark session active:', e);
+      }
+    }
+
+    async function endRemoteSession(sessionId) {
+      if (!confirm('Conclude this remote support session?')) return;
+      try {
+        await supabaseClient
+          .from('remote_support_sessions')
+          .update({ status: 'ended', updated_at: new Date().toISOString() })
+          .eq('id', sessionId);
+        showRemoteToast('✓ Support session ended.');
+        loadRemoteSupportSessions();
+      } catch (e) {
+        alert('Could not end session: ' + e.message);
+      }
+    }
+
+    function formatTimeElapsed(isoStr) {
+      if (!isoStr) return '';
+      const diffMs = Date.now() - new Date(isoStr).getTime();
+      const sec = Math.floor(diffMs / 1000);
+      if (sec < 60) return 'Just now';
+      const min = Math.floor(sec / 60);
+      if (min < 60) return min + 'm ago';
+      const hrs = Math.floor(min / 60);
+      return hrs + 'h ago';
+    }
+
+    function renderRemoteSessionsQueueError(errMsg) {
       const panel = document.getElementById('remote-session-panel');
       if (!panel) return;
-      if (!activeRemoteSession) {
-        panel.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 40px;">No active session. During a support call, click "New Support Session" above to generate a code and read it to the merchant.</div>';
+      panel.innerHTML = '<div style="text-align: center; color: #f87171; font-size: 13.5px; padding: 40px;">' +
+        '⚠️ Error loading remote support sessions: ' + errMsg +
+        '<div style="margin-top: 12px;"><button class="action-btn" onclick="loadRemoteSupportSessions()">Retry</button></div></div>';
+    }
+
+    function renderRemoteSessionsQueue() {
+      const panel = document.getElementById('remote-session-panel');
+      if (!panel) return;
+
+      if (!allRemoteSessions || allRemoteSessions.length === 0) {
+        panel.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 13.5px; padding: 48px;">' +
+          '<div style="font-size: 32px; margin-bottom: 8px;">🖥️</div>' +
+          '<div style="font-weight: 700; color: #fff; margin-bottom: 4px;">No Active Support Sessions</div>' +
+          '<div>Click <strong>+ New Support Session</strong> above to generate a 1-click remote support link for a merchant.</div>' +
+          '</div>';
         return;
       }
 
-      const s = activeRemoteSession;
-      const statusMap = {
-        pending: { color: '#fbbf24', label: 'Waiting for the merchant to enter the code…' },
-        client_ready: { color: '#34d399', label: 'Merchant is ready — RustDesk ID received.' },
-        active: { color: '#60a5fa', label: 'Session active.' },
-        ended: { color: '#9ca3af', label: 'Session ended.' },
-        expired: { color: '#f87171', label: 'Code expired, unused.' },
-      };
-      const st = statusMap[s.status] || { color: '#9ca3af', label: s.status };
+      // Filter and sort: client_ready first, then active, then pending, then ended
+      const readySessions = allRemoteSessions.filter(s => s.status === 'client_ready');
+      const activeSessions = allRemoteSessions.filter(s => s.status === 'active');
+      const pendingSessions = allRemoteSessions.filter(s => s.status === 'pending');
+      const endedSessions = allRemoteSessions.filter(s => s.status === 'ended' || s.status === 'expired');
 
-      let html = '<div style="padding: 8px 4px;">';
-      html += '<div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Read this code to the merchant on the phone:</div>';
-      html += '<div style="font-family: \'JetBrains Mono\', monospace; font-size: 2.2rem; font-weight: 800; letter-spacing: 6px; color: #fff; margin-bottom: 16px;">' + s.code + '</div>';
-      html += '<div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: ' + st.color + '; margin-bottom: 22px;">';
-      html += '<span style="width: 8px; height: 8px; border-radius: 50%; background: ' + st.color + '; display: inline-block;"></span>' + st.label + '</div>';
+      let html = '<div style="display: flex; flex-direction: column; gap: 14px;">';
 
-      if (s.rustdeskId) {
-        const cleanId = String(s.rustdeskId).replace(/\s+/g, '');
-        html += '<div style="background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); border-radius: 10px; padding: 16px; margin-bottom: 20px;">';
-        html += '<div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px;">Merchant\'s RustDesk ID</div>';
-        html += '<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">';
-        html += '<span style="font-family: \'JetBrains Mono\', monospace; font-weight: 800; font-size: 1.15rem; color: #fff;">' + s.rustdeskId + '</span>';
-        html += '<button class="action-btn" onclick="copyRemoteId()">Copy ID</button>';
-        html += '<span id="remote-id-copied-note" style="display:none; color: var(--accent); font-size: 12px; margin-left: 6px;">Copied!</span>';
-        html += '<a class="action-btn" style="text-decoration: none; background: var(--primary); color: #fff; border-color: var(--primary); margin-left: 8px;" href="rustdesk://' + cleanId + '" onclick="staffConnectRemoteSession()">Connect via RustDesk</a>';
-        html += '</div>';
-        html += '<div style="font-size: 11px; color: var(--text-muted); margin-top: 10px;">Clicking Connect tries to open your own RustDesk app directly. If nothing happens (some browsers block this the first time), open RustDesk yourself and paste the ID above into the connect box.</div>';
-        html += '</div>';
+      // 1. READY TO CONNECT (HIGHLIGHTED GREEN)
+      if (readySessions.length > 0) {
+        html += '<div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #34d399; margin-top: 6px; display: flex; align-items: center; gap: 8px;">' +
+          '<span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981;" class="live-pulse-dot"></span> Ready for Connection (' + readySessions.length + ')</div>';
+
+        readySessions.forEach(s => {
+          const cleanId = String(s.rustdesk_id || '').replace(/\s+/g, '');
+          const timeAgo = formatTimeElapsed(s.updated_at || s.created_at);
+          html += '<div style="background: rgba(16, 185, 129, 0.08); border: 2px solid #10b981; border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">' +
+            '<div>' +
+              '<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">' +
+                '<span style="background: #10b981; color: #000; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 6px; text-transform: uppercase;">Ready to Connect</span>' +
+                '<span style="font-size: 13px; font-weight: 700; color: #fff;">Session #' + s.code + '</span>' +
+                '<span style="font-size: 12px; color: var(--text-muted);">• ' + timeAgo + '</span>' +
+              '</div>' +
+              '<div style="display: flex; align-items: baseline; gap: 12px;">' +
+                '<span style="font-size: 12px; color: var(--text-muted);">Merchant RustDesk ID:</span>' +
+                '<span style="font-family: \'JetBrains Mono\', monospace; font-size: 1.6rem; font-weight: 800; letter-spacing: 3px; color: #fff;">' + (s.rustdesk_id || '---') + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">' +
+              '<a class="action-btn" style="background: #10b981; color: #000; border-color: #10b981; font-weight: 800; font-size: 14px; padding: 10px 22px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(16,185,129,0.3);" href="rustdesk://' + cleanId + '" onclick="staffConnectRemoteSession(\'' + s.id + '\')">' +
+                '<span>⚡</span> One-Click Connect' +
+              '</a>' +
+              '<button class="action-btn" onclick="copyRustdeskId(\'' + cleanId + '\')" style="background: rgba(255,255,255,0.06); color: #fff; border-color: rgba(255,255,255,0.15);">' +
+                '📋 Copy ID' +
+              '</button>' +
+              '<button class="action-btn" onclick="endRemoteSession(\'' + s.id + '\')" style="background: transparent; color: #f87171; border-color: rgba(239,68,68,0.3);">' +
+                'End' +
+              '</button>' +
+            '</div>' +
+          '</div>';
+        });
       }
 
-      html += '<div style="font-size: 11px; color: var(--text-muted);">Session ID: <code>' + s.id + '</code></div>';
-      html += '</div>';
+      // 2. ACTIVE SESSIONS
+      if (activeSessions.length > 0) {
+        html += '<div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #60a5fa; margin-top: 14px;">Active Remote Sessions (' + activeSessions.length + ')</div>';
+        activeSessions.forEach(s => {
+          const cleanId = String(s.rustdesk_id || '').replace(/\s+/g, '');
+          const timeAgo = formatTimeElapsed(s.updated_at || s.created_at);
+          html += '<div style="background: rgba(59, 130, 246, 0.06); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">' +
+            '<div>' +
+              '<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">' +
+                '<span style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 6px;">CONNECTED</span>' +
+                '<span style="font-size: 13px; font-weight: 700; color: #fff;">Session #' + s.code + '</span>' +
+                '<span style="font-size: 12px; color: var(--text-muted);">• Started ' + timeAgo + '</span>' +
+              '</div>' +
+              '<div style="font-family: \'JetBrains Mono\', monospace; font-size: 1.15rem; font-weight: 700; color: #fff;">' +
+                (s.rustdesk_id || 'Connected') +
+              '</div>' +
+            '</div>' +
+            '<div style="display: flex; gap: 10px; align-items: center;">' +
+              '<a class="action-btn" style="text-decoration: none; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(59, 130, 246, 0.4);" href="rustdesk://' + cleanId + '">' +
+                'Re-connect' +
+              '</a>' +
+              '<button class="action-btn" onclick="copyRustdeskId(\'' + cleanId + '\')">Copy ID</button>' +
+              '<button class="action-btn" onclick="endRemoteSession(\'' + s.id + '\')" style="color: #f87171; border-color: rgba(239,68,68,0.3);">' +
+                'End Session' +
+              '</button>' +
+            '</div>' +
+          '</div>';
+        });
+      }
 
+      // 3. PENDING SESSIONS (WAITING FOR MERCHANT)
+      if (pendingSessions.length > 0) {
+        html += '<div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #fbbf24; margin-top: 14px;">Waiting for Merchant (' + pendingSessions.length + ')</div>';
+        pendingSessions.forEach(s => {
+          const timeAgo = formatTimeElapsed(s.created_at);
+          html += '<div style="background: rgba(15, 23, 42, 0.5); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">' +
+            '<div>' +
+              '<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">' +
+                '<span style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 6px;">PENDING</span>' +
+                '<span style="font-size: 14px; font-weight: 800; color: #fff; font-family: \'JetBrains Mono\', monospace; letter-spacing: 1px;">Session #' + s.code + '</span>' +
+                '<span style="font-size: 12px; color: var(--text-muted);">• Created ' + timeAgo + '</span>' +
+              '</div>' +
+              '<div style="font-size: 12.5px; color: var(--text-muted);">' +
+                'Waiting for merchant to open client and share 9-digit ID.' +
+              '</div>' +
+            '</div>' +
+            '<div style="display: flex; gap: 10px; align-items: center;">' +
+              '<button class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700;" onclick="copySupportLink(\'' + s.code + '\')">' +
+                '📋 Copy 1-Click Link' +
+              '</button>' +
+              '<button class="action-btn" onclick="endRemoteSession(\'' + s.id + '\')" style="color: #9ca3af;">' +
+                'Cancel' +
+              '</button>' +
+            '</div>' +
+          '</div>';
+        });
+      }
+
+      // 4. RECENT RESOLVED / ENDED SESSIONS
+      if (endedSessions.length > 0) {
+        html += '<div style="margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--card-border);">' +
+          '<details style="cursor: pointer;">' +
+            '<summary style="font-size: 12px; color: var(--text-muted); font-weight: 700;">' +
+              'View Recent Concluded Sessions (' + endedSessions.length + ')' +
+            '</summary>' +
+            '<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">';
+        endedSessions.slice(0, 10).forEach(s => {
+          html += '<div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(15,23,42,0.3); border-radius: 6px; font-size: 12px;">' +
+            '<span style="color: var(--text-muted); font-family: \'JetBrains Mono\', monospace;">#' + s.code + ' ' + (s.rustdesk_id ? '(' + s.rustdesk_id + ')' : '') + '</span>' +
+            '<span style="color: #9ca3af; text-transform: uppercase; font-size: 10px;">' + s.status + ' • ' + formatTimeElapsed(s.updated_at || s.created_at) + '</span>' +
+          '</div>';
+        });
+        html += '</div></details></div>';
+      }
+
+      html += '</div>';
       panel.innerHTML = html;
     }
 
