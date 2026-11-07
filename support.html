@@ -959,7 +959,6 @@
         subject: subject,
         description: description,
         status: 'open',
-        recaptcha_token: recaptchaResponse,
         assigned_to: autoAssign.assigned_to,
         device_telemetry: {
           app_version: 'Web Support v2.4.1',
@@ -971,7 +970,9 @@
           language: navigator.language,
           screen_resolution: `${window.screen.width}x${window.screen.height}`,
           submitted_at: new Date().toISOString(),
-          auto_assigned: autoAssign
+          auto_assigned: autoAssign,
+          recaptcha_verified: true,
+          recaptcha_token: recaptchaResponse
         }
       };
 
