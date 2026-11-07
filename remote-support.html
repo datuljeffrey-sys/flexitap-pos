@@ -705,6 +705,23 @@
 
       renderPlatformHelper();
 
+    // Asynchronously resolve latest GitHub release asset
+    try {
+      fetch('https://api.github.com/repos/rustdesk/rustdesk/releases/latest')
+        .then(r => r.json())
+        .then(d => {
+          if (d && d.assets) {
+            const w = d.assets.find(a => a.name && a.name.endsWith('-x86_64.exe') && !a.name.includes('sciter'));
+            const m = d.assets.find(a => a.name && a.name.endsWith('-x86_64.dmg'));
+            const wb = document.getElementById('rustdesk-win-btn');
+            const mb = document.getElementById('rustdesk-mac-btn');
+            if (w && wb) wb.href = w.browser_download_url;
+            if (m && mb) mb.href = m.browser_download_url;
+          }
+        }).catch(() => {});
+    } catch (_) {}
+
+
       // Pre-fill and auto-verify session code if passed from POS app
       if (code && code.length === 6) {
         const input = document.getElementById('session-code-input');
@@ -751,7 +768,7 @@
           <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 12px;">
             If RustDesk is already installed, open it to view your 9-digit ID. If not yet installed:
           </p>
-          <a href="https://github.com/rustdesk/rustdesk/releases/latest/download/rustdesk-x86_64.dmg" target="_blank" rel="noopener" class="download-btn">
+          <a href="https://github.com/rustdesk/rustdesk/releases/download/1.5.1/rustdesk-1.5.1-x86_64.dmg" target="_blank" rel="noopener" class="download-btn" id="rustdesk-mac-btn">
             <span>📥 Download RustDesk for Mac (.dmg)</span>
           </a>
           <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
@@ -765,11 +782,11 @@
         <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 12px;">
           If RustDesk is already open on this POS, enter your 9-digit ID below. If not yet installed:
         </p>
-        <a href="https://github.com/rustdesk/rustdesk/releases/latest/download/rustdesk-x86_64.exe" target="_blank" rel="noopener" class="download-btn">
+        <a href="https://github.com/rustdesk/rustdesk/releases/download/1.5.1/rustdesk-1.5.1-x86_64.exe" target="_blank" rel="noopener" class="download-btn" id="rustdesk-win-btn">
           <span>📥 Download RustDesk for Windows (.exe)</span>
         </a>
         <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
-          Run the downloaded <strong>rustdesk-x86_64.exe</strong> installer, then enter the 9-digit ID shown on your screen below.
+          Run the downloaded <strong>RustDesk installer</strong>, then enter the 9-digit ID shown on your screen below.
         </p>`;
     }
 
