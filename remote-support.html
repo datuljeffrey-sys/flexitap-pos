@@ -289,7 +289,7 @@
 
     /* Step 2 Section (RustDesk Connection) */
     #rustdesk-step {
-      display: none;
+      display: block;
       margin-top: 24px;
       padding-top: 24px;
       border-top: 1px solid var(--card-border);
@@ -504,48 +504,33 @@
 
     <!-- Main Card -->
     <div class="card">
-      <div class="card-title">
-        <span>1. Enter Support Session Code</span>
+      <!-- Session Badge (If linked via code) -->
+      <div id="session-badge-container" style="display:none; margin-bottom:16px;">
+        <span class="version-tag" id="session-badge-text" style="font-size:12px; padding:6px 14px; background:rgba(45,212,191,0.12); color:#2dd4bf; border:1px solid rgba(45,212,191,0.3); border-radius:999px;">
+          ✓ Connected to Active Support Session
+        </span>
+      </div>
+
+      <div class="card-title" style="color: #2dd4bf;">
+        <span>1. Launch Remote Support Client</span>
       </div>
       <p class="card-description">
-        During a support phone call or chat, our technician will provide you with a 6-character session code (e.g., <strong>6MGPA7</strong>). Enter it below to begin:
+        Open the pre-configured RustDesk client on this terminal so our certified technician can diagnose printer cutters, scanner pairing, payment sync, or POS application issues.
       </p>
 
-      <div class="input-row">
-        <input 
-          type="text" 
-          id="session-code-input" 
-          class="code-input" 
-          placeholder="e.g. 6MGPA7" 
-          maxlength="6"
-          autocomplete="off"
-          spellcheck="false"
-          onkeydown="if(event.key==='Enter') verifySessionCode()"
-        />
-        <button class="btn-connect" id="verify-btn" onclick="verifySessionCode()">
-          <span>Verify Session</span>
-          <span>→</span>
-        </button>
+      <div class="download-helper-box" id="platform-helper-box">
+        <!-- Dynamic platform content rendered by JS -->
       </div>
 
-      <div id="code-status-msg" class="status-msg"></div>
-
       <!-- Step 2: RustDesk Screen Sharing -->
-      <div id="rustdesk-step">
-        <div class="card-title" style="color: #2dd4bf; margin-top: 6px;">
-          <span>2. Launch RustDesk Screen Share</span>
+      <div id="rustdesk-step" style="display: block; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--card-border);">
+        <div class="card-title" style="font-size: 15px; margin-bottom: 8px;">
+          <span>2. Enter your 9-digit RustDesk ID:</span>
         </div>
-        <p class="card-description">
-          Open RustDesk on this terminal so our technician can diagnose printer cutters, scanner pairing, payment sync, or POS application issues.
+        <p class="card-description" style="margin-bottom: 12px; font-size: 13px;">
+          Once RustDesk is running on your screen, enter your 9-digit device ID below, or simply read it directly to your technician over the phone or chat:
         </p>
 
-        <div class="download-helper-box" id="platform-helper-box">
-          <!-- Dynamic platform content rendered by JS -->
-        </div>
-
-        <div class="card-title" style="font-size: 15px; margin-bottom: 8px;">
-          <span>Enter your 9-digit RustDesk ID:</span>
-        </div>
         <div class="input-row">
           <input 
             type="text" 
@@ -562,6 +547,25 @@
         </div>
 
         <div id="rustdesk-status-msg" class="status-msg"></div>
+
+        <!-- Optional Session Code Toggle for manual pairing -->
+        <div style="margin-top: 16px; font-size: 12px; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span>Technician Session Code (Optional):</span>
+            <input 
+              type="text" 
+              id="session-code-input" 
+              style="background:#090d16; border:1px solid var(--card-border); border-radius:6px; color:#fff; padding:5px 8px; font-size:12px; font-family:var(--font-mono); width:95px; text-transform:uppercase; text-align:center;" 
+              placeholder="e.g. F4456E" 
+              maxlength="6"
+              onkeydown="if(event.key==='Enter') verifySessionCode()"
+            />
+            <button class="btn-connect" id="verify-btn" onclick="verifySessionCode()" style="padding: 5px 12px; font-size: 12px; border-radius: 6px;">
+              Link
+            </button>
+          </div>
+          <div id="code-status-msg" class="status-msg" style="margin: 0; padding: 4px 10px; font-size: 11.5px;"></div>
+        </div>
 
         <!-- Live Connection Status Card -->
         <div id="live-session-card" class="live-status-card" style="display: none;">
@@ -780,14 +784,19 @@
       // Default: Windows POS Terminal
       helperBox.innerHTML = `
         <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 12px;">
-          If RustDesk is already open on this POS, enter your 9-digit ID below. If not yet installed:
+          Download our pre-configured support client for Windows (self-hosted relay pre-configured):
         </p>
-        <a href="https://github.com/rustdesk/rustdesk/releases/download/1.5.1/rustdesk-1.5.1-x86_64.exe" target="_blank" rel="noopener" class="download-btn" id="rustdesk-win-btn">
-          <span>📥 Download RustDesk for Windows (.exe)</span>
+        <a href="/downloads/rustdesk-host=rustdesk.flexitapapp.com,key=DupmnPdDGeoTy26tsw0JqfcU9rmh5hBotMp8mQMsqAg=,.exe" download="RustDesk-FlexiTapSupport.exe" class="download-btn" id="rustdesk-win-btn">
+          <span>📥 Download FlexiTap Remote Support (Windows .exe)</span>
         </a>
-        <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
-          Run the downloaded <strong>RustDesk installer</strong>, then enter the 9-digit ID shown on your screen below.
-        </p>`;
+        <div style="margin-top: 8px; font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+          Double-click the downloaded file to run. It automatically connects to the FlexiTap support relay.
+        </div>
+        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.08);">
+          <a href="rustdesk://config/9JiI6ISawFmIsISPnFUcz1UUthDcNR3bChWNo1mc5U1YmFnSwc3c0ZjM5R1bldERkBlbtBXdEJiOikXZrJCLi02bj5CcwFGchRXa4VGbm5yazVGZ0NXdyJiOikXYsVmciwiIt92YuAHchBXY0lGelxmZus2clRGdzVnciojI0N3boJye" style="color: #38bdf8; font-size: 12px; text-decoration: underline; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+            <span>⚡ Already have RustDesk open? Click here to auto-connect to FlexiTap server</span>
+          </a>
+        </div>`;
     }
 
     // Step 1: Verify Session Code
@@ -844,7 +853,13 @@
         } else {
           currentSessionCode = code;
           currentSessionId = sessionId;
-          showStatus(statusMsg, 'success', `✓ Session code ${code} verified! Proceed to Step 2 below.`);
+          showStatus(statusMsg, 'success', `✓ Linked to Session #${code}`);
+          const badgeBox = document.getElementById('session-badge-container');
+          const badgeText = document.getElementById('session-badge-text');
+          if (badgeBox && badgeText) {
+            badgeText.textContent = `✓ Linked to Support Session #${code}`;
+            badgeBox.style.display = 'block';
+          }
           
           // Reveal Step 2
           document.getElementById('rustdesk-step').style.display = 'block';
