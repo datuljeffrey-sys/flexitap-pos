@@ -47,7 +47,7 @@
       flex-direction: column;
     }
 
-    /* FULL BLEED END-TO-END CONTAINER */
+    /* FULL BLEED END-TO-END CONTAINER INHERITED FROM MAIN SITE */
     .container {
       width: 100%;
       max-width: 100%;
@@ -58,7 +58,7 @@
       z-index: 2;
     }
 
-    /* DEDICATED COMMUNITY FORUM HEADER (LOYVERSE TOWN SPEC) */
+    /* DEDICATED COMMUNITY FORUM HEADER */
     header {
       padding: clamp(12px, 1.6vh, 18px) 0;
       border-bottom: 1px solid var(--card-border);
@@ -597,6 +597,48 @@
     }
     .modal-close-btn:hover { color: #fff; }
 
+    /* ADMIN MODERATION BUTTONS */
+    .admin-del-btn {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .admin-del-btn:hover {
+      background: #ef4444;
+      color: #fff;
+      border-color: #ef4444;
+    }
+
+    /* GUEST SIGNIN GATE CARD (EXACT LOYVERSE TOWN REFERENCE) */
+    .signin-gate-card {
+      text-align: center;
+      padding: 32px 20px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      margin-top: 16px;
+    }
+    .signin-gate-card h4 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .signin-gate-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
     /* IN-PAGE THREAD ITEM */
     .native-thread-item {
       padding: 14px 16px;
@@ -708,47 +750,6 @@
       .footer-grid { grid-template-columns: 1fr; }
       .nav-links { display: none; }
     }
-  
-    /* ADMIN MODERATION BUTTONS */
-    .admin-del-btn {
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      color: #fca5a5;
-      font-size: 10.5px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.15s;
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-    }
-    .admin-del-btn:hover {
-      background: #ef4444;
-      color: #fff;
-      border-color: #ef4444;
-    }
-    .signin-gate-card {
-      text-align: center;
-      padding: 32px 20px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      margin-top: 16px;
-    }
-    .signin-gate-card h4 {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 6px;
-    }
-    .signin-gate-card p {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-    }
-
   </style>
 </head>
 <body>
@@ -848,10 +849,10 @@
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count">Active</div>
+              <div class="stats-count" id="count-sales">Active</div>
               <div class="stats-label">Channel</div>
             </div>
-            <div class="forum-latest">
+            <div class="forum-latest" id="latest-sales">
               <div class="latest-avatar" style="background:#059669;">F</div>
               <div class="latest-text">
                 <span class="latest-thread-link">📌 Fast offline checkout &amp; cash drawer kick trigger</span>
@@ -879,10 +880,10 @@
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count">Active</div>
+              <div class="stats-count" id="count-items">Active</div>
               <div class="stats-label">Channel</div>
             </div>
-            <div class="forum-latest">
+            <div class="forum-latest" id="latest-items">
               <div class="latest-avatar" style="background:#2563eb;">F</div>
               <div class="latest-text">
                 <span class="latest-thread-link">📌 Setting up variant matrices and nested modifier options</span>
@@ -910,10 +911,10 @@
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count" style="color: #fbbf24;">Hardware Lab</div>
+              <div class="stats-count" style="color: #fbbf24;" id="count-printers">Hardware Lab</div>
               <div class="stats-label">Matrix</div>
             </div>
-            <div class="forum-latest">
+            <div class="forum-latest" id="latest-printers">
               <div class="latest-avatar" style="background:#d97706;">F</div>
               <div class="latest-text">
                 <span class="latest-thread-link">📌 ESC/POS auto-cutter &amp; Bluetooth pairing guide</span>
@@ -940,10 +941,10 @@
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count">Active</div>
+              <div class="stats-count" id="count-inventory">Active</div>
               <div class="stats-label">Channel</div>
             </div>
-            <div class="forum-latest">
+            <div class="forum-latest" id="latest-inventory">
               <div class="latest-avatar" style="background:#7c3aed;">F</div>
               <div class="latest-text">
                 <span class="latest-thread-link">📌 Daily sales reconciliation and multi-station inventory audits</span>
@@ -970,10 +971,10 @@
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count" style="color: #fb7185;">Open Voting</div>
+              <div class="stats-count" style="color: #fb7185;" id="count-roadmap">Open Voting</div>
               <div class="stats-label">Roadmap</div>
             </div>
-            <div class="forum-latest">
+            <div class="forum-latest" id="latest-roadmap">
               <div class="latest-avatar" style="background:#e11d48;">F</div>
               <div class="latest-text">
                 <span class="latest-thread-link">📌 How to propose feature ideas &amp; vote on roadmap releases</span>
@@ -1003,10 +1004,10 @@
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count" style="color: #60a5fa;">VIP Lounge</div>
+              <div class="stats-count" style="color: #60a5fa;" id="count-plus-pro">VIP Lounge</div>
               <div class="stats-label">Channel</div>
             </div>
-            <div class="forum-latest">
+            <div class="forum-latest" id="latest-plus-pro">
               <div class="latest-avatar" style="background:#1d4ed8;">P</div>
               <div class="latest-text">
                 <span class="latest-thread-link">👑 Scaling multi-register stores with centralized back-office sync</span>
@@ -1198,12 +1199,11 @@
             verifiedProfile = profileRes?.data || null;
             verifiedStore = storeRes?.data || null;
           } catch (dbErr) {
-            console.warn('Backend subscription query fallback:', dbErr);
+            console.warn('Backend subscription query notice:', dbErr);
           }
 
           updateAuthUI(session.user, verifiedProfile, verifiedStore);
         } else {
-          // Reset to guest state
           activeMerchant = null;
           verifiedProfile = null;
           verifiedStore = null;
@@ -1215,6 +1215,16 @@
       } catch (err) {
         console.warn('Auth check failed:', err);
       }
+    }
+
+    // Check if current user has Dev / Admin moderation rights
+    function isDevAdminUser() {
+      if (!activeMerchant) return false;
+      const role = (verifiedProfile?.role || '').toLowerCase();
+      const isStaffRole = ['admin', 'super_admin', 'dev', 'developer', 'support', 'staff', 'ops', 'owner'].includes(role);
+      const email = (activeMerchant.email || '').toLowerCase();
+      const isStaffEmail = email.includes('@flexitapapp.com') || email === 'datuljeffrey@gmail.com' || email.startsWith('info@');
+      return isStaffRole || isStaffEmail;
     }
 
     // UPDATE UI WITH VERIFIED BACKEND SUBSCRIPTION DATA
@@ -1235,13 +1245,10 @@
       const resolvedName = profile?.store_name || store?.name || store?.store_name || profile?.full_name || (user.email ? user.email.split('@')[0] : 'Merchant');
 
       // 2. Resolve Verified Backend Role & Subscription Tier
-      const userRole = (profile?.role || '').toLowerCase();
-      const isStaff = ['admin', 'super_admin', 'dev', 'developer', 'support', 'staff', 'ops'].includes(userRole);
-
+      const isStaff = isDevAdminUser();
       const paymentStatus = (profile?.payment_status || 'free').toLowerCase();
       let rawTier = (profile?.subscription_tier || profile?.tier || store?.subscription_tier || store?.tier || 'free').toLowerCase();
       
-      // If payment is pending or unpaid
       if (paymentStatus === 'unpaid' && rawTier !== 'free') {
         rawTier = 'free';
       }
@@ -1342,7 +1349,6 @@
           throw error;
         }
 
-        // Close modal and verify subscription immediately on this page
         closeModal();
         await checkMerchantAuth();
       } catch (err) {
@@ -1377,12 +1383,12 @@
 
       const tierLower = badge.toLowerCase();
       let perkDesc = 'Free Community Hub member with full access to verified printer configs, guides, and peer solutions.';
-      if (tierLower.includes('pro')) {
+      if (tierLower.includes('staff')) {
+        perkDesc = '🛡️ Verified FlexiTap Core Team / Engineering Staff with Admin Moderation Rights.';
+      } else if (tierLower.includes('pro')) {
         perkDesc = '👑 Verified Founders Pro Subscriber — priority response queue, multi-location fleet guides, and VIP forum recognition.';
       } else if (tierLower.includes('plus')) {
         perkDesc = '⭐ Verified Plus Merchant — verified status badge and access to the Plus & Pro Merchant Exchange.';
-      } else if (tierLower.includes('staff')) {
-        perkDesc = '🛡️ Verified FlexiTap Core Team / Engineering Staff.';
       }
 
       content.innerHTML = `
@@ -1399,7 +1405,7 @@
         <div style="background:rgba(15,23,42,0.85); border:1px solid var(--card-border); border-radius:10px; padding:16px; margin-bottom:14px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
             <span style="font-size:13px; color:var(--text-muted);">Verified Subscription Tier:</span>
-            <span class="user-rank-badge" style="font-size:11px; padding:3px 10px; background:${tierLower.includes('pro') ? '#3b82f6' : tierLower.includes('plus') ? '#2563eb' : 'rgba(148,163,184,0.25)'}; color:#fff;">
+            <span class="user-rank-badge" style="font-size:11px; padding:3px 10px; background:${tierLower.includes('staff') ? '#e11d48' : tierLower.includes('pro') ? '#3b82f6' : tierLower.includes('plus') ? '#2563eb' : 'rgba(148,163,184,0.25)'}; color:#fff;">
               ${badge}
             </span>
           </div>
@@ -1427,7 +1433,7 @@
       modal.style.display = 'flex';
     }
 
-    // NATIVE IN-HOUSE DISCUSSION DATABASE
+    // NATIVE IN-HOUSE DISCUSSION DATABASE (LocalStorage + Supabase Resilient Sync)
     const DEFAULT_DISCUSSIONS = [
       {
         id: 'sales-1',
@@ -1551,17 +1557,6 @@
       container.innerHTML = html;
     }
 
-    
-    // Check if current user has Dev / Admin moderation rights
-    function isDevAdminUser() {
-      if (!activeMerchant) return false;
-      const role = (verifiedProfile?.role || '').toLowerCase();
-      const isStaffRole = ['admin', 'super_admin', 'dev', 'developer', 'support', 'staff', 'ops', 'owner'].includes(role);
-      const email = (activeMerchant.email || '').toLowerCase();
-      const isStaffEmail = email.includes('@flexitapapp.com') || email === 'datuljeffrey@gmail.com' || email.startsWith('info@');
-      return isStaffRole || isStaffEmail;
-    }
-
     // Admin Delete a Topic
     function adminDeleteTopic(threadId) {
       if (!isDevAdminUser()) return;
@@ -1572,7 +1567,6 @@
       discussions = discussions.filter(d => d.id !== threadId);
       saveDiscussions(discussions);
       
-      alert('✓ Discussion topic deleted.');
       if (target) {
         openCategoryFeed(target.category);
       } else {
@@ -1594,7 +1588,6 @@
       }
     }
 
-    // Open Category Feed (In-House Forum View)
     // Open Category Feed (In-House Forum View with Admin Topic Deletion)
     function openCategoryFeed(catId) {
       const discussions = getDiscussions();
@@ -1621,7 +1614,7 @@
             <div class="native-thread-item" onclick="openThreadDetail('${t.id}')">
               <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                 <div class="native-thread-title">${t.title}</div>
-                ${isAdmin ? `<button class="admin-del-btn" onclick="event.stopPropagation(); adminDeleteTopic('${t.id}')" title="Admin: Delete Topic">🗑️</button>` : ''}
+                ${isAdmin ? `<button class="admin-del-btn" onclick="event.stopPropagation(); adminDeleteTopic('${t.id}')" title="Admin: Delete Topic">🗑️ Delete</button>` : ''}
               </div>
               <div class="native-thread-meta">
                 <span class="user-rank-badge ${t.badgeClass || 'rank-staff'}">${t.authorTier}</span>
@@ -1654,7 +1647,6 @@
       modal.style.display = 'flex';
     }
 
-    // View Single Thread Detail with Replies & Reply Composer
     // View Single Thread Detail with Replies & Reply Composer (GATED + DEV ADMIN RIGHTS)
     function openThreadDetail(threadId) {
       const discussions = getDiscussions();
@@ -1685,7 +1677,7 @@
         repliesHtml = '<div style="font-size:12.5px; color:var(--text-muted); padding:10px 0;">No comments yet. Be the first to reply!</div>';
       }
 
-      // COMMENT COMPOSER OR GUEST SIGN-IN CARD
+      // COMMENT COMPOSER OR GUEST SIGN-IN CARD (MATCHING USER SCREENSHOT)
       let commentSectionHtml = '';
       if (activeMerchant) {
         commentSectionHtml = `
@@ -1760,6 +1752,10 @@
 
     // Submit a Reply natively
     function submitReply(threadId) {
+      if (!activeMerchant) {
+        openSignInModal();
+        return;
+      }
       const text = document.getElementById('reply-text')?.value.trim();
       if (!text) {
         alert('Please type a reply message.');
@@ -1785,7 +1781,6 @@
       openThreadDetail(threadId);
     }
 
-    // Open In-House New Discussion Modal
     // Open In-House New Discussion Modal (GATED: MUST BE SIGNED IN)
     function openNewDiscussionModal(defaultCat = 'sales') {
       const modal = document.getElementById('community-modal');
@@ -1854,6 +1849,10 @@
 
     // Publish Topic to Native Database
     function publishNativeTopic() {
+      if (!activeMerchant) {
+        openSignInModal();
+        return;
+      }
       const title = document.getElementById('new-topic-title')?.value.trim();
       const cat = document.getElementById('new-topic-cat')?.value || 'sales';
       const body = document.getElementById('new-topic-body')?.value.trim();
@@ -1893,7 +1892,6 @@
       discussions.unshift(newThread);
       saveDiscussions(discussions);
 
-      // Open the category feed containing this new topic
       openCategoryFeed(cat);
     }
 
