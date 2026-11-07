@@ -14787,7 +14787,7 @@ Role: ${lastProvisionedCreds.role}`;
     async function scheduleCrmAccountDeletion() {
       const role = getEffectiveRole();
       if (role === 'support') {
-        alert('🔒 Access Denied: Customer Support personnel cannot schedule merchant account erasure.\n\nThis action is strictly restricted to Core Dev / Admin engineering.');
+        alert('🔒 Access Denied: Customer Support personnel cannot purge or delete merchant accounts.\n\nAccount deletion is strictly restricted to Core Dev / Admin engineering.');
         return;
       }
 
@@ -14826,7 +14826,7 @@ Role: ${lastProvisionedCreds.role}`;
     async function restoreCrmAccountFromDeletion() {
       const role = getEffectiveRole();
       if (role === 'support') {
-        alert('🔒 Access Denied: Customer Support personnel cannot restore or modify deletion status.\n\nThis action is strictly restricted to Core Dev / Admin engineering.');
+        alert('🔒 Access Denied: Customer Support personnel cannot purge or delete merchant accounts.\n\nAccount deletion is strictly restricted to Core Dev / Admin engineering.');
         return;
       }
 
@@ -14862,9 +14862,7 @@ Role: ${lastProvisionedCreds.role}`;
     async function purgeCrmAccountImmediately() {
       const role = getEffectiveRole();
       if (role === 'support') {
-        alert('🔒 Access Denied: Customer Support personnel cannot purge or delete merchant accounts.
-
-Account deletion is strictly restricted to Core Dev / Admin engineering.');
+        alert('🔒 Access Denied: Customer Support personnel cannot purge or delete merchant accounts.\n\nAccount deletion is strictly restricted to Core Dev / Admin engineering.');
         return;
       }
 
@@ -14875,10 +14873,7 @@ Account deletion is strictly restricted to Core Dev / Admin engineering.');
       const deletedId = acc.id;
       const storeCode = acc.store_code || acc.id;
 
-      const confirmCode = prompt('⚡ WARNING: Immediate Purge & Anonymization is IRREVERSIBLE.
-All operational sales data, terminal device bindings, and merchant profile records will be wiped immediately.
-
-To confirm permanent deletion of "' + deletedStoreName + '", type PURGE below:');
+      const confirmCode = prompt("⚡ WARNING: Immediate Purge & Anonymization is IRREVERSIBLE.\nAll operational sales data, terminal device bindings, and merchant profile records will be wiped immediately.\n\nTo confirm permanent deletion of \"" + deletedStoreName + "\", type PURGE below:");
       if (confirmCode !== 'PURGE') {
         alert('Action cancelled. Confirmation code did not match.');
         return;
