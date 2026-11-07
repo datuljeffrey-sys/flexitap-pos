@@ -10,6 +10,7 @@ Allow: /features.html
 Allow: /pricing.html
 Allow: /about.html
 Allow: /support.html
+Allow: /community.html
 Allow: /insights.html
 Allow: /affiliate.html
 Allow: /terms.html

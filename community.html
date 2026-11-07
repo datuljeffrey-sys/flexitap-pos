@@ -3,11 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  
+  <!-- SECURITY HEADERS (Defensive Browsing & Anti-Tampering) -->
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>FlexiTap Community — Official Merchant Forum & Knowledge Base</title>
-  <meta name="description" content="The dedicated discussion forum and knowledge base for FlexiTap merchants, baristas, and retailers. Troubleshooting, ESC/POS printer guides, and feature requests.">
+  
+  <!-- SEO PRIMARY META -->
+  <title>FlexiTap Community Hub — POS Forum, Hardware Guides & Merchant Peer Help</title>
+  <meta name="title" content="FlexiTap Community Hub — POS Forum, Hardware Guides & Merchant Peer Help">
+  <meta name="description" content="Official FlexiTap POS Merchant Community. Join peer discussions, browse ESC/POS printer setups, troubleshoot offline cashier checkouts, and vote on upcoming feature roadmaps.">
+  <meta name="keywords" content="FlexiTap community, POS forum, offline POS discussion, ESC/POS printer troubleshooting, cashier setup, Star Micronics, Epson TM-T20III, barista checkout speed, retail inventory guides">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <link rel="canonical" href="https://flexitapapp.com/community.html">
+  
+  <!-- OPEN GRAPH / FACEBOOK / LINKEDIN (SOCIAL GRAPH) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="FlexiTap POS">
+  <meta property="og:url" content="https://flexitapapp.com/community.html">
+  <meta property="og:title" content="FlexiTap Community Hub — POS Forum, Hardware Guides & Merchant Peer Help">
+  <meta property="og:description" content="Official FlexiTap POS Merchant Community. Connect with fellow shop owners, explore verified ESC/POS printer guides, and get peer solutions.">
+  <meta property="og:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="FlexiTap Merchant Community Forum and Knowledge Base">
+  
+  <!-- TWITTER / X CARDS -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@flexitapapp">
+  <meta name="twitter:url" content="https://flexitapapp.com/community.html">
+  <meta name="twitter:title" content="FlexiTap Community Hub — POS Forum, Hardware Guides & Merchant Peer Help">
+  <meta name="twitter:description" content="Official FlexiTap POS Merchant Community. Peer support, hardware troubleshooting, and POS roadmap discussions.">
+  <meta name="twitter:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
+  
+  <!-- BRAND FAVICONS -->
   <link rel="icon" type="image/png" href="image_02e503.png">
   <link rel="shortcut icon" href="favicon.ico">
   <link rel="apple-touch-icon" href="image_02e503.png">
@@ -15,6 +44,99 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- AEO (ANSWER ENGINE OPTIMIZATION) & STRUCTURED DATA (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://flexitapapp.com/#organization",
+        "name": "FlexiTap POS",
+        "url": "https://flexitapapp.com/",
+        "logo": "https://flexitapapp.com/image_02e503.png",
+        "sameAs": [
+          "https://www.facebook.com/groups/1500322278604407"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "email": "info@flexitapapp.com",
+          "contactType": "customer support"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://flexitapapp.com/community.html#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://flexitapapp.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Community Hub",
+            "item": "https://flexitapapp.com/community.html"
+          }
+        ]
+      },
+      {
+        "@type": "CollectionPage",
+        "@id": "https://flexitapapp.com/community.html#webpage",
+        "url": "https://flexitapapp.com/community.html",
+        "name": "FlexiTap Merchant Community Hub & Knowledge Base",
+        "description": "Peer-to-peer discussion forum, hardware troubleshooting, and knowledge base for retail and restaurant merchants.",
+        "isPartOf": {
+          "@id": "https://flexitapapp.com/#website"
+        },
+        "breadcrumb": {
+          "@id": "https://flexitapapp.com/community.html#breadcrumb"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://flexitapapp.com/community.html#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does FlexiTap POS maintain checkout and cash drawer operations offline?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "FlexiTap utilizes an embedded local SQLite architecture. Cashier transactions, split tenders, and RJ11/RJ12 drawer kick pulse triggers execute entirely on local hardware with sub-15ms latency, queuing synchronization records until network connectivity returns."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which thermal receipt printers are compatible with FlexiTap?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "FlexiTap supports industry-standard ESC/POS thermal printers over USB OTG, Bluetooth 5.0, and Ethernet LAN, including Star Micronics (TSP143 series), Epson (TM-T20III, TM-m30), and Sunmi smart terminals."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is the FlexiTap Merchant Community Hub free to join?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, the FlexiTap Community Hub is completely free for all independent retailers, coffee shops, and restaurant operators to ask questions, share hardware setups, and view verified engineering guides."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I configure product variant matrices and nested modifiers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Items and modifiers are managed with flexible option groups (e.g., milk choices, syrups, sizes) that dynamically calculate add-on pricing and route tickets to appropriate kitchen display stations."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 
   <style>
     :root {
@@ -1395,10 +1517,10 @@
         <h2 style="font-size: 1.25rem; font-weight: 800; color:#fff; margin-bottom: 8px;">Merchant Profile &amp; Subscription</h2>
         
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
-          <div class="user-avatar-small" style="width:40px; height:40px; font-size:16px;">${name[0]}</div>
+          <div class="user-avatar-small" style="width:40px; height:40px; font-size:16px;">${escapeHtml(name[0])}</div>
           <div>
-            <div style="font-weight:700; color:#fff; font-size:15px;">${name}</div>
-            <div style="font-size:12px; color:var(--text-muted);">${email}</div>
+            <div style="font-weight:700; color:#fff; font-size:15px;">${escapeHtml(name)}</div>
+            <div style="font-size:12px; color:var(--text-muted);">${escapeHtml(email)}</div>
           </div>
         </div>
 
@@ -1547,10 +1669,14 @@
       const list = getDiscussions().slice(0, 5);
       let html = '';
       list.forEach(t => {
+        const safeTitle = escapeHtml(t.title);
+        const safeCat = escapeHtml(t.categoryName);
+        const safeId = escapeHtml(t.id);
+        const replyCount = t.replies ? t.replies.length : 0;
         html += `
-          <div class="mini-topic-item" onclick="openThreadDetail('${t.id}')">
-            <div class="mini-topic-title">${t.title}</div>
-            <div class="mini-topic-meta">${t.categoryName} • 💬 ${t.replies ? t.replies.length : 0}</div>
+          <div class="mini-topic-item" onclick="openThreadDetail('${safeId}')">
+            <div class="mini-topic-title">${safeTitle}</div>
+            <div class="mini-topic-meta">${safeCat} • 💬 ${replyCount}</div>
           </div>
         `;
       });
@@ -1610,17 +1736,24 @@
         threadsHtml = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:13.5px;">No active discussions in this channel yet. Be the first to start one!</div>';
       } else {
         catThreads.forEach(t => {
+          const safeId = escapeHtml(t.id);
+          const safeTitle = escapeHtml(t.title);
+          const safeTier = escapeHtml(t.authorTier);
+          const safeAuthor = escapeHtml(t.author);
+          const safeTime = escapeHtml(t.time);
+          const replyCount = t.replies ? t.replies.length : 0;
+          const upvoteCount = t.upvotes || 0;
           threadsHtml += `
-            <div class="native-thread-item" onclick="openThreadDetail('${t.id}')">
+            <div class="native-thread-item" onclick="openThreadDetail('${safeId}')">
               <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <div class="native-thread-title">${t.title}</div>
-                ${isAdmin ? `<button class="admin-del-btn" onclick="event.stopPropagation(); adminDeleteTopic('${t.id}')" title="Admin: Delete Topic">🗑️ Delete</button>` : ''}
+                <div class="native-thread-title">${safeTitle}</div>
+                ${isAdmin ? `<button class="admin-del-btn" onclick="event.stopPropagation(); adminDeleteTopic('${safeId}')" title="Admin: Delete Topic">🗑️ Delete</button>` : ''}
               </div>
               <div class="native-thread-meta">
-                <span class="user-rank-badge ${t.badgeClass || 'rank-staff'}">${t.authorTier}</span>
-                <span>${t.author} • ${t.time}</span>
-                <span>💬 ${t.replies ? t.replies.length : 0} replies</span>
-                <span>👍 ${t.upvotes || 0} upvotes</span>
+                <span class="user-rank-badge ${escapeHtml(t.badgeClass || 'rank-staff')}">${safeTier}</span>
+                <span>${safeAuthor} • ${safeTime}</span>
+                <span>💬 ${replyCount} replies</span>
+                <span>👍 ${upvoteCount} upvotes</span>
               </div>
             </div>
           `;
@@ -1660,16 +1793,20 @@
       let repliesHtml = '';
       if (thread.replies && thread.replies.length > 0) {
         thread.replies.forEach((r, idx) => {
+          const safeAuthor = escapeHtml(r.author);
+          const safeTier = escapeHtml(r.tier);
+          const safeTime = escapeHtml(r.time);
+          const safeContent = escapeHtml(r.content);
           repliesHtml += `
             <div style="padding:12px 14px; background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.06); border-radius:8px; margin-bottom:8px;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; font-size:12px;">
-                <span style="font-weight:700; color:#fff;">${r.author} <span class="user-rank-badge" style="background:#2563eb; color:#fff; font-size:9px;">${r.tier}</span></span>
+                <span style="font-weight:700; color:#fff;">${safeAuthor} <span class="user-rank-badge" style="background:#2563eb; color:#fff; font-size:9px;">${safeTier}</span></span>
                 <div style="display:flex; align-items:center; gap:8px;">
-                  <span style="color:var(--text-muted);">${r.time}</span>
-                  ${isAdmin ? `<button class="admin-del-btn" onclick="adminDeleteReply('${thread.id}', ${idx})" title="Admin: Delete Comment">🗑️ Delete</button>` : ''}
+                  <span style="color:var(--text-muted);">${safeTime}</span>
+                  ${isAdmin ? `<button class="admin-del-btn" onclick="adminDeleteReply('${escapeHtml(thread.id)}', ${idx})" title="Admin: Delete Comment">🗑️ Delete</button>` : ''}
                 </div>
               </div>
-              <div style="font-size:13px; color:#cbd5e1; line-height:1.4;">${r.content}</div>
+              <div style="font-size:13px; color:#cbd5e1; line-height:1.4;">${safeContent}</div>
             </div>
           `;
         });
@@ -1703,29 +1840,37 @@
         `;
       }
 
+      const safeThreadId = escapeHtml(thread.id);
+      const safeThreadTitle = escapeHtml(thread.title);
+      const safeThreadTier = escapeHtml(thread.authorTier);
+      const safeThreadAuthor = escapeHtml(thread.author);
+      const safeThreadCat = escapeHtml(thread.categoryName);
+      const safeThreadTime = escapeHtml(thread.time);
+      const safeThreadBody = escapeHtml(thread.content);
+
       content.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; border-bottom:1px solid var(--card-border); padding-bottom:12px;">
           <div>
             <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-              <span class="user-rank-badge ${thread.badgeClass || 'rank-staff'}">${thread.authorTier}</span>
+              <span class="user-rank-badge ${escapeHtml(thread.badgeClass || 'rank-staff')}">${safeThreadTier}</span>
               ${isAdmin ? '<span class="user-rank-badge" style="background:#e11d48; color:#fff;">🛡️ Admin Rights</span>' : ''}
             </div>
-            <h2 style="font-size: 1.25rem; font-weight: 800; color:#fff; line-height:1.3;">${thread.title}</h2>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color:#fff; line-height:1.3;">${safeThreadTitle}</h2>
             <div style="font-size: 12px; color:var(--text-muted); margin-top:4px;">
-              Posted by <strong>${thread.author}</strong> in ${thread.categoryName} • ${thread.time}
+              Posted by <strong>${safeThreadAuthor}</strong> in ${safeThreadCat} • ${safeThreadTime}
             </div>
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
-            ${isAdmin ? `<button class="admin-del-btn" onclick="adminDeleteTopic('${thread.id}')" style="padding:5px 10px; font-size:11px;" title="Admin: Delete Topic">🗑️ Delete Topic</button>` : ''}
-            <button class="btn-signin" onclick="upvoteThread('${thread.id}')" style="display:flex; align-items:center; gap:4px; padding:6px 12px;">
+            ${isAdmin ? `<button class="admin-del-btn" onclick="adminDeleteTopic('${safeThreadId}')" style="padding:5px 10px; font-size:11px;" title="Admin: Delete Topic">🗑️ Delete Topic</button>` : ''}
+            <button class="btn-signin" onclick="upvoteThread('${safeThreadId}')" style="display:flex; align-items:center; gap:4px; padding:6px 12px;">
               <span>👍</span>
-              <span id="upvote-count-${thread.id}">${thread.upvotes}</span>
+              <span id="upvote-count-${safeThreadId}">${thread.upvotes}</span>
             </button>
           </div>
         </div>
 
         <div style="font-size:14px; color:#e2e8f0; line-height:1.55; padding:12px 0 20px; border-bottom:1px dashed rgba(255,255,255,0.1); margin-bottom:16px;">
-          ${thread.content}
+          ${safeThreadBody}
         </div>
 
         <h3 style="font-size: 13.5px; font-weight: 800; color:#fff; margin-bottom:10px;">Comments (${thread.replies ? thread.replies.length : 0})</h3>
@@ -1759,6 +1904,10 @@
       const text = document.getElementById('reply-text')?.value.trim();
       if (!text) {
         alert('Please type a reply message.');
+        return;
+      }
+      if (text.length > 2000) {
+        alert('Reply must be 2,000 characters or fewer.');
         return;
       }
 
@@ -1859,6 +2008,14 @@
 
       if (!title || !body) {
         alert('Please fill out both the title and discussion details.');
+        return;
+      }
+      if (title.length > 150) {
+        alert('Discussion title must be 150 characters or fewer.');
+        return;
+      }
+      if (body.length > 5000) {
+        alert('Discussion content must be 5,000 characters or fewer.');
         return;
       }
 
