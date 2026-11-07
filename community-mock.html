@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>FlexiTap Community Hub — Official Merchant Forum & Knowledge Base</title>
-  <meta name="description" content="The official FlexiTap POS native community for independent retailers, baristas, and restaurateurs. Ask operational questions, view verified ESC/POS printer guides, and vote on upcoming features.">
+  <title>FlexiTap Community — Official Merchant Forum & Knowledge Base</title>
+  <meta name="description" content="The dedicated discussion forum and knowledge base for FlexiTap merchants, baristas, and retailers. Troubleshooting, ESC/POS printer guides, and feature requests.">
   <link rel="canonical" href="https://flexitapapp.com/community.html">
   <link rel="icon" type="image/png" href="image_02e503.png">
   <link rel="shortcut icon" href="favicon.ico">
@@ -47,7 +47,7 @@
       flex-direction: column;
     }
 
-    /* FULL BLEED END-TO-END CONTAINER INHERITED FROM INDEX.HTML */
+    /* FULL BLEED END-TO-END CONTAINER */
     .container {
       width: 100%;
       max-width: 100%;
@@ -58,7 +58,7 @@
       z-index: 2;
     }
 
-    /* HEADER INHERITED FROM INDEX.HTML */
+    /* DEDICATED COMMUNITY FORUM HEADER (LOYVERSE TOWN SPEC) */
     header {
       padding: clamp(12px, 1.6vh, 18px) 0;
       border-bottom: 1px solid var(--card-border);
@@ -78,49 +78,60 @@
       gap: clamp(12px, 1.8vw, 24px);
       position: relative;
     }
-    .logo {
+    .brand-box {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-size: clamp(19px, 1.6vw, 22px);
-      font-weight: 800;
-      color: #ffffff;
       text-decoration: none;
-      letter-spacing: -0.5px;
       flex-shrink: 0;
-      white-space: nowrap;
     }
     .brand-logo-svg {
       width: clamp(32px, 2.4vw, 38px);
       height: clamp(32px, 2.4vw, 38px);
-      flex-shrink: 0;
-      display: block;
       border-radius: 50%;
       object-fit: contain;
     }
+    .brand-title-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+    .brand-name {
+      font-size: clamp(18px, 1.5vw, 21px);
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+    .brand-sub {
+      font-size: 11px;
+      color: #38bdf8;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
 
-    /* NAVIGATION LINKS INHERITED FROM INDEX.HTML */
+    /* FORUM NAVIGATION TABS */
     .nav-links {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: clamp(8px, 1.1vw, 16px);
+      gap: clamp(8px, 1.2vw, 18px);
       flex: 1;
       margin: 0;
     }
     .nav-link {
       color: #cbd5e1;
       text-decoration: none;
-      font-size: clamp(13.5px, 0.95vw, 15px);
+      font-size: clamp(13px, 0.95vw, 14.5px);
       font-weight: 600;
-      transition: color 0.2s, transform 0.2s;
+      transition: color 0.2s;
       white-space: nowrap;
+      cursor: pointer;
     }
     .nav-link:hover, .nav-link.active {
-      color: #ffffff;
+      color: #38bdf8;
     }
     .nav-link.active {
-      color: #38bdf8;
       position: relative;
     }
     .nav-link.active::after {
@@ -134,109 +145,41 @@
       border-radius: 2px;
     }
 
-    /* INDUSTRIES DROPDOWN */
-    .nav-dropdown { position: relative; display: inline-flex; align-items: center; }
-    .nav-dropdown-btn {
-      background: none; border: none; color: #cbd5e1; font-size: clamp(13.5px, 0.95vw, 15px); font-weight: 600;
-      cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px;
-      transition: color 0.2s, background 0.2s; font-family: inherit;
-    }
-    .nav-dropdown:hover .nav-dropdown-btn,
-    .nav-dropdown.active .nav-dropdown-btn { color: #fff; background: rgba(255, 255, 255, 0.08); }
-    .dropdown-chevron { width: 14px; height: 14px; transition: transform 0.2s; pointer-events: none; }
-    .nav-dropdown:hover .dropdown-chevron,
-    .nav-dropdown.active .dropdown-chevron { transform: rotate(180deg); }
-    .dropdown-menu {
-      display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
-      width: 320px; background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 16px; padding: 8px;
-      box-shadow: 0 20px 45px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.08);
-      z-index: 9999; flex-direction: column; gap: 4px; margin-top: 6px;
-      pointer-events: auto;
-    }
-    .dropdown-menu::before {
-      content: ''; position: absolute; top: -14px; left: 0; right: 0; height: 14px; background: transparent;
-    }
-    .nav-dropdown:hover .dropdown-menu,
-    .nav-dropdown.active .dropdown-menu { display: flex; }
-    .dropdown-item {
-      display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px;
-      text-decoration: none; color: #fff; transition: background 0.15s, transform 0.1s;
-      cursor: pointer; position: relative; z-index: 10000;
-    }
-    .dropdown-item * { pointer-events: none; }
-    .dropdown-item:hover { background: rgba(255, 255, 255, 0.1); transform: translateX(2px); }
-    .dropdown-icon { font-size: 20px; width: 34px; height: 34px; border-radius: 8px; background: rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .dropdown-title { font-weight: 700; font-size: 13.5px; }
-    .dropdown-desc { font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
-
-    .mobile-menu-toggle {
-      display: none;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--card-border);
-      padding: 8px 12px;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 22px;
-      cursor: pointer;
-      line-height: 1;
-    }
-
-    /* BUTTONS INHERITED FROM INDEX.HTML */
+    /* RIGHT ACTIONS (NATIVE IN-PAGE AUTH & NEW TOPIC) */
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: clamp(8px, 1vw, 12px);
+      gap: 12px;
       flex-shrink: 0;
     }
-    .btn-login {
-      background: #ffffff;
-      color: #1d4ed8;
-      border: none;
-      padding: clamp(8px, 1vh, 10px) clamp(16px, 1.3vw, 22px);
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: clamp(13.5px, 0.95vw, 14.5px);
-      cursor: pointer;
-      transition: 0.2s ease;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      white-space: nowrap;
-    }
-    .btn-login:hover {
-      background: #f1f5f9;
-      transform: translateY(-1px);
-    }
-    .btn-signup {
+    .btn-new-topic {
       background: #2563eb;
-      border: none;
       color: #fff;
-      padding: clamp(8px, 1vh, 10px) clamp(18px, 1.5vw, 24px);
+      border: none;
+      padding: clamp(8px, 1vh, 10px) clamp(16px, 1.4vw, 22px);
       border-radius: 8px;
       font-weight: 700;
-      font-size: clamp(13.5px, 0.95vw, 14.5px);
+      font-size: clamp(13px, 0.95vw, 14px);
       cursor: pointer;
-      transition: 0.2s ease;
-      text-decoration: none;
+      transition: all 0.2s;
       display: inline-flex;
       align-items: center;
-      white-space: nowrap;
+      gap: 6px;
       box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
     }
-    .btn-signup:hover {
+    .btn-new-topic:hover {
       background: #1d4ed8;
       box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
       transform: translateY(-1px);
     }
 
-    /* SIGNED-IN USER CHIP (POINTS & LEVEL) */
+    /* USER PROFILE CHIP (SSO + BACKEND SUBSCRIPTION) */
     .user-profile-chip {
       display: none;
       align-items: center;
       gap: 10px;
-      background: rgba(15, 23, 42, 0.75);
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.35);
       padding: 6px 14px;
       border-radius: 9999px;
       cursor: pointer;
@@ -244,7 +187,7 @@
     }
     .user-profile-chip:hover {
       border-color: #38bdf8;
-      background: rgba(56, 189, 248, 0.1);
+      background: rgba(56, 189, 248, 0.12);
     }
     .user-avatar-small {
       width: 26px;
@@ -271,159 +214,144 @@
       gap: 4px;
     }
 
-    /* BREADCRUMB */
-    .community-breadcrumb {
-      padding: 24px 0 10px;
-      font-size: 13px;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .community-breadcrumb a { color: var(--text-muted); text-decoration: none; }
-    .community-breadcrumb a:hover { color: #fff; }
-
-    /* COMMUNITY HEADER BAR */
-    .community-header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 20px;
-      padding: 12px 0 32px;
-      border-bottom: 1px solid var(--card-border);
-      margin-bottom: 32px;
-    }
-    .header-title-box h1 {
-      font-size: clamp(2rem, 3.2vw, 2.75rem);
-      font-weight: 800;
-      letter-spacing: -0.025em;
-      color: #fff;
-      line-height: 1.15;
-    }
-    .header-title-box p {
-      font-size: 15px;
-      color: var(--text-muted);
-      margin-top: 6px;
-      max-width: 780px;
-    }
-
-    .header-actions-box {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .search-input-header {
-      background: rgba(15, 23, 42, 0.7);
+    .btn-signin {
+      background: transparent;
       border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 10px 14px 10px 38px;
       color: #fff;
-      font-size: 14px;
-      width: 290px;
-      outline: none;
+      padding: clamp(8px, 1vh, 10px) clamp(14px, 1.2vw, 18px);
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: clamp(13px, 0.95vw, 14px);
+      cursor: pointer;
       transition: all 0.2s;
     }
-    .search-input-header:focus {
-      border-color: #38bdf8;
-      width: 340px;
-      background: rgba(15, 23, 42, 0.95);
-    }
-    .search-wrapper { position: relative; }
-    .search-wrapper-icon {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 14px;
-      color: var(--text-muted);
+    .btn-signin:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.25);
     }
 
-    /* REPUTATION RANK PERK BANNER */
-    .reputation-perks-banner {
-      background: linear-gradient(90deg, rgba(30, 58, 138, 0.35), rgba(6, 95, 70, 0.3));
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      border-radius: 14px;
-      padding: 16px 24px;
-      margin-bottom: 36px;
+    /* SUB-BAR (BREADCRUMB & SEARCH - LOYVERSE STYLE) */
+    .sub-bar {
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid var(--card-border);
+      padding: 12px 0;
+      margin-bottom: 28px;
+    }
+    .sub-bar .container {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 14px;
     }
-    .perks-left {
+    .breadcrumb {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
     }
-    .perks-icon { font-size: 28px; }
-    .perks-title { font-weight: 800; color: #fff; font-size: 14.5px; }
-    .perks-desc { font-size: 13px; color: #cbd5e1; margin-top: 3px; }
-    .perks-btn {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
+    .breadcrumb a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .breadcrumb a:hover {
       color: #fff;
-      padding: 7px 16px;
-      border-radius: 6px;
-      font-size: 12.5px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
     }
-    .perks-btn:hover { background: rgba(255,255,255,0.2); color: #38bdf8; }
+    .search-box-wrap {
+      position: relative;
+    }
+    .search-box-input {
+      background: rgba(9, 13, 22, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 8px 14px 8px 36px;
+      color: #fff;
+      font-size: 13.5px;
+      width: 280px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .search-box-input:focus {
+      border-color: #38bdf8;
+      width: 320px;
+      background: rgba(9, 13, 22, 0.95);
+    }
+    .search-box-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--text-muted);
+    }
 
-    /* TWO-COLUMN LAYOUT - STRETCHED END TO END */
+    /* PAGE HEADING */
+    .page-title-box {
+      margin-bottom: 24px;
+    }
+    .page-title-box h1 {
+      font-size: clamp(1.8rem, 2.8vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+    .page-title-box p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* MAIN TWO-COLUMN COMMUNITY GRID */
     .community-main-grid {
       display: grid;
-      grid-template-columns: minmax(0, 2.7fr) minmax(360px, 1fr);
+      grid-template-columns: minmax(0, 2.7fr) minmax(340px, 1fr);
       gap: clamp(24px, 2.5vw, 40px);
       margin-bottom: 60px;
     }
 
-    /* SECTION HEADER */
-    .category-section-title {
-      font-size: 1.2rem;
+    /* SECTION TITLE */
+    .category-group-title {
+      font-size: 1.15rem;
       font-weight: 800;
       color: #fff;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    /* FORUM ROW CONTAINER */
+    /* FORUM BOARD LIST & ROWS (LOYVERSE TOWN SPEC) */
     .forum-board-list {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
+      border-radius: 14px;
       overflow: hidden;
       margin-bottom: 28px;
     }
 
     .forum-row {
       display: grid;
-      grid-template-columns: 50px 1fr 130px 1.6fr;
-      gap: 18px;
-      padding: 22px 24px;
+      grid-template-columns: 46px 1fr 110px 1.5fr;
+      gap: 16px;
+      padding: 18px 22px;
       border-bottom: 1px solid rgba(255,255,255,0.06);
       align-items: center;
       transition: background 0.15s;
       cursor: pointer;
     }
     .forum-row:last-child { border-bottom: none; }
-    .forum-row:hover { background: rgba(255,255,255,0.03); }
+    .forum-row:hover { background: rgba(255,255,255,0.025); }
 
     .forum-icon-box {
-      width: 46px;
-      height: 46px;
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 20px;
     }
     .icon-green { background: rgba(16, 185, 129, 0.15); color: #34d399; }
     .icon-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
@@ -433,20 +361,19 @@
 
     .forum-info { min-width: 0; }
     .forum-title {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: #fff;
-      text-decoration: none;
       display: inline-block;
       margin-bottom: 4px;
       transition: color 0.15s;
     }
     .forum-row:hover .forum-title { color: #38bdf8; }
     .forum-desc {
-      font-size: 13px;
+      font-size: 12.5px;
       color: var(--text-muted);
-      line-height: 1.45;
-      margin-bottom: 10px;
+      line-height: 1.4;
+      margin-bottom: 8px;
     }
     .subtopics-list {
       display: flex;
@@ -454,13 +381,13 @@
       gap: 6px;
     }
     .subtopic-pill {
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 600;
       background: rgba(255,255,255,0.04);
       border: 1px solid var(--card-border);
       color: #94a3b8;
-      padding: 3px 9px;
-      border-radius: 5px;
+      padding: 2px 8px;
+      border-radius: 4px;
       text-decoration: none;
       cursor: pointer;
       transition: all 0.15s;
@@ -475,10 +402,10 @@
       text-align: center;
       border-left: 1px solid rgba(255,255,255,0.06);
       border-right: 1px solid rgba(255,255,255,0.06);
-      padding: 0 12px;
+      padding: 0 10px;
     }
-    .stats-count { font-size: 11.5px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.35; }
-    .stats-label { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+    .stats-count { font-size: 11px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.3; }
+    .stats-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
 
     .forum-latest {
       display: flex;
@@ -487,21 +414,21 @@
       min-width: 0;
     }
     .latest-avatar {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       background: #334155;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 800;
       color: #fff;
       flex-shrink: 0;
     }
     .latest-text { min-width: 0; }
     .latest-thread-link {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
       color: #e2e8f0;
       text-decoration: none;
@@ -509,13 +436,11 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      cursor: pointer;
     }
-    .latest-thread-link:hover { color: #38bdf8; }
     .latest-meta {
-      font-size: 11.5px;
+      font-size: 11px;
       color: var(--text-muted);
-      margin-top: 3px;
+      margin-top: 2px;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -523,27 +448,30 @@
     }
 
     .user-rank-badge {
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 800;
       padding: 1px 6px;
       border-radius: 4px;
       text-transform: uppercase;
       letter-spacing: 0.3px;
     }
-    .rank-staff { background: #3b82f6; color: #fff; }
+    .rank-staff { background: #e11d48; color: #fff; }
+    .rank-pro { background: #3b82f6; color: #fff; }
+    .rank-plus { background: #2563eb; color: #fff; }
     .rank-guru { background: #10b981; color: #022c22; }
     .rank-lead { background: #8b5cf6; color: #fff; }
+    .rank-free { background: rgba(148,163,184,0.25); color: #cbd5e1; }
 
     /* RIGHT SIDEBAR */
     .sidebar-widget {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 22px;
-      margin-bottom: 24px;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
     }
     .widget-title {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 800;
       color: #fff;
       margin-bottom: 14px;
@@ -552,21 +480,22 @@
       justify-content: space-between;
     }
 
-    /* BLOGS & STORIES */
-    .blog-item {
+    /* STORY ITEMS */
+    .story-item {
       display: flex;
       align-items: flex-start;
       gap: 12px;
-      padding: 12px 0;
+      padding: 10px 0;
       border-bottom: 1px solid rgba(255,255,255,0.06);
       text-decoration: none;
+      cursor: pointer;
       transition: opacity 0.15s;
     }
-    .blog-item:last-child { border-bottom: none; }
-    .blog-item:hover { opacity: 0.85; }
-    .blog-thumb {
-      width: 46px;
-      height: 46px;
+    .story-item:last-child { border-bottom: none; }
+    .story-item:hover { opacity: 0.85; }
+    .story-thumb {
+      width: 44px;
+      height: 44px;
       border-radius: 8px;
       background: #1e293b;
       display: flex;
@@ -575,16 +504,39 @@
       font-size: 20px;
       flex-shrink: 0;
     }
-    .blog-content h4 {
-      font-size: 13.5px;
+    .story-title {
+      font-size: 13px;
       font-weight: 700;
       color: #fff;
       line-height: 1.35;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
-    .blog-meta {
-      font-size: 11.5px;
+    .story-meta {
+      font-size: 11px;
       color: var(--text-muted);
+    }
+
+    /* TOPIC MINI LIST */
+    .mini-topic-item {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+    }
+    .mini-topic-item:last-child { border-bottom: none; }
+    .mini-topic-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #e2e8f0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color 0.15s;
+    }
+    .mini-topic-item:hover .mini-topic-title { color: #38bdf8; }
+    .mini-topic-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
     }
 
     /* HARDWARE ROW */
@@ -592,7 +544,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 0;
+      padding: 9px 0;
       border-bottom: 1px solid rgba(255,255,255,0.06);
     }
     .hardware-row:last-child { border-bottom: none; }
@@ -626,7 +578,7 @@
       border: 1px solid var(--card-border);
       border-radius: 16px;
       width: 100%;
-      max-width: 680px;
+      max-width: 640px;
       max-height: 90vh;
       overflow-y: auto;
       padding: 28px;
@@ -645,7 +597,7 @@
     }
     .modal-close-btn:hover { color: #fff; }
 
-    /* NATIVE THREAD LIST STYLING */
+    /* IN-PAGE THREAD ITEM */
     .native-thread-item {
       padding: 14px 16px;
       background: rgba(15, 23, 42, 0.7);
@@ -675,144 +627,113 @@
       flex-wrap: wrap;
     }
 
+    /* AUTH MODAL STYLING */
+    .auth-input-group {
+      margin-bottom: 14px;
+    }
+    .auth-input-group label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+    .auth-input {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--card-border);
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .auth-input:focus {
+      border-color: #38bdf8;
+    }
+
     /* FOOTER */
     footer {
       background: #060911;
       border-top: 1px solid var(--card-border);
-      padding: 50px 0 30px;
+      padding: 40px 0 24px;
       margin-top: auto;
     }
     .footer-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr;
+      grid-template-columns: 2fr 1fr 1fr;
       gap: 32px;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
     }
     .footer-brand p {
       color: var(--text-muted);
-      font-size: 13.5px;
-      margin-top: 12px;
+      font-size: 13px;
+      margin-top: 10px;
       max-width: 320px;
     }
     .footer-col h4 {
       color: #fff;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 700;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .footer-col ul { list-style: none; }
     .footer-col li { margin-bottom: 8px; }
     .footer-col a {
       color: var(--text-muted);
-      font-size: 13px;
+      font-size: 12.5px;
       text-decoration: none;
       transition: color 0.15s;
     }
     .footer-col a:hover { color: #fff; }
     .footer-bottom {
       border-top: 1px solid rgba(255,255,255,0.06);
-      padding-top: 24px;
+      padding-top: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 12.5px;
+      font-size: 12px;
       color: var(--text-muted);
     }
 
-    @media (max-width: 1080px) {
-      .forum-row { grid-template-columns: 46px 1fr; }
+    @media (max-width: 980px) {
+      .forum-row { grid-template-columns: 44px 1fr; }
       .forum-stats { display: none; }
       .forum-latest { grid-column: span 2; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 10px; margin-top: 4px; }
       .community-main-grid { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr 1fr; }
     }
-    @media (max-width: 860px) {
-      .nav-links { display: none; }
-      .mobile-menu-toggle { display: block; }
-      .nav-links.mobile-open {
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: #090d16;
-        border-bottom: 1px solid var(--card-border);
-        padding: 20px;
-        gap: 14px;
-      }
+    @media (max-width: 640px) {
       .footer-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
+  <!-- DEDICATED COMMUNITY HEADER -->
   <header>
     <div class="container">
-      <a href="/" class="logo">
+      <a href="community.html" class="brand-box">
         <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" />
-        <span>FlexiTap POS</span>
-      </a>
-      
-      <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">☰</button>
-
-      <div class="nav-links" id="navLinksContainer">
-        <!-- INDUSTRIES DROPDOWN -->
-        <div class="nav-dropdown" id="industriesDropdown">
-          <button type="button" class="nav-link nav-dropdown-btn" onclick="toggleDropdown(event)">
-            <span>Industries</span>
-            <svg class="dropdown-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-          </button>
-          <div class="dropdown-menu">
-            <a href="pos-for-cafes.html" class="dropdown-item">
-              <span class="dropdown-icon">☕</span>
-              <div>
-                <div class="dropdown-title">Cafes &amp; Bakeries</div>
-                <div class="dropdown-desc">KOT tickets &amp; barista rush speed</div>
-              </div>
-            </a>
-            <a href="pos-for-retail.html" class="dropdown-item">
-              <span class="dropdown-icon">🛍️</span>
-              <div>
-                <div class="dropdown-title">Retail &amp; Boutiques</div>
-                <div class="dropdown-desc">Barcode scanning &amp; variant matrices</div>
-              </div>
-            </a>
-            <a href="pos-for-quick-service.html" class="dropdown-item">
-              <span class="dropdown-icon">🍔</span>
-              <div>
-                <div class="dropdown-title">Quick-Serve &amp; Food Trucks</div>
-                <div class="dropdown-desc">3-second tender, KDS &amp; bump bar</div>
-              </div>
-            </a>
-            <a href="pos-for-fine-dining.html" class="dropdown-item">
-              <span class="dropdown-icon">🍷</span>
-              <div>
-                <div class="dropdown-title">Fine Dining &amp; Full Service</div>
-                <div class="dropdown-desc">Floor plan, course firing &amp; split checks</div>
-              </div>
-            </a>
-            <a href="pos-for-professional-services.html" class="dropdown-item">
-              <span class="dropdown-icon">✂️</span>
-              <div>
-                <div class="dropdown-title">Professional Services &amp; Salons</div>
-                <div class="dropdown-desc">Appointments, deposits &amp; staff splits</div>
-              </div>
-            </a>
-          </div>
+        <div class="brand-title-wrap">
+          <span class="brand-name">FlexiTap Community</span>
+          <span class="brand-sub">Merchant Forum</span>
         </div>
+      </a>
 
-        <a href="features.html" class="nav-link">Capabilities</a>
-        <a href="pricing.html" class="nav-link">Pricing</a>
-        <a href="about.html" class="nav-link">About &amp; FAQ</a>
-        <a href="insights.html" class="nav-link">Insights</a>
-        <a href="support.html" class="nav-link">Support</a>
-        <a href="community.html" class="nav-link active">Community</a>
-      </div>
+      <!-- FORUM SECTION TABS -->
+      <nav class="nav-links">
+        <a href="community.html" class="nav-link active">All Categories</a>
+        <a onclick="filterBySubtopic('Receipts')" class="nav-link">Receipts &amp; Printers</a>
+        <a onclick="filterBySubtopic('Open Tickets')" class="nav-link">Floor Sales</a>
+        <a onclick="filterBySubtopic('Roadmap Ideas')" class="nav-link">Roadmap &amp; Ideas</a>
+        <a href="portal.html" class="nav-link" target="_blank" rel="noopener noreferrer">Back Office &rarr;</a>
+      </nav>
 
       <div class="nav-actions">
-        <!-- SIGNED-IN PROFILE CHIP -->
+        <!-- USER PROFILE CHIP (WITH BACKEND SUBSCRIPTION BADGE) -->
         <div class="user-profile-chip" id="signed-in-chip" onclick="showPointsBreakdown()">
           <div class="user-avatar-small" id="user-avatar-initial">M</div>
           <div style="font-size: 13px; font-weight: 700; color: #fff;" id="user-display-name">Merchant</div>
@@ -823,154 +744,102 @@
           <span class="user-rank-badge" id="user-tier-badge" style="background:#3b82f6; color:#fff;">Free Merchant</span>
         </div>
 
-        <!-- PUBLIC GUEST BUTTONS -->
-        <a href="portal.html" class="btn-login" id="guest-login-btn">Merchant Login</a>
-        <a href="pricing.html" class="btn-signup">Get Started</a>
+        <!-- NATIVE IN-PAGE SIGN-IN (NO REDIRECT TO PORTAL.HTML) -->
+        <button class="btn-signin" id="guest-login-btn" onclick="openSignInModal()">Sign In</button>
+        <button class="btn-new-topic" onclick="openNewDiscussionModal()">
+          <span>+</span>
+          <span>New Discussion</span>
+        </button>
       </div>
     </div>
   </header>
 
+  <!-- SUB-BAR (BREADCRUMB & SEARCH - LOYVERSE STYLE) -->
+  <div class="sub-bar">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">🏠 Home</a>
+        <span>&rsaquo;</span>
+        <span style="color: #fff; font-weight: 600;">Community</span>
+      </div>
+
+      <div class="search-box-wrap">
+        <span class="search-box-icon">🔍</span>
+        <input type="text" class="search-box-input" placeholder="Search community guides or topics..." id="filter-input" oninput="filterForumRows()">
+      </div>
+    </div>
+  </div>
+
   <main class="container">
 
-    <!-- BREADCRUMB -->
-    <div class="community-breadcrumb">
-      <a href="index.html">Home</a>
-      <span>&rsaquo;</span>
-      <span style="color: #fff;">Community Hub</span>
+    <!-- PAGE TITLE -->
+    <div class="page-title-box">
+      <h1>Community</h1>
+      <p>The open peer forum and official knowledge base for independent shop owners, baristas, and retailers.</p>
     </div>
 
-    <!-- HEADER TITLE & SEARCH TOOLBAR -->
-    <div class="community-header-bar">
-      <div class="header-title-box">
-        <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 700; color: #38bdf8; margin-bottom: 10px;">
-          <span>🆓 Free Merchant Support Hub</span>
-          <span>•</span>
-          <span style="color: #cbd5e1;">Plus &amp; Pro Verified Mentors</span>
-        </div>
-        <h1>FlexiTap Community Hub</h1>
-        <p>The native knowledge base and peer support forum built directly into FlexiTap. Ask operational questions, view verified printer configurations, and vote on upcoming releases.</p>
-      </div>
-
-      <div class="header-actions-box">
-        <div class="search-wrapper">
-          <span class="search-wrapper-icon">🔍</span>
-          <input type="text" class="search-input-header" placeholder="Search POS categories, printers, topics..." id="filter-input" oninput="filterForumRows()">
-        </div>
-        <button class="btn-signup" onclick="openNewDiscussionModal()">
-          + Start Discussion
-        </button>
-      </div>
-    </div>
-
-    <!-- REPUTATION PERKS BANNER -->
-    <div class="reputation-perks-banner">
-      <div class="perks-left">
-        <div class="perks-icon">🏅</div>
-        <div>
-          <div class="perks-title">Earn FlexiTap Community Points &amp; Unlock Subscription Credits</div>
-          <div class="perks-desc">Help fellow merchants configure hardware (+25 pts) or test receipt printer setups (+15 pts). Accumulate 500 points to redeem a free month of Founders Pro!</div>
-        </div>
-      </div>
-      <button class="perks-btn" onclick="showPointsRulesModal()">
-        How Points Work &rarr;
-      </button>
-    </div>
-
-    <!-- TWO COLUMN CONTENT -->
+    <!-- MAIN TWO-COLUMN LAYOUT -->
     <div class="community-main-grid">
 
-      <!-- LEFT: PRODUCTION POS BOARDS -->
+      <!-- LEFT: LOYVERSE STYLE FORUM CATEGORIES -->
       <div>
 
-        <div class="category-section-title">
-          <span>FlexiTap Point of Sale Operations</span>
-          <span style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;">6 Core Channels</span>
+        <div class="category-group-title">
+          <span>FlexiTap Point of Sale</span>
+          <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">6 Modules</span>
         </div>
 
         <div class="forum-board-list" id="boards-list">
 
-          <!-- ROW 1: SALES & CASHIER -->
+          <!-- BOARD 1: SALES -->
           <div class="forum-row" data-cat="sales" onclick="openCategoryFeed('sales')">
             <div class="forum-icon-box icon-green">
               <span>🛒</span>
             </div>
             <div class="forum-info">
-              <span class="forum-title">Cashier &amp; Floor Sales</span>
+              <span class="forum-title">Sales</span>
               <div class="forum-desc">Checkout speed, open tickets, split tenders, tip pooling, and cash drawer kick triggers.</div>
               <div class="subtopics-list">
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('sales');">Receipts</span>
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('sales');">Open Tickets</span>
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('sales');">Split Checks</span>
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('sales');">Cash Drawer Kick</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Receipts');">📁 Receipts</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Open Tickets');">📁 Open tickets</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Split Checks');">📁 Split checks</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Refunds');">📁 Refunds</span>
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count" id="count-sales">Active Guides</div>
-              <div class="stats-label">&amp; Peer Q&amp;A</div>
+              <div class="stats-count">Active</div>
+              <div class="stats-label">Channel</div>
             </div>
             <div class="forum-latest">
               <div class="latest-avatar" style="background:#059669;">F</div>
               <div class="latest-text">
-                <span class="latest-thread-link">📌 Best practices: Fast offline checkout &amp; cash drawer kick</span>
+                <span class="latest-thread-link">📌 Fast offline checkout &amp; cash drawer kick trigger</span>
                 <div class="latest-meta">
                   <span class="user-rank-badge rank-staff">Staff Guide</span>
-                  <span>FlexiTap Engineering • Official</span>
+                  <span>FlexiTap Engineering</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- ROW: PLUS & PRO STRATEGY LOUNGE -->
-          <div class="forum-row" data-cat="plus-pro" onclick="openCategoryFeed('plus-pro')" style="background: rgba(59, 130, 246, 0.04); border-left: 3px solid #3b82f6;">
-            <div class="forum-icon-box" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">
-              <span>👑</span>
-            </div>
-            <div class="forum-info">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span class="forum-title" style="color: #60a5fa;">Plus &amp; Pro Merchant Exchange</span>
-                <span class="user-rank-badge" style="background: #3b82f6; color: #fff;">Plus &amp; Pro Access</span>
-              </div>
-              <div class="forum-desc">Advanced multi-terminal fleet sync, cloud back-office inventory automation, and scaling strategies for paying subscribers.</div>
-              <div class="subtopics-list">
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('plus-pro');">Multi-Store Fleet</span>
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('plus-pro');">Cloud Sync</span>
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('plus-pro');">Priority Support</span>
-              </div>
-            </div>
-            <div class="forum-stats">
-              <div class="stats-count" style="color: #60a5fa;" id="count-plus-pro">VIP Lounge</div>
-              <div class="stats-label">Private Channel</div>
-            </div>
-            <div class="forum-latest">
-              <div class="latest-avatar" style="background:#1d4ed8;">P</div>
-              <div class="latest-text">
-                <span class="latest-thread-link">👑 Scaling multi-register stores with centralized back-office sync</span>
-                <div class="latest-meta">
-                  <span class="user-rank-badge" style="background:#1e40af; color:#93c5fd;">Founders Pro</span>
-                  <span>Pro Mentors • VIP Exchange</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ROW 2: ITEMS, MODIFIERS & BARCODES -->
+          <!-- BOARD 2: ITEMS -->
           <div class="forum-row" data-cat="items" onclick="openCategoryFeed('items')">
             <div class="forum-icon-box icon-blue">
               <span>🏷️</span>
             </div>
             <div class="forum-info">
-              <span class="forum-title">Items, Modifiers &amp; Barcodes</span>
+              <span class="forum-title">Items &amp; Catalog</span>
               <div class="forum-desc">Variant matrices, combo modifiers, weighted produce barcode scale setups, and tax rules.</div>
               <div class="subtopics-list">
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('items');">Modifiers</span>
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('items');">Discounts</span>
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('items');">Taxes</span>
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('items');">Barcode Matrices</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Modifiers');">📁 Modifiers</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Discounts');">📁 Discounts</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Taxes');">📁 Taxes</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Barcode Matrices');">📁 Barcodes</span>
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count" id="count-items">Active Guides</div>
-              <div class="stats-label">&amp; Peer Q&amp;A</div>
+              <div class="stats-count">Active</div>
+              <div class="stats-label">Channel</div>
             </div>
             <div class="forum-latest">
               <div class="latest-avatar" style="background:#2563eb;">F</div>
@@ -978,60 +847,60 @@
                 <span class="latest-thread-link">📌 Setting up variant matrices and nested modifier options</span>
                 <div class="latest-meta">
                   <span class="user-rank-badge rank-staff">Staff Guide</span>
-                  <span>FlexiTap Engineering • Official</span>
+                  <span>FlexiTap Engineering</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- ROW 3: THERMAL PRINTERS & KDS -->
+          <!-- BOARD 3: PRINTERS & HARDWARE -->
           <div class="forum-row" data-cat="printers" onclick="openCategoryFeed('printers')">
             <div class="forum-icon-box icon-amber">
               <span>🖨️</span>
             </div>
             <div class="forum-info">
-              <span class="forum-title">Thermal Printers &amp; Kitchen KDS</span>
+              <span class="forum-title">Printers &amp; Peripherals</span>
               <div class="forum-desc">Star Micronics, Epson TM series, network ESC/POS routing, and wireless kitchen bump screens.</div>
               <div class="subtopics-list">
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('printers');">ESC/POS Setup</span>
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('printers');">Star TSP143</span>
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('printers');">Epson TM-T20</span>
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('printers');">Bluetooth/LAN</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('ESC/POS Setup');">📁 ESC/POS Setup</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Star TSP143');">📁 Star TSP143</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Epson TM-T20');">📁 Epson TM series</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Bluetooth');">📁 Bluetooth/LAN</span>
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count" style="color: #fbbf24;" id="count-printers">Hardware Lab</div>
-              <div class="stats-label">Verified Matrix</div>
+              <div class="stats-count" style="color: #fbbf24;">Hardware Lab</div>
+              <div class="stats-label">Matrix</div>
             </div>
             <div class="forum-latest">
               <div class="latest-avatar" style="background:#d97706;">F</div>
               <div class="latest-text">
-                <span class="latest-thread-link">📌 Step-by-step ESC/POS auto-cutter &amp; Bluetooth pairing guide</span>
+                <span class="latest-thread-link">📌 ESC/POS auto-cutter &amp; Bluetooth pairing guide</span>
                 <div class="latest-meta">
                   <span class="user-rank-badge rank-guru">Verified Setup</span>
-                  <span>FlexiTap Hardware Lab</span>
+                  <span>Hardware Lab</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- ROW 4: INVENTORY & BACK OFFICE -->
+          <!-- BOARD 4: INVENTORY -->
           <div class="forum-row" data-cat="inventory" onclick="openCategoryFeed('inventory')">
             <div class="forum-icon-box icon-purple">
               <span>📊</span>
             </div>
             <div class="forum-info">
-              <span class="forum-title">Inventory &amp; Back Office Reports</span>
+              <span class="forum-title">Inventory &amp; Reports</span>
               <div class="forum-desc">Multi-location stock transfers, supplier POs, COGS calculations, and end-of-day Z-reports.</div>
               <div class="subtopics-list">
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('inventory');">Stock Audits</span>
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('inventory');">Z-Reports</span>
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('inventory');">Purchase Orders</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Stock Audits');">📁 Stock Audits</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Z-Reports');">📁 Z-Reports</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Purchase Orders');">📁 Purchase Orders</span>
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count" id="count-inventory">Back Office</div>
-              <div class="stats-label">Operations</div>
+              <div class="stats-count">Active</div>
+              <div class="stats-label">Channel</div>
             </div>
             <div class="forum-latest">
               <div class="latest-avatar" style="background:#7c3aed;">F</div>
@@ -1039,29 +908,29 @@
                 <span class="latest-thread-link">📌 Daily sales reconciliation and multi-station inventory audits</span>
                 <div class="latest-meta">
                   <span class="user-rank-badge rank-lead">Operations</span>
-                  <span>Back Office Team • Official</span>
+                  <span>Back Office Team</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- ROW 5: FEATURE REQUESTS & ROADMAP -->
+          <!-- BOARD 5: ROADMAP & IDEAS -->
           <div class="forum-row" data-cat="roadmap" onclick="openCategoryFeed('roadmap')">
             <div class="forum-icon-box icon-rose">
               <span>💡</span>
             </div>
             <div class="forum-info">
-              <span class="forum-title">Feature Requests &amp; Product Roadmap</span>
+              <span class="forum-title">Feature Requests &amp; Roadmap</span>
               <div class="forum-desc">Propose new features and vote on upcoming releases. Top community ideas go straight to engineering!</div>
               <div class="subtopics-list">
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('roadmap');">💡 Propose Idea</span>
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('roadmap');">🔍 Under Review</span>
-                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('roadmap');">🚀 In Progress</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Roadmap Ideas');">📁 Propose Idea</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Under Review');">📁 Under Review</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('In Progress');">📁 In Progress</span>
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count" style="color: #fb7185;" id="count-roadmap">Open Roadmap</div>
-              <div class="stats-label">In-House Voting</div>
+              <div class="stats-count" style="color: #fb7185;">Open Voting</div>
+              <div class="stats-label">Roadmap</div>
             </div>
             <div class="forum-latest">
               <div class="latest-avatar" style="background:#e11d48;">F</div>
@@ -1069,7 +938,40 @@
                 <span class="latest-thread-link">📌 How to propose feature ideas &amp; vote on roadmap releases</span>
                 <div class="latest-meta">
                   <span class="user-rank-badge rank-staff">Staff Pinned</span>
-                  <span>Engineering Team • Open</span>
+                  <span>Engineering Team</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOARD 6: PLUS & PRO STRATEGY LOUNGE -->
+          <div class="forum-row" data-cat="plus-pro" onclick="openCategoryFeed('plus-pro')" style="background: rgba(59, 130, 246, 0.03); border-left: 3px solid #3b82f6;">
+            <div class="forum-icon-box" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">
+              <span>👑</span>
+            </div>
+            <div class="forum-info">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="forum-title" style="color: #60a5fa;">Plus &amp; Pro Exchange</span>
+                <span class="user-rank-badge" style="background: #3b82f6; color: #fff;">Plus &amp; Pro</span>
+              </div>
+              <div class="forum-desc">Multi-terminal fleet sync, cloud back-office inventory automation, and multi-location scaling.</div>
+              <div class="subtopics-list">
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Multi-Store Fleet');">📁 Multi-Store Fleet</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Cloud Sync');">📁 Cloud Sync</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); filterBySubtopic('Priority Support');">📁 Priority Queue</span>
+              </div>
+            </div>
+            <div class="forum-stats">
+              <div class="stats-count" style="color: #60a5fa;">VIP Lounge</div>
+              <div class="stats-label">Channel</div>
+            </div>
+            <div class="forum-latest">
+              <div class="latest-avatar" style="background:#1d4ed8;">P</div>
+              <div class="latest-text">
+                <span class="latest-thread-link">👑 Scaling multi-register stores with centralized back-office sync</span>
+                <div class="latest-meta">
+                  <span class="user-rank-badge rank-pro">Founders Pro</span>
+                  <span>Pro Mentors</span>
                 </div>
               </div>
             </div>
@@ -1079,124 +981,88 @@
 
       </div>
 
-      <!-- RIGHT SIDEBAR -->
+      <!-- RIGHT SIDEBAR (LOYVERSE TOWN SPEC: STORIES, TOPICS, HARDWARE MATRIX) -->
       <aside>
 
-        <!-- WIDGET 1: FREE VS PRO SUPPORT CALLOUT -->
-        <div class="sidebar-widget" style="background: linear-gradient(135deg, rgba(30, 58, 138, 0.25), rgba(15, 23, 42, 0.8)); border: 1px solid rgba(59, 130, 246, 0.3);">
-          <div class="widget-title" style="color: #60a5fa;">
-            <span>🛡️ Free vs. Pro Support</span>
-          </div>
-          <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px;">
-            <strong>Free Merchants:</strong> Full access to community guides, hardware setups, and peer-to-peer troubleshooting.
-          </div>
-          <div style="font-size: 13px; color: #cbd5e1; line-height: 1.5; margin-bottom: 14px;">
-            <strong>Need urgent private support?</strong> Plus ($290/yr) &amp; Pro ($590/yr) include direct 1-on-1 attended screen-share and private ticket queue.
-          </div>
-          <a href="pricing.html" class="btn-signup" style="display: block; text-align: center; font-size: 13px; padding: 10px 14px; text-decoration: none;">
-            Compare Plus &amp; Pro Plans &rarr;
-          </a>
-        </div>
-
-        <!-- WIDGET 2: REPUTATION REWARDS & CHAMPIONS -->
+        <!-- WIDGET 1: MERCHANT STORIES -->
         <div class="sidebar-widget">
           <div class="widget-title">
-            <span>🏆 Community Champions</span>
-            <span style="font-size: 11.5px; color: var(--text-muted);">Season 1</span>
+            <span>Merchant Stories</span>
+            <span style="font-size: 11px; color: var(--text-muted);">Case Studies</span>
           </div>
-          <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px;">
-            Earn points by answering merchant questions and sharing verified printer configs. Top contributor of the month receives <strong>1 Free Month of Founders Pro</strong>!
+
+          <div class="story-item" onclick="openStoryModal('offline')">
+            <div class="story-thumb">⚡</div>
+            <div>
+              <div class="story-title">How Coffee Bars Handle Peak Hour Rushes with Zero Wi-Fi Drops</div>
+              <div class="story-meta">Local SQLite Sync • 4 min read</div>
+            </div>
           </div>
-          <button class="perks-btn" onclick="showPointsRulesModal()" style="width: 100%; padding: 9px; text-align: center;">
-            View Points &amp; Badges System &rarr;
-          </button>
+
+          <div class="story-item" onclick="openStoryModal('hardware')">
+            <div class="story-thumb">🖨️</div>
+            <div>
+              <div class="story-title">ESC/POS Thermal Receipt Printer Benchmark: USB vs. Bluetooth</div>
+              <div class="story-meta">Hardware Lab • 5 min read</div>
+            </div>
+          </div>
+
+          <div class="story-item" onclick="openStoryModal('multistore')">
+            <div class="story-thumb">☕</div>
+            <div>
+              <div class="story-title">From 1 Cart to 3 Outlets: Multi-Location Inventory Auditing</div>
+              <div class="story-meta">Merchant Operations • 6 min read</div>
+            </div>
+          </div>
         </div>
 
-        <!-- WIDGET 3: MERCHANT INSIGHTS & ENGINEERING ARTICLES -->
+        <!-- WIDGET 2: RECENT TOPICS -->
         <div class="sidebar-widget">
           <div class="widget-title">
-            <span>📖 FlexiTap Insights &amp; Guides</span>
+            <span>Recent Topics</span>
           </div>
-
-          <a href="insights.html" class="blog-item">
-            <div class="blog-thumb">⚡</div>
-            <div class="blog-content">
-              <h4>The Death of Cloud-Only POS: Why Offline Architecture Saves $12,000/Yr</h4>
-              <div class="blog-meta">Architecture • 6 min read</div>
-            </div>
-          </a>
-
-          <a href="insights.html" class="blog-item">
-            <div class="blog-thumb">☕</div>
-            <div class="blog-content">
-              <h4>How High-Volume Coffee Bars Cut Peak Checkout Time from 45s to 12s</h4>
-              <div class="blog-meta">Speed Benchmark • 4 min read</div>
-            </div>
-          </a>
-
-          <a href="insights.html" class="blog-item">
-            <div class="blog-thumb">🖨️</div>
-            <div class="blog-content">
-              <h4>ESC/POS Thermal Receipt Printer Benchmark: USB, Bluetooth, &amp; Ethernet</h4>
-              <div class="blog-meta">Hardware Guide • 5 min read</div>
-            </div>
-          </a>
+          <div id="sidebar-recent-topics">
+            <!-- Injected dynamically -->
+          </div>
         </div>
 
-        <!-- WIDGET 4: COMMUNITY CERTIFIED HARDWARE -->
+        <!-- WIDGET 3: VERIFIED HARDWARE QUICK MATRIX -->
         <div class="sidebar-widget">
           <div class="widget-title">
-            <span>🖨️ Verified Peripherals Matrix</span>
+            <span>Verified Hardware</span>
           </div>
           <div>
             <div class="hardware-row">
               <div>
-                <div style="font-weight: 700; color: #fff;">Epson TM-T20III</div>
-                <div style="font-size: 11.5px; color: var(--text-muted);">Standard 80mm ESC/POS</div>
+                <div style="font-weight: 700; color: #fff; font-size: 13px;">Epson TM-T20III</div>
+                <div style="font-size: 11px; color: var(--text-muted);">80mm ESC/POS USB</div>
               </div>
               <span class="hw-badge hw-plug">Plug &amp; Play</span>
             </div>
 
             <div class="hardware-row">
               <div>
-                <div style="font-weight: 700; color: #fff;">Star TSP143III (BT/LAN)</div>
-                <div style="font-size: 11.5px; color: var(--text-muted);">Tablet &amp; iPad friendly</div>
+                <div style="font-weight: 700; color: #fff; font-size: 13px;">Star TSP143III</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Bluetooth &amp; Ethernet</div>
               </div>
               <span class="hw-badge hw-bt">Bluetooth</span>
             </div>
 
             <div class="hardware-row">
               <div>
-                <div style="font-weight: 700; color: #fff;">Honeywell Voyager 1400g</div>
-                <div style="font-size: 11.5px; color: var(--text-muted);">1D/2D QR Barcode Scanner</div>
+                <div style="font-weight: 700; color: #fff; font-size: 13px;">Honeywell 1400g</div>
+                <div style="font-size: 11px; color: var(--text-muted);">1D/2D Barcode Scanner</div>
               </div>
               <span class="hw-badge hw-plug">Plug &amp; Play</span>
             </div>
 
             <div class="hardware-row">
               <div>
-                <div style="font-weight: 700; color: #fff;">Sunmi D2s / Android Terminal</div>
-                <div style="font-size: 11.5px; color: var(--text-muted);">Integrated thermal printer</div>
+                <div style="font-weight: 700; color: #fff; font-size: 13px;">Sunmi D2s Terminal</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Android POS + Built-in Thermal</div>
               </div>
               <span class="hw-badge hw-plug">Certified</span>
             </div>
-          </div>
-        </div>
-
-        <!-- WIDGET 5: OFFICIAL CHANNELS -->
-        <div class="sidebar-widget">
-          <div class="widget-title">
-            <span>💬 Official Community Channels</span>
-          </div>
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:8px; color:#fff; text-decoration:none; font-size:13px; font-weight:700;">
-              <span>👥 Merchant Facebook Group</span>
-              <span style="color:#60a5fa;">↗</span>
-            </a>
-            <a href="portal.html#support" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:8px; color:#fff; text-decoration:none; font-size:13px; font-weight:700;">
-              <span>🛡️ Merchant Support Desk</span>
-              <span style="color:#60a5fa;">↗</span>
-            </a>
           </div>
         </div>
 
@@ -1214,88 +1080,56 @@
     </div>
   </div>
 
-  <!-- FOOTER -->
+  <!-- DEDICATED COMMUNITY FOOTER -->
   <footer>
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
           <div style="display: flex; align-items: center; gap: 10px;">
             <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 26px; height: 26px;">
-            <div style="font-weight: 800; color: #fff; font-size: 18px;">FlexiTap POS</div>
+            <div style="font-weight: 800; color: #fff; font-size: 17px;">FlexiTap Community</div>
           </div>
-          <p>The modern point-of-sale for cafe owners, baristas, and retailers who demand true offline continuity without hardware lock-in.</p>
+          <p>The peer discussion forum for merchants, baristas, and retailers. Community-driven hardware matrices and operational knowledge.</p>
         </div>
 
         <div class="footer-col">
-          <h4>Product</h4>
+          <h4>Channels</h4>
           <ul>
-            <li><a href="features.html">Capabilities</a></li>
-            <li><a href="pricing.html">Pricing Plans</a></li>
-            <li><a href="insights.html">Merchant Insights</a></li>
-            <li><a href="community.html">Community Hub</a></li>
+            <li><a onclick="openCategoryFeed('sales')">Cashier &amp; Sales</a></li>
+            <li><a onclick="openCategoryFeed('items')">Items &amp; Barcodes</a></li>
+            <li><a onclick="openCategoryFeed('printers')">Thermal Printers</a></li>
+            <li><a onclick="openCategoryFeed('roadmap')">Feature Roadmap</a></li>
           </ul>
         </div>
 
         <div class="footer-col">
-          <h4>Support &amp; Community</h4>
+          <h4>FlexiTap POS</h4>
           <ul>
-            <li><a href="support.html">Help Center</a></li>
-            <li><a href="portal.html">Merchant Portal</a></li>
-            <li><a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer">Facebook Group</a></li>
-            <li><a href="portal.html#support">Merchant Support Desk</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4>Legal</h4>
-          <ul>
-            <li><a href="privacy.html">Privacy Policy</a></li>
-            <li><a href="terms.html">Terms of Service</a></li>
-            <li><a href="refunds.html">Refund Policy</a></li>
+            <li><a href="index.html">Main Website &rarr;</a></li>
+            <li><a href="portal.html" target="_blank" rel="noopener noreferrer">Merchant Back Office &rarr;</a></li>
+            <li><a href="support.html">Help Desk &rarr;</a></li>
           </ul>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <div>&copy; 2026 FlexiTap POS. Built for resilient retail &amp; dining.</div>
-        <div style="display: flex; gap: 16px;">
-          <a href="https://x.com/flexitapapp" target="_blank" rel="noopener noreferrer" style="color:var(--text-muted); text-decoration:none;">Twitter</a>
-          <a href="https://www.facebook.com/FlexiTapPOS" target="_blank" rel="noopener noreferrer" style="color:var(--text-muted); text-decoration:none;">Facebook</a>
+        <div>&copy; 2026 FlexiTap Community Hub. Dedicated merchant forum.</div>
+        <div>
+          <a href="index.html" style="color:var(--text-muted); text-decoration:none;">Back to Main Site &uarr;</a>
         </div>
       </div>
     </div>
   </footer>
 
   <script>
-    // Navigation Dropdown Handler
-    function toggleDropdown(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      const dd = document.getElementById('industriesDropdown');
-      if (dd) {
-        dd.classList.toggle('active');
-      }
-    }
-
-    document.addEventListener('click', function(e) {
-      const dd = document.getElementById('industriesDropdown');
-      if (dd && !dd.contains(e.target)) {
-        dd.classList.remove('active');
-      }
-    });
-
-    function toggleMobileMenu() {
-      document.getElementById('navLinksContainer').classList.toggle('mobile-open');
-    }
-
-    // Supabase Real Merchant Session Check
+    // Supabase Real Merchant Session Check & Backend Subscription Verifier
     const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
 
     let supabaseClient = null;
     let activeMerchant = null;
+    let verifiedProfile = null;
+    let verifiedStore = null;
 
     try {
       if (typeof supabase !== 'undefined') {
@@ -1305,28 +1139,45 @@
       console.warn('Supabase init notice:', e);
     }
 
+    // CHECK AUTH AND VERIFY BACKEND SUBSCRIPTION TIER FROM SUPABASE
     async function checkMerchantAuth() {
       if (!supabaseClient) return;
       try {
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (session && session.user) {
           activeMerchant = session.user;
-          updateAuthUI(session.user);
-        } else {
-          const cached = localStorage.getItem('flexitap_cached_profile');
-          if (cached) {
-            try {
-              const parsed = JSON.parse(cached);
-              updateAuthUI(parsed);
-            } catch (_) {}
+
+          // QUERY BACKEND SUPABASE DATABASE FOR REAL PROFILES & STORES
+          try {
+            const [profileRes, storeRes] = await Promise.all([
+              supabaseClient.from('profiles').select('*').eq('id', session.user.id).maybeSingle(),
+              supabaseClient.from('stores').select('*').or(`owner_id.eq.${session.user.id},user_id.eq.${session.user.id},id.eq.${session.user.id}`).maybeSingle()
+            ]);
+
+            verifiedProfile = profileRes?.data || null;
+            verifiedStore = storeRes?.data || null;
+          } catch (dbErr) {
+            console.warn('Backend subscription query fallback:', dbErr);
           }
+
+          updateAuthUI(session.user, verifiedProfile, verifiedStore);
+        } else {
+          // Reset to guest state
+          activeMerchant = null;
+          verifiedProfile = null;
+          verifiedStore = null;
+          const chip = document.getElementById('signed-in-chip');
+          const loginBtn = document.getElementById('guest-login-btn');
+          if (chip) chip.style.display = 'none';
+          if (loginBtn) loginBtn.style.display = 'inline-flex';
         }
       } catch (err) {
         console.warn('Auth check failed:', err);
       }
     }
 
-    function updateAuthUI(user) {
+    // UPDATE UI WITH VERIFIED BACKEND SUBSCRIPTION DATA
+    function updateAuthUI(user, profile, store) {
       const chip = document.getElementById('signed-in-chip');
       const loginBtn = document.getElementById('guest-login-btn');
       const displayName = document.getElementById('user-display-name');
@@ -1339,44 +1190,214 @@
       chip.style.display = 'flex';
       loginBtn.style.display = 'none';
 
-      const name = user.user_metadata?.store_name || user.store_name || user.email?.split('@')[0] || 'Merchant';
-      const tier = (user.user_metadata?.tier || user.tier || 'free').toLowerCase();
+      // 1. Resolve Verified Store / Merchant Name
+      const resolvedName = profile?.store_name || store?.name || store?.store_name || profile?.full_name || (user.email ? user.email.split('@')[0] : 'Merchant');
 
-      if (displayName) displayName.textContent = name;
-      if (avatarInitial) avatarInitial.textContent = name[0].toUpperCase();
+      // 2. Resolve Verified Backend Role & Subscription Tier
+      const userRole = (profile?.role || '').toLowerCase();
+      const isStaff = ['admin', 'super_admin', 'dev', 'developer', 'support', 'staff', 'ops'].includes(userRole);
+
+      const paymentStatus = (profile?.payment_status || 'free').toLowerCase();
+      let rawTier = (profile?.subscription_tier || profile?.tier || store?.subscription_tier || store?.tier || 'free').toLowerCase();
+      
+      // If payment is pending or unpaid
+      if (paymentStatus === 'unpaid' && rawTier !== 'free') {
+        rawTier = 'free';
+      }
+
+      let badgeText = 'Free Merchant';
+      let badgeBg = 'rgba(148,163,184,0.25)';
+      let badgeColor = '#cbd5e1';
+      let points = profile?.reputation_points || profile?.points || 120;
+
+      if (isStaff) {
+        badgeText = '🛡️ Staff / Dev';
+        badgeBg = '#e11d48';
+        badgeColor = '#fff';
+        points = profile?.reputation_points || 950;
+      } else if (rawTier.includes('pro') || rawTier.includes('founder')) {
+        badgeText = '👑 Founders Pro';
+        badgeBg = '#3b82f6';
+        badgeColor = '#fff';
+        points = profile?.reputation_points || 640;
+      } else if (rawTier.includes('plus')) {
+        badgeText = '⭐ Plus Merchant';
+        badgeBg = '#2563eb';
+        badgeColor = '#fff';
+        points = profile?.reputation_points || 320;
+      }
+
+      if (displayName) displayName.textContent = resolvedName;
+      if (avatarInitial) avatarInitial.textContent = resolvedName[0].toUpperCase();
 
       if (tierBadge) {
-        if (tier.includes('pro')) {
-          tierBadge.textContent = '👑 Founders Pro';
-          tierBadge.style.background = '#e11d48';
-          tierBadge.style.color = '#fff';
-          if (pointsVal) pointsVal.textContent = '640 pts';
-        } else if (tier.includes('plus')) {
-          tierBadge.textContent = '⭐ Plus Merchant';
-          tierBadge.style.background = '#2563eb';
-          tierBadge.style.color = '#fff';
-          if (pointsVal) pointsVal.textContent = '320 pts';
-        } else {
-          tierBadge.textContent = 'Free Merchant';
-          tierBadge.style.background = 'rgba(148,163,184,0.2)';
-          tierBadge.style.color = '#cbd5e1';
-          if (pointsVal) pointsVal.textContent = '120 pts';
+        tierBadge.textContent = badgeText;
+        tierBadge.style.background = badgeBg;
+        tierBadge.style.color = badgeColor;
+      }
+
+      if (pointsVal) {
+        pointsVal.textContent = points + ' pts';
+      }
+    }
+
+    // NATIVE IN-PAGE SIGN IN MODAL (NO REDIRECT TO PORTAL.HTML)
+    function openSignInModal() {
+      const modal = document.getElementById('community-modal');
+      const content = document.getElementById('modal-content');
+
+      content.innerHTML = `
+        <h2 style="font-size: 1.35rem; font-weight: 800; color:#fff; margin-bottom: 6px;">Sign In to FlexiTap Community</h2>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+          Use your registered FlexiTap store credentials to sign in directly without leaving this page.
+        </p>
+
+        <div id="signin-error-msg" style="display:none; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#fca5a5; font-size:12.5px; padding:10px 14px; border-radius:8px; margin-bottom:14px;"></div>
+
+        <form id="native-signin-form" onsubmit="handleNativeSignIn(event)">
+          <div class="auth-input-group">
+            <label for="signin-email">Merchant Email Address</label>
+            <input type="email" id="signin-email" class="auth-input" placeholder="e.g. barista@yourcafe.com" required autocomplete="email" />
+          </div>
+
+          <div class="auth-input-group">
+            <label for="signin-password">Password</label>
+            <input type="password" id="signin-password" class="auth-input" placeholder="••••••••••••" required autocomplete="current-password" />
+          </div>
+
+          <button type="submit" id="btn-submit-signin" class="btn-new-topic" style="width:100%; justify-content:center; padding:12px; margin-top:8px; font-size:14px;">
+            Sign In &amp; Verify Subscription
+          </button>
+        </form>
+
+        <div style="margin-top:18px; text-align:center; font-size:12px; color:var(--text-muted);">
+          <span>New to FlexiTap? </span>
+          <a href="portal.html#signup" target="_blank" style="color:#38bdf8; text-decoration:none; font-weight:700;">Create Free Merchant Account &rarr;</a>
+        </div>
+      `;
+      modal.style.display = 'flex';
+      setTimeout(() => document.getElementById('signin-email')?.focus(), 100);
+    }
+
+    // HANDLE NATIVE SIGN IN (IN-PAGE SUPABASE AUTH)
+    async function handleNativeSignIn(e) {
+      if (e) e.preventDefault();
+      const email = document.getElementById('signin-email')?.value.trim();
+      const password = document.getElementById('signin-password')?.value;
+      const submitBtn = document.getElementById('btn-submit-signin');
+      const errBox = document.getElementById('signin-error-msg');
+
+      if (!email || !password) return;
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Verifying Backend Account...';
+      }
+      if (errBox) errBox.style.display = 'none';
+
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) {
+          throw error;
+        }
+
+        // Close modal and verify subscription immediately on this page
+        closeModal();
+        await checkMerchantAuth();
+      } catch (err) {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = 'Sign In & Verify Subscription';
+        }
+        if (errBox) {
+          errBox.textContent = err.message || 'Invalid email or password. Please try again.';
+          errBox.style.display = 'block';
         }
       }
     }
 
-    // NATIVE IN-HOUSE DISCUSSION DATABASE (LocalStorage + Supabase Resilient Fallback)
+    // NATIVE SIGN OUT (IN-PAGE)
+    async function handleNativeSignOut() {
+      if (supabaseClient) {
+        await supabaseClient.auth.signOut();
+      }
+      closeModal();
+      await checkMerchantAuth();
+    }
+
+    // SHOW VERIFIED PROFILE BREAKDOWN MODAL
+    function showPointsBreakdown() {
+      const modal = document.getElementById('community-modal');
+      const content = document.getElementById('modal-content');
+      const name = document.getElementById('user-display-name')?.textContent || 'Merchant';
+      const pts = document.getElementById('user-points-val')?.textContent || '120 pts';
+      const badge = document.getElementById('user-tier-badge')?.textContent || 'Free Merchant';
+      const email = activeMerchant?.email || '';
+
+      const tierLower = badge.toLowerCase();
+      let perkDesc = 'Free Community Hub member with full access to verified printer configs, guides, and peer solutions.';
+      if (tierLower.includes('pro')) {
+        perkDesc = '👑 Verified Founders Pro Subscriber — priority response queue, multi-location fleet guides, and VIP forum recognition.';
+      } else if (tierLower.includes('plus')) {
+        perkDesc = '⭐ Verified Plus Merchant — verified status badge and access to the Plus & Pro Merchant Exchange.';
+      } else if (tierLower.includes('staff')) {
+        perkDesc = '🛡️ Verified FlexiTap Core Team / Engineering Staff.';
+      }
+
+      content.innerHTML = `
+        <h2 style="font-size: 1.25rem; font-weight: 800; color:#fff; margin-bottom: 8px;">Merchant Profile &amp; Subscription</h2>
+        
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+          <div class="user-avatar-small" style="width:40px; height:40px; font-size:16px;">${name[0]}</div>
+          <div>
+            <div style="font-weight:700; color:#fff; font-size:15px;">${name}</div>
+            <div style="font-size:12px; color:var(--text-muted);">${email}</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(15,23,42,0.85); border:1px solid var(--card-border); border-radius:10px; padding:16px; margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span style="font-size:13px; color:var(--text-muted);">Verified Subscription Tier:</span>
+            <span class="user-rank-badge" style="font-size:11px; padding:3px 10px; background:${tierLower.includes('pro') ? '#3b82f6' : tierLower.includes('plus') ? '#2563eb' : 'rgba(148,163,184,0.25)'}; color:#fff;">
+              ${badge}
+            </span>
+          </div>
+          <div style="font-size:12.5px; color:#cbd5e1; line-height:1.45;">
+            ${perkDesc}
+          </div>
+        </div>
+
+        <div style="background:rgba(15,23,42,0.85); border:1px solid var(--card-border); border-radius:10px; padding:16px; margin-bottom:20px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <span style="font-size:13px; color:var(--text-muted);">Reputation Points:</span>
+            <span style="font-size:1.3rem; font-weight:800; color:#fbbf24;">${pts}</span>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+          <button class="btn-signin" onclick="handleNativeSignOut()" style="flex:1; padding:10px; text-align:center; color:#f87171; border-color:rgba(239,68,68,0.3);">
+            Sign Out
+          </button>
+          <button class="btn-signin" onclick="closeModal()" style="flex:1; padding:10px; text-align:center;">
+            Close
+          </button>
+        </div>
+      `;
+      modal.style.display = 'flex';
+    }
+
+    // NATIVE IN-HOUSE DISCUSSION DATABASE
     const DEFAULT_DISCUSSIONS = [
       {
         id: 'sales-1',
         category: 'sales',
-        categoryName: '🛒 Cashier & Floor Sales',
-        title: 'Best practices: Fast offline checkout & cash drawer kick trigger',
+        categoryName: 'Sales',
+        title: 'Fast offline checkout & cash drawer kick trigger best practices',
         author: 'FlexiTap Engineering',
         authorTier: 'Staff Guide',
         badgeClass: 'rank-staff',
-        time: 'Official Guide',
-        content: 'When running high-volume peak hours with spotty internet, configure your RJ11/RJ12 drawer kick pulse to 50ms on receipt print completion. FlexiTap queues all drawer triggers locally in SQLite so not a single ticket drop occurs even offline.',
+        time: 'Pinned Guide',
+        content: 'When operating high-volume peak hours with spotty internet, configure your RJ11/RJ12 drawer kick pulse to 50ms on receipt print completion. FlexiTap queues all drawer triggers locally in SQLite so not a single ticket drop occurs even offline.',
         upvotes: 42,
         replies: [
           { author: 'Elena (Corner Coffee)', tier: 'Free Merchant', time: '2h ago', content: 'Tested this on our TM-T20III during Sunday rush, zero delays. Thanks team!' },
@@ -1384,29 +1405,14 @@
         ]
       },
       {
-        id: 'plus-pro-1',
-        category: 'plus-pro',
-        categoryName: '👑 Plus & Pro Merchant Exchange',
-        title: 'Scaling multi-register stores with centralized back-office sync',
-        author: 'Pro Mentors',
-        authorTier: 'Founders Pro',
-        badgeClass: 'rank-staff',
-        time: 'VIP Exchange',
-        content: 'For businesses operating across 2+ locations or multi-terminal stores, local peer mDNS handles sub-second station-to-station ticket handoff, while cloud sync reconciles end-of-day sales into your unified dashboard.',
-        upvotes: 38,
-        replies: [
-          { author: 'Metro Retail Group', tier: 'Founders Pro', time: 'Yesterday', content: 'This eliminated our manual Excel reconciliation between the flagship store and our pop-up branch.' }
-        ]
-      },
-      {
         id: 'items-1',
         category: 'items',
-        categoryName: '🏷️ Items, Modifiers & Barcodes',
+        categoryName: 'Items & Catalog',
         title: 'Setting up variant matrices and nested modifier options',
         author: 'FlexiTap Engineering',
         authorTier: 'Staff Guide',
         badgeClass: 'rank-staff',
-        time: 'Official Guide',
+        time: 'Pinned Guide',
         content: 'Nested modifiers allow options like Milk Choice (Whole, Oat, Almond) to trigger secondary pricing overrides (+0.75 for Oat) seamlessly on checkout.',
         upvotes: 29,
         replies: [
@@ -1416,9 +1422,9 @@
       {
         id: 'printers-1',
         category: 'printers',
-        categoryName: '🖨️ Thermal Printers & Kitchen KDS',
-        title: 'Step-by-step ESC/POS auto-cutter & Bluetooth pairing guide',
-        author: 'FlexiTap Hardware Lab',
+        categoryName: 'Printers & Peripherals',
+        title: 'ESC/POS auto-cutter & Bluetooth pairing guide',
+        author: 'Hardware Lab',
         authorTier: 'Verified Setup',
         badgeClass: 'rank-guru',
         time: 'Verified Matrix',
@@ -1431,12 +1437,12 @@
       {
         id: 'inventory-1',
         category: 'inventory',
-        categoryName: '📊 Inventory & Back Office Reports',
+        categoryName: 'Inventory & Reports',
         title: 'Daily sales reconciliation and multi-station inventory audits',
         author: 'Back Office Team',
         authorTier: 'Operations',
         badgeClass: 'rank-lead',
-        time: 'Official Guide',
+        time: 'Pinned Guide',
         content: 'How to run X-Readings during shift changeovers and automatic Z-Reports at close of day to verify cash, card, and digital split tenders against the drawer.',
         upvotes: 34,
         replies: []
@@ -1444,7 +1450,7 @@
       {
         id: 'roadmap-1',
         category: 'roadmap',
-        categoryName: '💡 Feature Requests & Product Roadmap',
+        categoryName: 'Feature Requests',
         title: 'How to propose feature ideas & vote on roadmap releases',
         author: 'Engineering Team',
         authorTier: 'Staff Pinned',
@@ -1454,6 +1460,21 @@
         upvotes: 88,
         replies: [
           { author: 'Chef Juan', tier: 'Free Merchant', time: 'Yesterday', content: 'Upvoted! Please add direct QR code payments on customer-facing display!' }
+        ]
+      },
+      {
+        id: 'plus-pro-1',
+        category: 'plus-pro',
+        categoryName: 'Plus & Pro Exchange',
+        title: 'Scaling multi-register stores with centralized back-office sync',
+        author: 'Pro Mentors',
+        authorTier: 'Founders Pro',
+        badgeClass: 'rank-pro',
+        time: 'VIP Exchange',
+        content: 'For businesses operating across 2+ locations or multi-terminal stores, local peer mDNS handles sub-second station-to-station ticket handoff, while cloud sync reconciles end-of-day sales into your unified dashboard.',
+        upvotes: 38,
+        replies: [
+          { author: 'Metro Retail Group', tier: 'Founders Pro', time: 'Yesterday', content: 'This eliminated our manual Excel reconciliation between the flagship store and our pop-up branch.' }
         ]
       }
     ];
@@ -1470,6 +1491,23 @@
 
     function saveDiscussions(list) {
       localStorage.setItem('flexitap_native_discussions', JSON.stringify(list));
+      renderRecentTopicsSidebar();
+    }
+
+    function renderRecentTopicsSidebar() {
+      const container = document.getElementById('sidebar-recent-topics');
+      if (!container) return;
+      const list = getDiscussions().slice(0, 5);
+      let html = '';
+      list.forEach(t => {
+        html += `
+          <div class="mini-topic-item" onclick="openThreadDetail('${t.id}')">
+            <div class="mini-topic-title">${t.title}</div>
+            <div class="mini-topic-meta">${t.categoryName} • 💬 ${t.replies ? t.replies.length : 0}</div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
     }
 
     // Open Category Feed (In-House Forum View)
@@ -1477,13 +1515,13 @@
       const discussions = getDiscussions();
       const catThreads = discussions.filter(d => d.category === catId);
       
-      let catTitle = 'Discussion Channel';
-      if (catId === 'sales') catTitle = '🛒 Cashier & Floor Sales Channel';
-      else if (catId === 'plus-pro') catTitle = '👑 Plus & Pro Merchant Exchange';
-      else if (catId === 'items') catTitle = '🏷️ Items, Modifiers & Barcodes Channel';
-      else if (catId === 'printers') catTitle = '🖨️ Thermal Printers & Kitchen KDS';
-      else if (catId === 'inventory') catTitle = '📊 Inventory & Back Office Channel';
-      else if (catId === 'roadmap') catTitle = '💡 Feature Requests & Product Roadmap';
+      let catTitle = 'Channel';
+      if (catId === 'sales') catTitle = '🛒 Sales';
+      else if (catId === 'plus-pro') catTitle = '👑 Plus & Pro Exchange';
+      else if (catId === 'items') catTitle = '🏷️ Items & Catalog';
+      else if (catId === 'printers') catTitle = '🖨️ Printers & Peripherals';
+      else if (catId === 'inventory') catTitle = '📊 Inventory & Reports';
+      else if (catId === 'roadmap') catTitle = '💡 Feature Requests & Roadmap';
 
       const modal = document.getElementById('community-modal');
       const content = document.getElementById('modal-content');
@@ -1511,16 +1549,16 @@
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--card-border); padding-bottom:12px;">
           <div>
             <h2 style="font-size: 1.3rem; font-weight: 800; color:#fff;">${catTitle}</h2>
-            <div style="font-size: 12px; color:var(--text-muted);">Official FlexiTap Native Discussion Feed</div>
+            <div style="font-size: 12px; color:var(--text-muted);">FlexiTap Dedicated Community Board</div>
           </div>
-          <button class="btn-signup" onclick="openNewDiscussionModal('${catId}')" style="padding:6px 14px; font-size:12px;">+ New Topic</button>
+          <button class="btn-new-topic" onclick="openNewDiscussionModal('${catId}')" style="padding:6px 14px; font-size:12px;">+ New Topic</button>
         </div>
 
         <div style="margin-bottom:18px;">
           ${threadsHtml}
         </div>
 
-        <button class="btn-login" onclick="closeModal()" style="width:100%; padding:9px; text-align:center;">Close</button>
+        <button class="btn-signin" onclick="closeModal()" style="width:100%; padding:9px; text-align:center;">Close</button>
       `;
       modal.style.display = 'flex';
     }
@@ -1543,12 +1581,12 @@
                 <span style="font-weight:700; color:#fff;">${r.author} <span class="user-rank-badge" style="background:#2563eb; color:#fff; font-size:9px;">${r.tier}</span></span>
                 <span style="color:var(--text-muted);">${r.time}</span>
               </div>
-              <div style="font-size:13px; color:#cbd5e1; line-height:1.4;">${r.content}</div>
+              <div style="font-size:13px; color:#cbd5e1; line-line:1.4;">${r.content}</div>
             </div>
           `;
         });
       } else {
-        repliesHtml = '<div style="font-size:12.5px; color:var(--text-muted); padding:10px 0;">No replies yet. Share your experience or solution below!</div>';
+        repliesHtml = '<div style="font-size:12.5px; color:var(--text-muted); padding:10px 0;">No replies yet. Share your experience or answer below!</div>';
       }
 
       content.innerHTML = `
@@ -1560,7 +1598,7 @@
               Posted by <strong>${thread.author}</strong> in ${thread.categoryName} • ${thread.time}
             </div>
           </div>
-          <button class="perks-btn" onclick="upvoteThread('${thread.id}')" style="display:flex; align-items:center; gap:4px;">
+          <button class="btn-signin" onclick="upvoteThread('${thread.id}')" style="display:flex; align-items:center; gap:4px; padding:6px 12px;">
             <span>👍</span>
             <span id="upvote-count-${thread.id}">${thread.upvotes}</span>
           </button>
@@ -1577,10 +1615,10 @@
 
         <!-- Inline Reply Composer -->
         <div style="display:flex; flex-direction:column; gap:8px; border-top:1px solid var(--card-border); padding-top:14px;">
-          <textarea id="reply-text" rows="2" placeholder="Write a reply or solution (earn +10 points)..." style="padding:10px 12px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:13px; outline:none; resize:none;"></textarea>
+          <textarea id="reply-text" rows="2" placeholder="Write a reply or answer to this topic..." style="padding:10px 12px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:13px; outline:none; resize:none;"></textarea>
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <button class="btn-login" onclick="openCategoryFeed('${thread.category}')" style="padding:6px 14px; font-size:12px;">&larr; Back to Channel</button>
-            <button class="btn-signup" onclick="submitReply('${thread.id}')" style="padding:7px 18px; font-size:12.5px;">Post Reply</button>
+            <button class="btn-signin" onclick="openCategoryFeed('${thread.category}')" style="padding:6px 14px; font-size:12px;">&larr; Back to Channel</button>
+            <button class="btn-new-topic" onclick="submitReply('${thread.id}')" style="padding:7px 18px; font-size:12.5px;">Post Reply</button>
           </div>
         </div>
       `;
@@ -1611,8 +1649,8 @@
       const thread = discussions.find(d => d.id === threadId);
       if (!thread) return;
 
-      const authorName = activeMerchant?.user_metadata?.store_name || activeMerchant?.store_name || 'Merchant Contributor';
-      const authorTier = activeMerchant ? (activeMerchant.user_metadata?.tier || 'Free Merchant') : 'Free Merchant';
+      const authorName = verifiedProfile?.store_name || verifiedStore?.name || (activeMerchant?.email ? activeMerchant.email.split('@')[0] : 'Merchant Contributor');
+      const authorTier = document.getElementById('user-tier-badge')?.textContent || 'Free Merchant';
 
       if (!thread.replies) thread.replies = [];
       thread.replies.push({
@@ -1631,12 +1669,10 @@
       const modal = document.getElementById('community-modal');
       const content = document.getElementById('modal-content');
 
-      const authorName = activeMerchant?.user_metadata?.store_name || activeMerchant?.store_name || 'Merchant Contributor';
-
       content.innerHTML = `
         <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 6px;">Start a New Discussion</h2>
         <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-          Posting natively to the FlexiTap Community Hub. Your discussion will be visible to peer merchants immediately!
+          Share a question, hardware setup, or tip with the FlexiTap merchant community.
         </p>
 
         <div style="display:flex; flex-direction:column; gap:12px;">
@@ -1646,25 +1682,25 @@
           </div>
 
           <div>
-            <label style="font-size:12px; font-weight:700; color:#cbd5e1; display:block; margin-bottom:4px;">Channel / Category</label>
+            <label style="font-size:12px; font-weight:700; color:#cbd5e1; display:block; margin-bottom:4px;">Category / Channel</label>
             <select id="new-topic-cat" style="width:100%; padding:10px 14px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:13.5px; outline:none;">
-              <option value="sales" ${defaultCat === 'sales' ? 'selected' : ''}>🛒 Cashier &amp; Floor Sales</option>
-              <option value="plus-pro" ${defaultCat === 'plus-pro' ? 'selected' : ''}>👑 Plus &amp; Pro Merchant Exchange</option>
-              <option value="items" ${defaultCat === 'items' ? 'selected' : ''}>🏷️ Items, Modifiers &amp; Barcodes</option>
-              <option value="printers" ${defaultCat === 'printers' ? 'selected' : ''}>🖨️ Thermal Printers &amp; Kitchen KDS</option>
-              <option value="inventory" ${defaultCat === 'inventory' ? 'selected' : ''}>📊 Inventory &amp; Back Office Reports</option>
-              <option value="roadmap" ${defaultCat === 'roadmap' ? 'selected' : ''}>💡 Feature Requests &amp; Product Roadmap</option>
+              <option value="sales" ${defaultCat === 'sales' ? 'selected' : ''}>🛒 Sales</option>
+              <option value="items" ${defaultCat === 'items' ? 'selected' : ''}>🏷️ Items &amp; Catalog</option>
+              <option value="printers" ${defaultCat === 'printers' ? 'selected' : ''}>🖨️ Printers &amp; Peripherals</option>
+              <option value="inventory" ${defaultCat === 'inventory' ? 'selected' : ''}>📊 Inventory &amp; Reports</option>
+              <option value="roadmap" ${defaultCat === 'roadmap' ? 'selected' : ''}>💡 Feature Requests &amp; Roadmap</option>
+              <option value="plus-pro" ${defaultCat === 'plus-pro' ? 'selected' : ''}>👑 Plus &amp; Pro Exchange</option>
             </select>
           </div>
 
           <div>
             <label style="font-size:12px; font-weight:700; color:#cbd5e1; display:block; margin-bottom:4px;">Details &amp; Questions</label>
-            <textarea id="new-topic-body" rows="4" placeholder="Describe your shop setup, hardware model, or question..." style="width:100%; padding:10px 14px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:13.5px; outline:none; resize:none;"></textarea>
+            <textarea id="new-topic-body" rows="4" placeholder="Describe your shop setup, printer model, or question..." style="width:100%; padding:10px 14px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:13.5px; outline:none; resize:none;"></textarea>
           </div>
 
           <div style="display:flex; gap:10px; margin-top:8px;">
-            <button class="btn-signup" onclick="publishNativeTopic()" style="flex:1; padding:11px; text-align:center;">Publish Discussion &rarr;</button>
-            <button class="btn-login" onclick="closeModal()" style="padding:11px 18px;">Cancel</button>
+            <button class="btn-new-topic" onclick="publishNativeTopic()" style="flex:1; padding:11px; text-align:center;">Publish Discussion &rarr;</button>
+            <button class="btn-signin" onclick="closeModal()" style="padding:11px 18px;">Cancel</button>
           </div>
         </div>
       `;
@@ -1683,16 +1719,16 @@
       }
 
       const catNames = {
-        'sales': '🛒 Cashier & Floor Sales',
-        'plus-pro': '👑 Plus & Pro Merchant Exchange',
-        'items': '🏷️ Items, Modifiers & Barcodes',
-        'printers': '🖨️ Thermal Printers & Kitchen KDS',
-        'inventory': '📊 Inventory & Back Office Reports',
-        'roadmap': '💡 Feature Requests & Product Roadmap'
+        'sales': 'Sales',
+        'items': 'Items & Catalog',
+        'printers': 'Printers & Peripherals',
+        'inventory': 'Inventory & Reports',
+        'roadmap': 'Feature Requests',
+        'plus-pro': 'Plus & Pro Exchange'
       };
 
-      const authorName = activeMerchant?.user_metadata?.store_name || activeMerchant?.store_name || 'Merchant Contributor';
-      const authorTier = activeMerchant ? (activeMerchant.user_metadata?.tier || 'Free Merchant') : 'Free Merchant';
+      const authorName = verifiedProfile?.store_name || verifiedStore?.name || (activeMerchant?.email ? activeMerchant.email.split('@')[0] : 'Merchant Contributor');
+      const authorTier = document.getElementById('user-tier-badge')?.textContent || 'Free Merchant';
 
       const newThread = {
         id: 'topic-' + Date.now(),
@@ -1701,7 +1737,7 @@
         title: title,
         author: authorName,
         authorTier: authorTier,
-        badgeClass: authorTier.toLowerCase().includes('pro') ? 'rank-staff' : 'rank-guru',
+        badgeClass: authorTier.toLowerCase().includes('pro') ? 'rank-pro' : authorTier.toLowerCase().includes('staff') ? 'rank-staff' : 'rank-guru',
         time: 'Just now',
         content: body,
         upvotes: 1,
@@ -1711,11 +1747,6 @@
       const discussions = getDiscussions();
       discussions.unshift(newThread);
       saveDiscussions(discussions);
-
-      // Award points
-      userPoints += 5;
-      const ptsVal = document.getElementById('user-points-val');
-      if (ptsVal) ptsVal.textContent = userPoints + ' pts';
 
       // Open the category feed containing this new topic
       openCategoryFeed(cat);
@@ -1735,71 +1766,35 @@
       });
     }
 
-    // Modal Handlers
-    function showPointsRulesModal() {
-      const modal = document.getElementById('community-modal');
-      const content = document.getElementById('modal-content');
-      content.innerHTML = `
-        <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 8px;">🏆 How Community Points Work</h2>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">We reward power merchants who help other store owners solve hardware setups and operational questions.</p>
-        
-        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
-          <div style="display:flex; justify-content:space-between; padding:10px 14px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:8px; font-size:13px;">
-            <span>⭐ Marked as "Best Solution" Answer</span>
-            <span style="font-weight:800; color:#fbbf24;">+25 pts</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; padding:10px 14px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:8px; font-size:13px;">
-            <span>🖨️ Share a Verified Hardware Configuration</span>
-            <span style="font-weight:800; color:#34d399;">+15 pts</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; padding:10px 14px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:8px; font-size:13px;">
-            <span>👍 Your Reply or Guide is Upvoted</span>
-            <span style="font-weight:800; color:#60a5fa;">+10 pts</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; padding:10px 14px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:8px; font-size:13px;">
-            <span>💡 Helpful Discussion or Feature Idea Posted</span>
-            <span style="font-weight:800; color:#cbd5e1;">+5 pts</span>
-          </div>
-        </div>
-
-        <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:8px; padding:12px; font-size:12.5px; color:#fbbf24; margin-bottom:18px;">
-          🎁 <strong>500 Points Reward:</strong> Unlocks 1 Free Month of Founders Pro or a 10% annual subscription credit!
-        </div>
-
-        <button class="btn-signup" onclick="closeModal()" style="width:100%; padding:10px; cursor:pointer;">Got It</button>
-      `;
-      modal.style.display = 'flex';
+    function filterBySubtopic(name) {
+      document.getElementById('filter-input').value = name;
+      filterForumRows();
     }
 
-    function showPointsBreakdown() {
+    function openStoryModal(type) {
       const modal = document.getElementById('community-modal');
       const content = document.getElementById('modal-content');
-      const name = document.getElementById('user-display-name')?.textContent || 'Merchant';
-      const pts = document.getElementById('user-points-val')?.textContent || '120 pts';
-      const badge = document.getElementById('user-tier-badge')?.textContent || 'Free Merchant';
+      
+      let title = 'Merchant Case Study';
+      let body = '';
+
+      if (type === 'offline') {
+        title = '⚡ Peak Rush Hours With Zero Wi-Fi Drops';
+        body = 'Learn how high-volume coffee bars configure SQLite-based local peer sync so transactions, kitchen display tickets, and auto-cutters continue operating even if the local ISP or router goes down.';
+      } else if (type === 'hardware') {
+        title = '🖨️ ESC/POS Thermal Receipt Printer Benchmark';
+        body = 'A complete hardware lab breakdown comparing USB OTG, Bluetooth 5.0, and Ethernet network connectivity on Star TSP143, Epson TM-T20III, and Sunmi D2s devices.';
+      } else {
+        title = '☕ Multi-Location Inventory Auditing';
+        body = 'Best practices for multi-outlet retailers conducting real-time stock transfers, centralized vendor purchase orders, and daily Z-Report reconciliations.';
+      }
 
       content.innerHTML = `
-        <h2 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 8px;">Merchant Reputation Profile</h2>
-        <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
-          <div class="user-avatar-small" style="width:36px; height:36px; font-size:14px;">${name[0]}</div>
-          <div>
-            <div style="font-weight:700; color:#fff;">${name}</div>
-            <div style="font-size:12px; color:var(--text-muted);">${badge} • Active Contributor</div>
-          </div>
+        <h2 style="font-size: 1.3rem; font-weight: 800; color:#fff; margin-bottom: 10px;">${title}</h2>
+        <div style="font-size: 13.5px; color:#cbd5e1; line-height: 1.6; margin-bottom: 20px;">
+          ${body}
         </div>
-
-        <div style="background:rgba(15,23,42,0.8); border:1px solid var(--card-border); border-radius:10px; padding:16px; margin-bottom:16px;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
-            <span style="font-size:13px; color:var(--text-muted);">Total Reputation Points</span>
-            <span style="font-size:1.4rem; font-weight:800; color:#fbbf24;">${pts}</span>
-          </div>
-          <div style="font-size:12px; color:#34d399; font-weight:700;">Reach 500 points to unlock 1 Free Month of Founders Pro!</div>
-        </div>
-
-        <div style="display:flex; gap:10px;">
-          <a href="portal.html" class="btn-signup" style="flex:1; text-align:center; padding:10px; text-decoration:none;">Go to Merchant Portal</a>
-          <button class="btn-login" onclick="closeModal()" style="padding:10px;">Close</button>
-        </div>
+        <button class="btn-signin" onclick="closeModal()" style="width:100%; padding:10px;">Close Article</button>
       `;
       modal.style.display = 'flex';
     }
@@ -1813,7 +1808,10 @@
       if (e.target === modal) closeModal();
     }
 
-    document.addEventListener('DOMContentLoaded', checkMerchantAuth);
+    document.addEventListener('DOMContentLoaded', () => {
+      checkMerchantAuth();
+      renderRecentTopicsSidebar();
+    });
   </script>
 </body>
 </html>
