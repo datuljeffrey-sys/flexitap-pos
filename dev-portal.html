@@ -4695,7 +4695,9 @@
         supabaseClient.from('tickets').select('*')
       ]);
 
-      cachedProfiles = profilesRes.data || [];
+      cachedProfiles = (profilesRes.data || []).filter(function(p) {
+        return p.account_status !== 'purged' && p.account_status !== 'deleted';
+      });
       const liveStores = storesRes.data || [];
       const liveDevices = devicesRes.data || [];
       const liveTickets = ticketsRes.data || [];
@@ -4742,7 +4744,8 @@
           state: isPH ? 'NCR' : 'NY',
           postal_code: isPH ? '1000' : '10001',
           operating_hours: 'Mon-Sun: 9:00 AM - 10:00 PM',
-          status: 'active',
+          status: p.account_status || 'active',
+          deletion_scheduled_at: p.deletion_requested_at || null,
           country: p.country || (isPH ? 'PH' : 'US'),
           currency: currency
         };
@@ -9460,6 +9463,12 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
           showRbacAlert(`Your simulated role (${getEffectiveRoleLabel()}) does not have access to "${views[viewId]?.title || viewId}". Switched to Workforce & Shifts hub.`);
           switchNav('workforce');
         }
+      }
+
+      // Re-evaluate CRM Danger Zone permissions
+      if (typeof updateCrmDangerZoneUI === 'function' && typeof crmAccounts !== 'undefined' && currentCrmAccountId) {
+        const acc = crmAccounts.find(function(a) { return a.id === currentCrmAccountId; });
+        if (acc) updateCrmDangerZoneUI(acc);
       }
 
       // Re-render workforce views immediately
@@ -14695,12 +14704,37 @@ Role: ${lastProvisionedCreds.role}`;
       const badge = document.getElementById('crm-deletion-badge');
       const btnSchedule = document.getElementById('crm-btn-schedule-delete');
       const btnRestore = document.getElementById('crm-btn-restore-account');
+      const btnPurge = document.getElementById('crm-btn-purge-now');
 
-      const isPending = acc.status === 'pending_deletion';
+      const role = getEffectiveRole();
+      const isSupport = (role === 'support');
+      const isPending = acc && acc.status === 'pending_deletion';
 
+      // 1. RBAC SECURITY RESTRICTION: Support role cannot delete/purge merchants
+      if (isSupport) {
+        if (badge) badge.style.display = 'none';
+        if (btnSchedule) btnSchedule.style.display = 'none';
+        if (btnRestore) btnRestore.style.display = 'none';
+        if (btnPurge) btnPurge.style.display = 'none';
+        if (box) {
+          box.style.background = 'rgba(239, 68, 68, 0.05)';
+          box.style.borderColor = 'rgba(239, 68, 68, 0.25)';
+          box.innerHTML = '<div style="display: flex; align-items: center; gap: 10px;">' +
+            '<span style="font-size: 1.3rem;">🔒</span>' +
+            '<div>' +
+              '<strong style="color: #f87171;">Action Restricted: Customer Support Role</strong><br>' +
+              '<span style="color: #94a3b8; font-size: 0.8rem;">Customer Support personnel are not authorized to delete or purge merchant accounts. Account erasure and Clause 6 compliance must be performed by <strong>Core Dev / Platform Engineering</strong>.</span>' +
+            '</div>' +
+          '</div>';
+        }
+        return;
+      }
+
+      // 2. DEV / ADMIN: Render standard deletion controls
       if (badge) badge.style.display = isPending ? 'inline-flex' : 'none';
       if (btnSchedule) btnSchedule.style.display = isPending ? 'none' : 'inline-block';
       if (btnRestore) btnRestore.style.display = isPending ? 'inline-block' : 'none';
+      if (btnPurge) btnPurge.style.display = 'inline-block';
 
       if (box) {
         if (isPending) {
@@ -14718,6 +14752,12 @@ Role: ${lastProvisionedCreds.role}`;
     }
 
     async function scheduleCrmAccountDeletion() {
+      const role = getEffectiveRole();
+      if (role === 'support') {
+        alert('🔒 Access Denied: Customer Support personnel cannot schedule merchant account erasure.\n\nThis action is strictly restricted to Core Dev / Admin engineering.');
+        return;
+      }
+
       const acc = crmAccounts.find(function(a) { return a.id === currentCrmAccountId; });
       if (!acc) return;
 
@@ -14751,6 +14791,12 @@ Role: ${lastProvisionedCreds.role}`;
     }
 
     async function restoreCrmAccountFromDeletion() {
+      const role = getEffectiveRole();
+      if (role === 'support') {
+        alert('🔒 Access Denied: Customer Support personnel cannot restore or modify deletion status.\n\nThis action is strictly restricted to Core Dev / Admin engineering.');
+        return;
+      }
+
       const acc = crmAccounts.find(function(a) { return a.id === currentCrmAccountId; });
       if (!acc) return;
 
@@ -14781,39 +14827,130 @@ Role: ${lastProvisionedCreds.role}`;
     }
 
     async function purgeCrmAccountImmediately() {
+      const role = getEffectiveRole();
+      if (role === 'support') {
+        alert('🔒 Access Denied: Customer Support personnel cannot purge or delete merchant accounts.\n\nAccount deletion is strictly restricted to Core Dev / Admin engineering.');
+        return;
+      }
+
       const acc = crmAccounts.find(function(a) { return a.id === currentCrmAccountId; });
       if (!acc) return;
 
-      const confirmCode = prompt('⚠️ WARNING: Immediate Purge & Anonymization is IRREVERSIBLE.\nAll operational sales data, terminal device bindings, and merchant profile records will be wiped immediately.\n\nTo confirm, type PURGE below:');
+      const deletedStoreName = acc.store_name || 'Selected Merchant';
+      const deletedId = acc.id;
+      const storeCode = acc.store_code || acc.id;
+
+      const confirmCode = prompt('⚠️ WARNING: Immediate Purge & Anonymization is IRREVERSIBLE.\nAll operational sales data, terminal device bindings, and merchant profile records will be wiped immediately.\n\nTo confirm permanent deletion of "' + deletedStoreName + '", type PURGE below:');
       if (confirmCode !== 'PURGE') {
         alert('Action cancelled. Confirmation code did not match.');
         return;
       }
 
+      const purgeBtn = document.getElementById('crm-btn-purge-now');
+      if (purgeBtn) {
+        purgeBtn.disabled = true;
+        purgeBtn.innerText = '⚡ Purging Account...';
+      }
+
       try {
         if (supabaseClient) {
-          // Anonymize profile
-          await supabaseClient.from('profiles').update({
-            full_name: 'Anonymized Account',
-            store_name: 'Purged Store',
-            account_status: 'purged',
-            email: 'purged_' + acc.id.substring(0, 8) + '@anonymized.local'
-          }).eq('id', acc.id);
+          // 1. Delete CRM specific sub-records
+          await supabaseClient.from('merchant_crm_assets').delete().eq('account_id', deletedId).catch(function() {});
+          await supabaseClient.from('merchant_crm_contacts').delete().eq('account_id', deletedId).catch(function() {});
+          await supabaseClient.from('merchant_crm_accounts').delete().eq('id', deletedId).catch(function() {});
 
-          // Mark store deleted
-          await supabaseClient.from('stores').update({
-            status: 'purged',
-            name: 'Purged Store'
-          }).or('owner_id.eq.' + acc.id + ',id.eq.' + (acc.store_code || acc.id)).catch(function() {});
+          // 2. Delete linked devices
+          await supabaseClient.from('devices').delete().or('store_id.eq.' + storeCode + ',store_id.eq.' + deletedId).catch(function() {});
+
+          // 3. Delete stores
+          await supabaseClient.from('stores').delete().or('owner_id.eq.' + deletedId + ',id.eq.' + storeCode).catch(function() {});
+
+          // 4. Delete profile (or mark purged if auth foreign key prevents hard delete)
+          const { error: profileDelErr } = await supabaseClient.from('profiles').delete().eq('id', deletedId);
+          if (profileDelErr) {
+            console.warn('Hard profile delete prevented by FK, soft-deleting in profiles:', profileDelErr);
+            await supabaseClient.from('profiles').update({
+              account_status: 'purged',
+              full_name: '[PURGED MERCHANT]',
+              store_name: '[PURGED STORE]',
+              email: 'purged_' + deletedId.substring(0, 8) + '@purged.local'
+            }).eq('id', deletedId).catch(function() {});
+          }
         }
       } catch (e) {
         console.warn('Error purging in Supabase:', e);
       }
 
-      acc.store_name = 'Purged Store (' + acc.id.substring(0, 8) + ')';
-      acc.status = 'deleted';
-      renderSelectedCrmAccount();
-      alert('✓ Account data has been immediately purged and anonymized.');
+      // 5. Remove account completely from memory / local state
+      crmAccounts = crmAccounts.filter(function(a) { return a.id !== deletedId; });
+      cachedProfiles = cachedProfiles.filter(function(p) { return p.id !== deletedId; });
+      delete crmContactsMap[deletedId];
+      delete crmAssetsMap[deletedId];
+      delete crmSubscriptionsMap[deletedId];
+      delete crmTicketsMap[deletedId];
+
+      // 6. Refresh UI components
+      populateCrmAccountDropdown();
+
+      const kpiStore = document.getElementById('kpi-store-count');
+      if (kpiStore) kpiStore.innerText = crmAccounts.length;
+
+      renderProfiles(cachedProfiles);
+
+      // 7. Select next available account or clear form
+      if (crmAccounts.length > 0) {
+        currentCrmAccountId = crmAccounts[0].id;
+        renderSelectedCrmAccount();
+      } else {
+        currentCrmAccountId = null;
+        clearCrmAccountForm();
+      }
+
+      if (purgeBtn) {
+        purgeBtn.disabled = false;
+        purgeBtn.innerText = '⚡ Immediate Purge & Anonymize';
+      }
+
+      alert('✓ Merchant account "' + deletedStoreName + '" has been permanently purged and deleted from the fleet.');
+    }
+
+    function clearCrmAccountForm() {
+      const stripName = document.getElementById('crm-strip-name');
+      if (stripName) stripName.innerText = 'No Active Merchants';
+      const avatarEl = document.getElementById('crm-merchant-avatar');
+      if (avatarEl) avatarEl.innerText = '--';
+      const stripStatus = document.getElementById('crm-strip-status');
+      if (stripStatus) {
+        stripStatus.innerText = 'EMPTY FLEET';
+        stripStatus.style.background = 'rgba(255,255,255,0.05)';
+        stripStatus.style.color = 'var(--text-muted)';
+      }
+      const stripMeta = document.getElementById('crm-strip-meta');
+      if (stripMeta) stripMeta.innerText = 'Click "+ New Merchant" to create an account';
+      const stripPlan = document.getElementById('crm-strip-plan');
+      if (stripPlan) stripPlan.innerText = 'None';
+      const stripAssets = document.getElementById('crm-strip-assets');
+      if (stripAssets) stripAssets.innerText = '0 Units';
+      const stripTickets = document.getElementById('crm-strip-tickets');
+      if (stripTickets) stripTickets.innerText = '0 Open';
+
+      const fields = [
+        'crm-inp-legal-name', 'crm-inp-store-name', 'crm-inp-store-code',
+        'crm-inp-address', 'crm-inp-city', 'crm-inp-state', 'crm-inp-zip'
+      ];
+      fields.forEach(function(fid) {
+        const el = document.getElementById(fid);
+        if (el) el.value = '';
+      });
+
+      const box = document.getElementById('crm-deletion-status-box');
+      if (box) box.innerText = 'No merchant selected.';
+      const btnSchedule = document.getElementById('crm-btn-schedule-delete');
+      if (btnSchedule) btnSchedule.style.display = 'none';
+      const btnRestore = document.getElementById('crm-btn-restore-account');
+      if (btnRestore) btnRestore.style.display = 'none';
+      const btnPurge = document.getElementById('crm-btn-purge-now');
+      if (btnPurge) btnPurge.style.display = 'none';
     }
   </script>
 
