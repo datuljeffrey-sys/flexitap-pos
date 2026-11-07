@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>FlexiTap Community — Merchant Forum, Hardware Matrix & Feature Roadmap</title>
+  <meta name="description" content="Connect with thousands of restaurant, cafe, and retail merchants using FlexiTap POS. Explore verified printer hardware, vote on new features, and share offline workflows.">
+  <link rel="canonical" href="https://flexitapapp.com/community.html">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="image_02e503.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(22, 30, 49, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent: #10b981;
+      --accent-hover: #059669;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font);
+      line-height: 1.5;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(9, 13, 22, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--card-border);
+    }
+    header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .brand-logo-svg { width: 34px; height: 34px; border-radius: 8px; }
+
+    .nav-links { display: flex; align-items: center; gap: 24px; }
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14.5px;
+      font-weight: 600;
+      transition: color 0.2s;
+      cursor: pointer;
+    }
+    .nav-link:hover, .nav-link.active { color: #fff; }
+    .nav-link.community-active {
+      color: #38bdf8;
+      position: relative;
+    }
+    .nav-link.community-active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #38bdf8;
+      border-radius: 2px;
+    }
+
+    .nav-actions { display: flex; align-items: center; gap: 14px; }
+    .btn-login {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-login:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.2); }
+    .btn-signup {
+      background: var(--primary);
+      color: #fff;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13.5px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-signup:hover { background: var(--primary-hover); }
+
+    /* MOCK BANNER */
+    .mock-preview-ribbon {
+      background: linear-gradient(90deg, #1e3a8a, #065f46);
+      color: #e0f2fe;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 8px 16px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+    }
+    .mock-badge {
+      background: #38bdf8;
+      color: #032b43;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    /* HERO */
+    .community-hero {
+      padding: 60px 0 40px;
+      text-align: center;
+      position: relative;
+    }
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: #38bdf8;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    .hero-title {
+      font-size: clamp(2rem, 3.8vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      background: linear-gradient(180deg, #fff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      max-width: 760px;
+      margin: 0 auto 32px;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* SEARCH BAR */
+    .community-search-box {
+      max-width: 680px;
+      margin: 0 auto 36px;
+      position: relative;
+    }
+    .community-search-input {
+      width: 100%;
+      padding: 16px 20px 16px 52px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.2s;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .community-search-input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    }
+    .search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      color: var(--text-muted);
+    }
+
+    /* KPI STATS */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .stat-pill {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 18px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .stat-pill:hover { transform: translateY(-3px); }
+    .stat-val { font-size: 1.7rem; font-weight: 800; color: #fff; margin-bottom: 2px; }
+    .stat-label { font-size: 12.5px; color: var(--text-muted); font-weight: 600; }
+
+    /* CATEGORIES & TOPIC PILLS */
+    .topics-filter-row {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 32px;
+      scrollbar-width: none;
+    }
+    .topics-filter-row::-webkit-scrollbar { display: none; }
+    .topic-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 10px 18px;
+      border-radius: 9999px;
+      font-size: 13.5px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .topic-btn:hover, .topic-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: #38bdf8;
+      color: #fff;
+    }
+
+    /* TWO COLUMN MAIN CONTENT */
+    .community-grid {
+      display: grid;
+      grid-template-columns: 2.2fr 1fr;
+      gap: 32px;
+      margin-bottom: 60px;
+    }
+
+    /* DISCUSSION CARDS */
+    .discussion-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 16px;
+      transition: all 0.2s;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+    .discussion-card:hover {
+      border-color: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.3);
+    }
+
+    .vote-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      min-width: 54px;
+      padding: 8px 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .vote-box:hover {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+    }
+    .vote-arrow { font-size: 16px; line-height: 1; margin-bottom: 4px; }
+    .vote-count { font-weight: 800; font-size: 13px; color: #fff; }
+
+    .discussion-body { flex: 1; }
+    .discussion-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .author-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #fff;
+      font-weight: 700;
+    }
+    .author-avatar {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+    .tag-badge {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--card-border);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+    .tag-verified {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-weight: 700;
+    }
+
+    .discussion-title {
+      font-size: 1.12rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.35;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+    }
+    .discussion-title:hover { color: #38bdf8; }
+
+    .discussion-snippet {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .discussion-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      border-top: 1px dashed rgba(255,255,255,0.06);
+      padding-top: 12px;
+    }
+    .reply-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    /* SIDEBAR WIDGETS */
+    .sidebar-widget {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .widget-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .channel-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .channel-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      text-decoration: none;
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+    .channel-item:hover {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: #38bdf8;
+      transform: translateX(3px);
+    }
+    .channel-item span { display: flex; align-items: center; gap: 10px; }
+
+    /* HARDWARE DIRECTORY HIGHLIGHT */
+    .hardware-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 13px;
+    }
+    .hardware-item:last-child { border-bottom: none; }
+    .hardware-name { font-weight: 700; color: #fff; }
+    .hardware-status { font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 700; }
+    .status-native { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .status-bluetooth { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+
+    /* ROADMAP / FEATURE BACKLOG */
+    .roadmap-badge {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+    .badge-in-progress { background: #f59e0b; color: #000; }
+    .badge-review { background: #3b82f6; color: #fff; }
+    .badge-shipped { background: #10b981; color: #fff; }
+
+    /* CTA BOX */
+    .community-cta-card {
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.4), rgba(5, 150, 105, 0.2));
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 16px;
+      padding: 36px 30px;
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .community-cta-card h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; }
+    .community-cta-card p { font-size: 14.5px; color: var(--text-muted); max-width: 600px; margin: 0 auto 24px; }
+    .cta-btn-group { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+    /* FOOTER */
+    footer {
+      margin-top: auto;
+      background: #060911;
+      border-top: 1px solid var(--card-border);
+      padding: 50px 0 30px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    .footer-brand p { color: var(--text-muted); font-size: 13.5px; margin: 12px 0 20px; max-width: 300px; }
+    .footer-col h3 { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a { color: var(--text-muted); text-decoration: none; font-size: 13.5px; transition: color 0.2s; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom {
+      border-top: 1px solid var(--card-border);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+      font-size: 12.5px;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+      z-index: 999; display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-card {
+      background: #0f172a; border: 1px solid var(--card-border); border-radius: 14px;
+      max-width: 480px; width: 100%; padding: 28px; position: relative;
+    }
+    .modal-close { position: absolute; right: 20px; top: 20px; background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
+
+    @media (max-width: 860px) {
+      .community-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 540px) {
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MOCK BANNER -->
+  <div class="mock-preview-ribbon">
+    <span class="mock-badge">Design Mockup</span>
+    <span>Explore the proposed FlexiTap Community Hub architecture and interactive features below.</span>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg">
+        <span>FlexiTap POS</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="features.html" class="nav-link">Capabilities</a>
+        <a href="pricing.html" class="nav-link">Pricing</a>
+        <a href="about.html" class="nav-link">About &amp; FAQ</a>
+        <a href="insights.html" class="nav-link">Insights</a>
+        <a href="support.html" class="nav-link">Support</a>
+        <a href="community-mock.html" class="nav-link community-active">Community</a>
+      </div>
+
+      <div class="nav-actions">
+        <a href="portal.html" class="btn-login">Merchant Login</a>
+        <a href="pricing.html" class="btn-signup">Get Started</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="container">
+
+    <!-- HERO -->
+    <section class="community-hero">
+      <div class="hero-pill">
+        <span>⚡</span>
+        <span>Independent Sellers, Baristas &amp; Hardware Engineers</span>
+      </div>
+      <h1 class="hero-title">FlexiTap Merchant &amp; Developer Hub</h1>
+      <p class="hero-subtitle">
+        Join hundreds of cafes, retail shops, and mobile food trucks. Share offline floor configurations, explore community-tested receipt printer matrices, vote on upcoming features, and build custom catalog integrations.
+      </p>
+
+      <!-- SEARCH BAR -->
+      <div class="community-search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="community-search-input" id="search-bar" placeholder="Search community guides, Star/Epson printer setups, split check tricks..." oninput="filterTopics()">
+      </div>
+
+      <!-- METRICS -->
+      <div class="stats-row">
+        <div class="stat-pill">
+          <div class="stat-val">1,420+</div>
+          <div class="stat-label">Active Merchant Registers</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val">85+</div>
+          <div class="stat-label">Verified Printers &amp; Scanners</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val">14</div>
+          <div class="stat-label">Community Features Shipped</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val">99.98%</div>
+          <div class="stat-label">Offline Continuity Record</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOPICS FILTER PILLS -->
+    <div class="topics-filter-row">
+      <button class="topic-btn active" onclick="setFilter('all', this)">🌐 All Discussions</button>
+      <button class="topic-btn" onclick="setFilter('hardware', this)">🖨️ Hardware &amp; Printers</button>
+      <button class="topic-btn" onclick="setFilter('cafe', this)">☕ Cafe &amp; Quick-Serve</button>
+      <button class="topic-btn" onclick="setFilter('retail', this)">🛍️ Retail &amp; Barcodes</button>
+      <button class="topic-btn" onclick="setFilter('roadmap', this)">💡 Feature Requests &amp; Ideas</button>
+      <button class="topic-btn" onclick="setFilter('dev', this)">👨‍💻 Developers &amp; APIs</button>
+    </div>
+
+    <!-- MAIN TWO COLUMN GRID -->
+    <div class="community-grid">
+
+      <!-- LEFT: DISCUSSION FEED -->
+      <div id="discussions-container">
+
+        <!-- CARD 1: HARDWARE ESC/POS -->
+        <div class="discussion-card" data-category="hardware">
+          <div class="vote-box" onclick="handleVote(this)">
+            <div class="vote-arrow">▲</div>
+            <div class="vote-count">74</div>
+          </div>
+          <div class="discussion-body">
+            <div class="discussion-meta">
+              <span class="author-pill">
+                <span class="author-avatar" style="background: #10b981;">E</span>
+                <span>Eastside Bakery &amp; Deli</span>
+              </span>
+              <span>• 4 hours ago</span>
+              <span class="tag-badge tag-verified">✓ Verified Hardware Setup</span>
+              <span class="tag-badge">#EpsonThermal</span>
+            </div>
+            <a class="discussion-title" onclick="openTopicModal(1)">
+              Epson TM-T20III vs. Star Micronics TSP143III: Real-world speed, auto-cutter durability, and Bluetooth range review
+            </a>
+            <p class="discussion-snippet">
+              We benchmarked both printers during our morning 300-order rush across 2 Android tablets and 1 Windows master register. Here are the exact DIP switch settings, baud rates, and cutter reliability notes...
+            </p>
+            <div class="discussion-footer">
+              <span class="reply-stat">💬 18 replies</span>
+              <span style="color: #34d399; font-weight: 700;">★ Marked as Best Answer</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 2: KITCHEN OFFLINE WORKFLOW -->
+        <div class="discussion-card" data-category="cafe">
+          <div class="vote-box" onclick="handleVote(this)">
+            <div class="vote-arrow">▲</div>
+            <div class="vote-count">56</div>
+          </div>
+          <div class="discussion-body">
+            <div class="discussion-meta">
+              <span class="author-pill">
+                <span class="author-avatar" style="background: #3b82f6;">M</span>
+                <span>The Daily Roast Cafe</span>
+              </span>
+              <span>• Yesterday</span>
+              <span class="tag-badge">#OfflineContinuity</span>
+              <span class="tag-badge">#KDS</span>
+            </div>
+            <a class="discussion-title" onclick="openTopicModal(2)">
+              How we kept firing 4 kitchen bump screens with zero internet during the major fiber cable outage
+            </a>
+            <p class="discussion-snippet">
+              When our city ISP went dark for 6 hours on Friday night, our cashiers didn't even notice. Local SQLite and peer-to-peer Wi-Fi KOT firing kept orders printing instantly. Here is our network configuration...
+            </p>
+            <div class="discussion-footer">
+              <span class="reply-stat">💬 29 replies</span>
+              <span>Last active 15m ago</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 3: FEATURE REQUEST -->
+        <div class="discussion-card" data-category="roadmap">
+          <div class="vote-box" onclick="handleVote(this)">
+            <div class="vote-arrow">▲</div>
+            <div class="vote-count">112</div>
+          </div>
+          <div class="discussion-body">
+            <div class="discussion-meta">
+              <span class="author-pill">
+                <span class="author-avatar" style="background: #f59e0b;">S</span>
+                <span>Sweet Treats Bakery Co.</span>
+              </span>
+              <span>• 3 days ago</span>
+              <span class="roadmap-badge badge-in-progress">In Progress • Engineering</span>
+              <span class="tag-badge">#FeatureRequest</span>
+            </div>
+            <a class="discussion-title" onclick="openTopicModal(3)">
+              Feature Request: Print customer loyalty balance and custom reward tier message directly on the thermal receipt footer
+            </a>
+            <p class="discussion-snippet">
+              It would increase repeat visits significantly if cashiers could show customers their points total at the bottom of the paper receipt or electronic SMS slip...
+            </p>
+            <div class="discussion-footer">
+              <span class="reply-stat">💬 41 replies</span>
+              <span style="color: #f59e0b; font-weight: 700;">🚀 Scheduled for Q1 2027 Release</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 4: RETAIL BARCODE SCANNING -->
+        <div class="discussion-card" data-category="retail">
+          <div class="vote-box" onclick="handleVote(this)">
+            <div class="vote-arrow">▲</div>
+            <div class="vote-count">38</div>
+          </div>
+          <div class="discussion-body">
+            <div class="discussion-meta">
+              <span class="author-pill">
+                <span class="author-avatar" style="background: #ec4899;">V</span>
+                <span>Valley Fresh Supermarket</span>
+              </span>
+              <span>• 5 days ago</span>
+              <span class="tag-badge">#RetailMatrix</span>
+              <span class="tag-badge">#BarcodeScanner</span>
+            </div>
+            <a class="discussion-title" onclick="openTopicModal(4)">
+              Guide: Configuring USB and Bluetooth 2D QR/UPC barcode scanner prefix &amp; suffix carriage return in FlexiTap
+            </a>
+            <p class="discussion-snippet">
+              If your Honeywell or Zebra scanner triggers twice or fails to focus on rapid multi-item checkout, scan this programming barcode sheet to set automated Enter-key terminations...
+            </p>
+            <div class="discussion-footer">
+              <span class="reply-stat">💬 12 replies</span>
+              <span>Verified with Honeywell Voyager 1400g</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 5: DEVELOPER & WEBHOOKS -->
+        <div class="discussion-card" data-category="dev">
+          <div class="vote-box" onclick="handleVote(this)">
+            <div class="vote-arrow">▲</div>
+            <div class="vote-count">44</div>
+          </div>
+          <div class="discussion-body">
+            <div class="discussion-meta">
+              <span class="author-pill">
+                <span class="author-avatar" style="background: #8b5cf6;">D</span>
+                <span>DevBrew Engineering Team</span>
+              </span>
+              <span>• Official Post</span>
+              <span class="tag-badge tag-verified">Staff Announcement</span>
+              <span class="tag-badge">#Webhooks</span>
+            </div>
+            <a class="discussion-title" onclick="openTopicModal(5)">
+              Developer Guide: Realtime webhook dispatch for third-party ERP, QuickBooks sync, and automated Shopify stock decrements
+            </a>
+            <p class="discussion-snippet">
+              Learn how to consume FlexiTap's idempotent order webhooks, verify HMAC-SHA256 signatures in Node.js and Python, and keep external e-commerce inventory synced with floor cashiers.
+            </p>
+            <div class="discussion-footer">
+              <span class="reply-stat">💬 22 replies</span>
+              <span>Sample GitHub Repo Available</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: COMMUNITY SIDEBAR -->
+      <aside>
+
+        <!-- JOIN COMMUNITY CHANNELS -->
+        <div class="sidebar-widget">
+          <div class="widget-title">
+            <span>💬</span> Join the Community
+          </div>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+            Connect with peer merchants and the DevBrew core engineering team in real time:
+          </p>
+          <div class="channel-list">
+            <a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer" class="channel-item">
+              <span>👥 Merchant Facebook Group</span>
+              <span style="color: #60a5fa;">↗</span>
+            </a>
+            <a href="https://github.com/datuljeffrey-sys/flexitap-pos/discussions" target="_blank" rel="noopener noreferrer" class="channel-item">
+              <span>🐙 GitHub Discussions (Dev &amp; Q&amp;A)</span>
+              <span style="color: #60a5fa;">↗</span>
+            </a>
+            <a href="https://discord.gg" target="_blank" rel="noopener noreferrer" class="channel-item">
+              <span>👾 Community Discord Server</span>
+              <span style="color: #60a5fa;">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- VERIFIED HARDWARE QUICK MATRIX -->
+        <div class="sidebar-widget">
+          <div class="widget-title">
+            <span>🖨️</span> Verified Hardware Matrix
+          </div>
+          <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">
+            Top community-certified POS peripherals:
+          </p>
+          <div>
+            <div class="hardware-item">
+              <div>
+                <div class="hardware-name">Epson TM-T20III (USB/Ethernet)</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Standard 80mm ESC/POS</div>
+              </div>
+              <span class="hardware-status status-native">Plug &amp; Play</span>
+            </div>
+            <div class="hardware-item">
+              <div>
+                <div class="hardware-name">Star TSP143III (Bluetooth/LAN)</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Tablet &amp; iPad friendly</div>
+              </div>
+              <span class="hardware-status status-bluetooth">Bluetooth</span>
+            </div>
+            <div class="hardware-item">
+              <div>
+                <div class="hardware-name">Honeywell Voyager 1400g (2D)</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Barcode &amp; QR scanning</div>
+              </div>
+              <span class="hardware-status status-native">Plug &amp; Play</span>
+            </div>
+            <div class="hardware-item">
+              <div>
+                <div class="hardware-name">APG Vasario Cash Drawer</div>
+                <div style="font-size: 11px; color: var(--text-muted);">RJ12 printer kick-out trigger</div>
+              </div>
+              <span class="hardware-status status-native">Universal</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- UPVOTED ROADMAP BACKLOG -->
+        <div class="sidebar-widget">
+          <div class="widget-title">
+            <span>🚀</span> Product Roadmap
+          </div>
+          <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">
+            Top features requested and voted by merchants:
+          </p>
+
+          <div style="margin-bottom: 14px;">
+            <span class="roadmap-badge badge-in-progress">In Progress</span>
+            <div style="font-size: 13px; font-weight: 700; color: #fff;">Multi-Location Shift Clock-in</div>
+            <div style="font-size: 11.5px; color: var(--text-muted);">Cross-store payroll hours sync</div>
+          </div>
+
+          <div style="margin-bottom: 14px;">
+            <span class="roadmap-badge badge-review">Under Review</span>
+            <div style="font-size: 13px; font-weight: 700; color: #fff;">Integrated Stored-Value Gift Cards</div>
+            <div style="font-size: 11.5px; color: var(--text-muted);">Digital barcode and magnetic strip balance</div>
+          </div>
+
+          <div>
+            <span class="roadmap-badge badge-shipped">Shipped</span>
+            <div style="font-size: 13px; font-weight: 700; color: #fff;">Self-Hosted RustDesk Diagnostics</div>
+            <div style="font-size: 11.5px; color: var(--text-muted);">Instant 1-click remote floor assistance</div>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+
+    <!-- COMMUNITY CTA -->
+    <section class="community-cta-card">
+      <h2>Have an idea or need advice on your store's setup?</h2>
+      <p>
+        Whether you are opening your first cafe or switching your multi-terminal supermarket from legacy lock-ins, our merchant community and engineering team are here to help.
+      </p>
+      <div class="cta-btn-group">
+        <button class="btn-signup" onclick="openTopicModal('new')" style="padding: 12px 24px; font-size: 14px; cursor: pointer;">
+          + Start a Discussion
+        </button>
+        <a href="support.html" class="btn-login" style="padding: 12px 24px; font-size: 14px; text-decoration: none;">
+          Contact Technical Support
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 26px; height: 26px;">
+            <div style="font-weight: 800; color: #fff; font-size: 18px;">FlexiTap POS</div>
+          </div>
+          <p>Simplify Sales. Grow Your Business. A point-of-sale for shop owners, baristas, and anyone who needs things to just work.</p>
+        </div>
+
+        <div class="footer-col">
+          <h3>Industry Solutions</h3>
+          <ul>
+            <li><a href="pos-for-cafes.html">Cafes &amp; Bakeries</a></li>
+            <li><a href="pos-for-retail.html">Retail &amp; Boutiques</a></li>
+            <li><a href="pos-for-quick-service.html">Quick-Serve &amp; Food Trucks</a></li>
+            <li><a href="pos-for-fine-dining.html">Fine Dining &amp; Full Service</a></li>
+            <li><a href="pos-for-professional-services.html">Professional Services &amp; Salons</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>Product &amp; Community</h3>
+          <ul>
+            <li><a href="features.html">Capabilities</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="community-mock.html">Merchant Community</a></li>
+            <li><a href="insights.html">Insights &amp; News</a></li>
+            <li><a href="support.html">Support</a></li>
+            <li><a href="affiliate.html">Affiliate Program</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>Legal</h3>
+          <ul>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="refunds.html">Refund Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 FlexiTap POS. All rights reserved.</div>
+        <div>Community Hub Concept Preview</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL FOR TOPIC DETAILS / NEW POST -->
+  <div class="modal-overlay" id="topic-modal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeTopicModal()">&times;</button>
+      <div id="modal-content-area">
+        <!-- Dynamically rendered -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Upvoting simulation
+    function handleVote(el) {
+      const countEl = el.querySelector('.vote-count');
+      let count = parseInt(countEl.textContent, 10);
+      if (el.dataset.voted === 'true') {
+        count -= 1;
+        el.dataset.voted = 'false';
+        el.style.borderColor = 'var(--card-border)';
+        el.style.background = 'rgba(15, 23, 42, 0.6)';
+        el.querySelector('.vote-arrow').style.color = '#fff';
+      } else {
+        count += 1;
+        el.dataset.voted = 'true';
+        el.style.borderColor = '#38bdf8';
+        el.style.background = 'rgba(56, 189, 248, 0.15)';
+        el.querySelector('.vote-arrow').style.color = '#38bdf8';
+      }
+      countEl.textContent = count;
+    }
+
+    // Filter topics by category
+    function setFilter(category, btn) {
+      document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const cards = document.querySelectorAll('.discussion-card');
+      cards.forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Search filter
+    function filterTopics() {
+      const q = document.getElementById('search-bar').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.discussion-card');
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (!q || text.includes(q)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Modal view
+    function openTopicModal(id) {
+      const modal = document.getElementById('topic-modal');
+      const area = document.getElementById('modal-content-area');
+
+      if (id === 'new') {
+        area.innerHTML = `
+          <h2 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 8px;">Start a New Discussion</h2>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 18px;">Share a tip, ask about hardware setups, or propose a feature request to the FlexiTap community.</p>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <input type="text" placeholder="Topic Title (e.g. Recommended Bluetooth scale for deli items)" style="padding:10px 14px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:14px; outline:none;" />
+            <select style="padding:10px 14px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:14px; outline:none;">
+              <option>🖨️ Hardware & Printers</option>
+              <option>☕ Cafe & Quick-Serve Operations</option>
+              <option>🛍️ Retail & Multi-Register</option>
+              <option>💡 Feature Request / Product Idea</option>
+            </select>
+            <textarea rows="4" placeholder="Describe your question or workflow in detail..." style="padding:10px 14px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:14px; outline:none; resize:none;"></textarea>
+            <button class="btn-signup" onclick="alert('Thank you! In production this submits directly to GitHub Discussions via Giscus API.'); closeTopicModal();" style="padding:10px; cursor:pointer;">Publish Discussion</button>
+          </div>`;
+      } else {
+        area.innerHTML = `
+          <h2 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 8px;">Discussion Thread Preview</h2>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">In production, clicking opens the full threaded conversation powered by GitHub Discussions / Giscus with instant community replies.</p>
+          <div style="padding:14px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:8px; margin-bottom:16px; font-size:13.5px; color:#cbd5e1;">
+            ✓ Real-time upvoting enabled<br>
+            ✓ Markdown code blocks &amp; hardware images supported<br>
+            ✓ Official DevBrew Staff &amp; Verified Partner Badges
+          </div>
+          <button class="btn-signup" onclick="closeTopicModal()" style="width:100%; padding:10px; cursor:pointer;">Close Preview</button>`;
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    function closeTopicModal() {
+      document.getElementById('topic-modal').style.display = 'none';
+    }
+
+    window.onclick = function(e) {
+      const modal = document.getElementById('topic-modal');
+      if (e.target === modal) closeTopicModal();
+    }
+  </script>
+</body>
+</html>
