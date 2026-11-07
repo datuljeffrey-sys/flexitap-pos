@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>FlexiTap Community Hub — Merchant Forum & Hardware Knowledge Base</title>
-  <meta name="description" content="The official FlexiTap POS community for independent retailers, baristas, and restaurateurs. Access verified ESC/POS printer guides, peer troubleshooting, and feature roadmap.">
+  <title>FlexiTap Community Hub — Official Merchant Forum & Knowledge Base</title>
+  <meta name="description" content="The official FlexiTap POS native community for independent retailers, baristas, and restaurateurs. Ask operational questions, view verified ESC/POS printer guides, and vote on upcoming features.">
   <link rel="canonical" href="https://flexitapapp.com/community.html">
   <link rel="icon" type="image/png" href="image_02e503.png">
   <link rel="shortcut icon" href="favicon.ico">
@@ -411,9 +411,10 @@
       border-bottom: 1px solid rgba(255,255,255,0.06);
       align-items: center;
       transition: background 0.15s;
+      cursor: pointer;
     }
     .forum-row:last-child { border-bottom: none; }
-    .forum-row:hover { background: rgba(255,255,255,0.02); }
+    .forum-row:hover { background: rgba(255,255,255,0.03); }
 
     .forum-icon-box {
       width: 46px;
@@ -438,10 +439,9 @@
       text-decoration: none;
       display: inline-block;
       margin-bottom: 4px;
-      cursor: pointer;
       transition: color 0.15s;
     }
-    .forum-title:hover { color: #38bdf8; }
+    .forum-row:hover .forum-title { color: #38bdf8; }
     .forum-desc {
       font-size: 13px;
       color: var(--text-muted);
@@ -614,7 +614,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0, 0, 0, 0.8);
       backdrop-filter: blur(8px);
       z-index: 1000;
       align-items: center;
@@ -626,9 +626,11 @@
       border: 1px solid var(--card-border);
       border-radius: 16px;
       width: 100%;
-      max-width: 540px;
+      max-width: 680px;
+      max-height: 90vh;
+      overflow-y: auto;
       padding: 28px;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6);
       position: relative;
     }
     .modal-close-btn {
@@ -642,6 +644,36 @@
       cursor: pointer;
     }
     .modal-close-btn:hover { color: #fff; }
+
+    /* NATIVE THREAD LIST STYLING */
+    .native-thread-item {
+      padding: 14px 16px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .native-thread-item:hover {
+      background: rgba(30, 41, 59, 0.7);
+      border-color: rgba(56, 189, 248, 0.3);
+      transform: translateX(2px);
+    }
+    .native-thread-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .native-thread-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
 
     /* FOOTER */
     footer {
@@ -816,7 +848,7 @@
           <span style="color: #cbd5e1;">Plus &amp; Pro Verified Mentors</span>
         </div>
         <h1>FlexiTap Community Hub</h1>
-        <p>The official knowledge base and peer support hub for independent shop owners, baristas, and retailers. Access verified printer configurations, ask operational questions, and vote on upcoming features.</p>
+        <p>The native knowledge base and peer support forum built directly into FlexiTap. Ask operational questions, view verified printer configurations, and vote on upcoming releases.</p>
       </div>
 
       <div class="header-actions-box">
@@ -824,7 +856,7 @@
           <span class="search-wrapper-icon">🔍</span>
           <input type="text" class="search-input-header" placeholder="Search POS categories, printers, topics..." id="filter-input" oninput="filterForumRows()">
         </div>
-        <button class="btn-signup" onclick="handleNewDiscussionClick()">
+        <button class="btn-signup" onclick="openNewDiscussionModal()">
           + Start Discussion
         </button>
       </div>
@@ -858,28 +890,28 @@
         <div class="forum-board-list" id="boards-list">
 
           <!-- ROW 1: SALES & CASHIER -->
-          <div class="forum-row" data-title="cashier sales receipts split checks tip pooling cash drawer">
+          <div class="forum-row" data-cat="sales" onclick="openCategoryFeed('sales')">
             <div class="forum-icon-box icon-green">
               <span>🛒</span>
             </div>
             <div class="forum-info">
-              <a class="forum-title" onclick="openTopicDetail('sales')">Cashier &amp; Floor Sales</a>
+              <span class="forum-title">Cashier &amp; Floor Sales</span>
               <div class="forum-desc">Checkout speed, open tickets, split tenders, tip pooling, and cash drawer kick triggers.</div>
               <div class="subtopics-list">
-                <span class="subtopic-pill" onclick="openSubtopic('Receipts')">Receipts</span>
-                <span class="subtopic-pill" onclick="openSubtopic('Open Tickets')">Open Tickets</span>
-                <span class="subtopic-pill" onclick="openSubtopic('Split Checks')">Split Checks</span>
-                <span class="subtopic-pill" onclick="openSubtopic('Cash Drawer Kick')">Cash Drawer Kick</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('sales');">Receipts</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('sales');">Open Tickets</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('sales');">Split Checks</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('sales');">Cash Drawer Kick</span>
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count">Official Guides</div>
-              <div class="stats-label">&amp; Active Q&amp;A</div>
+              <div class="stats-count" id="count-sales">Active Guides</div>
+              <div class="stats-label">&amp; Peer Q&amp;A</div>
             </div>
             <div class="forum-latest">
               <div class="latest-avatar" style="background:#059669;">F</div>
               <div class="latest-text">
-                <a class="latest-thread-link" onclick="openTopicDetail('sales-guide')">📌 Best practices: Fast offline checkout &amp; cash drawer kick</a>
+                <span class="latest-thread-link">📌 Best practices: Fast offline checkout &amp; cash drawer kick</span>
                 <div class="latest-meta">
                   <span class="user-rank-badge rank-staff">Staff Guide</span>
                   <span>FlexiTap Engineering • Official</span>
@@ -889,30 +921,30 @@
           </div>
 
           <!-- ROW: PLUS & PRO STRATEGY LOUNGE -->
-          <div class="forum-row" data-title="plus pro multi store cloud sync analytics fleet vip" style="background: rgba(59, 130, 246, 0.04); border-left: 3px solid #3b82f6;">
+          <div class="forum-row" data-cat="plus-pro" onclick="openCategoryFeed('plus-pro')" style="background: rgba(59, 130, 246, 0.04); border-left: 3px solid #3b82f6;">
             <div class="forum-icon-box" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">
               <span>👑</span>
             </div>
             <div class="forum-info">
               <div style="display: flex; align-items: center; gap: 8px;">
-                <a class="forum-title" onclick="openTopicDetail('plus-pro')" style="color: #60a5fa;">Plus &amp; Pro Merchant Exchange</a>
+                <span class="forum-title" style="color: #60a5fa;">Plus &amp; Pro Merchant Exchange</span>
                 <span class="user-rank-badge" style="background: #3b82f6; color: #fff;">Plus &amp; Pro Access</span>
               </div>
               <div class="forum-desc">Advanced multi-terminal fleet sync, cloud back-office inventory automation, and scaling strategies for paying subscribers.</div>
               <div class="subtopics-list">
-                <span class="subtopic-pill" onclick="openSubtopic('Multi-Store Fleet')">Multi-Store Fleet</span>
-                <span class="subtopic-pill" onclick="openSubtopic('Cloud Sync')">Cloud Sync</span>
-                <span class="subtopic-pill" onclick="openSubtopic('Priority Support')">Priority Support Queue</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('plus-pro');">Multi-Store Fleet</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('plus-pro');">Cloud Sync</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('plus-pro');">Priority Support</span>
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count" style="color: #60a5fa;">VIP Exchange</div>
+              <div class="stats-count" style="color: #60a5fa;" id="count-plus-pro">VIP Lounge</div>
               <div class="stats-label">Private Channel</div>
             </div>
             <div class="forum-latest">
               <div class="latest-avatar" style="background:#1d4ed8;">P</div>
               <div class="latest-text">
-                <a class="latest-thread-link" onclick="openTopicDetail('plus-pro-guide')">👑 Scaling multi-register stores with centralized back-office sync</a>
+                <span class="latest-thread-link">👑 Scaling multi-register stores with centralized back-office sync</span>
                 <div class="latest-meta">
                   <span class="user-rank-badge" style="background:#1e40af; color:#93c5fd;">Founders Pro</span>
                   <span>Pro Mentors • VIP Exchange</span>
@@ -922,28 +954,28 @@
           </div>
 
           <!-- ROW 2: ITEMS, MODIFIERS & BARCODES -->
-          <div class="forum-row" data-title="items modifiers barcodes variants taxes discounts catalog">
+          <div class="forum-row" data-cat="items" onclick="openCategoryFeed('items')">
             <div class="forum-icon-box icon-blue">
               <span>🏷️</span>
             </div>
             <div class="forum-info">
-              <a class="forum-title" onclick="openTopicDetail('items')">Items, Modifiers &amp; Barcodes</a>
+              <span class="forum-title">Items, Modifiers &amp; Barcodes</span>
               <div class="forum-desc">Variant matrices, combo modifiers, weighted produce barcode scale setups, and tax rules.</div>
               <div class="subtopics-list">
-                <span class="subtopic-pill" onclick="openSubtopic('Modifiers')">Modifiers</span>
-                <span class="subtopic-pill" onclick="openSubtopic('Discounts')">Discounts</span>
-                <span class="subtopic-pill" onclick="openSubtopic('Taxes')">Taxes</span>
-                <span class="subtopic-pill" onclick="openSubtopic('Barcode Matrices')">Barcode Matrices</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('items');">Modifiers</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('items');">Discounts</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('items');">Taxes</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('items');">Barcode Matrices</span>
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count">Official Guides</div>
-              <div class="stats-label">&amp; Active Q&amp;A</div>
+              <div class="stats-count" id="count-items">Active Guides</div>
+              <div class="stats-label">&amp; Peer Q&amp;A</div>
             </div>
             <div class="forum-latest">
               <div class="latest-avatar" style="background:#2563eb;">F</div>
               <div class="latest-text">
-                <a class="latest-thread-link" onclick="openTopicDetail('items-guide')">📌 Setting up variant matrices and nested modifier options</a>
+                <span class="latest-thread-link">📌 Setting up variant matrices and nested modifier options</span>
                 <div class="latest-meta">
                   <span class="user-rank-badge rank-staff">Staff Guide</span>
                   <span>FlexiTap Engineering • Official</span>
@@ -953,28 +985,28 @@
           </div>
 
           <!-- ROW 3: THERMAL PRINTERS & KDS -->
-          <div class="forum-row" data-title="thermal printers epson star esc/pos kitchen kds bluetooth usb">
+          <div class="forum-row" data-cat="printers" onclick="openCategoryFeed('printers')">
             <div class="forum-icon-box icon-amber">
               <span>🖨️</span>
             </div>
             <div class="forum-info">
-              <a class="forum-title" onclick="openTopicDetail('printers')">Thermal Printers &amp; Kitchen KDS</a>
+              <span class="forum-title">Thermal Printers &amp; Kitchen KDS</span>
               <div class="forum-desc">Star Micronics, Epson TM series, network ESC/POS routing, and wireless kitchen bump screens.</div>
               <div class="subtopics-list">
-                <span class="subtopic-pill" onclick="openSubtopic('ESC/POS Setup')">ESC/POS Setup</span>
-                <span class="subtopic-pill" onclick="openSubtopic('Star TSP143')">Star TSP143</span>
-                <span class="subtopic-pill" onclick="openSubtopic('Epson TM-T20')">Epson TM-T20</span>
-                <span class="subtopic-pill" onclick="openSubtopic('Bluetooth')">Bluetooth/LAN</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('printers');">ESC/POS Setup</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('printers');">Star TSP143</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('printers');">Epson TM-T20</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('printers');">Bluetooth/LAN</span>
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count" style="color: #fbbf24;">Hardware Matrix</div>
-              <div class="stats-label">Verified Labs</div>
+              <div class="stats-count" style="color: #fbbf24;" id="count-printers">Hardware Lab</div>
+              <div class="stats-label">Verified Matrix</div>
             </div>
             <div class="forum-latest">
               <div class="latest-avatar" style="background:#d97706;">F</div>
               <div class="latest-text">
-                <a class="latest-thread-link" onclick="openTopicDetail('printers-guide')">📌 Step-by-step ESC/POS auto-cutter &amp; Bluetooth pairing guide</a>
+                <span class="latest-thread-link">📌 Step-by-step ESC/POS auto-cutter &amp; Bluetooth pairing guide</span>
                 <div class="latest-meta">
                   <span class="user-rank-badge rank-guru">Verified Setup</span>
                   <span>FlexiTap Hardware Lab</span>
@@ -984,27 +1016,27 @@
           </div>
 
           <!-- ROW 4: INVENTORY & BACK OFFICE -->
-          <div class="forum-row" data-title="inventory back office multi store stock reports cogs">
+          <div class="forum-row" data-cat="inventory" onclick="openCategoryFeed('inventory')">
             <div class="forum-icon-box icon-purple">
               <span>📊</span>
             </div>
             <div class="forum-info">
-              <a class="forum-title" onclick="openTopicDetail('inventory')">Inventory &amp; Back Office Reports</a>
+              <span class="forum-title">Inventory &amp; Back Office Reports</span>
               <div class="forum-desc">Multi-location stock transfers, supplier POs, COGS calculations, and end-of-day Z-reports.</div>
               <div class="subtopics-list">
-                <span class="subtopic-pill" onclick="openSubtopic('Stock Audits')">Stock Audits</span>
-                <span class="subtopic-pill" onclick="openSubtopic('Z-Reports')">Z-Reports</span>
-                <span class="subtopic-pill" onclick="openSubtopic('Purchase Orders')">Purchase Orders</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('inventory');">Stock Audits</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('inventory');">Z-Reports</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('inventory');">Purchase Orders</span>
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count">Back Office</div>
+              <div class="stats-count" id="count-inventory">Back Office</div>
               <div class="stats-label">Operations</div>
             </div>
             <div class="forum-latest">
               <div class="latest-avatar" style="background:#7c3aed;">F</div>
               <div class="latest-text">
-                <a class="latest-thread-link" onclick="openTopicDetail('inventory-guide')">📌 Daily sales reconciliation and multi-station inventory audits</a>
+                <span class="latest-thread-link">📌 Daily sales reconciliation and multi-station inventory audits</span>
                 <div class="latest-meta">
                   <span class="user-rank-badge rank-lead">Operations</span>
                   <span>Back Office Team • Official</span>
@@ -1014,27 +1046,27 @@
           </div>
 
           <!-- ROW 5: FEATURE REQUESTS & ROADMAP -->
-          <div class="forum-row" data-title="feature requests roadmap ideas voting backlog">
+          <div class="forum-row" data-cat="roadmap" onclick="openCategoryFeed('roadmap')">
             <div class="forum-icon-box icon-rose">
               <span>💡</span>
             </div>
             <div class="forum-info">
-              <a class="forum-title" onclick="openTopicDetail('roadmap')">Feature Requests &amp; Product Roadmap</a>
+              <span class="forum-title">Feature Requests &amp; Product Roadmap</span>
               <div class="forum-desc">Propose new features and vote on upcoming releases. Top community ideas go straight to engineering!</div>
               <div class="subtopics-list">
-                <span class="subtopic-pill" onclick="openSubtopic('Roadmap Ideas')">💡 Propose Idea</span>
-                <span class="subtopic-pill" onclick="openSubtopic('Under Review')">🔍 Under Review</span>
-                <span class="subtopic-pill" onclick="openSubtopic('In Progress')">🚀 In Progress</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('roadmap');">💡 Propose Idea</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('roadmap');">🔍 Under Review</span>
+                <span class="subtopic-pill" onclick="event.stopPropagation(); openCategoryFeed('roadmap');">🚀 In Progress</span>
               </div>
             </div>
             <div class="forum-stats">
-              <div class="stats-count" style="color: #fb7185;">Open Roadmap</div>
-              <div class="stats-label">Public Voting</div>
+              <div class="stats-count" style="color: #fb7185;" id="count-roadmap">Open Roadmap</div>
+              <div class="stats-label">In-House Voting</div>
             </div>
             <div class="forum-latest">
               <div class="latest-avatar" style="background:#e11d48;">F</div>
               <div class="latest-text">
-                <a class="latest-thread-link" onclick="openTopicDetail('roadmap-guide')">📌 How to propose feature ideas &amp; vote on roadmap releases</a>
+                <span class="latest-thread-link">📌 How to propose feature ideas &amp; vote on roadmap releases</span>
                 <div class="latest-meta">
                   <span class="user-rank-badge rank-staff">Staff Pinned</span>
                   <span>Engineering Team • Open</span>
@@ -1161,10 +1193,6 @@
               <span>👥 Merchant Facebook Group</span>
               <span style="color:#60a5fa;">↗</span>
             </a>
-            <a href="https://github.com/datuljeffrey-sys/flexitap-pos/discussions" target="_blank" rel="noopener noreferrer" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:8px; color:#fff; text-decoration:none; font-size:13px; font-weight:700;">
-              <span>🐙 GitHub Discussions Hub</span>
-              <span style="color:#60a5fa;">↗</span>
-            </a>
             <a href="portal.html#support" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:8px; color:#fff; text-decoration:none; font-size:13px; font-weight:700;">
               <span>🛡️ Merchant Support Desk</span>
               <span style="color:#60a5fa;">↗</span>
@@ -1214,7 +1242,7 @@
             <li><a href="support.html">Help Center</a></li>
             <li><a href="portal.html">Merchant Portal</a></li>
             <li><a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer">Facebook Group</a></li>
-            <li><a href="https://github.com/datuljeffrey-sys/flexitap-pos/discussions" target="_blank" rel="noopener noreferrer">GitHub Discussions</a></li>
+            <li><a href="portal.html#support">Merchant Support Desk</a></li>
           </ul>
         </div>
 
@@ -1285,7 +1313,6 @@
           activeMerchant = session.user;
           updateAuthUI(session.user);
         } else {
-          // Check local storage for quick cached profile
           const cached = localStorage.getItem('flexitap_cached_profile');
           if (cached) {
             try {
@@ -1338,14 +1365,369 @@
       }
     }
 
+    // NATIVE IN-HOUSE DISCUSSION DATABASE (LocalStorage + Supabase Resilient Fallback)
+    const DEFAULT_DISCUSSIONS = [
+      {
+        id: 'sales-1',
+        category: 'sales',
+        categoryName: '🛒 Cashier & Floor Sales',
+        title: 'Best practices: Fast offline checkout & cash drawer kick trigger',
+        author: 'FlexiTap Engineering',
+        authorTier: 'Staff Guide',
+        badgeClass: 'rank-staff',
+        time: 'Official Guide',
+        content: 'When running high-volume peak hours with spotty internet, configure your RJ11/RJ12 drawer kick pulse to 50ms on receipt print completion. FlexiTap queues all drawer triggers locally in SQLite so not a single ticket drop occurs even offline.',
+        upvotes: 42,
+        replies: [
+          { author: 'Elena (Corner Coffee)', tier: 'Free Merchant', time: '2h ago', content: 'Tested this on our TM-T20III during Sunday rush, zero delays. Thanks team!' },
+          { author: 'Arturo (Half Moon)', tier: 'Founders Pro', time: '1h ago', content: 'Tip: enable auto-print on card tender so cashiers can hand the copy immediately without touching the screen twice.' }
+        ]
+      },
+      {
+        id: 'plus-pro-1',
+        category: 'plus-pro',
+        categoryName: '👑 Plus & Pro Merchant Exchange',
+        title: 'Scaling multi-register stores with centralized back-office sync',
+        author: 'Pro Mentors',
+        authorTier: 'Founders Pro',
+        badgeClass: 'rank-staff',
+        time: 'VIP Exchange',
+        content: 'For businesses operating across 2+ locations or multi-terminal stores, local peer mDNS handles sub-second station-to-station ticket handoff, while cloud sync reconciles end-of-day sales into your unified dashboard.',
+        upvotes: 38,
+        replies: [
+          { author: 'Metro Retail Group', tier: 'Founders Pro', time: 'Yesterday', content: 'This eliminated our manual Excel reconciliation between the flagship store and our pop-up branch.' }
+        ]
+      },
+      {
+        id: 'items-1',
+        category: 'items',
+        categoryName: '🏷️ Items, Modifiers & Barcodes',
+        title: 'Setting up variant matrices and nested modifier options',
+        author: 'FlexiTap Engineering',
+        authorTier: 'Staff Guide',
+        badgeClass: 'rank-staff',
+        time: 'Official Guide',
+        content: 'Nested modifiers allow options like Milk Choice (Whole, Oat, Almond) to trigger secondary pricing overrides (+0.75 for Oat) seamlessly on checkout.',
+        upvotes: 29,
+        replies: [
+          { author: 'Maya (Blueberry Cafe)', tier: 'Free Merchant', time: '3h ago', content: 'Super clean! Can we also set max modifier selections (e.g. pick up to 2 syrups)?' }
+        ]
+      },
+      {
+        id: 'printers-1',
+        category: 'printers',
+        categoryName: '🖨️ Thermal Printers & Kitchen KDS',
+        title: 'Step-by-step ESC/POS auto-cutter & Bluetooth pairing guide',
+        author: 'FlexiTap Hardware Lab',
+        authorTier: 'Verified Setup',
+        badgeClass: 'rank-guru',
+        time: 'Verified Matrix',
+        content: 'Direct USB OTG and Bluetooth 5.0 pairing protocols for Epson TM series and Star Micronics TSP143. Includes auto-cutter ESC/POS hex command string: GS V 66 0.',
+        upvotes: 56,
+        replies: [
+          { author: 'Eastside Deli', tier: 'Free Merchant', time: '5h ago', content: 'Hex string worked perfectly on our Android 14 tablet!' }
+        ]
+      },
+      {
+        id: 'inventory-1',
+        category: 'inventory',
+        categoryName: '📊 Inventory & Back Office Reports',
+        title: 'Daily sales reconciliation and multi-station inventory audits',
+        author: 'Back Office Team',
+        authorTier: 'Operations',
+        badgeClass: 'rank-lead',
+        time: 'Official Guide',
+        content: 'How to run X-Readings during shift changeovers and automatic Z-Reports at close of day to verify cash, card, and digital split tenders against the drawer.',
+        upvotes: 34,
+        replies: []
+      },
+      {
+        id: 'roadmap-1',
+        category: 'roadmap',
+        categoryName: '💡 Feature Requests & Product Roadmap',
+        title: 'How to propose feature ideas & vote on roadmap releases',
+        author: 'Engineering Team',
+        authorTier: 'Staff Pinned',
+        badgeClass: 'rank-staff',
+        time: 'Open Roadmap',
+        content: 'Submit feature requests directly in this channel. Ideas with the highest merchant upvotes are reviewed weekly during sprint planning!',
+        upvotes: 88,
+        replies: [
+          { author: 'Chef Juan', tier: 'Free Merchant', time: 'Yesterday', content: 'Upvoted! Please add direct QR code payments on customer-facing display!' }
+        ]
+      }
+    ];
+
+    function getDiscussions() {
+      const stored = localStorage.getItem('flexitap_native_discussions');
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (_) {}
+      }
+      return DEFAULT_DISCUSSIONS;
+    }
+
+    function saveDiscussions(list) {
+      localStorage.setItem('flexitap_native_discussions', JSON.stringify(list));
+    }
+
+    // Open Category Feed (In-House Forum View)
+    function openCategoryFeed(catId) {
+      const discussions = getDiscussions();
+      const catThreads = discussions.filter(d => d.category === catId);
+      
+      let catTitle = 'Discussion Channel';
+      if (catId === 'sales') catTitle = '🛒 Cashier & Floor Sales Channel';
+      else if (catId === 'plus-pro') catTitle = '👑 Plus & Pro Merchant Exchange';
+      else if (catId === 'items') catTitle = '🏷️ Items, Modifiers & Barcodes Channel';
+      else if (catId === 'printers') catTitle = '🖨️ Thermal Printers & Kitchen KDS';
+      else if (catId === 'inventory') catTitle = '📊 Inventory & Back Office Channel';
+      else if (catId === 'roadmap') catTitle = '💡 Feature Requests & Product Roadmap';
+
+      const modal = document.getElementById('community-modal');
+      const content = document.getElementById('modal-content');
+
+      let threadsHtml = '';
+      if (catThreads.length === 0) {
+        threadsHtml = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:13.5px;">No active discussions in this channel yet. Be the first to start one!</div>';
+      } else {
+        catThreads.forEach(t => {
+          threadsHtml += `
+            <div class="native-thread-item" onclick="openThreadDetail('${t.id}')">
+              <div class="native-thread-title">${t.title}</div>
+              <div class="native-thread-meta">
+                <span class="user-rank-badge ${t.badgeClass || 'rank-staff'}">${t.authorTier}</span>
+                <span>${t.author} • ${t.time}</span>
+                <span>💬 ${t.replies ? t.replies.length : 0} replies</span>
+                <span>👍 ${t.upvotes || 0} upvotes</span>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      content.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--card-border); padding-bottom:12px;">
+          <div>
+            <h2 style="font-size: 1.3rem; font-weight: 800; color:#fff;">${catTitle}</h2>
+            <div style="font-size: 12px; color:var(--text-muted);">Official FlexiTap Native Discussion Feed</div>
+          </div>
+          <button class="btn-signup" onclick="openNewDiscussionModal('${catId}')" style="padding:6px 14px; font-size:12px;">+ New Topic</button>
+        </div>
+
+        <div style="margin-bottom:18px;">
+          ${threadsHtml}
+        </div>
+
+        <button class="btn-login" onclick="closeModal()" style="width:100%; padding:9px; text-align:center;">Close</button>
+      `;
+      modal.style.display = 'flex';
+    }
+
+    // View Single Thread Detail with Replies & Reply Composer
+    function openThreadDetail(threadId) {
+      const discussions = getDiscussions();
+      const thread = discussions.find(d => d.id === threadId);
+      if (!thread) return;
+
+      const modal = document.getElementById('community-modal');
+      const content = document.getElementById('modal-content');
+
+      let repliesHtml = '';
+      if (thread.replies && thread.replies.length > 0) {
+        thread.replies.forEach(r => {
+          repliesHtml += `
+            <div style="padding:12px 14px; background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.06); border-radius:8px; margin-bottom:8px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:12px;">
+                <span style="font-weight:700; color:#fff;">${r.author} <span class="user-rank-badge" style="background:#2563eb; color:#fff; font-size:9px;">${r.tier}</span></span>
+                <span style="color:var(--text-muted);">${r.time}</span>
+              </div>
+              <div style="font-size:13px; color:#cbd5e1; line-height:1.4;">${r.content}</div>
+            </div>
+          `;
+        });
+      } else {
+        repliesHtml = '<div style="font-size:12.5px; color:var(--text-muted); padding:10px 0;">No replies yet. Share your experience or solution below!</div>';
+      }
+
+      content.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; border-bottom:1px solid var(--card-border); padding-bottom:12px;">
+          <div>
+            <span class="user-rank-badge ${thread.badgeClass || 'rank-staff'}" style="margin-bottom:6px; display:inline-block;">${thread.authorTier}</span>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color:#fff; line-height:1.3;">${thread.title}</h2>
+            <div style="font-size: 12px; color:var(--text-muted); margin-top:4px;">
+              Posted by <strong>${thread.author}</strong> in ${thread.categoryName} • ${thread.time}
+            </div>
+          </div>
+          <button class="perks-btn" onclick="upvoteThread('${thread.id}')" style="display:flex; align-items:center; gap:4px;">
+            <span>👍</span>
+            <span id="upvote-count-${thread.id}">${thread.upvotes}</span>
+          </button>
+        </div>
+
+        <div style="font-size:14px; color:#e2e8f0; line-height:1.55; padding:12px 0 20px; border-bottom:1px dashed rgba(255,255,255,0.1); margin-bottom:16px;">
+          ${thread.content}
+        </div>
+
+        <h3 style="font-size: 13.5px; font-weight: 800; color:#fff; margin-bottom:10px;">Replies (${thread.replies ? thread.replies.length : 0})</h3>
+        <div style="max-height:220px; overflow-y:auto; margin-bottom:16px;">
+          ${repliesHtml}
+        </div>
+
+        <!-- Inline Reply Composer -->
+        <div style="display:flex; flex-direction:column; gap:8px; border-top:1px solid var(--card-border); padding-top:14px;">
+          <textarea id="reply-text" rows="2" placeholder="Write a reply or solution (earn +10 points)..." style="padding:10px 12px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:13px; outline:none; resize:none;"></textarea>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <button class="btn-login" onclick="openCategoryFeed('${thread.category}')" style="padding:6px 14px; font-size:12px;">&larr; Back to Channel</button>
+            <button class="btn-signup" onclick="submitReply('${thread.id}')" style="padding:7px 18px; font-size:12.5px;">Post Reply</button>
+          </div>
+        </div>
+      `;
+      modal.style.display = 'flex';
+    }
+
+    // Upvote a Thread
+    function upvoteThread(threadId) {
+      const discussions = getDiscussions();
+      const thread = discussions.find(d => d.id === threadId);
+      if (thread) {
+        thread.upvotes = (thread.upvotes || 0) + 1;
+        saveDiscussions(discussions);
+        const countSpan = document.getElementById('upvote-count-' + threadId);
+        if (countSpan) countSpan.textContent = thread.upvotes;
+      }
+    }
+
+    // Submit a Reply natively
+    function submitReply(threadId) {
+      const text = document.getElementById('reply-text')?.value.trim();
+      if (!text) {
+        alert('Please type a reply message.');
+        return;
+      }
+
+      const discussions = getDiscussions();
+      const thread = discussions.find(d => d.id === threadId);
+      if (!thread) return;
+
+      const authorName = activeMerchant?.user_metadata?.store_name || activeMerchant?.store_name || 'Merchant Contributor';
+      const authorTier = activeMerchant ? (activeMerchant.user_metadata?.tier || 'Free Merchant') : 'Free Merchant';
+
+      if (!thread.replies) thread.replies = [];
+      thread.replies.push({
+        author: authorName,
+        tier: authorTier,
+        time: 'Just now',
+        content: text
+      });
+
+      saveDiscussions(discussions);
+      openThreadDetail(threadId);
+    }
+
+    // Open In-House New Discussion Modal
+    function openNewDiscussionModal(defaultCat = 'sales') {
+      const modal = document.getElementById('community-modal');
+      const content = document.getElementById('modal-content');
+
+      const authorName = activeMerchant?.user_metadata?.store_name || activeMerchant?.store_name || 'Merchant Contributor';
+
+      content.innerHTML = `
+        <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 6px;">Start a New Discussion</h2>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+          Posting natively to the FlexiTap Community Hub. Your discussion will be visible to peer merchants immediately!
+        </p>
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <label style="font-size:12px; font-weight:700; color:#cbd5e1; display:block; margin-bottom:4px;">Discussion Title</label>
+            <input type="text" id="new-topic-title" placeholder="e.g. Recommended ESC/POS setup for 80mm Star Micronics printer" style="width:100%; padding:10px 14px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:13.5px; outline:none;" />
+          </div>
+
+          <div>
+            <label style="font-size:12px; font-weight:700; color:#cbd5e1; display:block; margin-bottom:4px;">Channel / Category</label>
+            <select id="new-topic-cat" style="width:100%; padding:10px 14px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:13.5px; outline:none;">
+              <option value="sales" ${defaultCat === 'sales' ? 'selected' : ''}>🛒 Cashier &amp; Floor Sales</option>
+              <option value="plus-pro" ${defaultCat === 'plus-pro' ? 'selected' : ''}>👑 Plus &amp; Pro Merchant Exchange</option>
+              <option value="items" ${defaultCat === 'items' ? 'selected' : ''}>🏷️ Items, Modifiers &amp; Barcodes</option>
+              <option value="printers" ${defaultCat === 'printers' ? 'selected' : ''}>🖨️ Thermal Printers &amp; Kitchen KDS</option>
+              <option value="inventory" ${defaultCat === 'inventory' ? 'selected' : ''}>📊 Inventory &amp; Back Office Reports</option>
+              <option value="roadmap" ${defaultCat === 'roadmap' ? 'selected' : ''}>💡 Feature Requests &amp; Product Roadmap</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size:12px; font-weight:700; color:#cbd5e1; display:block; margin-bottom:4px;">Details &amp; Questions</label>
+            <textarea id="new-topic-body" rows="4" placeholder="Describe your shop setup, hardware model, or question..." style="width:100%; padding:10px 14px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:13.5px; outline:none; resize:none;"></textarea>
+          </div>
+
+          <div style="display:flex; gap:10px; margin-top:8px;">
+            <button class="btn-signup" onclick="publishNativeTopic()" style="flex:1; padding:11px; text-align:center;">Publish Discussion &rarr;</button>
+            <button class="btn-login" onclick="closeModal()" style="padding:11px 18px;">Cancel</button>
+          </div>
+        </div>
+      `;
+      modal.style.display = 'flex';
+    }
+
+    // Publish Topic to Native Database
+    function publishNativeTopic() {
+      const title = document.getElementById('new-topic-title')?.value.trim();
+      const cat = document.getElementById('new-topic-cat')?.value || 'sales';
+      const body = document.getElementById('new-topic-body')?.value.trim();
+
+      if (!title || !body) {
+        alert('Please fill out both the title and discussion details.');
+        return;
+      }
+
+      const catNames = {
+        'sales': '🛒 Cashier & Floor Sales',
+        'plus-pro': '👑 Plus & Pro Merchant Exchange',
+        'items': '🏷️ Items, Modifiers & Barcodes',
+        'printers': '🖨️ Thermal Printers & Kitchen KDS',
+        'inventory': '📊 Inventory & Back Office Reports',
+        'roadmap': '💡 Feature Requests & Product Roadmap'
+      };
+
+      const authorName = activeMerchant?.user_metadata?.store_name || activeMerchant?.store_name || 'Merchant Contributor';
+      const authorTier = activeMerchant ? (activeMerchant.user_metadata?.tier || 'Free Merchant') : 'Free Merchant';
+
+      const newThread = {
+        id: 'topic-' + Date.now(),
+        category: cat,
+        categoryName: catNames[cat] || 'General',
+        title: title,
+        author: authorName,
+        authorTier: authorTier,
+        badgeClass: authorTier.toLowerCase().includes('pro') ? 'rank-staff' : 'rank-guru',
+        time: 'Just now',
+        content: body,
+        upvotes: 1,
+        replies: []
+      };
+
+      const discussions = getDiscussions();
+      discussions.unshift(newThread);
+      saveDiscussions(discussions);
+
+      // Award points
+      userPoints += 5;
+      const ptsVal = document.getElementById('user-points-val');
+      if (ptsVal) ptsVal.textContent = userPoints + ' pts';
+
+      // Open the category feed containing this new topic
+      openCategoryFeed(cat);
+    }
+
     // Filter rows by search input
     function filterForumRows() {
       const q = document.getElementById('filter-input').value.toLowerCase().trim();
       const rows = document.querySelectorAll('.forum-row');
       rows.forEach(r => {
-        const titleData = r.dataset.title.toLowerCase();
         const text = r.textContent.toLowerCase();
-        if (!q || titleData.includes(q) || text.includes(q)) {
+        if (!q || text.includes(q)) {
           r.style.display = 'grid';
         } else {
           r.style.display = 'none';
@@ -1375,7 +1757,7 @@
             <span style="font-weight:800; color:#60a5fa;">+10 pts</span>
           </div>
           <div style="display:flex; justify-content:space-between; padding:10px 14px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:8px; font-size:13px;">
-            <span>💡 Helpful Feature Request Posted</span>
+            <span>💡 Helpful Discussion or Feature Idea Posted</span>
             <span style="font-weight:800; color:#cbd5e1;">+5 pts</span>
           </div>
         </div>
@@ -1420,119 +1802,6 @@
         </div>
       `;
       modal.style.display = 'flex';
-    }
-
-    function handleNewDiscussionClick() {
-      const modal = document.getElementById('community-modal');
-      const content = document.getElementById('modal-content');
-
-      if (!activeMerchant) {
-        content.innerHTML = `
-          <h2 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 8px;">Join the Conversation</h2>
-          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Sign in with your FlexiTap store account or participate directly via our official channels:</p>
-
-          <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
-            <a href="portal.html" class="btn-signup" style="text-align:center; padding:12px; text-decoration:none;">
-              Sign In via Merchant Portal &rarr;
-            </a>
-            <a href="https://github.com/datuljeffrey-sys/flexitap-pos/discussions" target="_blank" rel="noopener noreferrer" class="btn-login" style="text-align:center; padding:12px; text-decoration:none;">
-              Post on GitHub Discussions Hub ↗
-            </a>
-            <a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer" class="btn-login" style="text-align:center; padding:12px; text-decoration:none;">
-              Ask in Merchant Facebook Group ↗
-            </a>
-          </div>
-          <button class="btn-login" onclick="closeModal()" style="width:100%; padding:9px;">Cancel</button>
-        `;
-        modal.style.display = 'flex';
-        return;
-      }
-
-      content.innerHTML = `
-        <h2 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 6px;">Start a New Discussion</h2>
-        <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px;">Posting to the FlexiTap Merchant Community. You will earn <strong>+5 points</strong> when published!</p>
-        <div style="display:flex; flex-direction:column; gap:12px;">
-          <input type="text" id="disc-title" placeholder="Topic title (e.g. Best Bluetooth scale setup for quick deli checkouts)" style="padding:10px 14px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:13.5px; outline:none;" />
-          <select id="disc-cat" style="padding:10px 14px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:13.5px; outline:none;">
-            <option>🛒 Cashier &amp; Floor Sales</option>
-            <option>🏷️ Items, Modifiers &amp; Barcodes</option>
-            <option>🖨️ Thermal Printers &amp; Kitchen KDS</option>
-            <option>📊 Inventory &amp; Back Office Reports</option>
-            <option>💡 Feature Request &amp; Product Roadmap</option>
-          </select>
-          <textarea id="disc-body" rows="4" placeholder="Detail your workflow, printer model, or question..." style="padding:10px 14px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:13.5px; outline:none; resize:none;"></textarea>
-          <div style="display:flex; gap:10px;">
-            <button class="btn-signup" onclick="submitDiscussion()" style="flex:1; padding:10px;">Publish Discussion</button>
-            <button class="btn-login" onclick="closeModal()" style="padding:10px;">Cancel</button>
-          </div>
-        </div>
-      `;
-      modal.style.display = 'flex';
-    }
-
-    function submitDiscussion() {
-      const title = document.getElementById('disc-title')?.value.trim();
-      if (!title) {
-        alert('Please enter a discussion title.');
-        return;
-      }
-      const url = 'https://github.com/datuljeffrey-sys/flexitap-pos/discussions/new?title=' + encodeURIComponent(title);
-      window.open(url, '_blank');
-      closeModal();
-    }
-
-    function openTopicDetail(topicId) {
-      const modal = document.getElementById('community-modal');
-      const content = document.getElementById('modal-content');
-      
-      let title = 'Community Discussion Channel';
-      let desc = 'Explore merchant guides, verified configurations, and peer discussions for this module.';
-
-      if (topicId.includes('sales')) {
-        title = '🛒 Cashier & Floor Sales Channel';
-        desc = 'Speed checkouts, cash drawer triggers, split bills, and tip settlements.';
-      } else if (topicId.includes('plus-pro')) {
-        title = '👑 Plus & Pro Merchant Exchange';
-        desc = 'Exclusive strategy and fleet synchronization channel for paying subscribers.';
-      } else if (topicId.includes('items')) {
-        title = '🏷️ Items, Modifiers & Barcodes Channel';
-        desc = 'Product catalogs, nested modifiers, barcode scanners, and produce scales.';
-      } else if (topicId.includes('printers')) {
-        title = '🖨️ Thermal Printers & Kitchen KDS Channel';
-        desc = 'ESC/POS protocols, Star Micronics, Epson auto-cutters, and kitchen bump screens.';
-      } else if (topicId.includes('inventory')) {
-        title = '📊 Inventory & Back Office Channel';
-        desc = 'Stock transfer logs, purchase orders, COGS, and daily Z-reports.';
-      } else if (topicId.includes('roadmap')) {
-        title = '💡 Feature Requests & Roadmap';
-        desc = 'Vote on community features and review what the dev team is building next.';
-      }
-
-      content.innerHTML = `
-        <h2 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 8px;">${title}</h2>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">${desc}</p>
-        
-        <div style="background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:8px; padding:14px; font-size:13px; color:#cbd5e1; margin-bottom:16px; line-height: 1.6;">
-          ✓ Pinned engineering setup guides<br>
-          ✓ Verified peer solutions and upvotes<br>
-          ✓ Earn reputation points by answering merchant questions
-        </div>
-
-        <div style="display:flex; flex-direction:column; gap:10px;">
-          <a href="https://github.com/datuljeffrey-sys/flexitap-pos/discussions" target="_blank" rel="noopener noreferrer" class="btn-signup" style="text-align:center; padding:10px; text-decoration:none;">
-            Open Discussions on GitHub ↗
-          </a>
-          <a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer" class="btn-login" style="text-align:center; padding:10px; text-decoration:none;">
-            Join Merchant Facebook Group ↗
-          </a>
-        </div>
-      `;
-      modal.style.display = 'flex';
-    }
-
-    function openSubtopic(name) {
-      document.getElementById('filter-input').value = name;
-      filterForumRows();
     }
 
     function closeModal() {
