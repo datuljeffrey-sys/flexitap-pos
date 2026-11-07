@@ -14887,36 +14887,36 @@ Role: ${lastProvisionedCreds.role}`;
 
       try {
         if (supabaseClient) {
-          // A. Trigger Security Definer RPC function (bypasses RLS to purge all relational data)
+          let backendDeleted = false;
+          let backendErrorMsg = '';
+
+          // A. Trigger Security Definer RPC function (hard-deletes auth.users, profiles, stores, subscriptions)
           try {
             const { data: rpcRes, error: rpcErr } = await supabaseClient.rpc('admin_purge_merchant_account', { target_account_id: deletedId });
-            if (rpcErr) {
-              console.warn('RPC admin_purge_merchant_account error (fallback to direct table purge):', rpcErr);
-            } else {
-              console.log('RPC account purge succeeded:', rpcRes);
+            if (!rpcErr && rpcRes && rpcRes.success) {
+              backendDeleted = true;
+              console.log('RPC account hard purge succeeded:', rpcRes);
+            } else if (rpcErr) {
+              backendErrorMsg = rpcErr.message;
+              console.warn('RPC admin_purge_merchant_account error (trying manual cascade):', rpcErr);
             }
           } catch (rpcEx) {
+            backendErrorMsg = rpcEx.message || 'RPC exception';
             console.warn('RPC execution exception:', rpcEx);
           }
 
-          // B. Direct database updates/deletes to guarantee backend persistence across all tables
-          // 1. Unconditionally update account_status to 'purged' and scrub PII in public.profiles
-          await supabaseClient.from('profiles').update({
-            account_status: 'purged',
-            deletion_requested_at: new Date().toISOString(),
-            full_name: '[PURGED MERCHANT]',
-            store_name: '[PURGED STORE]',
-            email: 'purged_' + deletedId.substring(0, 8) + '@purged.local',
-            phone: null
-          }).eq('id', deletedId).catch(function() {});
+          // B. Direct cascading deletes across all tables to guarantee total deletion
+          // 1. Delete child subscriptions first to release FK constraint on profiles
+          await supabaseClient.from('subscriptions').delete().eq('user_id', deletedId).catch(function() {});
 
-          // 2. Delete linked hardware devices
+          // 2. Delete linked devices
           await supabaseClient.from('devices').delete().or('store_id.eq.' + storeCode + ',store_id.eq.' + deletedId + ',user_id.eq.' + deletedId).catch(function() {});
+          await supabaseClient.from('pos_devices').delete().or('store_id.eq.' + storeCode + ',store_id.eq.' + deletedId + ',user_id.eq.' + deletedId).catch(function() {});
 
           // 3. Delete merchant stores
           await supabaseClient.from('stores').delete().or('owner_id.eq.' + deletedId + ',user_id.eq.' + deletedId + ',id.eq.' + storeCode).catch(function() {});
 
-          // 4. Delete CRM specific sub-records (if tables exist)
+          // 4. Delete CRM tables
           await supabaseClient.from('merchant_crm_assets').delete().eq('account_id', deletedId).catch(function() {});
           await supabaseClient.from('merchant_crm_contacts').delete().eq('account_id', deletedId).catch(function() {});
           await supabaseClient.from('merchant_crm_accounts').delete().eq('id', deletedId).catch(function() {});
@@ -14924,8 +14924,22 @@ Role: ${lastProvisionedCreds.role}`;
           // 5. Delete merchant feedback
           await supabaseClient.from('merchant_feedback').delete().or('store_id.eq.' + storeCode + ',store_id.eq.' + deletedId).catch(function() {});
 
-          // 6. Attempt hard delete of profile row
-          await supabaseClient.from('profiles').delete().eq('id', deletedId).catch(function() {});
+          // 6. Delete profile row completely
+          const { error: profDelErr } = await supabaseClient.from('profiles').delete().eq('id', deletedId);
+          if (!profDelErr) {
+            backendDeleted = true;
+          } else {
+            console.warn('Profile direct delete note:', profDelErr);
+            // If FK prevents hard delete, anonymize PII
+            await supabaseClient.from('profiles').update({
+              account_status: 'purged',
+              deletion_requested_at: new Date().toISOString(),
+              full_name: '[PURGED MERCHANT]',
+              store_name: '[PURGED STORE]',
+              email: 'purged_' + deletedId.substring(0, 8) + '@purged.local',
+              phone: null
+            }).eq('id', deletedId).catch(function() {});
+          }
         }
       } catch (e) {
         console.warn('Error purging in Supabase:', e);
