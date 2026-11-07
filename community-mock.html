@@ -611,11 +611,15 @@
 
   <!-- MOCK BANNER WITH DEMO SIGN-IN TOGGLE -->
   <div class="mock-ribbon">
-    <span class="mock-badge">Mock Review</span>
-    <span>Loyverse-inspired Category Directory + Gamified Points &amp; Single Sign-On (SSO).</span>
-    <button class="demo-toggle-btn" onclick="toggleSimulatedAuth()" id="demo-auth-btn">
-      ⚡ Toggle Merchant Login Demo
-    </button>
+    <span class="mock-badge">Tier Review</span>
+    <span>Dedicated Free Merchant Community • Plus &amp; Pro Access with VIP Badges</span>
+    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+      <span style="font-size: 11px; color: #93c5fd; font-weight: 600;">Simulate User Tier:</span>
+      <button class="demo-toggle-btn" onclick="setSimulatedTier('free')" id="btn-tier-free">🆓 Free Merchant</button>
+      <button class="demo-toggle-btn" onclick="setSimulatedTier('plus')" id="btn-tier-plus">⭐ Plus Merchant</button>
+      <button class="demo-toggle-btn" onclick="setSimulatedTier('pro')" id="btn-tier-pro">👑 Founders Pro</button>
+      <button class="demo-toggle-btn" onclick="setSimulatedTier('guest')" id="btn-tier-guest">🌐 Guest</button>
+    </div>
   </div>
 
   <!-- HEADER -->
@@ -666,8 +670,13 @@
     <!-- HEADER TITLE & SEARCH TOOLBAR -->
     <div class="community-header-bar">
       <div class="header-title-box">
-        <h1>FlexiTap Seller &amp; Developer Hub</h1>
-        <p>Connect with peer restaurateurs, baristas, and retail shop owners. Get instant printer advice and vote on features.</p>
+        <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); padding: 4px 12px; border-radius: 9999px; font-size: 11.5px; font-weight: 700; color: #38bdf8; margin-bottom: 8px;">
+          <span>🆓 Dedicated Support Hub for Free Merchants</span>
+          <span>•</span>
+          <span style="color: #cbd5e1;">Plus &amp; Pro Members Welcome</span>
+        </div>
+        <h1>FlexiTap Merchant Community Hub</h1>
+        <p>The free-forever community home for independent shop owners and baristas. Supported peer-to-peer and backed by Plus &amp; Pro merchant mentors.</p>
       </div>
 
       <div class="header-actions-box">
@@ -867,6 +876,23 @@
 
       <!-- RIGHT SIDEBAR (LOYVERSE CASE STUDIES + POINTS LEADERBOARD) -->
       <aside>
+
+        
+        <!-- WIDGET: FREE VS PRO SUPPORT CALLOUT -->
+        <div class="sidebar-widget" style="background: linear-gradient(135deg, rgba(30, 58, 138, 0.25), rgba(15, 23, 42, 0.8)); border: 1px solid rgba(59, 130, 246, 0.3);">
+          <div class="widget-title" style="color: #60a5fa;">
+            <span>🛡️ Free vs. Pro Support</span>
+          </div>
+          <div style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px;">
+            <strong>Free Merchants:</strong> Full access to community answers, hardware guides, and peer solutions.
+          </div>
+          <div style="font-size: 12.5px; color: #cbd5e1; line-height: 1.5; margin-bottom: 14px;">
+            <strong>Need urgent private support?</strong> Plus ($290/yr) &amp; Pro ($590/yr) include direct 1-on-1 remote screen-share and private phone callbacks.
+          </div>
+          <a href="pricing.html" class="btn-signup" style="display: block; text-align: center; font-size: 12.5px; padding: 8px 12px; text-decoration: none;">
+            Compare Plus &amp; Pro Plans &rarr;
+          </a>
+        </div>
 
         <!-- WIDGET 1: TOP COMMUNITY CONTRIBUTORS (POINTS LEADERBOARD) -->
         <div class="sidebar-widget">
@@ -1072,31 +1098,73 @@
   </div>
 
   <script>
-    let isUserLoggedIn = false;
+    let currentSimulatedTier = 'guest'; // 'guest', 'free', 'plus', 'pro'
     let userPoints = 485;
 
-    // Toggle Simulated Auth State
-    function toggleSimulatedAuth() {
-      isUserLoggedIn = !isUserLoggedIn;
+    function setSimulatedTier(tier) {
+      currentSimulatedTier = tier;
+      
+      // Update toggle buttons in mock ribbon
+      ['free', 'plus', 'pro', 'guest'].forEach(t => {
+        const btn = document.getElementById('btn-tier-' + t);
+        if (btn) {
+          if (t === tier) {
+            btn.style.background = '#38bdf8';
+            btn.style.color = '#032b43';
+          } else {
+            btn.style.background = 'rgba(255,255,255,0.2)';
+            btn.style.color = '#fff';
+          }
+        }
+      });
+
       const chip = document.getElementById('signed-in-chip');
       const loginBtn = document.getElementById('guest-login-btn');
-      const demoBtn = document.getElementById('demo-auth-btn');
 
-      if (isUserLoggedIn) {
-        chip.style.display = 'flex';
-        loginBtn.style.display = 'none';
-        demoBtn.textContent = '🔓 Log Out (Demo Guest View)';
-        showNotification('Signed in as Alex (Downtown Bistro)! You have 485 Community Points.');
+      if (tier === 'guest') {
+        if (chip) chip.style.display = 'none';
+        if (loginBtn) loginBtn.style.display = 'inline-block';
+        alert('Switched to: Guest Visitor (Public Browsing Mode). Anyone can read all solutions and hardware matrices without logging in!');
       } else {
-        chip.style.display = 'none';
-        loginBtn.style.display = 'inline-block';
-        demoBtn.textContent = '⚡ Toggle Merchant Login Demo';
-        showNotification('Viewing as Guest Visitor (Browsing mode enabled).');
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (chip) {
+          chip.style.display = 'flex';
+          let nameHtml = '';
+          let badgeHtml = '';
+          let points = 240;
+
+          if (tier === 'free') {
+            nameHtml = 'Elena (Corner Coffee) • Free Merchant';
+            badgeHtml = '<span class="user-rank-badge" style="background:rgba(148,163,184,0.2); color:#cbd5e1;">Free Tier</span>';
+            points = 85;
+          } else if (tier === 'plus') {
+            nameHtml = 'Marcus (Artisan Bakery) • Plus Member';
+            badgeHtml = '<span class="user-rank-badge" style="background:#2563eb; color:#fff;">⭐ Plus</span>';
+            points = 320;
+          } else if (tier === 'pro') {
+            nameHtml = 'Alex (Downtown Bistro) • Founders Pro';
+            badgeHtml = '<span class="user-rank-badge" style="background:#e11d48; color:#fff;">👑 Pro Mentor</span>';
+            points = 640;
+          }
+
+          chip.innerHTML = `
+            <div class="user-avatar-small" style="background:${tier === 'pro' ? '#e11d48' : tier === 'plus' ? '#2563eb' : '#64748b'}">${nameHtml[0]}</div>
+            <div style="font-size: 13px; font-weight: 700; color: #fff;">${nameHtml}</div>
+            <div class="points-pill">
+              <span>🏆</span>
+              <span>${points} pts</span>
+            </div>
+            ${badgeHtml}
+          `;
+        }
+        alert(`Simulating signed-in merchant as: ${tier.toUpperCase()} TIER!`);
       }
     }
 
-    function showNotification(msg) {
-      alert(msg);
+    function toggleSimulatedAuth() {
+      // Rotate between guest -> free -> plus -> pro
+      const next = currentSimulatedTier === 'guest' ? 'free' : currentSimulatedTier === 'free' ? 'plus' : currentSimulatedTier === 'plus' ? 'pro' : 'guest';
+      setSimulatedTier(next);
     }
 
     // Filter rows by search input
