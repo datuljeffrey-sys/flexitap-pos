@@ -33,6 +33,7 @@ AS $$
 $$;
 
 -- 2. SECURITY DEFINER RPC: Permanently wipes a merchant and all cascading records
+-- Authorized for Core Dev/Staff OR the merchant themselves (GDPR Art. 17 / CCPA)
 CREATE OR REPLACE FUNCTION public.admin_purge_merchant_account(target_account_id UUID)
 RETURNS JSONB
 LANGUAGE plpgsql
@@ -46,17 +47,18 @@ DECLARE
   v_purged_devices INT := 0;
   v_purged_subscriptions INT := 0;
 BEGIN
-  -- Security check: Caller must be authenticated admin or staff
+  -- A. Security check: Must be authenticated
   IF auth.uid() IS NULL THEN
     RAISE EXCEPTION 'Authentication required to purge accounts.';
   END IF;
 
-  v_is_authorized := public.is_admin_or_staff_caller();
+  -- B. Authorization check: Must be Staff/Dev OR deleting own account
+  v_is_authorized := (auth.uid() = target_account_id) OR public.is_admin_or_staff_caller();
   IF NOT v_is_authorized THEN
-    RAISE EXCEPTION 'Access Denied: Only Core Dev / System Administrators can purge merchant accounts.';
+    RAISE EXCEPTION 'Access Denied: You are not authorized to purge this merchant account.';
   END IF;
 
-  -- Collect all store IDs associated with this merchant profile
+  -- C. Collect all store IDs associated with this merchant profile
   SELECT ARRAY_AGG(id::text) INTO v_store_ids
   FROM public.stores
   WHERE owner_id::text = target_account_id::text 
@@ -191,16 +193,16 @@ DROP POLICY IF EXISTS "Staff can delete profiles" ON public.profiles;
 CREATE POLICY "Staff can delete profiles"
   ON public.profiles FOR DELETE
   TO authenticated
-  USING (public.is_admin_or_staff_caller());
+  USING (public.is_admin_or_staff_caller() OR auth.uid() = id);
 
 DROP POLICY IF EXISTS "Staff can delete stores" ON public.stores;
 CREATE POLICY "Staff can delete stores"
   ON public.stores FOR DELETE
   TO authenticated
-  USING (public.is_admin_or_staff_caller());
+  USING (public.is_admin_or_staff_caller() OR owner_id::text = auth.uid()::text OR user_id::text = auth.uid()::text);
 
 DROP POLICY IF EXISTS "Staff can delete subscriptions" ON public.subscriptions;
 CREATE POLICY "Staff can delete subscriptions"
   ON public.subscriptions FOR DELETE
   TO authenticated
-  USING (public.is_admin_or_staff_caller());
+  USING (public.is_admin_or_staff_caller() OR user_id::text = auth.uid()::text);
