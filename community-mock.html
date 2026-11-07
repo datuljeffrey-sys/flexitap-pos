@@ -708,6 +708,47 @@
       .footer-grid { grid-template-columns: 1fr; }
       .nav-links { display: none; }
     }
+  
+    /* ADMIN MODERATION BUTTONS */
+    .admin-del-btn {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .admin-del-btn:hover {
+      background: #ef4444;
+      color: #fff;
+      border-color: #ef4444;
+    }
+    .signin-gate-card {
+      text-align: center;
+      padding: 32px 20px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      margin-top: 16px;
+    }
+    .signin-gate-card h4 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .signin-gate-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
   </style>
 </head>
 <body>
@@ -1510,10 +1551,55 @@
       container.innerHTML = html;
     }
 
+    
+    // Check if current user has Dev / Admin moderation rights
+    function isDevAdminUser() {
+      if (!activeMerchant) return false;
+      const role = (verifiedProfile?.role || '').toLowerCase();
+      const isStaffRole = ['admin', 'super_admin', 'dev', 'developer', 'support', 'staff', 'ops', 'owner'].includes(role);
+      const email = (activeMerchant.email || '').toLowerCase();
+      const isStaffEmail = email.includes('@flexitapapp.com') || email === 'datuljeffrey@gmail.com' || email.startsWith('info@');
+      return isStaffRole || isStaffEmail;
+    }
+
+    // Admin Delete a Topic
+    function adminDeleteTopic(threadId) {
+      if (!isDevAdminUser()) return;
+      if (!confirm('Are you sure you want to permanently delete this discussion topic as an Administrator?')) return;
+      
+      let discussions = getDiscussions();
+      const target = discussions.find(d => d.id === threadId);
+      discussions = discussions.filter(d => d.id !== threadId);
+      saveDiscussions(discussions);
+      
+      alert('✓ Discussion topic deleted.');
+      if (target) {
+        openCategoryFeed(target.category);
+      } else {
+        closeModal();
+      }
+    }
+
+    // Admin Delete a Reply/Comment
+    function adminDeleteReply(threadId, replyIndex) {
+      if (!isDevAdminUser()) return;
+      if (!confirm('Are you sure you want to delete this comment as an Administrator?')) return;
+
+      const discussions = getDiscussions();
+      const thread = discussions.find(d => d.id === threadId);
+      if (thread && thread.replies && thread.replies[replyIndex]) {
+        thread.replies.splice(replyIndex, 1);
+        saveDiscussions(discussions);
+        openThreadDetail(threadId);
+      }
+    }
+
     // Open Category Feed (In-House Forum View)
+    // Open Category Feed (In-House Forum View with Admin Topic Deletion)
     function openCategoryFeed(catId) {
       const discussions = getDiscussions();
       const catThreads = discussions.filter(d => d.category === catId);
+      const isAdmin = isDevAdminUser();
       
       let catTitle = 'Channel';
       if (catId === 'sales') catTitle = '🛒 Sales';
@@ -1533,7 +1619,10 @@
         catThreads.forEach(t => {
           threadsHtml += `
             <div class="native-thread-item" onclick="openThreadDetail('${t.id}')">
-              <div class="native-thread-title">${t.title}</div>
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div class="native-thread-title">${t.title}</div>
+                ${isAdmin ? `<button class="admin-del-btn" onclick="event.stopPropagation(); adminDeleteTopic('${t.id}')" title="Admin: Delete Topic">🗑️</button>` : ''}
+              </div>
               <div class="native-thread-meta">
                 <span class="user-rank-badge ${t.badgeClass || 'rank-staff'}">${t.authorTier}</span>
                 <span>${t.author} • ${t.time}</span>
@@ -1549,7 +1638,9 @@
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--card-border); padding-bottom:12px;">
           <div>
             <h2 style="font-size: 1.3rem; font-weight: 800; color:#fff;">${catTitle}</h2>
-            <div style="font-size: 12px; color:var(--text-muted);">FlexiTap Dedicated Community Board</div>
+            <div style="font-size: 12px; color:var(--text-muted);">
+              FlexiTap Dedicated Community Board ${isAdmin ? '• <span style="color:#f87171; font-weight:700;">Admin Mode Active</span>' : ''}
+            </div>
           </div>
           <button class="btn-new-topic" onclick="openNewDiscussionModal('${catId}')" style="padding:6px 14px; font-size:12px;">+ New Topic</button>
         </div>
@@ -1564,6 +1655,7 @@
     }
 
     // View Single Thread Detail with Replies & Reply Composer
+    // View Single Thread Detail with Replies & Reply Composer (GATED + DEV ADMIN RIGHTS)
     function openThreadDetail(threadId) {
       const discussions = getDiscussions();
       const thread = discussions.find(d => d.id === threadId);
@@ -1571,56 +1663,85 @@
 
       const modal = document.getElementById('community-modal');
       const content = document.getElementById('modal-content');
+      const isAdmin = isDevAdminUser();
 
       let repliesHtml = '';
       if (thread.replies && thread.replies.length > 0) {
-        thread.replies.forEach(r => {
+        thread.replies.forEach((r, idx) => {
           repliesHtml += `
             <div style="padding:12px 14px; background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.06); border-radius:8px; margin-bottom:8px;">
-              <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; font-size:12px;">
                 <span style="font-weight:700; color:#fff;">${r.author} <span class="user-rank-badge" style="background:#2563eb; color:#fff; font-size:9px;">${r.tier}</span></span>
-                <span style="color:var(--text-muted);">${r.time}</span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="color:var(--text-muted);">${r.time}</span>
+                  ${isAdmin ? `<button class="admin-del-btn" onclick="adminDeleteReply('${thread.id}', ${idx})" title="Admin: Delete Comment">🗑️ Delete</button>` : ''}
+                </div>
               </div>
-              <div style="font-size:13px; color:#cbd5e1; line-line:1.4;">${r.content}</div>
+              <div style="font-size:13px; color:#cbd5e1; line-height:1.4;">${r.content}</div>
             </div>
           `;
         });
       } else {
-        repliesHtml = '<div style="font-size:12.5px; color:var(--text-muted); padding:10px 0;">No replies yet. Share your experience or answer below!</div>';
+        repliesHtml = '<div style="font-size:12.5px; color:var(--text-muted); padding:10px 0;">No comments yet. Be the first to reply!</div>';
+      }
+
+      // COMMENT COMPOSER OR GUEST SIGN-IN CARD
+      let commentSectionHtml = '';
+      if (activeMerchant) {
+        commentSectionHtml = `
+          <div style="display:flex; flex-direction:column; gap:8px; border-top:1px solid var(--card-border); padding-top:14px;">
+            <textarea id="reply-text" rows="2" placeholder="Write a reply or answer to this topic..." style="padding:10px 12px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:13px; outline:none; resize:none;"></textarea>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <button class="btn-signin" onclick="openCategoryFeed('${thread.category}')" style="padding:6px 14px; font-size:12px;">&larr; Back to Channel</button>
+              <button class="btn-new-topic" onclick="submitReply('${thread.id}')" style="padding:7px 18px; font-size:12.5px;">Post Reply</button>
+            </div>
+          </div>
+        `;
+      } else {
+        // EXACT SCREENSHOT GUEST GATE CARD
+        commentSectionHtml = `
+          <div class="signin-gate-card">
+            <h4>Please sign in to comment</h4>
+            <p>You will be able to leave a comment after signing in</p>
+            <button class="btn-new-topic" onclick="openSignInModal()" style="margin: 0 auto; display: inline-flex;">Sign In Now</button>
+          </div>
+          <div style="margin-top:12px;">
+            <button class="btn-signin" onclick="openCategoryFeed('${thread.category}')" style="padding:6px 14px; font-size:12px;">&larr; Back to Channel</button>
+          </div>
+        `;
       }
 
       content.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; border-bottom:1px solid var(--card-border); padding-bottom:12px;">
           <div>
-            <span class="user-rank-badge ${thread.badgeClass || 'rank-staff'}" style="margin-bottom:6px; display:inline-block;">${thread.authorTier}</span>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+              <span class="user-rank-badge ${thread.badgeClass || 'rank-staff'}">${thread.authorTier}</span>
+              ${isAdmin ? '<span class="user-rank-badge" style="background:#e11d48; color:#fff;">🛡️ Admin Rights</span>' : ''}
+            </div>
             <h2 style="font-size: 1.25rem; font-weight: 800; color:#fff; line-height:1.3;">${thread.title}</h2>
             <div style="font-size: 12px; color:var(--text-muted); margin-top:4px;">
               Posted by <strong>${thread.author}</strong> in ${thread.categoryName} • ${thread.time}
             </div>
           </div>
-          <button class="btn-signin" onclick="upvoteThread('${thread.id}')" style="display:flex; align-items:center; gap:4px; padding:6px 12px;">
-            <span>👍</span>
-            <span id="upvote-count-${thread.id}">${thread.upvotes}</span>
-          </button>
+          <div style="display:flex; align-items:center; gap:8px;">
+            ${isAdmin ? `<button class="admin-del-btn" onclick="adminDeleteTopic('${thread.id}')" style="padding:5px 10px; font-size:11px;" title="Admin: Delete Topic">🗑️ Delete Topic</button>` : ''}
+            <button class="btn-signin" onclick="upvoteThread('${thread.id}')" style="display:flex; align-items:center; gap:4px; padding:6px 12px;">
+              <span>👍</span>
+              <span id="upvote-count-${thread.id}">${thread.upvotes}</span>
+            </button>
+          </div>
         </div>
 
         <div style="font-size:14px; color:#e2e8f0; line-height:1.55; padding:12px 0 20px; border-bottom:1px dashed rgba(255,255,255,0.1); margin-bottom:16px;">
           ${thread.content}
         </div>
 
-        <h3 style="font-size: 13.5px; font-weight: 800; color:#fff; margin-bottom:10px;">Replies (${thread.replies ? thread.replies.length : 0})</h3>
+        <h3 style="font-size: 13.5px; font-weight: 800; color:#fff; margin-bottom:10px;">Comments (${thread.replies ? thread.replies.length : 0})</h3>
         <div style="max-height:220px; overflow-y:auto; margin-bottom:16px;">
           ${repliesHtml}
         </div>
 
-        <!-- Inline Reply Composer -->
-        <div style="display:flex; flex-direction:column; gap:8px; border-top:1px solid var(--card-border); padding-top:14px;">
-          <textarea id="reply-text" rows="2" placeholder="Write a reply or answer to this topic..." style="padding:10px 12px; border-radius:8px; background:rgba(15,23,42,0.8); border:1px solid var(--card-border); color:#fff; font-size:13px; outline:none; resize:none;"></textarea>
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <button class="btn-signin" onclick="openCategoryFeed('${thread.category}')" style="padding:6px 14px; font-size:12px;">&larr; Back to Channel</button>
-            <button class="btn-new-topic" onclick="submitReply('${thread.id}')" style="padding:7px 18px; font-size:12.5px;">Post Reply</button>
-          </div>
-        </div>
+        ${commentSectionHtml}
       `;
       modal.style.display = 'flex';
     }
@@ -1665,9 +1786,33 @@
     }
 
     // Open In-House New Discussion Modal
+    // Open In-House New Discussion Modal (GATED: MUST BE SIGNED IN)
     function openNewDiscussionModal(defaultCat = 'sales') {
       const modal = document.getElementById('community-modal');
       const content = document.getElementById('modal-content');
+
+      // GUEST GATE VIEW
+      if (!activeMerchant) {
+        content.innerHTML = `
+          <div style="text-align:center; padding: 20px 10px;">
+            <div style="font-size:38px; margin-bottom:12px;">🔒</div>
+            <h2 style="font-size:1.35rem; font-weight:800; color:#fff; margin-bottom:8px;">Please sign in to start a discussion</h2>
+            <p style="font-size:13.5px; color:var(--text-muted); margin-bottom:22px; max-width:420px; margin-left:auto; margin-right:auto; line-height:1.5;">
+              You must be signed in with your FlexiTap store account to create a new discussion topic and share with the merchant community.
+            </p>
+            <div style="display:flex; justify-content:center; gap:12px;">
+              <button class="btn-new-topic" onclick="openSignInModal()" style="padding:10px 24px; font-size:13.5px;">
+                Sign In Now
+              </button>
+              <button class="btn-signin" onclick="closeModal()" style="padding:10px 18px;">
+                Cancel
+              </button>
+            </div>
+          </div>
+        `;
+        modal.style.display = 'flex';
+        return;
+      }
 
       content.innerHTML = `
         <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 6px;">Start a New Discussion</h2>
