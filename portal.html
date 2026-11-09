@@ -5476,7 +5476,7 @@
           sessionStorage.clear();
           localStorage.removeItem('ft_active_store_id');
           await supabaseClient.auth.signOut().catch(function() {});
-          window.location.href = 'index.html';
+          window.location.href = '/';
           return;
         }
 

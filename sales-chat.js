@@ -1283,7 +1283,7 @@
       <strong>📅 Schedule a Live 1-on-1 Walkthrough:</strong><br>
       Choose a date and time that fits your schedule, or email our engineering lead directly at <a href="mailto:info@flexitapapp.com" style="color:#60a5fa; font-weight:700;">info@flexitapapp.com</a>.
       <br><br>
-      <a href="index.html#demo" style="display:inline-block; padding:8px 14px; background:#2563eb; color:#ffffff; border-radius:8px; font-weight:700; text-decoration:none; font-size:12px;">📅 Go to Demo Scheduler</a>
+      <a href="/#demo" style="display:inline-block; padding:8px 14px; background:#2563eb; color:#ffffff; border-radius:8px; font-weight:700; text-decoration:none; font-size:12px;">📅 Go to Demo Scheduler</a>
     `);
   }
 
