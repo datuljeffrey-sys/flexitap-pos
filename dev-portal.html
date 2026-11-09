@@ -1469,7 +1469,10 @@
                     <div class="panel-title">Registered Hardware Assets &amp; Fleet Lifecycle</div>
                     <p style="font-size: 0.78rem; color: var(--text-muted);">Manage terminals, handhelds, thermal printers, purchase dates, deployment dates, and warranty expiry.</p>
                   </div>
-                  <button class="action-btn" onclick="openAddAssetModal()" style="background: var(--primary); color: #fff; border-color: var(--primary);">+ Add Hardware Asset</button>
+                  <div style="display: flex; gap: 8px;">
+                    <button class="action-btn" onclick="cleanStaleDevices()" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.35);">🧹 Clean Ghost / Stale Devices</button>
+                    <button class="action-btn" onclick="openAddAssetModal()" style="background: var(--primary); color: #fff; border-color: var(--primary);">+ Add Hardware Asset</button>
+                  </div>
                 </div>
 
                 <table class="data-table">
@@ -4807,8 +4810,67 @@
           return d.user_id === p.id || (matchedStore && d.store_id === matchedStore.id) || (p.store_id && d.store_id === p.store_id);
         });
 
+        // Determine the single TRUE active Master Station (the one with the latest heartbeat/creation)
+        const masterList = userDevices.filter(d => (d.role || '').toLowerCase() === 'master');
+        let latestMasterId = null;
+        if (masterList.length > 0) {
+          masterList.sort(function(a, b) {
+            const timeA = new Date(a.last_seen || a.created_at || 0).getTime();
+            const timeB = new Date(b.last_seen || b.created_at || 0).getTime();
+            return timeB - timeA;
+          });
+          latestMasterId = masterList[0].id;
+        }
+
         crmAssetsMap[p.id] = userDevices.map(function(d, idx) {
           const purchaseDate = d.created_at ? d.created_at.substring(0, 10) : '2026-09-22';
+          const lastSeenRaw = d.last_seen || null;
+
+          // Calculate Heartbeat Recency from real timestamp
+          let heartbeatLabel = 'Never Connected';
+          let diffMinutes = 999999;
+          let isHeartbeatLive = false;
+          let isHeartbeatRecent = false;
+
+          if (lastSeenRaw) {
+            const diffMs = Date.now() - new Date(lastSeenRaw).getTime();
+            diffMinutes = diffMs > 0 ? (diffMs / (1000 * 60)) : 0;
+            if (diffMinutes < 15) {
+              heartbeatLabel = 'Just now (Live)';
+              isHeartbeatLive = true;
+            } else if (diffMinutes < 60) {
+              heartbeatLabel = Math.floor(diffMinutes) + 'm ago';
+              isHeartbeatLive = true;
+            } else if (diffMinutes < 1440) {
+              heartbeatLabel = Math.floor(diffMinutes / 60) + 'h ago';
+              isHeartbeatRecent = true;
+            } else {
+              const days = Math.floor(diffMinutes / 1440);
+              heartbeatLabel = days + 'd ago';
+            }
+          }
+
+          const isMaster = (d.role || '').toLowerCase() === 'master';
+          const isCurrentActiveMaster = isMaster && d.id === latestMasterId;
+          const isReplacedMaster = isMaster && d.id !== latestMasterId;
+
+          // Accurate Operational Status Determination
+          let calculatedStatus = 'offline';
+          if (d.is_active === false) {
+            calculatedStatus = 'suspended';
+          } else if (isReplacedMaster) {
+            calculatedStatus = 'obsolete';
+          } else if (isHeartbeatLive) {
+            calculatedStatus = 'online';
+          } else if (isHeartbeatRecent) {
+            calculatedStatus = 'standby';
+          } else {
+            calculatedStatus = 'offline';
+          }
+
+          const roleLabel = isMaster
+            ? (isCurrentActiveMaster ? 'Master Register (Active)' : 'Replaced Master (Ghost)')
+            : 'POS Client Terminal';
           const deployDate = d.last_seen ? d.last_seen.substring(0, 10) : purchaseDate;
           const expYear = new Date(purchaseDate).getFullYear() + 2;
           const expDate = expYear + purchaseDate.substring(4);
@@ -4818,16 +4880,21 @@
 
           return {
             id: d.id,
-            asset_name: (d.name || roleName) + (userDevices.length > 1 ? ' #' + (idx + 1) : ''),
+            asset_name: (d.name || roleLabel) + (userDevices.length > 1 ? ' #' + (idx + 1) : ''),
             device_model: modelName,
             serial_number: 'IP: ' + (d.ip_address || '127.0.0.1') + ' • SN: ' + d.id.substring(0, 8),
-            location_station: d.role === 'master' ? 'Primary Checkout Counter' : ('Terminal #' + (idx + 1)),
+            location_station: isMaster ? (isCurrentActiveMaster ? 'Primary Checkout Counter' : 'Old Counter (Ghost)') : ('Terminal #' + (idx + 1)),
             purchase_date: purchaseDate,
-            deployment_date: deployDate,
+            deployment_date: lastSeenRaw ? lastSeenRaw.substring(0, 10) : purchaseDate,
+            last_seen_label: heartbeatLabel,
+            last_seen_raw: lastSeenRaw,
+            diff_minutes: diffMinutes,
             expiry_date: expDate,
             role: d.role,
+            is_current_master: isCurrentActiveMaster,
+            is_replaced_master: isReplacedMaster,
             is_active: d.is_active !== false,
-            status: (d.is_active !== false) ? 'online' : 'offline'
+            status: calculatedStatus
           };
         });
 
@@ -5398,7 +5465,10 @@
       // Assets Pill & Map
       const assets = crmAssetsMap[acc.id] || [];
       const stripAssets = document.getElementById('crm-strip-assets');
-      if (stripAssets) stripAssets.innerText = assets.length + ' Units';
+      if (stripAssets) {
+        const activeUnits = assets.filter(a => a.status === 'online' || a.status === 'standby').length;
+        stripAssets.innerText = activeUnits + ' Active (' + assets.length + ' Total)';
+      }
 
       // Tickets Pill & Map
       const tickets = crmTicketsMap[acc.id] || [];
@@ -5531,10 +5601,18 @@
             expiryTag = '<div><strong style="color: ' + expColor + ';">' + ast.expiry_date + '</strong><div style="font-size: 0.68rem; color: var(--text-muted);">' + (isExpiringSoon ? 'Expiring Soon' : 'Warranty Active') + '</div></div>';
           }
 
-          const isSuspended = ast.is_active === false || ast.status === 'suspended';
-          const statusBadge = isSuspended 
-            ? '<span class="badge-pill badge-urgent" style="background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);">SUSPENDED</span>'
-            : '<span class="badge-pill badge-resolved" style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);">ACTIVE</span>';
+          let statusBadge = '';
+          if (ast.status === 'suspended' || ast.is_active === false) {
+            statusBadge = '<span class="badge-pill badge-urgent" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);">🔴 SUSPENDED</span><div style="font-size: 0.68rem; color: #f87171; margin-top: 2px;">Revoked by Admin</div>';
+          } else if (ast.status === 'obsolete' || ast.is_replaced_master) {
+            statusBadge = '<span class="badge-pill" style="background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4);">⚠️ REPLACED GHOST</span><div style="font-size: 0.68rem; color: #ea580c; margin-top: 2px;">Duplicate Master</div>';
+          } else if (ast.status === 'online') {
+            statusBadge = '<span class="badge-pill badge-resolved" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);">🟢 ACTIVE ONLINE</span><div style="font-size: 0.68rem; color: #34d399; margin-top: 2px;">' + (ast.last_seen_label || 'Heartbeat Active') + '</div>';
+          } else if (ast.status === 'standby') {
+            statusBadge = '<span class="badge-pill" style="background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4);">🟡 STANDBY</span><div style="font-size: 0.68rem; color: #eab308; margin-top: 2px;">Seen ' + (ast.last_seen_label || 'Today') + '</div>';
+          } else {
+            statusBadge = '<span class="badge-pill" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);">⚪ OFFLINE</span><div style="font-size: 0.68rem; color: #64748b; margin-top: 2px;">' + (ast.last_seen_label || 'No recent ping') + '</div>';
+          }
 
           const suspendBtn = isSuspended
             ? '<button class="action-btn" onclick="toggleDeviceSuspension(\'' + ast.id + '\', true)" style="color: var(--accent); margin-right: 6px; font-weight: 600;">Reactivate</button>'
@@ -6187,6 +6265,36 @@
         console.error('Error toggling device suspension:', e);
         alert('Failed to update terminal status: ' + (e.message || e));
       }
+    }
+
+    async function cleanStaleDevices() {
+      if (!currentCrmAccountId) return;
+      const assets = crmAssetsMap[currentCrmAccountId] || [];
+      const staleAssets = assets.filter(a => a.status === 'obsolete' || a.is_replaced_master || a.status === 'suspended' || (a.status === 'offline' && a.diff_minutes > 1440 * 3));
+
+      if (staleAssets.length === 0) {
+        alert('All hardware devices in this store fleet are currently healthy. No ghost or obsolete registrations detected.');
+        return;
+      }
+
+      if (!confirm('Found ' + staleAssets.length + ' ghost / obsolete / suspended device registration(s).\n\nWould you like to permanently clean and remove them from Supabase now?')) return;
+
+      for (const st of staleAssets) {
+        try {
+          await supabaseClient.rpc('admin_delete_hardware_asset', { p_device_id: st.id });
+          await supabaseClient.from('devices').delete().eq('id', st.id);
+          let purgedDevices = JSON.parse(localStorage.getItem('ft_purged_devices') || '[]');
+          if (!purgedDevices.includes(st.id)) {
+            purgedDevices.push(st.id);
+            localStorage.setItem('ft_purged_devices', JSON.stringify(purgedDevices));
+          }
+        } catch (_) {}
+      }
+
+      crmAssetsMap[currentCrmAccountId] = crmAssetsMap[currentCrmAccountId].filter(a => !staleAssets.some(s => s.id === a.id));
+      renderCrmAssets(currentCrmAccountId);
+      renderSelectedCrmAccount();
+      alert('🧹 Successfully cleaned up ' + staleAssets.length + ' ghost device registrations from the fleet.');
     }
 
     async function deleteCrmAsset(assetId) {

@@ -5,14 +5,6 @@
 -- 1. Open your Supabase Dashboard: https://supabase.com/dashboard/project/_/sql
 -- 2. Click "New Query" (or paste into SQL Editor).
 -- 3. Click "RUN" (or Ctrl + Enter).
--- 
--- WHAT THIS SCRIPT DOES:
--- Part 1: Installs 'admin_purge_merchant_account' & 'admin_delete_hardware_asset' (SECURITY DEFINER)
---         Allows Dev Portal & Merchant Portal to permanently hard-purge accounts
---         and individual hardware assets/devices from Supabase.
--- Part 2: Sets up RLS DELETE policies so staff accounts can manage profiles, stores, subscriptions, and devices.
--- Part 3: Wipes all existing dummy/test merchant rows (test, fdfd, hjnj, KKK, etc.)
---         while strictly protecting master staff accounts (info@, datuljeffrey@, liamjareddatul@).
 -- ==============================================================================
 
 -- ------------------------------------------------------------------------------
@@ -290,12 +282,12 @@ CREATE POLICY "Staff and owners can delete devices"
 -- ------------------------------------------------------------------------------
 DO $$
 DECLARE
-  v_purge_ids UUID[];
+  v_purge_ids TEXT[];
   v_store_ids TEXT[];
   v_count INT := 0;
 BEGIN
-  -- Select all test/dummy account profile IDs (Excluding master admin/dev emails & stores)
-  SELECT ARRAY_AGG(p.id) INTO v_purge_ids
+  -- Collect all test/dummy account profile IDs as TEXT to prevent any type mismatches
+  SELECT ARRAY_AGG(p.id::text) INTO v_purge_ids
   FROM public.profiles p
   LEFT JOIN auth.users u ON u.id = p.id
   WHERE (
@@ -303,8 +295,8 @@ BEGIN
     OR LOWER(COALESCE(p.full_name, '')) IN ('test', 'test account', 'purged merchant')
     OR LOWER(COALESCE(u.email, '')) LIKE '%test%'
     OR LOWER(COALESCE(u.email, '')) LIKE '%purged%'
-    OR p.id IN (
-      SELECT s.owner_id FROM public.stores s 
+    OR p.id::text IN (
+      SELECT s.owner_id::text FROM public.stores s 
       WHERE LOWER(s.name) IN ('test', 'test account', 'fdfd', 'hjnj', 'kkk')
     )
   )
@@ -319,48 +311,48 @@ BEGIN
     -- Find all stores owned by these test accounts or named 'test', 'fdfd', 'kkk'
     SELECT ARRAY_AGG(id::text) INTO v_store_ids
     FROM public.stores
-    WHERE owner_id = ANY(v_purge_ids)
-       OR user_id = ANY(v_purge_ids)
+    WHERE owner_id::text = ANY(v_purge_ids)
+       OR user_id::text = ANY(v_purge_ids)
        OR LOWER(name) IN ('test', 'test account', 'fdfd', 'hjnj', 'kkk');
 
     -- 1. Subscriptions
     IF to_regclass('public.subscriptions') IS NOT NULL THEN
-      DELETE FROM public.subscriptions WHERE user_id = ANY(v_purge_ids);
+      DELETE FROM public.subscriptions WHERE user_id::text = ANY(v_purge_ids);
     END IF;
 
     -- 2. Devices
     IF to_regclass('public.devices') IS NOT NULL THEN
       DELETE FROM public.devices 
-      WHERE user_id = ANY(v_purge_ids)
+      WHERE user_id::text = ANY(v_purge_ids)
          OR (v_store_ids IS NOT NULL AND store_id::text = ANY(v_store_ids));
     END IF;
 
     IF to_regclass('public.pos_devices') IS NOT NULL THEN
       DELETE FROM public.pos_devices 
-      WHERE user_id = ANY(v_purge_ids)
+      WHERE user_id::text = ANY(v_purge_ids)
          OR (v_store_ids IS NOT NULL AND store_id::text = ANY(v_store_ids));
     END IF;
 
     -- 3. Tickets
     IF to_regclass('public.tickets') IS NOT NULL THEN
       DELETE FROM public.tickets 
-      WHERE merchant_id = ANY(v_purge_ids)
+      WHERE merchant_id::text = ANY(v_purge_ids)
          OR (v_store_ids IS NOT NULL AND store_id::text = ANY(v_store_ids));
     END IF;
 
     -- 4. Stores
     IF to_regclass('public.stores') IS NOT NULL THEN
       DELETE FROM public.stores 
-      WHERE owner_id = ANY(v_purge_ids)
-         OR user_id = ANY(v_purge_ids)
+      WHERE owner_id::text = ANY(v_purge_ids)
+         OR user_id::text = ANY(v_purge_ids)
          OR (v_store_ids IS NOT NULL AND id::text = ANY(v_store_ids));
     END IF;
 
     -- 5. Profiles
-    DELETE FROM public.profiles WHERE id = ANY(v_purge_ids);
+    DELETE FROM public.profiles WHERE id::text = ANY(v_purge_ids);
 
-    -- 6. auth.users (Master Auth records)
-    DELETE FROM auth.users WHERE id = ANY(v_purge_ids);
+    -- 6. auth.users (Master Auth records - cast to UUID)
+    DELETE FROM auth.users WHERE id::text = ANY(v_purge_ids);
 
     RAISE NOTICE 'Successfully purged % test accounts from Supabase!', v_count;
   END IF;
