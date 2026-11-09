@@ -87,9 +87,13 @@ BEGIN
   END IF;
 
   IF to_regclass('public.pos_devices') IS NOT NULL THEN
-    DELETE FROM public.pos_devices
-    WHERE user_id::text = target_account_id::text
-       OR (v_store_ids IS NOT NULL AND store_id::text = ANY(v_store_ids));
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'pos_devices' AND column_name = 'user_id') THEN
+      EXECUTE 'DELETE FROM public.pos_devices WHERE user_id::text = $1 OR (store_id::text = ANY($2))' USING target_account_id::text, v_store_ids;
+    ELSIF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'pos_devices' AND column_name = 'store_id') THEN
+      IF v_store_ids IS NOT NULL AND array_length(v_store_ids, 1) > 0 THEN
+        EXECUTE 'DELETE FROM public.pos_devices WHERE store_id::text = ANY($1)' USING v_store_ids;
+      END IF;
+    END IF;
   END IF;
 
   -- 3. Wipe sales summaries & feedback
@@ -106,19 +110,17 @@ BEGIN
   END IF;
 
   -- 4. Wipe tickets & notes
-  IF to_regclass('public.ticket_notes') IS NOT NULL THEN
+  IF to_regclass('public.ticket_notes') IS NOT NULL AND to_regclass('public.tickets') IS NOT NULL THEN
     DELETE FROM public.ticket_notes
     WHERE ticket_id IN (
       SELECT id FROM public.tickets 
       WHERE merchant_id::text = target_account_id::text
-         OR (v_store_ids IS NOT NULL AND store_id::text = ANY(v_store_ids))
     );
   END IF;
 
   IF to_regclass('public.tickets') IS NOT NULL THEN
     DELETE FROM public.tickets
-    WHERE merchant_id::text = target_account_id::text
-       OR (v_store_ids IS NOT NULL AND store_id::text = ANY(v_store_ids));
+    WHERE merchant_id::text = target_account_id::text;
   END IF;
 
   -- 5. Wipe support & remote sessions
@@ -327,17 +329,22 @@ BEGIN
          OR (v_store_ids IS NOT NULL AND store_id::text = ANY(v_store_ids));
     END IF;
 
+    -- 2b. POS Devices (Safely handle schema variations)
     IF to_regclass('public.pos_devices') IS NOT NULL THEN
-      DELETE FROM public.pos_devices 
-      WHERE user_id::text = ANY(v_purge_ids)
-         OR (v_store_ids IS NOT NULL AND store_id::text = ANY(v_store_ids));
+      IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'pos_devices' AND column_name = 'user_id') THEN
+        EXECUTE 'DELETE FROM public.pos_devices WHERE user_id::text = ANY($1) OR (store_id::text = ANY($2))' 
+        USING v_purge_ids, v_store_ids;
+      ELSIF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'pos_devices' AND column_name = 'store_id') THEN
+        IF v_store_ids IS NOT NULL AND array_length(v_store_ids, 1) > 0 THEN
+          EXECUTE 'DELETE FROM public.pos_devices WHERE store_id::text = ANY($1)' 
+          USING v_store_ids;
+        END IF;
+      END IF;
     END IF;
 
     -- 3. Tickets
     IF to_regclass('public.tickets') IS NOT NULL THEN
-      DELETE FROM public.tickets 
-      WHERE merchant_id::text = ANY(v_purge_ids)
-         OR (v_store_ids IS NOT NULL AND store_id::text = ANY(v_store_ids));
+      DELETE FROM public.tickets WHERE merchant_id::text = ANY(v_purge_ids);
     END IF;
 
     -- 4. Stores
