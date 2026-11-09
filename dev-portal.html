@@ -14985,7 +14985,11 @@ Role: ${lastProvisionedCreds.role}`;
         purgeBtn.innerText = '⚡ Immediate Purge & Anonymize';
       }
 
-      alert('✅ Merchant account "' + deletedStoreName + '" has been permanently purged and deleted from the fleet.');
+      if (backendDeleted) {
+        alert('✅ Merchant account "' + deletedStoreName + '" has been permanently purged from Supabase (auth.users, profiles, stores, subscriptions, devices).');
+      } else {
+        alert('⚠️ Database Note: Account hidden locally, but Supabase reported: ' + (backendErrorMsg || 'Please execute supabase_master_purge_setup_and_cleanup.sql in the Supabase SQL Editor to enable 100% database-level hard purges.'));
+      }
     }
     function clearCrmAccountForm() {
       const stripName = document.getElementById('crm-strip-name');

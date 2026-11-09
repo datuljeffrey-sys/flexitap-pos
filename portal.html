@@ -5459,9 +5459,20 @@
           }
 
           // A. Trigger Security Definer RPC (hard delete from auth.users, profiles, stores, subscriptions)
+          let rpcSuccess = false;
+          let rpcErrorMsg = '';
           try {
-            await supabaseClient.rpc('admin_purge_merchant_account', { target_account_id: activeUser.id });
-          } catch (_) {}
+            const { data: rpcRes, error: rpcErr } = await supabaseClient.rpc('admin_purge_merchant_account', { target_account_id: activeUser.id });
+            if (!rpcErr && rpcRes && rpcRes.success) {
+              rpcSuccess = true;
+            } else if (rpcErr) {
+              rpcErrorMsg = rpcErr.message;
+              console.warn('RPC deletion notice:', rpcErr);
+            }
+          } catch (ex) {
+            rpcErrorMsg = ex.message;
+            console.warn('RPC deletion exception:', ex);
+          }
 
           // B. Direct cascading deletes across client tables
           await supabaseClient.from('subscriptions').delete().eq('user_id', activeUser.id).catch(function() {});
