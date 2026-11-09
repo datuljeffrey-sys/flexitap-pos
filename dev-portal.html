@@ -5614,6 +5614,7 @@
             statusBadge = '<span class="badge-pill" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);">⚪ OFFLINE</span><div style="font-size: 0.68rem; color: #64748b; margin-top: 2px;">' + (ast.last_seen_label || 'No recent ping') + '</div>';
           }
 
+          const isSuspended = ast.status === 'suspended' || ast.is_active === false;
           const suspendBtn = isSuspended
             ? '<button class="action-btn" onclick="toggleDeviceSuspension(\'' + ast.id + '\', true)" style="color: var(--accent); margin-right: 6px; font-weight: 600;">Reactivate</button>'
             : '<button class="action-btn" onclick="toggleDeviceSuspension(\'' + ast.id + '\', false)" style="color: var(--warning); margin-right: 6px;">Suspend</button>';
