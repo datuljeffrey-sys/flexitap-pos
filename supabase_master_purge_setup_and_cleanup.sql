@@ -1,5 +1,5 @@
 -- ==============================================================================
--- FLEXITAP SUPABASE MASTER PURGE ENGINE & ONE-TIME DATABASE CLEANUP
+-- FLEXITAP SUPABASE MASTER PURGE ENGINE & ASSET MANAGEMENT CLEANUP
 -- ==============================================================================
 -- INSTRUCTIONS:
 -- 1. Open your Supabase Dashboard: https://supabase.com/dashboard/project/_/sql
@@ -7,10 +7,10 @@
 -- 3. Click "RUN" (or Ctrl + Enter).
 -- 
 -- WHAT THIS SCRIPT DOES:
--- Part 1: Installs 'admin_purge_merchant_account' (SECURITY DEFINER)
+-- Part 1: Installs 'admin_purge_merchant_account' & 'admin_delete_hardware_asset' (SECURITY DEFINER)
 --         Allows Dev Portal & Merchant Portal to permanently hard-purge accounts
---         from auth.users, profiles, stores, subscriptions, devices, tickets.
--- Part 2: Sets up RLS DELETE policies so staff accounts can manage records.
+--         and individual hardware assets/devices from Supabase.
+-- Part 2: Sets up RLS DELETE policies so staff accounts can manage profiles, stores, subscriptions, and devices.
 -- Part 3: Wipes all existing dummy/test merchant rows (test, fdfd, hjnj, KKK, etc.)
 --         while strictly protecting master staff accounts (info@, datuljeffrey@, liamjareddatul@).
 -- ==============================================================================
@@ -196,9 +196,54 @@ BEGIN
 END;
 $$;
 
--- Grant execution permission
+-- Master RPC Function: 100% Total Permanent Deletion of a Hardware Device Asset
+CREATE OR REPLACE FUNCTION public.admin_delete_hardware_asset(p_device_id text)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, auth, pg_temp
+AS $$
+DECLARE
+  v_caller_id uuid := auth.uid();
+  v_is_authorized boolean := false;
+BEGIN
+  IF v_caller_id IS NULL THEN
+    RETURN jsonb_build_object('success', false, 'error', 'Authentication required.');
+  END IF;
+
+  v_is_authorized := public.is_admin_or_staff_caller() OR EXISTS (
+    SELECT 1 FROM public.devices d
+    WHERE d.id::text = p_device_id::text
+      AND (
+        d.user_id::text = v_caller_id::text
+        OR d.store_id::text IN (
+          SELECT s.id::text FROM public.stores s
+          WHERE s.owner_id::text = v_caller_id::text OR s.user_id::text = v_caller_id::text
+        )
+      )
+  );
+
+  IF NOT v_is_authorized THEN
+    RETURN jsonb_build_object('success', false, 'error', 'Unauthorized to delete this hardware device.');
+  END IF;
+
+  -- Hard delete from all device registries
+  DELETE FROM public.devices WHERE id::text = p_device_id::text;
+  IF to_regclass('public.pos_devices') IS NOT NULL THEN
+    DELETE FROM public.pos_devices WHERE id::text = p_device_id::text;
+  END IF;
+  IF to_regclass('public.merchant_crm_assets') IS NOT NULL THEN
+    DELETE FROM public.merchant_crm_assets WHERE id::text = p_device_id::text;
+  END IF;
+
+  RETURN jsonb_build_object('success', true, 'deleted_id', p_device_id);
+END;
+$$;
+
+-- Grant execution permissions
 GRANT EXECUTE ON FUNCTION public.is_admin_or_staff_caller() TO authenticated, anon;
 GRANT EXECUTE ON FUNCTION public.admin_purge_merchant_account(UUID) TO authenticated, anon;
+GRANT EXECUTE ON FUNCTION public.admin_delete_hardware_asset(text) TO authenticated, anon;
 
 -- ------------------------------------------------------------------------------
 -- PART 2: RLS DELETE POLICIES (Enables direct deletes for authorized staff)
@@ -206,6 +251,7 @@ GRANT EXECUTE ON FUNCTION public.admin_purge_merchant_account(UUID) TO authentic
 ALTER TABLE IF EXISTS public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS public.stores ENABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.devices ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Staff can delete profiles" ON public.profiles;
 CREATE POLICY "Staff can delete profiles"
@@ -224,6 +270,19 @@ CREATE POLICY "Staff can delete subscriptions"
   ON public.subscriptions FOR DELETE
   TO authenticated
   USING (public.is_admin_or_staff_caller() OR user_id::text = auth.uid()::text);
+
+DROP POLICY IF EXISTS "Staff and owners can delete devices" ON public.devices;
+CREATE POLICY "Staff and owners can delete devices"
+  ON public.devices FOR DELETE
+  TO authenticated
+  USING (
+    public.is_admin_or_staff_caller()
+    OR user_id::text = auth.uid()::text
+    OR store_id::text IN (
+      SELECT id::text FROM public.stores 
+      WHERE (owner_id::text = auth.uid()::text OR user_id::text = auth.uid()::text)
+    )
+  );
 
 
 -- ------------------------------------------------------------------------------
