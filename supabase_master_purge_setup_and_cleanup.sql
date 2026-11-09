@@ -169,11 +169,11 @@ BEGIN
 
   -- 8. Hard delete from profiles
   IF to_regclass('public.profiles') IS NOT NULL THEN
-    DELETE FROM public.profiles WHERE id = target_account_id;
+    DELETE FROM public.profiles WHERE id::text = target_account_id::text;
   END IF;
 
   -- 9. Hard delete from auth.users (Master Supabase Auth)
-  DELETE FROM auth.users WHERE id = target_account_id;
+  DELETE FROM auth.users WHERE id::text = target_account_id::text;
 
   RETURN jsonb_build_object(
     'success', true,
@@ -249,7 +249,7 @@ DROP POLICY IF EXISTS "Staff can delete profiles" ON public.profiles;
 CREATE POLICY "Staff can delete profiles"
   ON public.profiles FOR DELETE
   TO authenticated
-  USING (public.is_admin_or_staff_caller() OR auth.uid() = id);
+  USING (public.is_admin_or_staff_caller() OR auth.uid()::text = id::text);
 
 DROP POLICY IF EXISTS "Staff can delete stores" ON public.stores;
 CREATE POLICY "Staff can delete stores"
