@@ -256,6 +256,16 @@
   <main class="container">
     <!-- HERO -->
     <section class="hero">
+    <!-- PROGRAM SUSPENSION NOTICE -->
+    <div style="background: rgba(239, 68, 68, 0.16); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 14px; padding: 18px 24px; margin: 24px auto 30px auto; max-width: 820px; color: #fca5a5; font-size: 14px; text-align: center; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.15);">
+      <div style="display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 15px; color: #fff; margin-bottom: 6px;">
+        <span style="font-size: 20px;">⏸️</span> AFFILIATE &amp; PARTNER PROGRAM CURRENTLY SUSPENDED
+      </div>
+      <p style="margin: 0; line-height: 1.5; color: #fecaca; font-size: 13.5px;">
+        The Philippine Partner &amp; Affiliate Program is temporarily paused for review. New partner sign-ups, referral link attributions, and bounty disbursements are currently suspended. Existing partners may still view their recorded balances.
+      </p>
+    </div>
+
       <div class="hero-pill">
         <span>🇵🇭</span> Philippines Partner Pilot Program
       </div>
@@ -283,9 +293,9 @@
 
       <!-- CTA ACTION BUTTONS -->
       <div style="display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; margin: 38px 0 22px;">
-        <a href="partner-portal.html#register" class="btn-submit-partner" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 15px 34px; font-size: 15px; font-weight: 800; border-radius: 12px; box-shadow: 0 12px 30px rgba(37, 99, 235, 0.35); width: auto;">
-          <span>✨</span> Sign Up for Partner Program &rarr;
-        </a>
+        <button disabled class="btn-submit-partner" style="background: #334155; color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.12); cursor: not-allowed; display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 15px 34px; font-size: 15px; font-weight: 800; border-radius: 12px; width: auto; box-shadow: none;">
+          <span>⏸️</span> Partner Registrations Suspended
+        </button>
         <a href="partner-portal.html" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 15px 28px; font-size: 14px; font-weight: 700; border-radius: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff; transition: background 0.2s;">
           <span>🛡️</span> Sign In to Partner Portal (2FA)
         </a>
@@ -387,6 +397,9 @@
     }
 
     async function handleAffiliateSignup(e) {
+      e.preventDefault();
+      alert("The Affiliate & Partner Program is temporarily suspended. New registrations are currently closed.");
+      return;
       e.preventDefault();
       const btn = document.getElementById('aff-btn');
       const err = document.getElementById('aff-error-msg');

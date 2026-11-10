@@ -6,6 +6,21 @@
 (function () {
   'use strict';
 
+  // Global Program Suspension Flag
+  var AFFILIATE_PROGRAM_SUSPENDED = true;
+  if (AFFILIATE_PROGRAM_SUSPENDED) {
+    window.FlexiTapAffiliate = {
+      isSuspended: true,
+      getCode: function () { return null; },
+      getStoredCode: function () { return null; },
+      clearCode: function () {},
+      decorateLink: function (url) { return url; },
+      dispatchSignupEmails: function () {},
+      logClick: function () {}
+    };
+    return;
+  }
+
   var STORAGE_KEY = 'flexitap_ref';
   var COOKIE_NAME = 'flexitap_ref';
   var COOKIE_DAYS = 60;
