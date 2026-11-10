@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <!-- Primary SEO Metadata -->
+  <title>Loyverse POS Alternative | Zero-Fee Offline POS System</title>
+  <meta name="title" content="Loyverse POS Alternative | Zero-Fee Offline POS System">
+  <meta name="description" content="Switch from Loyverse to FlexiTap: true offline SQLite speed, zero monthly add-on fees, ESC/POS printer support, and 1-click Loyverse CSV menu migration.">
+  <meta name="keywords" content="loyverse pos alternative, loyverse alternative, loyverse pos, loyverse pricing, switch from loyverse, free offline pos, loyverse vs flexitap, cafe pos, retail pos">
+  <link rel="canonical" href="https://flexitapapp.com/loyverse-pos-alternative.html">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="product">
+  <meta property="og:url" content="https://flexitapapp.com/loyverse-pos-alternative.html">
+  <meta property="og:site_name" content="FlexiTap POS">
+  <meta property="og:title" content="Loyverse POS Alternative | Zero-Fee Offline POS System">
+  <meta property="og:description" content="Tired of paying $50+/month for basic Loyverse add-ons? FlexiTap delivers 100% offline SQLite checkouts, native KDS, and zero monthly subscriptions.">
+  <meta property="og:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter / X Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://flexitapapp.com/loyverse-pos-alternative.html">
+  <meta name="twitter:title" content="Loyverse POS Alternative | Zero-Fee Offline POS System">
+  <meta name="twitter:description" content="Tired of paying $50+/month for basic Loyverse add-ons? FlexiTap delivers 100% offline SQLite checkouts, native KDS, and zero monthly subscriptions.">
+  <meta name="twitter:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "FlexiTap POS - Loyverse Alternative",
+        "operatingSystem": "Windows 10, Windows 11, Android POS, iPadOS, iOS, Web PWA",
+        "applicationCategory": "BusinessApplication",
+        "category": "Point of Sale Software for Cafes, Restaurants, and Retail",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "description": "Free Community Tier with 100% Offline Resilience and Zero Mandatory Monthly Add-on Fees"
+        },
+        "description": "High-speed offline-first POS software engineered as a modern alternative to Loyverse POS, featuring local SQLite data storage, ESC/POS hardware support, and zero monthly add-on taxes."
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why is FlexiTap the best alternative to Loyverse POS?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Unlike Loyverse POS which charges recurring $25/month per store fees for Employee Management and another $25/month for Advanced Inventory ($50+/month total), FlexiTap offers true offline SQLite architecture, unlimited transactions, native KDS kitchen routing, and zero mandatory monthly add-on fees."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I use my existing Loyverse receipt printer and barcode scanner with FlexiTap?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, 100%. FlexiTap supports the exact same hardware used by Loyverse merchants, including Epson TM-T20III, Star Micronics TSP143, Sunmi smart POS terminals, standard 58mm/80mm ESC/POS USB, Bluetooth, and LAN thermal receipt printers, and standard HID barcode scanners."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I migrate my products and menu from Loyverse to FlexiTap?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Migration takes less than 60 seconds. In your Loyverse Back Office, go to Items -> Export to download your CSV file. Then, in the FlexiTap Merchant Portal, click Import Loyverse CSV. All your item names, SKUs, barcode numbers, prices, categories, and modifiers are imported instantly."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does FlexiTap work offline without internet?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. FlexiTap features an embedded local SQLite engine. You can ring sales, apply modifiers, scan barcodes, print receipts, and route tickets to the kitchen display even when your Wi-Fi or mobile data goes down completely."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <link rel="icon" type="image/png" href="image_02e503.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="image_02e503.png">
+
+  <!-- External SDKs with non-blocking performance -->
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.paddle.com">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js" defer></script>
+  <script src="analytics.js?v=20261031" defer></script>
+  <script src="affiliate-tracker.js?v=20261031" defer></script>
+
+  <link rel="preload" href="fonts/480c062501_tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css?v=20261031">
+
+  <style>
+    :root {
+      --bg: #070a11;
+      --card-bg: rgba(18, 24, 38, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent-green: #10b981;
+      --accent-orange: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+    html, body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; overflow-x: clip; position: relative; }
+
+    .container { width: 100%; max-width: 100%; margin: 0; padding: 0 clamp(24px, 4vw, 64px); box-sizing: border-box; position: relative; z-index: 2; }
+
+    header {
+      padding: clamp(12px, 1.6vh, 18px) 0;
+      border-bottom: 1px solid var(--card-border);
+      position: sticky; top: 0;
+      background: rgba(9, 13, 22, 0.94);
+      backdrop-filter: blur(14px);
+      z-index: 1000; width: 100%;
+    }
+    header .container {
+      display: flex; justify-content: space-between; align-items: center; width: 100%; gap: clamp(12px, 1.8vw, 24px);
+    }
+    .logo {
+      display: flex; align-items: center; gap: 12px; font-size: clamp(19px, 1.6vw, 22px);
+      font-weight: 800; color: #ffffff; text-decoration: none; letter-spacing: -0.5px; flex-shrink: 0; white-space: nowrap;
+    }
+    .brand-logo-svg { width: clamp(32px, 2.4vw, 38px); height: clamp(32px, 2.4vw, 38px); border-radius: 50%; object-fit: contain; }
+
+    .nav-links { display: flex; align-items: center; justify-content: center; gap: clamp(8px, 1.1vw, 16px); flex: 1; margin: 0; }
+    .nav-link { color: #cbd5e1; text-decoration: none; font-size: clamp(13.5px, 0.95vw, 15px); font-weight: 600; transition: color 0.2s; white-space: nowrap; }
+    .nav-link:hover { color: #ffffff; }
+
+    .nav-dropdown { position: relative; display: inline-flex; align-items: center; }
+    .nav-dropdown-btn {
+      background: none; border: none; color: var(--text-muted); font-size: 14.5px; font-weight: 600;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px;
+      transition: color 0.2s, background 0.2s; font-family: inherit;
+    }
+    .nav-dropdown:hover .nav-dropdown-btn,
+    .nav-dropdown.active .nav-dropdown-btn { color: #fff; background: rgba(255, 255, 255, 0.08); }
+    .dropdown-chevron { width: 14px; height: 14px; transition: transform 0.2s; }
+    .nav-dropdown:hover .dropdown-chevron,
+    .nav-dropdown.active .dropdown-chevron { transform: rotate(180deg); }
+
+    .dropdown-menu {
+      display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      width: 320px; background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px; padding: 8px; box-shadow: 0 20px 45px rgba(0,0,0,0.85); z-index: 9999;
+      flex-direction: column; gap: 4px; margin-top: 6px;
+    }
+    .dropdown-menu::before { content: ''; position: absolute; top: -14px; left: 0; right: 0; height: 14px; background: transparent; }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown.active .dropdown-menu { display: flex; }
+
+    .dropdown-item {
+      display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px;
+      text-decoration: none; color: #fff; transition: background 0.15s;
+    }
+    .dropdown-item:hover { background: rgba(255, 255, 255, 0.1); }
+    .dropdown-icon { font-size: 20px; width: 34px; height: 34px; border-radius: 8px; background: rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .dropdown-title { font-size: 13.5px; font-weight: 700; color: #fff; }
+    .dropdown-desc { font-size: 11px; color: var(--text-muted); }
+
+    .nav-actions { display: flex; align-items: center; gap: clamp(8px, 1.2vw, 16px); flex-shrink: 0; }
+    .btn-login { color: #ffffff; text-decoration: none; font-size: clamp(13px, 0.95vw, 14.5px); font-weight: 700; padding: 9px 16px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.2); transition: background 0.2s; white-space: nowrap; }
+    .btn-login:hover { background: rgba(255, 255, 255, 0.08); }
+    .btn-signup { background: #2563eb; color: #ffffff; text-decoration: none; font-size: clamp(13px, 0.95vw, 14.5px); font-weight: 700; padding: 10px 20px; border-radius: 10px; transition: background 0.2s; white-space: nowrap; }
+    .btn-signup:hover { background: #1d4ed8; }
+
+    /* HERO */
+    .hero {
+      padding: clamp(60px, 8vh, 100px) 0 clamp(40px, 6vh, 70px);
+      text-align: center;
+      position: relative;
+    }
+    .badge-pill {
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px;
+      background: rgba(37, 99, 235, 0.15); border: 1px solid rgba(59, 130, 246, 0.35);
+      border-radius: 9999px; color: #93c5fd; font-size: 13px; font-weight: 700; margin-bottom: 24px;
+    }
+    .hero-title {
+      font-size: clamp(2.3rem, 4.5vw, 3.8rem);
+      font-weight: 800; line-height: 1.15; letter-spacing: -0.03em;
+      max-width: 950px; margin: 0 auto 20px; color: #fff;
+    }
+    .hero-title span {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #93c5fd 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      font-size: clamp(1.05rem, 1.4vw, 1.25rem); color: var(--text-muted);
+      max-width: 780px; margin: 0 auto 36px; line-height: 1.6;
+    }
+    .hero-cta-group {
+      display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px;
+    }
+    .btn-primary-lg {
+      background: var(--primary); color: #fff; padding: 14px 28px; border-radius: 10px;
+      font-size: 15px; font-weight: 700; text-decoration: none; transition: background 0.2s, transform 0.15s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary-lg:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-secondary-lg {
+      background: rgba(255, 255, 255, 0.08); color: #fff; padding: 14px 28px; border-radius: 10px;
+      font-size: 15px; font-weight: 700; text-decoration: none; border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: background 0.2s; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-secondary-lg:hover { background: rgba(255, 255, 255, 0.14); }
+
+    .hero-highlights {
+      display: flex; justify-content: center; gap: clamp(16px, 3vw, 32px); flex-wrap: wrap;
+      color: #cbd5e1; font-size: 13.5px; font-weight: 600;
+    }
+    .hero-highlight-item { display: flex; align-items: center; gap: 8px; }
+    .hero-highlight-item span { color: var(--accent-green); font-size: 16px; }
+
+    /* SECTION STYLES */
+    .section-wrap { padding: clamp(50px, 7vh, 85px) 0; position: relative; }
+    .section-header { text-align: center; max-width: 780px; margin: 0 auto clamp(36px, 5vh, 50px); }
+    .section-tag {
+      color: #60a5fa; font-size: 12.5px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.1em; display: inline-block; margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; color: #fff;
+      letter-spacing: -0.02em; line-height: 1.25; margin-bottom: 14px;
+    }
+    .section-subtitle { font-size: 15.5px; color: var(--text-muted); line-height: 1.6; }
+
+    /* COST TRAP CALLOUT CARDS */
+    .cost-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px; max-width: 1100px; margin: 0 auto;
+    }
+    .cost-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 16px; padding: 32px; position: relative; overflow: hidden;
+    }
+    .cost-card.bad { border-color: rgba(239, 68, 68, 0.35); background: rgba(30, 16, 22, 0.6); }
+    .cost-card.good { border-color: rgba(16, 185, 129, 0.45); background: rgba(12, 32, 28, 0.6); }
+    .cost-badge {
+      display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 12px;
+      font-weight: 800; text-transform: uppercase; margin-bottom: 16px;
+    }
+    .cost-badge.bad { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+    .cost-badge.good { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+    .cost-amount { font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
+    .cost-sub { font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px; }
+    .cost-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .cost-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: #cbd5e1; }
+    .cost-list li strong { color: #fff; }
+    .cost-icon-bad { color: #ef4444; font-weight: 800; }
+    .cost-icon-good { color: #10b981; font-weight: 800; }
+
+    /* COMPARISON TABLE */
+    .compare-wrap {
+      max-width: 1100px; margin: 0 auto; overflow-x: auto;
+      border: 1px solid var(--card-border); border-radius: 16px; background: var(--card-bg);
+    }
+    .compare-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14.5px; }
+    .compare-table th, .compare-table td { padding: 18px 24px; border-bottom: 1px solid var(--card-border); }
+    .compare-table th { background: rgba(0, 0, 0, 0.4); font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+    .compare-table th.highlight { background: rgba(37, 99, 235, 0.2); color: #60a5fa; font-size: 15px; }
+    .compare-table td.highlight { background: rgba(37, 99, 235, 0.08); font-weight: 700; color: #fff; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .status-check { color: var(--accent-green); font-weight: 800; margin-right: 6px; }
+    .status-cross { color: #ef4444; font-weight: 800; margin-right: 6px; }
+    .status-warn { color: var(--accent-orange); font-weight: 800; margin-right: 6px; }
+
+    /* STEP BY STEP MIGRATION */
+    .migration-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px; max-width: 1100px; margin: 0 auto;
+    }
+    .step-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 14px; padding: 28px; position: relative;
+    }
+    .step-num {
+      width: 40px; height: 40px; border-radius: 10px; background: rgba(37, 99, 235, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4); color: #60a5fa; display: flex; align-items: center;
+      justify-content: center; font-size: 18px; font-weight: 800; margin-bottom: 18px;
+    }
+    .step-title { font-size: 1.15rem; font-weight: 800; color: #fff; margin-bottom: 10px; }
+    .step-desc { font-size: 13.5px; color: var(--text-muted); line-height: 1.5; }
+
+    /* HARDWARE SUPPORT GRID */
+    .hw-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px; max-width: 1100px; margin: 0 auto;
+    }
+    .hw-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 14px; padding: 22px; text-align: center;
+    }
+    .hw-icon { font-size: 32px; margin-bottom: 12px; display: inline-block; }
+    .hw-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .hw-desc { font-size: 12.5px; color: var(--text-muted); }
+
+    /* FAQ ACCORDION */
+    .faq-list { max-width: 850px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+    .faq-item {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color 0.2s;
+    }
+    .faq-item:hover { border-color: rgba(255, 255, 255, 0.2); }
+    .faq-item.open { border-color: var(--primary); }
+    .faq-question {
+      padding: 20px 24px; font-weight: 700; font-size: 15.5px; color: #fff;
+      display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    }
+    .faq-toggle { font-size: 20px; color: var(--text-muted); font-weight: 400; transition: transform 0.2s; }
+    .faq-item.open .faq-toggle { transform: rotate(45deg); color: var(--primary); }
+    .faq-answer {
+      display: none; padding: 0 24px 22px; font-size: 14px; color: #cbd5e1;
+      line-height: 1.6; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 16px;
+    }
+    .faq-item.open .faq-answer { display: block; }
+
+    /* CTA BANNER */
+    .cta-banner {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.25) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 20px;
+      padding: clamp(40px, 6vh, 60px) clamp(24px, 4vw, 48px);
+      text-align: center; max-width: 1050px; margin: 0 auto;
+    }
+    .cta-banner h2 { font-size: clamp(1.8rem, 3.2vw, 2.6rem); font-weight: 800; color: #fff; margin-bottom: 14px; }
+    .cta-banner p { font-size: 15.5px; color: #cbd5e1; max-width: 650px; margin: 0 auto 30px; }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #050811; }
+    .footer-grid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 40px; margin-bottom: 40px; }
+    .footer-brand p { color: var(--text-muted); font-size: 13.5px; margin-top: 12px; max-width: 320px; }
+    .footer-col h3 { color: #fff; font-size: 13.5px; font-weight: 700; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .footer-col a { color: var(--text-muted); text-decoration: none; font-size: 13px; transition: color 0.15s; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom { border-top: 1px solid var(--card-border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; color: var(--text-muted); flex-wrap: wrap; gap: 12px; }
+
+    @media (max-width: 900px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .compare-table { font-size: 13px; }
+      .compare-table th, .compare-table td { padding: 12px 14px; }
+    }
+  </style>
+
+  <script>
+    function toggleFaq(el) {
+      el.classList.toggle('open');
+      const toggleIcon = el.querySelector('.faq-toggle');
+      if (toggleIcon) {
+        toggleIcon.textContent = el.classList.contains('open') ? '−' : '+';
+      }
+    }
+    function toggleDropdown(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      const dd = document.getElementById('industriesDropdown');
+      if (dd) dd.classList.toggle('active');
+    }
+    document.addEventListener('click', function(e) {
+      const dd = document.getElementById('industriesDropdown');
+      if (dd && !dd.contains(e.target)) dd.classList.remove('active');
+    });
+  </script>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container">
+      <a href="/" class="logo">
+        <img src="image_02e503.png" alt="FlexiTap POS" class="brand-logo-svg" onerror="this.src='favicon.png'">
+        <span>FlexiTap POS</span>
+      </a>
+
+      <nav class="nav-links">
+        <div class="nav-dropdown" id="industriesDropdown">
+          <button class="nav-dropdown-btn" onclick="toggleDropdown(event)">
+            <span>Industries</span>
+            <svg class="dropdown-chevron" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+          <div class="dropdown-menu">
+            <a href="pos-for-cafes.html" class="dropdown-item">
+              <div class="dropdown-icon">☕</div>
+              <div><div class="dropdown-title">Cafes &amp; Bakeries</div><div class="dropdown-desc">Barista speed &amp; KOT ticket routing</div></div>
+            </a>
+            <a href="pos-for-retail.html" class="dropdown-item">
+              <div class="dropdown-icon">🛍️</div>
+              <div><div class="dropdown-title">Retail &amp; Convenience</div><div class="dropdown-desc">Barcode guns &amp; variant inventory</div></div>
+            </a>
+            <a href="pos-for-quick-service.html" class="dropdown-item">
+              <div class="dropdown-icon">⚡</div>
+              <div><div class="dropdown-title">Quick-Serve &amp; Trucks</div><div class="dropdown-desc">Speed checkout &amp; offline line busting</div></div>
+            </a>
+            <a href="pos-for-fine-dining.html" class="dropdown-item">
+              <div class="dropdown-icon">🍷</div>
+              <div><div class="dropdown-title">Fine Dining</div><div class="dropdown-desc">Table tabs, coursing &amp; split bills</div></div>
+            </a>
+            <a href="pos-for-professional-services.html" class="dropdown-item">
+              <div class="dropdown-icon">✂️</div>
+              <div><div class="dropdown-title">Services &amp; Salons</div><div class="dropdown-desc">Staff commission &amp; appointment billing</div></div>
+            </a>
+          </div>
+        </div>
+
+        <a href="features.html" class="nav-link">Capabilities</a>
+        <a href="pricing.html" class="nav-link">Pricing</a>
+        <a href="community.html" class="nav-link">Community</a>
+        <a href="insights.html" class="nav-link">Insights</a>
+        <a href="support.html" class="nav-link">Support</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="portal.html" class="btn-login" target="_blank" rel="noopener noreferrer">Merchant Login</a>
+        <a href="pricing.html" class="btn-signup">Get Started</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container">
+        <div class="badge-pill">
+          <span>🔄</span> #1 Recommended Loyverse POS Alternative (2026)
+        </div>
+        <h1 class="hero-title">
+          The Free, Offline-First <span>Loyverse POS Alternative</span> Without Add-On Fees
+        </h1>
+        <p class="hero-subtitle">
+          Tired of paying $50+/month for basic employee management and inventory in Loyverse? FlexiTap runs on an embedded SQLite engine with zero cloud lag, native KDS kitchen routing, and works with the exact receipt printers you already own.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="pricing.html" class="btn-primary-lg">Switch to FlexiTap Free &rarr;</a>
+          <a href="https://flexitapapp.com/#demo" class="btn-secondary-lg">Schedule a 1-on-1 Walkthrough</a>
+        </div>
+
+        <div class="hero-highlights">
+          <div class="hero-highlight-item"><span>✓</span> Zero Monthly Add-on Fees</div>
+          <div class="hero-highlight-item"><span>✓</span> 100% Offline SQLite Engine</div>
+          <div class="hero-highlight-item"><span>✓</span> Works with Loyverse ESC/POS Printers</div>
+          <div class="hero-highlight-item"><span>✓</span> 1-Minute CSV Menu Import</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: THE LOYVERSE COST TRAP EXPOSED -->
+    <section class="section-wrap" style="background: rgba(15, 23, 42, 0.45); border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Pricing Reality Check</span>
+          <h2 class="section-title">The "Free POS" Illusion vs. FlexiTap Transparency</h2>
+          <p class="section-subtitle">
+            Loyverse advertises as free, but paywalls the fundamental features every growing cafe, food truck, and retail shop needs to operate.
+          </p>
+        </div>
+
+        <div class="cost-grid">
+          <!-- CARD 1: LOYVERSE -->
+          <div class="cost-card bad">
+            <span class="cost-badge bad">Loyverse POS True Cost</span>
+            <div class="cost-amount">$59+ <span style="font-size: 16px; font-weight: 600; color: #fca5a5;">/ month per store</span></div>
+            <div class="cost-sub">Adds up to $708 - $2,124+ over 1 to 3 years</div>
+            <ul class="cost-list">
+              <li><span class="cost-icon-bad">✕</span> <div><strong>Employee Management Add-on:</strong> $25/mo per store required for staff clock-in and PIN tracking</div></li>
+              <li><span class="cost-icon-bad">✕</span> <div><strong>Advanced Inventory Add-on:</strong> $25/mo per store required for purchase orders and low-stock alerts</div></li>
+              <li><span class="cost-icon-bad">✕</span> <div><strong>Integrations API Add-on:</strong> $9/mo per register required for external sync</div></li>
+              <li><span class="cost-icon-bad">✕</span> <div><strong>Cloud-Dependent Sync:</strong> Delays between registers when store internet fluctuates</div></li>
+            </ul>
+          </div>
+
+          <!-- CARD 2: FLEXITAP -->
+          <div class="cost-card good">
+            <span class="cost-badge good">FlexiTap POS True Value</span>
+            <div class="cost-amount">$0 <span style="font-size: 16px; font-weight: 600; color: #6ee7b7;">/ Free Community Core</span></div>
+            <div class="cost-sub">Or optional lifetime VIP pass — never a forced monthly fee</div>
+            <ul class="cost-list">
+              <li><span class="cost-icon-good">✓</span> <div><strong>Full Staff Roles &amp; Permissions:</strong> Included free without per-employee charges</div></li>
+              <li><span class="cost-icon-good">✓</span> <div><strong>Real-Time Stock &amp; Recipe Modifiers:</strong> Track coffee beans, syrups, and SKU variants included</div></li>
+              <li><span class="cost-icon-good">✓</span> <div><strong>Native Local KDS Sync:</strong> Sub-300ms kitchen order routing over local Wi-Fi / LAN</div></li>
+              <li><span class="cost-icon-good">✓</span> <div><strong>100% Offline SQLite Architecture:</strong> Zero freeze, zero dropped sales when internet cuts out</div></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: SIDE BY SIDE COMPARISON TABLE -->
+    <section class="section-wrap">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Direct Feature Matrix</span>
+          <h2 class="section-title">Head-to-Head: FlexiTap vs. Loyverse POS</h2>
+          <p class="section-subtitle">
+            See how FlexiTap delivers superior speed, true offline autonomy, and hardware freedom without monthly lock-in fees.
+          </p>
+        </div>
+
+        <div class="compare-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Feature / Capability</th>
+                <th class="highlight">FlexiTap POS</th>
+                <th>Loyverse POS (Free)</th>
+                <th>Loyverse with Add-Ons</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>True Offline Architecture</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> 100% Local SQLite (Full Store Ops)</td>
+                <td><span class="status-warn">⚠</span> Basic offline (Sync lag &amp; report freeze)</td>
+                <td><span class="status-warn">⚠</span> Basic offline (Requires cloud reconnect)</td>
+              </tr>
+              <tr>
+                <td><strong>Monthly Software Cost</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> $0 / Free Forever Core Tier</td>
+                <td>$0 / mo (Heavily stripped)</td>
+                <td><span class="status-cross">✕</span> $50 – $59 / mo per store</td>
+              </tr>
+              <tr>
+                <td><strong>Employee PINs &amp; Access Roles</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> Included Free</td>
+                <td><span class="status-cross">✕</span> Blocked / Unavailable</td>
+                <td><span class="status-check">✓</span> Paid ($25/mo per store)</td>
+              </tr>
+              <tr>
+                <td><strong>Advanced Inventory &amp; Stock Alerts</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> Included Free</td>
+                <td><span class="status-cross">✕</span> Simple counts only</td>
+                <td><span class="status-check">✓</span> Paid ($25/mo per store)</td>
+              </tr>
+              <tr>
+                <td><strong>Kitchen Order Ticket (KOT) &amp; KDS</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> Sub-300ms Local LAN Sync</td>
+                <td><span class="status-warn">⚠</span> Cloud-dependent KDS app</td>
+                <td><span class="status-warn">⚠</span> Cloud-dependent KDS app</td>
+              </tr>
+              <tr>
+                <td><strong>Thermal Printer Freedom (ESC/POS)</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> USB, Bluetooth, LAN, Wi-Fi</td>
+                <td><span class="status-check">✓</span> USB, Bluetooth, LAN</td>
+                <td><span class="status-check">✓</span> USB, Bluetooth, LAN</td>
+              </tr>
+              <tr>
+                <td><strong>Barcode Scanner Support</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> Sub-15ms 1D &amp; 2D HID Lookups</td>
+                <td><span class="status-check">✓</span> Basic barcode scan</td>
+                <td><span class="status-check">✓</span> Basic barcode scan</td>
+              </tr>
+              <tr>
+                <td><strong>Customer Display System (CDS)</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> Native Secondary Window / Tablet</td>
+                <td><span class="status-check">✓</span> Separate CDS app</td>
+                <td><span class="status-check">✓</span> Separate CDS app</td>
+              </tr>
+              <tr>
+                <td><strong>Hardware Ecosystem Freedom</strong></td>
+                <td class="highlight"><span class="status-check">✓</span> Windows, Android, Sunmi, iPadOS, iOS, Mac</td>
+                <td>Android &amp; iOS only</td>
+                <td>Android &amp; iOS only</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: 1-MINUTE LOYVERSE MIGRATION -->
+    <section class="section-wrap" style="background: rgba(15, 23, 42, 0.45); border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Zero Hassle Switch</span>
+          <h2 class="section-title">Migrate from Loyverse to FlexiTap in 3 Easy Steps</h2>
+          <p class="section-subtitle">
+            You don't have to re-enter your menu, prices, or modifiers. Your store can switch in under 5 minutes without missing a single customer order.
+          </p>
+        </div>
+
+        <div class="migration-grid">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <h3 class="step-title">Export from Loyverse</h3>
+            <p class="step-desc">
+              Log into your Loyverse Back Office, navigate to <strong>Items &rarr; Item List</strong>, and click <strong>Export</strong> to download your products CSV file.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <h3 class="step-title">Import into FlexiTap</h3>
+            <p class="step-desc">
+              In your FlexiTap Merchant Back Office, click <strong>Import Items CSV</strong>. FlexiTap automatically parses your Loyverse categories, SKUs, barcode numbers, prices, and modifiers.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <h3 class="step-title">Keep Your Printers &amp; Ring Up</h3>
+            <p class="step-desc">
+              Connect your existing ESC/POS receipt printer or barcode scanner. FlexiTap auto-detects standard USB and Bluetooth peripherals. You are ready to sell!
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: HARDWARE COMPATIBILITY (ZERO NEW HARDWARE TO BUY) -->
+    <section class="section-wrap">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Keep Your Setup</span>
+          <h2 class="section-title">100% Compatible With Your Current Hardware</h2>
+          <p class="section-subtitle">
+            Don't throw away your printers or tablets. FlexiTap works with the exact equipment Loyverse merchants already own.
+          </p>
+        </div>
+
+        <div class="hw-grid">
+          <div class="hw-card">
+            <div class="hw-icon">🖨️</div>
+            <h3 class="hw-title">Thermal Receipt Printers</h3>
+            <p class="hw-desc">Epson TM-T20III, Star TSP143, Sunmi, Xprinter, Rongta, and all standard 58mm &amp; 80mm ESC/POS USB, LAN, or Bluetooth printers.</p>
+          </div>
+
+          <div class="hw-card">
+            <div class="hw-icon">📱</div>
+            <h3 class="hw-title">Any Tablet or Desktop</h3>
+            <p class="hw-desc">Android commercial tablets, Sunmi T2/V2 devices, Windows 10/11 all-in-one cash registers, iPads, and browser workstations.</p>
+          </div>
+
+          <div class="hw-card">
+            <div class="hw-icon">🔫</div>
+            <h3 class="hw-title">Barcode Scanners</h3>
+            <p class="hw-desc">Standard USB and Bluetooth 1D/2D handheld barcode guns (Zebra, Honeywell, Netum, Eyoyo) with sub-15ms SKU lookups.</p>
+          </div>
+
+          <div class="hw-card">
+            <div class="hw-icon">💵</div>
+            <h3 class="hw-title">Cash Drawers</h3>
+            <p class="hw-desc">Standard RJ11 / RJ12 cash drawers triggered automatically by thermal printer kick-pulse upon payment completion.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: FREQUENTLY ASKED QUESTIONS -->
+    <section class="section-wrap" style="background: rgba(15, 23, 42, 0.45); border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Got Questions?</span>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <p class="section-subtitle">
+            Everything you need to know about switching from Loyverse POS to FlexiTap.
+          </p>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Why do merchants look for a Loyverse POS alternative?</span>
+              <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+              While Loyverse advertises a free core app, essential business functions require expensive monthly add-ons: Employee Management is $25/month per store and Advanced Inventory is $25/month per store ($50+/month total). In addition, stores with spotty internet experience sync delays and freezing. FlexiTap eliminates these costs with true offline SQLite resilience and zero mandatory monthly add-on taxes.
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Can I keep my existing Loyverse receipt printer?</span>
+              <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+              Yes, 100%. FlexiTap supports any standard ESC/POS thermal printer (Epson, Star Micronics, Sunmi, Xprinter, etc.) connected via USB, Bluetooth, or Ethernet LAN. Auto-cutters and RJ11 cash drawers trigger out of the box with zero proprietary hardware lock-in.
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>How difficult is it to migrate my products from Loyverse?</span>
+              <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+              It takes less than 60 seconds. Simply export your product list CSV from Loyverse Back Office (Items &rarr; Export) and upload it to your FlexiTap portal. All your item names, prices, categories, barcodes, and modifiers map automatically.
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Does FlexiTap support Kitchen Display Systems (KDS)?</span>
+              <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+              Yes. FlexiTap includes native real-time KDS kitchen display and Kitchen Order Ticket (KOT) printing. Orders routed from cashier registers or floor tablets transmit instantly to your kitchen prep screens over local Wi-Fi or LAN with sub-300ms latency.
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+              <span>Is the FlexiTap Free Tier really free?</span>
+              <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+              Yes. The FlexiTap Community edition has no trial expiration, no credit card required, and no hidden monthly subscription. You get full cashier register checkout, unlimited transactions, local offline SQLite encryption, and hardware printer integration completely free.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: BOTTOM CALL TO ACTION -->
+    <section class="section-wrap">
+      <div class="container">
+        <div class="cta-banner">
+          <h2>Ready to Stop Paying $50/Month for Loyverse Add-Ons?</h2>
+          <p>
+            Join the hundreds of independent cafes, bakeries, and retail stores upgrading to FlexiTap. Import your Loyverse menu in 60 seconds and start ringing orders today.
+          </p>
+          <div class="hero-cta-group" style="margin-bottom: 0;">
+            <a href="pricing.html" class="btn-primary-lg">Get Started Free &rarr;</a>
+            <a href="https://flexitapapp.com/#demo" class="btn-secondary-lg">Book 1-on-1 Walkthrough</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="logo">
+            <img src="image_02e503.png" alt="FlexiTap POS" class="brand-logo-svg" onerror="this.src='favicon.png'">
+            <span>FlexiTap POS</span>
+          </a>
+          <p>The high-speed, offline-first point of sale system for independent cafes, quick-service food, and retail merchants.</p>
+        </div>
+
+        <div class="footer-col">
+          <h3>Solutions</h3>
+          <ul>
+            <li><a href="pos-for-cafes.html">Cafes &amp; Bakeries</a></li>
+            <li><a href="pos-for-retail.html">Retail &amp; Boutiques</a></li>
+            <li><a href="pos-for-quick-service.html">Quick-Serve &amp; Trucks</a></li>
+            <li><a href="pos-for-fine-dining.html">Fine Dining &amp; Full Service</a></li>
+            <li><a href="pos-for-professional-services.html">Services &amp; Salons</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>Comparisons</h3>
+          <ul>
+            <li><a href="loyverse-pos-alternative.html">Loyverse POS Alternative</a></li>
+            <li><a href="features.html">Offline Architecture</a></li>
+            <li><a href="pricing.html">Transparent Pricing</a></li>
+            <li><a href="community.html">Merchant Community</a></li>
+            <li><a href="insights.html">Industry Insights</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>Company</h3>
+          <ul>
+            <li><a href="about.html">About &amp; FAQ</a></li>
+            <li><a href="support.html">Hardware &amp; Help Desk</a></li>
+            <li><a href="affiliate.html">Affiliate Program</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 FlexiTap POS. All rights reserved. Unconditional offline-first checkout.</div>
+        <div>
+          <a href="/" style="color:var(--text-muted); text-decoration:none;">Back to Top &uarr;</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
