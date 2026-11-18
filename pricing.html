@@ -8,22 +8,22 @@
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Free Community POS & Transparent Pricing | FlexiTap</title>
-  <meta name="description" content="Transparent pricing with zero hidden fees. Start free with 100% offline POS, or unlock real-time cloud sync and back office with Founders VIP.">
+  <meta name="description" content="Transparent pricing with zero hidden fees. Start free with 100% offline POS, or choose flexible monthly and annual plans for cloud sync and multi-store fleet ops.">
   <link rel="canonical" href="https://flexitapapp.com/pricing.html">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://flexitapapp.com/pricing.html">
   <meta property="og:site_name" content="FlexiTap POS">
-  <meta property="og:title" content="FlexiTap POS Pricing — Free Community & Founders VIP Annual Pass">
-  <meta property="og:description" content="Transparent pricing with zero hidden fees. Start free with 100% offline POS, or unlock real-time cloud sync and back office with Founders VIP.">
+  <meta property="og:title" content="FlexiTap POS Pricing — Flexible Monthly &amp; Annual Plans">
+  <meta property="og:description" content="Transparent pricing with zero hidden fees. Start free with 100% offline POS, or choose flexible monthly and annual plans for cloud sync and multi-store fleet ops.">
   <meta property="og:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
 
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://flexitapapp.com/pricing.html">
-  <meta name="twitter:title" content="FlexiTap POS Pricing — Free Community & Founders VIP Annual Pass">
-  <meta name="twitter:description" content="Transparent pricing with zero hidden fees. Start free with 100% offline POS, or unlock real-time cloud sync and back office with Founders VIP.">
+  <meta name="twitter:title" content="FlexiTap POS Pricing — Flexible Monthly &amp; Annual Plans">
+  <meta name="twitter:description" content="Transparent pricing with zero hidden fees. Start free with 100% offline POS, or choose flexible monthly and annual plans for cloud sync and multi-store fleet ops.">
   <meta name="twitter:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
   
   <link rel="icon" type="image/png" href="image_02e503.png">
@@ -879,12 +879,12 @@
     // =========================================================================
     // FLEXITAP DYNAMIC PRICING & LOCALIZED BILLING ENGINE
     // =========================================================================
-    // FEATURE FLAGS: Disabled until Launch Day (November 21, 2026)
-    const ENABLE_MONTHLY_BILLING = false; // Turn on during launch day
-    const ENABLE_PH_PRICING = false;      // Turn on during launch day (US pricing only for now)
+    // FEATURE FLAGS: Monthly & Annual Billing Active
+    const ENABLE_MONTHLY_BILLING = true;  // Monthly and Annual billing fully unlocked
+    const ENABLE_PH_PRICING = false;      // US / International Paddle pricing active
 
-    let currentCurrency = 'USD'; // Default to USD (US pricing active)
-    let currentBillingCycle = 'annual'; // Locked to Annual VIP Pass
+    let currentCurrency = 'USD'; // Default to USD (Paddle active)
+    let currentBillingCycle = 'annual'; // Default to Annual (Save with Annual), toggleable to Monthly
     let activeGcashPayment = null;
 
     const PRICING_CONFIG = {
@@ -904,7 +904,7 @@
             period: '/ mo',
             original: '₱2,490',
             note: '🔒 Fixed lock-in rate • Direct GCash or Card',
-            btnText: 'Get Founders Plus (₱1,299/mo)',
+            btnText: 'Get Plus (₱1,299/mo)',
             planId: 'php_plus_monthly',
             amount: 1299
           },
@@ -913,7 +913,7 @@
             period: '/ mo',
             original: '₱4,990',
             note: '🔒 Fixed lock-in rate • Dedicated Standby Included',
-            btnText: 'Get Founders Pro (₱2,499/mo)',
+            btnText: 'Get Pro (₱2,499/mo)',
             planId: 'php_pro_monthly',
             amount: 2499
           }
@@ -924,7 +924,7 @@
             period: '/ year fixed',
             original: '₱24,900',
             note: '🔒 Lifetime rate lock • Save ~₱3,500 vs standard',
-            btnText: 'Lock In Plus Annual (₱14,990)',
+            btnText: 'Get Plus Annual (₱14,990)',
             planId: 'php_plus_annual',
             amount: 14990
           },
@@ -933,7 +933,7 @@
             period: '/ year fixed',
             original: '₱49,900',
             note: '🔒 Lifetime rate lock • White-Glove Migration Included',
-            btnText: 'Lock In Pro Annual (₱28,990)',
+            btnText: 'Get Pro Annual (₱28,990)',
             planId: 'php_pro_annual',
             amount: 28990
           }
@@ -946,45 +946,45 @@
           price: '$0',
           period: '/ mo',
           original: '',
-          note: 'No credit card required to reserve',
-          btnText: 'Join Free Launch Waitlist'
+          note: 'No credit card required • Single terminal',
+          btnText: 'Get Started Free'
         },
         monthly: {
           plus: {
-            price: '$29',
+            price: '$24.99',
             period: '/ mo',
-            original: '$49',
-            note: '🔒 Fixed rate lock • Automated Paddle billing',
-            btnText: 'Claim Founders Plus ($29/mo)',
-            planId: 'pri_01m1pb8szpcf4vapm28yfzw9aq',
-            amount: 29
+            original: '$39',
+            note: 'Billed monthly • Up to 10 devices • Cancel anytime',
+            btnText: 'Get Plus ($24.99/mo)',
+            planId: 'pri_01m5hw17h78pet009h7dk38cgz',
+            amount: 24.99
           },
           pro: {
-            price: '$59',
+            price: '$49.99',
             period: '/ mo',
-            original: '$99',
-            note: '🔒 Fixed rate lock • White-Glove Setup Included',
-            btnText: 'Claim Founders Pro ($59/mo)',
-            planId: 'pri_01m1pb6ba15axyr7acv0hswynd',
-            amount: 59
+            original: '$79',
+            note: 'Billed monthly • Unlimited devices • Cancel anytime',
+            btnText: 'Get Pro ($49.99/mo)',
+            planId: 'pri_01m5hvzhwktdsha3tjpy4j8nee',
+            amount: 49.99
           }
         },
         annual: {
           plus: {
             price: '$290',
-            period: '/ year fixed',
-            original: '$490',
-            note: '🔒 Lifetime rate lock • VAT calculated at checkout',
-            btnText: 'Claim Founders Plus ($290)',
+            period: '/ year',
+            original: '$300',
+            note: '~$24.16/mo effective • Up to 10 devices • Billed annually',
+            btnText: 'Get Plus Annual ($290/yr)',
             planId: 'pri_01m1pb8szpcf4vapm28yfzw9aq',
             amount: 290
           },
           pro: {
             price: '$590',
-            period: '/ year fixed',
-            original: '$990',
-            note: '🔒 Lifetime rate lock • White-Glove Setup Included',
-            btnText: 'Claim Founders Pro ($590)',
+            period: '/ year',
+            original: '$600',
+            note: '~$49.16/mo effective • Unlimited devices • White-glove setup',
+            btnText: 'Get Pro Annual ($590/yr)',
             planId: 'pri_01m1pb6ba15axyr7acv0hswynd',
             amount: 590
           }
@@ -1146,38 +1146,60 @@
       const previousVal = selectedKey || selectEl.value || 'free';
 
       if (!ENABLE_PH_PRICING || currentCurrency === 'USD') {
-        selectEl.innerHTML = `
-          <option value="free">Free Launch Waitlist ($0 / mo)</option>
-          <option value="pri_01m1pb8szpcf4vapm28yfzw9aq">Plus Founders VIP ($290 / year fixed)</option>
-          <option value="pri_01m1pb6ba15axyr7acv0hswynd">Pro Founders VIP ($590 / year fixed)</option>
-        `;
-      } else if (ENABLE_MONTHLY_BILLING) {
-        selectEl.innerHTML = `
-          <option value="free">Free Launch Waitlist (₱0 / mo)</option>
-          <option value="php_plus_monthly">Plus Plan (₱1,299 / month via GCash)</option>
-          <option value="php_plus_annual">Plus Founders Annual (₱14,990 / year via GCash)</option>
-          <option value="php_pro_monthly">Pro Plan (₱2,499 / month via GCash)</option>
-          <option value="php_pro_annual">Pro Founders Annual (₱28,990 / year via GCash)</option>
-        `;
+        if (currentBillingCycle === 'annual') {
+          selectEl.innerHTML = `
+            <option value="free">Free Community Tier ($0 / mo)</option>
+            <option value="pri_01m1pb8szpcf4vapm28yfzw9aq">FlexiTap Plus Annual ($290.00 / year)</option>
+            <option value="pri_01m1pb6ba15axyr7acv0hswynd">FlexiTap Pro Annual ($590.00 / year)</option>
+            <option value="pri_01m5hw17h78pet009h7dk38cgz">FlexiTap Plus Monthly ($24.99 / mo)</option>
+            <option value="pri_01m5hvzhwktdsha3tjpy4j8nee">FlexiTap Pro Monthly ($49.99 / mo)</option>
+          `;
+        } else {
+          selectEl.innerHTML = `
+            <option value="free">Free Community Tier ($0 / mo)</option>
+            <option value="pri_01m5hw17h78pet009h7dk38cgz">FlexiTap Plus Monthly ($24.99 / mo)</option>
+            <option value="pri_01m5hvzhwktdsha3tjpy4j8nee">FlexiTap Pro Monthly ($49.99 / mo)</option>
+            <option value="pri_01m1pb8szpcf4vapm28yfzw9aq">FlexiTap Plus Annual ($290.00 / year)</option>
+            <option value="pri_01m1pb6ba15axyr7acv0hswynd">FlexiTap Pro Annual ($590.00 / year)</option>
+          `;
+        }
       } else {
         selectEl.innerHTML = `
-          <option value="free">Free Launch Waitlist (₱0 / mo)</option>
-          <option value="php_plus_annual">Plus Founders Annual (₱14,990 / year via GCash)</option>
-          <option value="php_pro_annual">Pro Founders Annual (₱28,990 / year via GCash)</option>
+          <option value="free">Free Community Tier (₱0 / mo)</option>
+          <option value="php_plus_monthly">Plus Plan (₱1,299 / month via GCash)</option>
+          <option value="php_plus_annual">Plus Annual (₱14,990 / year via GCash)</option>
+          <option value="php_pro_monthly">Pro Plan (₱2,499 / month via GCash)</option>
+          <option value="php_pro_annual">Pro Annual (₱28,990 / year via GCash)</option>
         `;
       }
 
       const pVal = String(previousVal).toLowerCase();
       if (pVal === 'free') {
         selectEl.value = 'free';
-      } else if (pVal.includes('pro') || pVal === 'pri_01m1pb6ba15axyr7acv0hswynd') {
-        selectEl.value = (!ENABLE_PH_PRICING || currentCurrency === 'USD')
-          ? 'pri_01m1pb6ba15axyr7acv0hswynd'
-          : ((pVal.includes('annual') || currentBillingCycle === 'annual' || !ENABLE_MONTHLY_BILLING) ? 'php_pro_annual' : 'php_pro_monthly');
-      } else if (pVal.includes('plus') || pVal === 'pri_01m1pb8szpcf4vapm28yfzw9aq') {
-        selectEl.value = (!ENABLE_PH_PRICING || currentCurrency === 'USD')
-          ? 'pri_01m1pb8szpcf4vapm28yfzw9aq'
-          : ((pVal.includes('annual') || currentBillingCycle === 'annual' || !ENABLE_MONTHLY_BILLING) ? 'php_plus_annual' : 'php_plus_monthly');
+      } else if (pVal.includes('pro') || pVal === 'pri_01m1pb6ba15axyr7acv0hswynd' || pVal === 'pri_01m5hvzhwktdsha3tjpy4j8nee') {
+        if (!ENABLE_PH_PRICING || currentCurrency === 'USD') {
+          if (pVal === 'pri_01m5hvzhwktdsha3tjpy4j8nee' || pVal.includes('monthly')) {
+            selectEl.value = 'pri_01m5hvzhwktdsha3tjpy4j8nee';
+          } else if (pVal === 'pri_01m1pb6ba15axyr7acv0hswynd' || pVal.includes('annual')) {
+            selectEl.value = 'pri_01m1pb6ba15axyr7acv0hswynd';
+          } else {
+            selectEl.value = (currentBillingCycle === 'annual') ? 'pri_01m1pb6ba15axyr7acv0hswynd' : 'pri_01m5hvzhwktdsha3tjpy4j8nee';
+          }
+        } else {
+          selectEl.value = (pVal.includes('annual') || currentBillingCycle === 'annual') ? 'php_pro_annual' : 'php_pro_monthly';
+        }
+      } else if (pVal.includes('plus') || pVal === 'pri_01m1pb8szpcf4vapm28yfzw9aq' || pVal === 'pri_01m5hw17h78pet009h7dk38cgz') {
+        if (!ENABLE_PH_PRICING || currentCurrency === 'USD') {
+          if (pVal === 'pri_01m5hw17h78pet009h7dk38cgz' || pVal.includes('monthly')) {
+            selectEl.value = 'pri_01m5hw17h78pet009h7dk38cgz';
+          } else if (pVal === 'pri_01m1pb8szpcf4vapm28yfzw9aq' || pVal.includes('annual')) {
+            selectEl.value = 'pri_01m1pb8szpcf4vapm28yfzw9aq';
+          } else {
+            selectEl.value = (currentBillingCycle === 'annual') ? 'pri_01m1pb8szpcf4vapm28yfzw9aq' : 'pri_01m5hw17h78pet009h7dk38cgz';
+          }
+        } else {
+          selectEl.value = (pVal.includes('annual') || currentBillingCycle === 'annual') ? 'php_plus_annual' : 'php_plus_monthly';
+        }
       } else {
         selectEl.value = 'free';
       }
@@ -1193,30 +1215,29 @@
       if (!selectEl || !btnText) return;
 
       const val = selectEl.value || 'free';
-      const isPlus = val.includes('plus') || val === 'pri_01m1pb8szpcf4vapm28yfzw9aq';
-      const isPro = val.includes('pro') || val === 'pri_01m1pb6ba15axyr7acv0hswynd';
+      const isPlus = val.includes('plus') || val === 'pri_01m1pb8szpcf4vapm28yfzw9aq' || val === 'pri_01m5hw17h78pet009h7dk38cgz';
+      const isPro = val.includes('pro') || val === 'pri_01m1pb6ba15axyr7acv0hswynd' || val === 'pri_01m5hvzhwktdsha3tjpy4j8nee';
+      const isAnnual = val.includes('annual') || val === 'pri_01m1pb8szpcf4vapm28yfzw9aq' || val === 'pri_01m1pb6ba15axyr7acv0hswynd';
 
       if (isPlus) {
         if (currentCurrency === 'PHP' || val.startsWith('php_')) {
-          const isAnnual = val.includes('annual');
-          btnText.innerText = isAnnual ? 'Lock In Plus Annual (₱14,990)' : 'Lock In Plus Plan (₱1,299/mo)';
+          btnText.innerText = isAnnual ? 'Subscribe to Plus Annual (₱14,990/yr)' : 'Subscribe to Plus (₱1,299/mo)';
           if (helper) helper.innerText = 'Includes 7-day shift guarantee. Pay securely via GCash with instant manual verification.';
         } else {
-          btnText.innerText = 'Lock In Plus VIP Pass ($290/yr)';
-          if (helper) helper.innerText = 'Includes 100% money-back guarantee after your first live week via Paddle.';
+          btnText.innerText = isAnnual ? 'Subscribe to Plus Annual ($290/yr)' : 'Subscribe to Plus ($24.99/mo)';
+          if (helper) helper.innerText = 'Includes 7-day live shift guarantee. Secure checkout via Paddle.';
         }
       } else if (isPro) {
         if (currentCurrency === 'PHP' || val.startsWith('php_')) {
-          const isAnnual = val.includes('annual');
-          btnText.innerText = isAnnual ? 'Lock In Pro Annual (₱28,990)' : 'Lock In Pro Plan (₱2,499/mo)';
+          btnText.innerText = isAnnual ? 'Subscribe to Pro Annual (₱28,990/yr)' : 'Subscribe to Pro (₱2,499/mo)';
           if (helper) helper.innerText = 'Includes white-glove menu migration and direct engineer standby via GCash.';
         } else {
-          btnText.innerText = 'Lock In Pro VIP Pass ($590/yr)';
-          if (helper) helper.innerText = 'Includes full menu migration and phone/remote standby access via Paddle.';
+          btnText.innerText = isAnnual ? 'Subscribe to Pro Annual ($590/yr)' : 'Subscribe to Pro ($49.99/mo)';
+          if (helper) helper.innerText = 'Includes white-glove setup and priority phone/remote support via Paddle.';
         }
       } else {
-        btnText.innerText = 'Join Free Launch Waitlist';
-        if (helper) helper.innerText = 'No credit card required. You will receive access on November 21, 2026.';
+        btnText.innerText = 'Get Started Free';
+        if (helper) helper.innerText = 'No credit card required. Download your standalone POS on release day.';
       }
 
       if (termsCheckbox) {
@@ -1227,17 +1248,21 @@
     function openSignupModalWithPlan(planKey) {
       let targetVal = 'free';
       const keyStr = String(planKey || '').toLowerCase();
-      const isPro = keyStr === 'pro' || keyStr.includes('pro') || keyStr === 'pri_01m1pb6ba15axyr7acv0hswynd';
-      const isPlus = keyStr === 'plus' || keyStr.includes('plus') || keyStr === 'pri_01m1pb8szpcf4vapm28yfzw9aq';
+      const isPro = keyStr === 'pro' || keyStr.includes('pro') || keyStr === 'pri_01m1pb6ba15axyr7acv0hswynd' || keyStr === 'pri_01m5hvzhwktdsha3tjpy4j8nee';
+      const isPlus = keyStr === 'plus' || keyStr.includes('plus') || keyStr === 'pri_01m1pb8szpcf4vapm28yfzw9aq' || keyStr === 'pri_01m5hw17h78pet009h7dk38cgz';
 
       if (isPro) {
-        targetVal = (!ENABLE_PH_PRICING || currentCurrency === 'USD')
-          ? 'pri_01m1pb6ba15axyr7acv0hswynd'
-          : (currentBillingCycle === 'annual' || !ENABLE_MONTHLY_BILLING ? 'php_pro_annual' : 'php_pro_monthly');
+        if (!ENABLE_PH_PRICING || currentCurrency === 'USD') {
+          targetVal = (currentBillingCycle === 'annual') ? 'pri_01m1pb6ba15axyr7acv0hswynd' : 'pri_01m5hvzhwktdsha3tjpy4j8nee';
+        } else {
+          targetVal = (currentBillingCycle === 'annual') ? 'php_pro_annual' : 'php_pro_monthly';
+        }
       } else if (isPlus) {
-        targetVal = (!ENABLE_PH_PRICING || currentCurrency === 'USD')
-          ? 'pri_01m1pb8szpcf4vapm28yfzw9aq'
-          : (currentBillingCycle === 'annual' || !ENABLE_MONTHLY_BILLING ? 'php_plus_annual' : 'php_plus_monthly');
+        if (!ENABLE_PH_PRICING || currentCurrency === 'USD') {
+          targetVal = (currentBillingCycle === 'annual') ? 'pri_01m1pb8szpcf4vapm28yfzw9aq' : 'pri_01m5hw17h78pet009h7dk38cgz';
+        } else {
+          targetVal = (currentBillingCycle === 'annual') ? 'php_plus_annual' : 'php_plus_monthly';
+        }
       } else {
         targetVal = 'free';
       }
@@ -1259,7 +1284,7 @@
       const errorDiv = document.getElementById('gcash-modal-error');
 
       if (planDisplay) {
-        planDisplay.innerText = `FlexiTap ${tierName.toUpperCase()} (${billingCycle === 'annual' ? 'Annual VIP Pass' : 'Monthly'})`;
+        planDisplay.innerText = `FlexiTap ${tierName.toUpperCase()} (${billingCycle === 'annual' ? 'Annual Plan' : 'Monthly'})`;
       }
       if (amountDisplay) {
         amountDisplay.innerText = `₱${amount.toLocaleString()}.00`;
@@ -1421,11 +1446,11 @@
       `;
 
       if (tierKey === 'plus') {
-        tierTitle = 'Plus Founders VIP Edition';
+        tierTitle = 'FlexiTap Plus Edition';
         badgeColor = '#1d4ed8';
         badgeBg = '#eff6ff';
         badgeBorder = '#bfdbfe';
-        badgeText = 'Founders VIP Pass Confirmed ($290/yr Fixed)';
+        badgeText = 'Subscription Confirmed - FlexiTap Plus';
         priceDesc = '$290 / year fixed rate - 7-Day Live Shift Money-Back Guarantee';
         ctaUrl = 'https://www.flexitapapp.com/portal.html';
         ctaText = 'Access Merchant Back Office &rarr;';
@@ -1440,11 +1465,11 @@
           </p>
         `;
       } else if (tierKey === 'pro') {
-        tierTitle = 'Pro Founders VIP Edition';
+        tierTitle = 'FlexiTap Pro Edition';
         badgeColor = '#6b21a8';
         badgeBg = '#faf5ff';
         badgeBorder = '#e9d5ff';
-        badgeText = 'Pro VIP Onboarding Activated ($590/yr Fixed)';
+        badgeText = 'Subscription Confirmed - FlexiTap Pro';
         priceDesc = '$590 / year fixed rate - White-Glove Migration &amp; Standby';
         ctaUrl = 'https://www.flexitapapp.com/portal.html';
         ctaText = 'Access Merchant Back Office &rarr;';
@@ -1619,8 +1644,8 @@
       let tierName = 'free';
       let paymentStatus = 'free';
 
-      const isPlus = priceId.includes('plus') || priceId === 'pri_01m1pb8szpcf4vapm28yfzw9aq';
-      const isPro = priceId.includes('pro') || priceId === 'pri_01m1pb6ba15axyr7acv0hswynd';
+      const isPlus = priceId.includes('plus') || priceId === 'pri_01m1pb8szpcf4vapm28yfzw9aq' || priceId === 'pri_01m5hw17h78pet009h7dk38cgz';
+      const isPro = priceId.includes('pro') || priceId === 'pri_01m1pb6ba15axyr7acv0hswynd' || priceId === 'pri_01m5hvzhwktdsha3tjpy4j8nee';
 
       if (isPlus) {
         tierName = 'plus';
@@ -2149,11 +2174,11 @@
     <section class="pricing">
       
       <div class="hero-badge">
-        <span class="hero-dot"></span> Official Public Launch: November 21, 2026
+        <span class="hero-dot"></span> Flexible Monthly &amp; Annual Subscription Plans
       </div>
       
       <h1 class="section-title">Resilient Offline POS.<br>Zero Proprietary Terminal Fees.</h1>
-      <p class="section-subtitle">Run your counter on standard tablets and PCs. Lock in guaranteed lifetime pricing with our Founders VIP Pass before public retail billing begins.</p>
+      <p class="section-subtitle">Run your counter on standard tablets and PCs. Choose flexible monthly billing or save with our discounted annual plans.</p>
       
       <!-- GEOLOCATION TAG & BILLING CYCLE TOGGLE -->
       <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 10px auto 30px;">
@@ -2161,25 +2186,21 @@
           📍 Detected Location: <strong>Philippines</strong> — Local Rates (₱) &amp; GCash Checkout Active
         </div>
 
-        <div class="billing-cycle-switch" id="billing-cycle-wrapper" style="display: none;">
+        <div class="billing-cycle-switch" id="billing-cycle-wrapper">
           <button type="button" class="cycle-btn" id="btn-cycle-monthly" onclick="setBillingCycle('monthly')">
             Monthly Billing
           </button>
           <button type="button" class="cycle-btn active" id="btn-cycle-annual" onclick="setBillingCycle('annual')">
-            Annual VIP Pass <span class="cycle-badge-save" id="cycle-save-badge">Save Up to 20%</span>
+            Annual Billing <span class="cycle-badge-save" id="cycle-save-badge">Save with Annual</span>
           </button>
-        </div>
-
-        <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(37, 99, 235, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); color: #93c5fd; padding: 7px 20px; border-radius: 9999px; font-size: 13px; font-weight: 700; margin: 6px 0 20px;">
-          <span>🎟️</span> Founders Pre-Launch: Annual VIP Passes Only <span style="background: rgba(255, 255, 255, 0.1); color: #cbd5e1; font-size: 11px; padding: 2px 8px; border-radius: 9999px; margin-left: 4px;">Monthly Unlocks Launch Day (Nov 21)</span>
         </div>
       </div>
       
       <!-- RISK-REVERSAL BANNER -->
       <div class="risk-reversal-card">
         <div class="risk-text">
-          <div class="risk-title" style="font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px;">🛡️ The Founders Operational Guarantee</div>
-          <p>Your 12-month subscription begins on launch day. If FlexiTap does not speed up your service during your first 7 live shifts, get a 100% full refund immediately.</p>
+          <div class="risk-title" style="font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px;">🛡️ 7-Day Live Shift Money-Back Guarantee</div>
+          <p>Try FlexiTap Plus or Pro during your first 7 live shifts. If it doesn't dramatically speed up your counter line and streamline operations, get a 100% full refund immediately.</p>
         </div>
         <div class="risk-badge">100% Risk-Free Commitment</div>
       </div>
@@ -2216,22 +2237,22 @@
           </div>
 
           <div>
-            <button class="btn-card-action secondary" id="btn-action-free" onclick="openSignupModalWithPlan('free')">Join Free Launch Waitlist</button>
+            <button class="btn-card-action secondary" id="btn-action-free" onclick="openSignupModalWithPlan('free')">Get Started Free</button>
             <div class="guarantee-micro">Instant confirmation • App access sent on Nov 21</div>
           </div>
         </div>
 
-        <!-- PLUS TIER (FOUNDERS VIP) -->
+        <!-- PLUS TIER -->
         <div class="pricing-card popular">
           <div>
             <span class="badge-pop">Most Popular</span>
-            <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Plus Founders VIP</h2>
-            <p class="tier-target">For growing cafes & food trucks</p>
+            <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">FlexiTap Plus</h2>
+            <p class="tier-target">For growing cafes, bakeries & food trucks</p>
             
             <div class="price-container">
-              <span class="original-price" id="original-price-plus">$490</span>
-              <div class="price" id="price-display-plus">$290 <span>/ year fixed</span></div>
-              <div class="vat-note" id="vat-note-plus">🔒 Lifetime rate lock • VAT calculated at checkout</div>
+              <span class="original-price" id="original-price-plus">$300</span>
+              <div class="price" id="price-display-plus">$290 <span>/ year</span></div>
+              <div class="vat-note" id="vat-note-plus">~$24.16/mo effective • Billed annually</div>
             </div>
 
             <ul class="pricing-list">
@@ -2250,22 +2271,22 @@
           </div>
 
           <div>
-            <button class="btn-card-action primary" id="btn-action-plus" onclick="openSignupModalWithPlan('plus')">Claim Founders Plus ($290)</button>
+            <button class="btn-card-action primary" id="btn-action-plus" onclick="openSignupModalWithPlan('plus')">Get Plus Annual ($290/yr)</button>
             <div class="guarantee-micro">Backed by 7-Day Live Shift Money-Back Guarantee</div>
           </div>
         </div>
 
-        <!-- PRO TIER (FOUNDERS VIP) -->
+        <!-- PRO TIER -->
         <div class="pricing-card">
           <div>
-            <span class="badge-pop" style="background: var(--accent-purple);">VIP Elite</span>
-            <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Pro Founders VIP</h2>
-            <p class="tier-target">For multi-station restaurants</p>
+            <span class="badge-pop" style="background: var(--accent-purple);">Multi-Store &amp; Fleet</span>
+            <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">FlexiTap Pro</h2>
+            <p class="tier-target">For multi-station restaurants & busy retail</p>
             
             <div class="price-container">
-              <span class="original-price" id="original-price-pro">$990</span>
-              <div class="price" style="color: var(--accent-purple);" id="price-display-pro">$590 <span>/ year fixed</span></div>
-              <div class="vat-note" id="vat-note-pro">🔒 Lifetime rate lock • White-Glove Setup Included</div>
+              <span class="original-price" id="original-price-pro">$600</span>
+              <div class="price" style="color: var(--accent-purple);" id="price-display-pro">$590 <span>/ year</span></div>
+              <div class="vat-note" id="vat-note-pro">~$49.16/mo effective • White-Glove Onboarding</div>
             </div>
 
             <ul class="pricing-list">
@@ -2283,7 +2304,7 @@
           </div>
 
           <div>
-            <button class="btn-card-action purple" id="btn-action-pro" onclick="openSignupModalWithPlan('pro')">Claim Founders Pro ($590)</button>
+            <button class="btn-card-action purple" id="btn-action-pro" onclick="openSignupModalWithPlan('pro')">Get Pro Annual ($590/yr)</button>
             <div class="guarantee-micro">Priority onboarding &amp; direct engineer standby</div>
           </div>
         </div>
@@ -2297,11 +2318,11 @@
         <div class="byod-pill">Zero Proprietary Hardware Fees</div>
       </div>
 
-      <!-- VIP PERKS SECTION -->
+      <!-- PERKS SECTION -->
       <div class="founders-perks-section">
         <div class="perks-header">
-          <h3>Why Operators Lock In the Founders Pass</h3>
-          <p>We eliminate the operational headache of switching systems with hands-on setup and lifetime protection.</p>
+          <h3>Why Operators Choose FlexiTap Plus &amp; Pro</h3>
+          <p>We eliminate the operational headache of switching systems with hands-on setup, flexible billing, and reliable support.</p>
         </div>
         
         <div class="perks-grid">
@@ -2309,21 +2330,21 @@
             <span class="perk-highlight-tag">Save 15+ Hours</span>
             <div class="perk-icon">📋</div>
             <h4>Done-For-You Menu Setup</h4>
-            <p>Skip the setup headache. Send us your menu and our product team will pre-format your store database, categories, and items before launch day.</p>
+            <p>Skip the setup headache. Send us your menu and our product team will pre-format your store database, categories, and items before your first shift.</p>
           </div>
           
           <div class="perk-card">
-            <span class="perk-highlight-tag">Permanent Shield</span>
+            <span class="perk-highlight-tag">Zero Lock-In</span>
             <div class="perk-icon">🔒</div>
-            <h4>Permanent Lifetime Price Lock</h4>
-            <p>Your early-adopter renewal rate will never increase. As we scale and roll out new operational features, your founding subscription remains locked forever.</p>
+            <h4>Flexible Monthly or Annual</h4>
+            <p>Choose monthly billing with the freedom to cancel anytime, or choose annual billing to lock in discounted rates with zero surprise price jumps.</p>
           </div>
           
           <div class="perk-card">
-            <span class="perk-highlight-tag">VIP Standby</span>
+            <span class="perk-highlight-tag">Priority Support</span>
             <div class="perk-icon">⭐</div>
-            <h4>Launch Shift Standby Support</h4>
-            <p>Skip the queue during launch week. Get white-glove assistance setting up your store database, printer pairings, and inventory, backed by direct engineer standby.</p>
+            <h4>Direct Engineer Standby Support</h4>
+            <p>Get white-glove assistance setting up your store database, printer pairings, and inventory, backed by direct priority technician support.</p>
           </div>
         </div>
       </div>
@@ -2449,9 +2470,11 @@
         
         <label>Select Plan</label>
         <select id="signup-tier" required>
-          <option value="free">Free Launch Waitlist ($0 / mo)</option>
-          <option value="pri_01m1pb8szpcf4vapm28yfzw9aq">Plus Founders VIP ($290 / year fixed)</option>
-          <option value="pri_01m1pb6ba15axyr7acv0hswynd">Pro Founders VIP ($590 / year fixed)</option>
+          <option value="free">Free Community Tier ($0 / mo)</option>
+          <option value="pri_01m5hw17h78pet009h7dk38cgz">FlexiTap Plus Monthly ($24.99 / mo)</option>
+          <option value="pri_01m1pb8szpcf4vapm28yfzw9aq" selected>FlexiTap Plus Annual ($290.00 / year)</option>
+          <option value="pri_01m5hvzhwktdsha3tjpy4j8nee">FlexiTap Pro Monthly ($49.99 / mo)</option>
+          <option value="pri_01m1pb6ba15axyr7acv0hswynd">FlexiTap Pro Annual ($590.00 / year)</option>
         </select>
 
         <div class="checkbox-wrap">
@@ -2696,7 +2719,7 @@
           <div class="step-badge">3</div>
           <div>
             <div class="step-heading">Onboarding Priority</div>
-            <div class="step-desc">Founders VIP members will be contacted directly for done-for-you menu setup prior to launch.</div>
+            <div class="step-desc">Plus and Pro subscribers receive priority onboarding assistance and done-for-you menu setup.</div>
           </div>
         </div>
       </div>
