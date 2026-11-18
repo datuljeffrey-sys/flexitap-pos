@@ -941,6 +941,12 @@
             </button>
           </li>
           <li>
+            <button class="nav-btn" onclick="switchNav('bug-backlog', this)">
+              <span>🐛 Bug Backlog</span>
+              <span class="nav-badge" id="bug-backlog-badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35);">0</span>
+            </button>
+          </li>
+          <li>
             <button class="nav-btn" onclick="switchNav('feedback', this)">
               <span>💡 Merchant Ideas</span>
               <span class="nav-badge" id="merchant-feedback-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">0</span>
@@ -2103,6 +2109,82 @@
                   Select a ticket on the left to inspect details, log developer notes, and update resolution.
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        
+        <!-- ================= 3.5 BUG BACKLOG & RELEASE STAGING VIEW ================= -->
+        <div id="view-bug-backlog" class="tab-view">
+          <!-- Top KPI Cards -->
+          <div class="kpi-row" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 20px;">
+            <div class="kpi-card">
+              <div class="kpi-title">Staged for Next Release</div>
+              <div class="kpi-val" style="color: #f87171;" id="kpi-bugs-staged">0</div>
+              <div class="kpi-status" style="color: #fca5a5;">● Confirmed Defects Queued</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Fixed in 'test' Branch</div>
+              <div class="kpi-val" style="color: #34d399;" id="kpi-bugs-fixed">0</div>
+              <div class="kpi-status" style="color: #6ee7b7;">✓ Verified on Staging</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Critical Blockers</div>
+              <div class="kpi-val" style="color: #fb923c;" id="kpi-bugs-critical">0</div>
+              <div class="kpi-status" style="color: #fdba74;">Must Fix Before Deploy</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Target Milestone Release</div>
+              <div class="kpi-val" style="color: #38bdf8;" id="kpi-bugs-target">v2.4.1</div>
+              <div class="kpi-status" style="color: #93c5fd;">Active Engineering Goal</div>
+            </div>
+          </div>
+
+          <!-- Staging Workspace Panel -->
+          <div class="panel" style="padding: 22px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+              <div>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                  <span>🐛</span> Next Version Bug Backlog &amp; Release Queue
+                </h3>
+                <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">
+                  Bugs confirmed by AI codebase diagnostics staged for the upcoming release. Code fixes are verified against the <strong>test</strong> branch before shipping.
+                </p>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <select id="filter-bug-version" onchange="renderBugBacklogTable()" style="padding: 8px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.82rem; outline: none; cursor: pointer;">
+                  <option value="all">All Milestones</option>
+                  <option value="v2.4.1" selected>v2.4.1 (Next Hotfix)</option>
+                  <option value="v2.5.0">v2.5.0 (Feature Release)</option>
+                </select>
+                <button class="action-btn" onclick="openManualStageBugModal()" style="padding: 8px 14px; font-weight: 700; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(59, 130, 246, 0.4);">
+                  <span>+ Stage Custom Defect</span>
+                </button>
+                <button class="action-btn" onclick="openShipMilestoneModal()" style="padding: 8px 16px; font-weight: 700; background: var(--accent); color: #fff; border-color: var(--accent);">
+                  <span>🚀 Ship Release v2.4.1</span>
+                </button>
+              </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+              <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                  <tr>
+                    <th>Milestone</th>
+                    <th>Severity</th>
+                    <th>Defect Summary &amp; Component</th>
+                    <th>File on 'test' Branch</th>
+                    <th>Origin Ticket</th>
+                    <th>Verification Status</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="bug-backlog-tbody">
+                  <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">Loading release bug backlog...</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -3913,6 +3995,7 @@
       updates: { title: 'App Updates & Storage Releases', subtitle: 'Listen directly to Supabase storage releases, inspect APKs/binaries, and publish OTA payloads.' },
       support: { title: 'Live Merchant Support Desk', subtitle: 'Reply directly to paying Plus & Pro merchants in real time.' },
       tickets: { title: 'Support Tickets & Issue Resolution', subtitle: 'Create tickets, log internal dev notes, update statuses, and resolve merchant issues.' },
+      'bug-backlog': { title: 'Next Release Bug Backlog & Quality Engineering', subtitle: 'Staged software defects, AI diagnostic blueprints, test verification on test branch, and version changelog generator.' },
       feedback: { title: 'Merchant Feedback & Feature Requests', subtitle: 'Review in-app merchant ratings, feature suggestions, UX feedback, and developer triage.' },
       remote: { title: 'Remote Access & Diagnostics', subtitle: 'Send real-time ADB commands, clear caches, and inspect remote device state.' },
       monitoring: { title: 'Telemetry & Sockets Monitoring', subtitle: 'Live Supabase real-time channels, API latencies, and sync performance.' },
@@ -3981,6 +4064,7 @@
       if (key === 'dashboard') loadDashboardData();
       if (key === 'clients') loadDevData();
       if (key === 'partners') loadPartnersAdminData();
+      if (key === 'bug-backlog') loadBugBacklog();
       if (key === 'support') loadSupportDeskSessions();
       if (key === 'remote') loadRemoteSupportSessions();
       if (key === 'feedback') {
@@ -8669,6 +8753,9 @@
         ${renderTicketAttachmentsHtml(selectedTicket)}
 
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+          <button class="action-btn" id="btn-run-ai-diag" onclick="runAiCodebaseDiagnostic('${selectedTicket.id}')" style="background: rgba(139, 92, 246, 0.18); color: #c084fc; border-color: rgba(139, 92, 246, 0.45); font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+            <span>🤖</span> Run AI Codebase Diagnostic
+          </button>
           <button class="action-btn" onclick="discussTicketInTeamChat('${selectedTicket.id}')" style="color: #60a5fa; border-color: rgba(59, 130, 246, 0.35);">
             💬 Discuss in Team Chat
           </button>
@@ -8761,6 +8848,18 @@
             <div style="white-space: pre-wrap;">${escapeHtml(n.note)}</div>
           </div>
         `;
+      });
+      // Parse AI stage action tokens
+      html = html.replace(/\[STAGE_FOR_RELEASE:([^\]]+)\]/g, function(match, data) {
+        const parts = data.split('|');
+        const comp = parts[0] || 'Core';
+        const file = parts[1] || 'lib/';
+        const line = parts[2] || '1';
+        const tId = parts[3] || '';
+        const safeComp = escapeHtml(comp).replace(/'/g, "\\'");
+        const safeFile = escapeHtml(file).replace(/'/g, "\\'");
+        const safeId = escapeHtml(tId).replace(/'/g, "\\'");
+        return '<div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);"><button type="button" class="action-btn" onclick="openStageBugModalFromNote(\'' + safeComp + '\', \'' + safeFile + '\', ' + line + ', \'' + safeId + '\')" style="background: rgba(239, 68, 68, 0.18); color: #f87171; border-color: rgba(239, 68, 68, 0.4); font-weight: 700; padding: 6px 14px; font-size: 0.75rem;">📌 Stage for Next Update</button></div>';
       });
       box.innerHTML = html;
       box.scrollTop = box.scrollHeight;
@@ -9748,6 +9847,7 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
       if (r === 'super_admin' || r === 'admin') return true;
 
       // SLA Dashboard and Team & RBAC are strictly EXCLUSIVE to Admins only
+      if (tabKey === 'bug-backlog') return r === 'dev' || r === 'developer' || r === 'devops' || r === 'super_admin' || r === 'admin';
       if (tabKey === 'sla' || tabKey === 'team') return false;
 
       // Dashboard, Workforce and Chat are open to all platform staff
@@ -9765,7 +9865,7 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
 
       // Default role fallback:
       if (r === 'dev' || r === 'developer' || r === 'devops') {
-        return ['dashboard', 'clients', 'updates', 'support', 'tickets', 'feedback', 'remote', 'monitoring', 'errors', 'analytics', 'chat', 'workforce', 'partners'].includes(tabKey);
+        return ['dashboard', 'clients', 'updates', 'support', 'tickets', 'bug-backlog', 'feedback', 'remote', 'monitoring', 'errors', 'analytics', 'chat', 'workforce', 'partners'].includes(tabKey);
       }
 
       if (r === 'support' || r === 'agent' || r === 'customer_support' || r === 'technician' || r === 'tech') {
@@ -16949,6 +17049,146 @@ Role: ${lastProvisionedCreds.role}`;
       }
     }
   </script>
+
+
+  <!-- MODAL: AI CODEBASE BLUEPRINT VIEWER -->
+  <div id="crm-modal-ai-blueprint" class="crm-modal-backdrop" style="z-index: 2500;" onclick="if(event.target === this) closeAiBlueprintModal();">
+    <div class="crm-modal-box" style="max-width: 720px; width: 95%;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 24px;">🤖</span>
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #fff; margin: 0;" id="bp-modal-title">AI Engineering Diagnostic Blueprint</h3>
+            <p style="font-size: 0.76rem; color: var(--text-muted); margin: 2px 0 0 0;" id="bp-modal-sub">Grounded inspection from GitHub 'test' branch</p>
+          </div>
+        </div>
+        <button onclick="closeAiBlueprintModal()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <div style="margin-bottom: 14px;">
+        <label style="display: block; font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Target File &amp; Line (Branch: test)</label>
+        <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); padding: 9px 12px; border-radius: 8px;">
+          <code id="bp-modal-file" style="color: #38bdf8; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">lib/core/services/...</code>
+          <a id="bp-modal-gh-link" href="#" target="_blank" style="color: #60a5fa; font-size: 0.78rem; text-decoration: none; font-weight: 700;">Open on GitHub ↗</a>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 14px;">
+        <label style="display: block; font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Root Cause &amp; Defect Analysis</label>
+        <div id="bp-modal-rootcause" style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); color: #fca5a5; padding: 12px 14px; border-radius: 8px; font-size: 0.82rem; line-height: 1.5; white-space: pre-wrap;"></div>
+      </div>
+
+      <div style="margin-bottom: 14px;">
+        <label style="display: block; font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Recommended Code Fix Blueprint</label>
+        <pre id="bp-modal-codefix" style="background: #030712; border: 1px solid var(--card-border); color: #34d399; padding: 12px 14px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; overflow-x: auto; line-height: 1.4; max-height: 220px;"></pre>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Test Suite Verification &amp; Gap</label>
+        <div id="bp-modal-testsuite" style="background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); color: #cbd5e1; padding: 10px 14px; border-radius: 8px; font-size: 0.8rem; line-height: 1.4;"></div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--card-border); padding-top: 14px;">
+        <button type="button" class="action-btn" onclick="closeAiBlueprintModal()">Close Blueprint</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: STAGE BUG FOR NEXT UPDATE -->
+  <div id="crm-modal-stage-bug" class="crm-modal-backdrop" style="z-index: 2500;" onclick="if(event.target === this) closeStageBugModal();">
+    <div class="crm-modal-box" style="max-width: 580px; width: 95%;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 22px;">📌</span>
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #fff; margin: 0;">Stage Defect for Release</h3>
+            <p style="font-size: 0.76rem; color: var(--text-muted); margin: 2px 0 0 0;">Add confirmed bug to the engineering backlog for the upcoming build</p>
+          </div>
+        </div>
+        <button onclick="closeStageBugModal()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <form onsubmit="handleStageBugFormSubmit(event)" style="display: flex; flex-direction: column; gap: 14px;">
+        <input type="hidden" id="stage-inp-ticket-id" />
+        <input type="hidden" id="stage-inp-github-link" />
+        <input type="hidden" id="stage-inp-test-suite" />
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="display: block; font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Target Version *</label>
+            <select id="stage-inp-version" required style="width: 100%; padding: 9px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none;">
+              <option value="v2.4.1" selected>v2.4.1 (Next Hotfix)</option>
+              <option value="v2.5.0">v2.5.0 (Feature Release)</option>
+              <option value="v3.0.0">v3.0.0 (Major Release)</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Severity *</label>
+            <select id="stage-inp-severity" required style="width: 100%; padding: 9px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none;">
+              <option value="critical">🔴 Critical (Crash / Blocker)</option>
+              <option value="high" selected>🟠 High (Core Workflow)</option>
+              <option value="normal">🟡 Normal (Minor Defect)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Defect Title *</label>
+          <input type="text" id="stage-inp-title" required placeholder="e.g. KDS WebSocket desync when order contains modifiers" style="width: 100%; padding: 9px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none;" />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">File Path on 'test' Branch *</label>
+          <input type="text" id="stage-inp-file" required placeholder="lib/core/services/..." style="width: 100%; padding: 9px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; outline: none;" />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Root Cause Summary</label>
+          <textarea id="stage-inp-rootcause" rows="2" style="width: 100%; padding: 9px 12px; background: var(--bg); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-size: 0.82rem; outline: none; resize: vertical;"></textarea>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Recommended Fix Diff / Blueprint</label>
+          <textarea id="stage-inp-codefix" rows="3" style="width: 100%; padding: 9px 12px; background: #030712; border: 1px solid var(--card-border); color: #34d399; font-family: 'JetBrains Mono', monospace; border-radius: 8px; font-size: 0.8rem; outline: none; resize: vertical;"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--card-border); padding-top: 14px;">
+          <button type="button" class="action-btn" onclick="closeStageBugModal()">Cancel</button>
+          <button type="submit" class="action-btn" style="background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700;">📌 Add to Release Backlog</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: SHIP MILESTONE RELEASE -->
+  <div id="crm-modal-ship-release" class="crm-modal-backdrop" style="z-index: 2500;" onclick="if(event.target === this) closeShipMilestoneModal();">
+    <div class="crm-modal-box" style="max-width: 640px; width: 95%;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 22px;">🚀</span>
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #fff; margin: 0;">Ship Release &amp; Generate Changelog</h3>
+            <p style="font-size: 0.76rem; color: var(--text-muted); margin: 2px 0 0 0;">Marks verified defects as shipped and resolves origin tickets</p>
+          </div>
+        </div>
+        <button onclick="closeShipMilestoneModal()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Generated Release Notes / Changelog</label>
+        <div id="ship-modal-changelog" style="background: #030712; border: 1px solid var(--card-border); color: #cbd5e1; padding: 14px; border-radius: 8px; font-size: 0.82rem; line-height: 1.5; max-height: 250px; overflow-y: auto; white-space: pre-wrap;"></div>
+      </div>
+
+      <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); padding: 12px 14px; border-radius: 8px; font-size: 0.78rem; color: #a7f3d0; margin-bottom: 18px;">
+        ✓ Will automatically resolve all origin merchant tickets with release version confirmation.
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--card-border); padding-top: 14px;">
+        <button type="button" class="action-btn" onclick="closeShipMilestoneModal()">Cancel</button>
+        <button type="button" class="action-btn" onclick="confirmShipMilestoneRelease()" style="background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700;">🚀 Confirm &amp; Ship Release</button>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>
