@@ -659,7 +659,7 @@
             <thead>
               <tr>
                 <th>Store DBA</th>
-                <th>VIP Tier</th>
+                <th>Plan Tier</th>
                 <th>Date</th>
                 <th style="text-align: right;">Status</th>
               </tr>
@@ -1551,9 +1551,9 @@
       } else {
         refTbody.innerHTML = referrals.map(r => {
           const dStr = r.created_at ? new Date(r.created_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
-          let tierPill = '<span class="badge badge-green">Plus VIP (₱3k)</span>';
+          let tierPill = '<span class="badge badge-green">Plus Plan</span>';
           if (r.plan_tier && r.plan_tier.toLowerCase().includes('pro')) {
-            tierPill = '<span class="badge badge-blue">Pro VIP (₱6k)</span>';
+            tierPill = '<span class="badge badge-blue">Pro Plan</span>';
           } else if (r.plan_tier && r.plan_tier.toLowerCase().includes('free')) {
             tierPill = '<span class="badge" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);">Free Waitlist</span>';
           }

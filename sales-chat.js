@@ -793,7 +793,7 @@
           🏢 Find My Setup (Venue / Terminals)
         </button>
         <button class="ft-chip-btn" onclick="window.FlexiTapChat.showPricingFAQ()">
-          💳 VIP Pricing &amp; 100% Guarantee
+          💳 Pricing Plans &amp; 100% Guarantee
         </button>
         <button class="ft-chip-btn" onclick="window.FlexiTapChat.showBookingModal()">
           📅 Book a 1-on-1 Live Walkthrough
@@ -846,9 +846,9 @@
     }
 
     // 3. Pricing & Founders Pass
-    if (q.includes('price') || q.includes('pricing') || q.includes('cost') || q.includes('fee') || q.includes('rate') || q.includes('vip') || q.includes('annual')) {
+    if (q.includes('price') || q.includes('pricing') || q.includes('cost') || q.includes('fee') || q.includes('rate') || q.includes('plan') || q.includes('annual')) {
       return `
-        <strong>💳 Founders VIP Annual Pass:</strong><br>
+        <strong>💳 Flexible Monthly &amp; Annual Plans:</strong><br>
         • <strong>Plus ($290/yr):</strong> Up to 5 terminals, KDS kitchen screens, customer loyalty &amp; online portal.<br>
         • <strong>Pro ($590/yr):</strong> Unlimited terminals, custom table floor plans, ingredient recipe inventory &amp; 24/7 remote support.<br>
         <em>Includes a 7-day 100% money-back live shift guarantee. Fixed rate for life!</em>
@@ -928,7 +928,7 @@
     addMessage('visitor', hardware);
 
     const isLarge = state.qualificationData.stations.includes('5+') || state.qualificationData.stations.includes('2-4');
-    const recommendedTier = isLarge ? 'Founders VIP Pro ($590/year)' : 'Founders VIP Plus ($290/year)';
+    const recommendedTier = isLarge ? 'FlexiTap Pro ($49.99/mo or $590/yr)' : 'FlexiTap Plus ($24.99/mo or $290/yr)';
 
     setTimeout(() => {
       addMessage('bot', `
@@ -939,7 +939,7 @@
         • <strong>Recommended Tier:</strong> <span style="color:#34d399; font-weight:800;">${recommendedTier}</span><br>
         • <strong>Estimated Savings:</strong> ~$1,400/yr vs. Toast / Square terminal subscriptions.
         <div class="ft-chat-card" style="margin-top: 10px;">
-          <div style="font-size: 11.5px; font-weight: 700; color: #93c5fd; margin-bottom: 6px;">📩 Send custom spec &amp; VIP offer to your email:</div>
+          <div style="font-size: 11.5px; font-weight: 700; color: #93c5fd; margin-bottom: 6px;">📩 Send custom spec &amp; plan offer to your email:</div>
           <form onsubmit="window.FlexiTapChat.submitLeadFromCard(event)">
             <input type="text" id="ft-lead-name" class="ft-form-input" placeholder="Your Name / Business Name" required />
             <input type="email" id="ft-lead-email" class="ft-form-input" placeholder="Business Email (owner@venue.com)" required />
@@ -1255,7 +1255,7 @@
   // Show pricing FAQ in chat
   function showPricingFAQ() {
     addMessage('bot', `
-      <strong>💳 Founders VIP Annual Pass:</strong><br>
+      <strong>💳 Flexible Monthly &amp; Annual Plans:</strong><br>
       • <strong>Plus ($290/yr):</strong> Up to 5 terminals, KDS kitchen screens, customer loyalty &amp; online portal.<br>
       • <strong>Pro ($590/yr):</strong> Unlimited terminals, custom table floor plans, ingredient recipe inventory &amp; 24/7 remote standby.<br>
       <em>Includes 7-day 100% money-back live shift guarantee. Fixed for life with zero terminal leasing fees!</em>
