@@ -8862,6 +8862,22 @@ Return strictly this valid JSON structure:
       window.closeDeleteAccountModal = closeDeleteAccountModal;
       window.handlePortalAccountDeletion = handlePortalAccountDeletion;
 
+    // --- HELPER: SEAMLESS PORTAL UPGRADE URL BUILDER ---
+    function getPortalUpgradeUrl(targetTier) {
+      const u = (typeof activeUser !== 'undefined') ? activeUser : null;
+      const s = (typeof activeStore !== 'undefined') ? activeStore : null;
+      const params = new URLSearchParams({
+        action: 'upgrade',
+        tier: targetTier || 'plus',
+        cycle: 'annual'
+      });
+      if (u && u.id) params.set('user_id', u.id);
+      if (u && u.email) params.set('email', u.email);
+      if (s && s.id) params.set('store_id', s.id);
+      if (s && s.name) params.set('store_name', s.name);
+      return 'pricing.html?' + params.toString();
+    }
+
     // --- 2. STORE SETTINGS DATA POPULATOR ---
     function populateStoreSettingsFields() {
       const prof = window.activeProfile || (typeof activeProfile !== 'undefined' ? activeProfile : null);
@@ -8938,11 +8954,11 @@ Return strictly this valid JSON structure:
       } else if (tier === 'PLUS') {
         if (btnFree) btnFree.innerHTML = '<button type="button" class="btn-action" disabled style="width: 100%; opacity: 0.6; cursor: default;">Included Baseline</button>';
         if (btnPlus) btnPlus.innerHTML = '<button type="button" class="btn-action" disabled style="display: block; text-align: center; width: 100%; font-weight: 800; background: rgba(16, 185, 129, 0.12); color: #059669; border: 1.5px solid #10b981; cursor: default;">✓ Current Active Plan</button>';
-        if (btnPro) btnPro.innerHTML = '<a href="pricing.html" target="_blank" class="btn-action" style="display: block; text-align: center; width: 100%; font-weight: 700; background: #9333ea; color: #fff; border-color: #9333ea;">Upgrade to Pro &rarr;</a>';
+        if (btnPro) btnPro.innerHTML = '<a href="' + getPortalUpgradeUrl('pro') + '" target="_blank" class="btn-action" style="display: block; text-align: center; width: 100%; font-weight: 700; background: #9333ea; color: #fff; border-color: #9333ea;">Upgrade to Pro &rarr;</a>';
       } else {
         if (btnFree) btnFree.innerHTML = '<button type="button" class="btn-action" disabled style="display: block; text-align: center; width: 100%; font-weight: 800; background: rgba(16, 185, 129, 0.12); color: #059669; border: 1.5px solid #10b981; cursor: default;">✓ Current Active Plan</button>';
-        if (btnPlus) btnPlus.innerHTML = '<a href="pricing.html" target="_blank" class="btn-action btn-primary-action" style="display: block; text-align: center; width: 100%; font-weight: 700;">Upgrade to Plus &rarr;</a>';
-        if (btnPro) btnPro.innerHTML = '<a href="pricing.html" target="_blank" class="btn-action" style="display: block; text-align: center; width: 100%; font-weight: 700; background: #9333ea; color: #fff; border-color: #9333ea;">Upgrade to Pro &rarr;</a>';
+        if (btnPlus) btnPlus.innerHTML = '<a href="' + getPortalUpgradeUrl('plus') + '" target="_blank" class="btn-action btn-primary-action" style="display: block; text-align: center; width: 100%; font-weight: 700;">Upgrade to Plus &rarr;</a>';
+        if (btnPro) btnPro.innerHTML = '<a href="' + getPortalUpgradeUrl('pro') + '" target="_blank" class="btn-action" style="display: block; text-align: center; width: 100%; font-weight: 700; background: #9333ea; color: #fff; border-color: #9333ea;">Upgrade to Pro &rarr;</a>';
       }
     }
 

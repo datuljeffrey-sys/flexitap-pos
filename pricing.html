@@ -1246,6 +1246,21 @@
     }
 
     function openSignupModalWithPlan(planKey) {
+      // If user is already authenticated in browser, route directly to seamless upgrade modal!
+      if (activeLoggedInUser && planKey !== 'free') {
+        const keyStr = String(planKey || '').toLowerCase();
+        const tier = (keyStr.includes('pro') || keyStr === 'pri_01m1pb6ba15axyr7acv0hswynd' || keyStr === 'pri_01m5hvzhwktdsha3tjpy4j8nee') ? 'pro' : 'plus';
+        openUpgradeModalForAccount({
+          userId: activeLoggedInUser.id,
+          email: activeLoggedInUser.email,
+          storeId: '',
+          storeName: activeLoggedInStore || (activeLoggedInUser.email ? activeLoggedInUser.email.split('@')[0] + "'s Store" : 'My Store'),
+          tier: tier,
+          cycle: currentBillingCycle || 'annual'
+        });
+        return;
+      }
+
       let targetVal = 'free';
       const keyStr = String(planKey || '').toLowerCase();
       const isPro = keyStr === 'pro' || keyStr.includes('pro') || keyStr === 'pri_01m1pb6ba15axyr7acv0hswynd' || keyStr === 'pri_01m5hvzhwktdsha3tjpy4j8nee';
@@ -1608,18 +1623,50 @@
       }
       syncModalState();
 
-      // Handle in-app upgrade redirects from POS
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('action') === 'upgrade') {
-        const tier = (urlParams.get('tier') || 'plus').toLowerCase();
-        const email = urlParams.get('email') || '';
-        const priceId = (tier === 'pro') ? 'pri_01m1pb6ba15axyr7acv0hswynd' : 'pri_01m1pb8szpcf4vapm28yfzw9aq';
-        openSignupModalWithPlan(priceId);
-        if (email) {
-          const emailInput = document.getElementById('signup-email');
-          if (emailInput) emailInput.value = email;
+      // 1. Inspect existing Supabase session in browser
+      (async () => {
+        try {
+          if (typeof supabaseClient !== 'undefined' && supabaseClient.auth) {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session && session.user) {
+              activeLoggedInUser = session.user;
+              try {
+                const { data: profile } = await supabaseClient
+                  .from('profiles')
+                  .select('id, store_name, subscription_tier')
+                  .eq('id', session.user.id)
+                  .maybeSingle();
+                if (profile && profile.store_name) {
+                  activeLoggedInStore = profile.store_name;
+                }
+              } catch (_) {}
+            }
+          }
+        } catch (_) {}
+
+        // 2. Handle upgrade action redirects from Flutter POS or Web Portal
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('action') === 'upgrade') {
+          const tier = (urlParams.get('tier') || 'plus').toLowerCase();
+          const cycle = (urlParams.get('cycle') || currentBillingCycle || 'annual').toLowerCase();
+          const email = urlParams.get('email') || (activeLoggedInUser ? activeLoggedInUser.email : '');
+          const userId = urlParams.get('user_id') || (activeLoggedInUser ? activeLoggedInUser.id : '');
+          const storeId = urlParams.get('store_id') || '';
+          const storeName = urlParams.get('store_name') || activeLoggedInStore || (email ? email.split('@')[0] + "'s Store" : 'My Store');
+
+          activeUpgradeContext = {
+            userId: userId,
+            email: email,
+            storeId: storeId,
+            storeName: storeName,
+            tier: tier,
+            cycle: cycle
+          };
+
+          // Open the seamless Upgrade modal directly without signup or password prompt!
+          openUpgradeModalForAccount(activeUpgradeContext);
         }
-      }
+      })();
     });
 
 
@@ -2093,6 +2140,208 @@
     });
 
     function toggleMobileMenu() { document.getElementById('navLinksContainer').classList.toggle('mobile-open'); }
+
+    /* =========================================================================
+       EXISTING ACCOUNT SEAMLESS UPGRADE ENGINE
+       ========================================================================= */
+
+    let activeLoggedInUser = null;
+    let activeLoggedInStore = null;
+    let activeUpgradeContext = {
+      userId: '',
+      email: '',
+      storeId: '',
+      storeName: '',
+      tier: 'plus',
+      cycle: 'annual'
+    };
+
+    function openUpgradeModalForAccount(ctx) {
+      if (ctx) {
+        activeUpgradeContext = Object.assign({}, activeUpgradeContext, ctx);
+      }
+
+      const modal = document.getElementById('upgrade-modal');
+      if (!modal) return;
+
+      const storeEl = document.getElementById('upgrade-modal-store-name');
+      const emailEl = document.getElementById('upgrade-modal-email');
+      const cycleSelect = document.getElementById('upgrade-modal-cycle');
+      const errDiv = document.getElementById('upgrade-modal-error');
+      if (errDiv) errDiv.innerText = '';
+
+      if (storeEl) storeEl.innerText = activeUpgradeContext.storeName || 'My Store';
+      if (emailEl) emailEl.innerText = activeUpgradeContext.email || 'Registered Merchant Account';
+
+      if (cycleSelect && activeUpgradeContext.cycle) {
+        cycleSelect.value = activeUpgradeContext.cycle;
+      }
+
+      syncUpgradeModalPricing();
+      openModal('upgrade-modal');
+    }
+
+    function syncUpgradeModalPricing() {
+      const cycleSelect = document.getElementById('upgrade-modal-cycle');
+      const cycle = cycleSelect ? cycleSelect.value : (activeUpgradeContext.cycle || 'annual');
+      activeUpgradeContext.cycle = cycle;
+
+      const tier = activeUpgradeContext.tier || 'plus';
+      const planTitleEl = document.getElementById('upgrade-modal-plan-title');
+      const priceEl = document.getElementById('upgrade-modal-plan-price');
+      const submitBtn = document.getElementById('upgrade-modal-submit-btn');
+
+      const isPro = tier === 'pro';
+      const isAnnual = cycle === 'annual';
+
+      if (planTitleEl) {
+        planTitleEl.innerText = isPro ? 'FlexiTap Pro Edition' : 'FlexiTap Plus Edition';
+      }
+
+      if (ENABLE_PH_PRICING && (currentCurrency === 'PHP')) {
+        const amt = isPro ? (isAnnual ? 28990 : 2499) : (isAnnual ? 14990 : 1299);
+        if (priceEl) priceEl.innerText = '₱' + amt.toLocaleString() + '.00 / ' + (isAnnual ? 'year' : 'month');
+        if (submitBtn) submitBtn.innerHTML = '🇵🇭 Pay ₱' + amt.toLocaleString() + ' via GCash &rarr;';
+      } else {
+        let priceText = '$290.00 / year';
+        if (isPro) {
+          priceText = isAnnual ? '$590.00 / year' : '$49.99 / mo';
+        } else {
+          priceText = isAnnual ? '$290.00 / year' : '$24.99 / mo';
+        }
+        if (priceEl) priceEl.innerText = priceText;
+        if (submitBtn) submitBtn.innerHTML = '💳 Proceed to Secure Checkout (' + priceText.split('/')[0].trim() + ') &rarr;';
+      }
+    }
+
+    function syncUpgradeModalCycle() {
+      syncUpgradeModalPricing();
+    }
+
+    async function executeAccountUpgradeCheckout() {
+      const errorDiv = document.getElementById('upgrade-modal-error');
+      const submitBtn = document.getElementById('upgrade-modal-submit-btn');
+      if (errorDiv) errorDiv.innerText = '';
+
+      const tier = activeUpgradeContext.tier || 'plus';
+      const cycle = activeUpgradeContext.cycle || 'annual';
+      const email = activeUpgradeContext.email || '';
+      const userId = activeUpgradeContext.userId || '';
+      const storeId = activeUpgradeContext.storeId || '';
+      const storeName = activeUpgradeContext.storeName || 'My Store';
+      const isAnnual = cycle === 'annual';
+
+      // 1. Philippine GCash Flow
+      if (ENABLE_PH_PRICING && currentCurrency === 'PHP') {
+        closeModal('upgrade-modal');
+        const amt = (tier === 'pro') ? (isAnnual ? 28990 : 2499) : (isAnnual ? 14990 : 1299);
+        openGcashPaymentModal({
+          userId: userId,
+          businessName: storeName,
+          email: email,
+          tierName: tier,
+          billingCycle: isAnnual ? 'annual' : 'monthly',
+          amount: amt
+        });
+        return;
+      }
+
+      // 2. Paddle Checkout Flow
+      if (typeof Paddle === 'undefined') {
+        if (errorDiv) errorDiv.innerText = 'Payment gateway is initializing. Please wait a few seconds and retry.';
+        return;
+      }
+
+      let priceId = '';
+      if (tier === 'pro') {
+        priceId = isAnnual ? 'pri_01m1pb6ba15axyr7acv0hswynd' : 'pri_01m5hvzhwktdsha3tjpy4j8nee';
+      } else {
+        priceId = isAnnual ? 'pri_01m1pb8szpcf4vapm28yfzw9aq' : 'pri_01m5hw17h78pet009h7dk38cgz';
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Opening secure checkout...';
+      }
+
+      const activeAffCode = (window.FlexiTapAffiliate ? window.FlexiTapAffiliate.getCode() : '') || localStorage.getItem('flexitap_ref') || '';
+
+      closeModal('upgrade-modal');
+      if (submitBtn) submitBtn.disabled = false;
+      syncUpgradeModalPricing();
+
+      Paddle.Checkout.open({
+        items: [{ priceId: priceId, quantity: 1 }],
+        customer: { email: email },
+        customData: {
+          user_id: userId,
+          supabase_user_id: userId,
+          store_id: storeId,
+          customer_email: email,
+          business_name: storeName,
+          target_tier: tier,
+          upgrade_action: 'account_upgrade',
+          affiliate_code: activeAffCode
+        },
+        successCallback: async function(checkoutData) {
+          try {
+            if (userId && typeof supabaseClient !== 'undefined' && supabaseClient.from) {
+              // Immediately update profile to paid tier
+              await supabaseClient.from('profiles').update({
+                subscription_tier: tier,
+                pending_tier: null,
+                payment_status: 'paid',
+                paddle_transaction_id: checkoutData?.transaction_id || checkoutData?.id || null,
+                updated_at: new Date().toISOString()
+              }).eq('id', userId);
+
+              // Synchronize store record
+              if (storeId) {
+                await supabaseClient.from('stores').update({
+                  subscription_tier: tier,
+                  payment_status: 'paid',
+                  max_devices: (tier === 'pro' ? 9999 : 10),
+                  updated_at: new Date().toISOString()
+                }).eq('id', storeId);
+              } else {
+                await supabaseClient.from('stores').update({
+                  subscription_tier: tier,
+                  payment_status: 'paid',
+                  max_devices: (tier === 'pro' ? 9999 : 10),
+                  updated_at: new Date().toISOString()
+                }).or('owner_id.eq.' + userId + ',user_id.eq.' + userId);
+              }
+            }
+          } catch (err) {
+            console.warn('Subscription activation update notice:', err);
+          }
+
+          dispatchSignupWelcomeEmail({
+            businessName: storeName,
+            email: email,
+            tierName: tier,
+            paymentStatus: 'paid'
+          });
+
+          showUpgradeSuccessModal({ storeName, email, tier });
+        }
+      });
+    }
+
+    function showUpgradeSuccessModal(data) {
+      const modal = document.getElementById('upgrade-success-modal');
+      if (!modal) {
+        alert('🎉 Success! Your subscription has been upgraded to FlexiTap ' + (data.tier || 'Plus').toUpperCase() + '. Your POS registers will unlock automatically.');
+        window.location.href = 'portal.html';
+        return;
+      }
+      const emailEl = document.getElementById('upgrade-success-email');
+      const tierEl = document.getElementById('upgrade-success-tier');
+      if (emailEl) emailEl.innerText = data.email || '';
+      if (tierEl) tierEl.innerText = 'FlexiTap ' + (data.tier || 'Plus').toUpperCase();
+      openModal('upgrade-success-modal');
+    }
+
   </script>
 </head>
 <body>
@@ -2456,7 +2705,11 @@
     <div class="modal-card">
       <button class="close-btn" onclick="closeModal('signup-modal')">&times;</button>
       <h2>Reserve Your Store</h2>
-      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;" id="modal-intent-helper">Enter your store details below.</p>
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;" id="modal-intent-helper">Enter your store details below.</p>
+      <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 12.5px; color: #93c5fd; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+        <span>Already have a FlexiTap store account?</span>
+        <button type="button" onclick="closeModal('signup-modal'); openModal('login-modal');" style="background: none; border: none; color: #60a5fa; font-weight: 700; text-decoration: underline; cursor: pointer; padding: 0;">Sign In &rarr;</button>
+      </div>
       
       <form id="portal-signup-form" onsubmit="handleStoreSignup(event)">
         <label>Business Name</label>
@@ -2490,7 +2743,92 @@
     </div>
   </div>
 
-  
+  <!-- UPGRADE ACCOUNT MODAL (FOR EXISTING MERCHANTS) -->
+  <div class="modal-overlay" id="upgrade-modal">
+    <div class="modal-card" style="max-width: 480px;">
+      <button class="close-btn" onclick="closeModal('upgrade-modal')">&times;</button>
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+        <span style="font-size: 24px;">🚀</span>
+        <h2 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: #fff;">Upgrade Your Subscription</h2>
+      </div>
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 18px;" id="upgrade-modal-sub">
+        Upgrading your existing FlexiTap store account. Zero downtime.
+      </p>
+
+      <!-- Store Account Card -->
+      <div style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px;">
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800; color: #60a5fa; margin-bottom: 6px;">
+          Active Store Account
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <div>
+            <div style="font-size: 15px; font-weight: 800; color: #fff;" id="upgrade-modal-store-name">My Store</div>
+            <div style="font-size: 12.5px; color: #94a3b8;" id="upgrade-modal-email">owner@cafe.com</div>
+          </div>
+          <span style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">Verified Account</span>
+        </div>
+      </div>
+
+      <!-- Plan Selection & Pricing Summary -->
+      <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--card-border); border-radius: 10px; padding: 14px 16px; margin-bottom: 18px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Selected Plan</span>
+          <span style="font-size: 14px; font-weight: 800; color: #38bdf8;" id="upgrade-modal-plan-title">FlexiTap Plus</span>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+          <span style="font-size: 13px; color: #cbd5e1;">Billing Cycle:</span>
+          <select id="upgrade-modal-cycle" onchange="syncUpgradeModalCycle()" style="padding: 5px 10px; background: #0f172a; border: 1px solid var(--card-border); color: #fff; border-radius: 6px; font-size: 12.5px; font-weight: 700; outline: none; cursor: pointer;">
+            <option value="annual" selected>Annual (Save ~20%)</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+          <span style="font-size: 13px; color: #cbd5e1;">Total Amount:</span>
+          <span style="font-size: 22px; font-weight: 800; color: #34d399;" id="upgrade-modal-plan-price">$290.00 / year</span>
+        </div>
+      </div>
+
+      <!-- Guarantee / Feature Gating Note -->
+      <div style="background: rgba(16, 185, 129, 0.08); border-left: 3px solid #10b981; padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 12px; color: #a7f3d0; line-height: 1.5; margin-bottom: 20px;">
+        ✓ Backed by our <strong>7-Day Live Shift Money-Back Guarantee</strong>. Once payment is confirmed, all POS registers and connected devices will unlock the new features automatically.
+      </div>
+
+      <div id="upgrade-modal-error" class="error-msg" style="margin-bottom: 10px;"></div>
+
+      <!-- Action Button -->
+      <button type="button" class="submit-btn" id="upgrade-modal-submit-btn" onclick="executeAccountUpgradeCheckout()" style="width: 100%; font-size: 15px; font-weight: 800; padding: 14px 20px;">
+        💳 Proceed to Secure Checkout &rarr;
+      </button>
+
+      <div style="text-align: center; margin-top: 12px; font-size: 12px; color: var(--text-muted);">
+        Encrypted &amp; processed securely via Paddle (PCI-DSS Level 1)
+      </div>
+    </div>
+  </div>
+
+  <!-- UPGRADE SUCCESS CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="upgrade-success-modal">
+    <div class="modal-card" style="max-width: 460px; text-align: center; padding: 32px 24px;">
+      <div style="font-size: 52px; margin-bottom: 12px;">🎉</div>
+      <h2 style="font-size: 1.35rem; font-weight: 800; color: #fff; margin: 0 0 6px 0;">Subscription Upgraded!</h2>
+      <p style="color: #94a3b8; font-size: 13.5px; line-height: 1.5; margin: 0 0 20px 0;">
+        Your store has been successfully upgraded. All POS registers and devices will unlock the new features automatically.
+      </p>
+      <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 8px; padding: 12px; margin-bottom: 22px; font-size: 13px; color: #a7f3d0; text-align: left;">
+        <div style="margin-bottom: 4px;">✓ Account: <strong id="upgrade-success-email">owner@cafe.com</strong></div>
+        <div>✓ Edition: <strong id="upgrade-success-tier">FlexiTap Plus</strong></div>
+      </div>
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <a href="portal.html" class="submit-btn" style="text-decoration: none; padding: 12px 24px; font-weight: 700; display: inline-block;">
+          Open Merchant Back Office &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+
+
   <!-- GCASH PAYMENT VERIFICATION MODAL -->
   <div class="modal-overlay" id="gcash-payment-modal">
     <div class="modal-card gcash-modal-card">
