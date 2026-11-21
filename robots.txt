@@ -1,7 +1,6 @@
 # FlexiTap POS - Search Engine & AI Agent Crawler Directives
 User-agent: *
 Allow: /
-Allow: /loyverse-pos-alternative.html
 Allow: /pos-for-cafes.html
 Allow: /pos-for-retail.html
 Allow: /pos-for-quick-service.html
@@ -11,6 +10,7 @@ Allow: /features.html
 Allow: /pricing.html
 Allow: /about.html
 Allow: /support.html
+Allow: /download.html
 Allow: /community.html
 Allow: /insights.html
 Allow: /affiliate.html
