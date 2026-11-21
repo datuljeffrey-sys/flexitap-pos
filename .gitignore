@@ -1,0 +1,5 @@
+downloads/
+*.exe
+*.apk
+.DS_Store
+Thumbs.db
