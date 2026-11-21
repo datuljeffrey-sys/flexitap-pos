@@ -1084,12 +1084,19 @@
     // --- DYNAMIC RELEASE RESOLVER WITH PH REGIONAL BLOCK ---
     let currentVersion = '1.0.99'; // Dynamically synced with Supabase updates/version.json
     let isPhilippines = false;
+    const PH_RESTRICTION_ACTIVE = false; // Temporarily disabled for user testing
 
     // Supabase Public Storage Base Endpoint
     const SUPABASE_STORAGE_BASE = 'https://ezaqdnnecfkmqjdzigrf.supabase.co/storage/v1/object/public/updates';
 
     // 1. Check if user is located in the Philippines (PH)
     async function checkPhilippinesRegion() {
+      // Temporarily bypassed for testing
+      if (!PH_RESTRICTION_ACTIVE) {
+        isPhilippines = false;
+        return;
+      }
+
       // Local Timezone check
       try {
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
@@ -1206,7 +1213,7 @@
 
     // Execute Download (Blocked if in PH, background download without exposing raw URL)
     function executeDownload(platform) {
-      if (isPhilippines) {
+      if (PH_RESTRICTION_ACTIVE && isPhilippines) {
         showPhRestrictionNotice();
         return;
       }
