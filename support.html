@@ -1,1770 +1,1839 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta http-equiv="X-Frame-Options" content="DENY">
-  <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-    <title>FlexiTap POS Support — Guides, Troubleshooting & Downloads</title>
-  <meta name="description" content="Official support center, setup guides, printer configurations, and hardware troubleshooting for FlexiTap POS terminals.">
-  <link rel="canonical" href="https://flexitapapp.com/support.html">
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://flexitapapp.com/support.html">
-  <meta property="og:site_name" content="FlexiTap POS">
-  <meta property="og:title" content="FlexiTap POS Support — Guides, Troubleshooting & Downloads">
-  <meta property="og:description" content="Official support center, setup guides, printer configurations, and hardware troubleshooting for FlexiTap POS terminals.">
-  <meta property="og:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
-
-  <!-- Twitter Cards -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://flexitapapp.com/support.html">
-  <meta name="twitter:title" content="FlexiTap POS Support — Guides, Troubleshooting & Downloads">
-  <meta name="twitter:description" content="Official support center, setup guides, printer configurations, and hardware troubleshooting for FlexiTap POS terminals.">
-  <meta name="twitter:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
-  
-  <link rel="icon" type="image/png" href="image_02e503.png">
-  <link rel="shortcut icon" href="favicon.ico">
-  <link rel="manifest" href="./manifest.json">
-  <link rel="apple-touch-icon" href="./image_02e503.png">
-  <meta name="theme-color" content="#080c14">
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Google reCAPTCHA v2 -->
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
-  <script src="analytics.js?v=20261031" defer></script>
-  <!-- In-House Philippine Affiliate & Referral Tracker -->
-  <script src="affiliate-tracker.js?v=20261031" defer></script>
-  
-  <link rel="preload" href="fonts/480c062501_tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="fonts.css?v=20261031">
-
-  <style>
-    :root {
-      --bg: #090d16;
-      --card-bg: rgba(22, 30, 49, 0.75);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --accent-green: #10b981;
-      --accent-purple: #8b5cf6;
-      --accent-orange: #f59e0b;
-      --accent-red: #ef4444;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
-    html, body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; width: 100%; max-width: 100vw; overflow-x: clip; position: relative; }
-    /* FLUID CONTAINER - True Full-Width Edge-to-Edge Like Shift4 */
-    .container { 
-      width: 100%; 
-      max-width: 100%; 
-      margin: 0; 
-      padding: 0 clamp(24px, 4vw, 64px); 
-      box-sizing: border-box; 
-      position: relative; 
-      z-index: 2; 
-    }
-
-    /* HEADER & NAV - Fully Responsive & Non-Stepped */
-    header { 
-      padding: clamp(12px, 1.6vh, 18px) 0; 
-      border-bottom: 1px solid var(--card-border); 
-      position: sticky; 
-      top: 0; 
-      background: rgba(9, 13, 22, 0.94); 
-      backdrop-filter: blur(14px); 
-      z-index: 100; 
-      width: 100%; 
-    }
-    header .container { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      width: 100%; 
-      gap: clamp(12px, 1.8vw, 24px); 
-      position: relative;
-    }
-    .logo { 
-      display: flex; 
-      align-items: center; 
-      gap: 12px; 
-      font-size: clamp(19px, 1.6vw, 22px); 
-      font-weight: 800; 
-      color: #ffffff; 
-      text-decoration: none; 
-      letter-spacing: -0.5px; 
-      flex-shrink: 0; 
-     white-space: nowrap; }
-    .brand-logo-svg { 
-      width: clamp(32px, 2.4vw, 38px); 
-      height: clamp(32px, 2.4vw, 38px); 
-      flex-shrink: 0; 
-      display: block; 
-      border-radius: 50%; 
-      object-fit: contain; 
-    }
-    
-    .nav-links { 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      gap: clamp(8px, 1.1vw, 16px); 
-      flex: 1; 
-      margin: 0; 
-    }
-    .nav-link { 
-      color: #cbd5e1; 
-      text-decoration: none; 
-      font-size: clamp(13.5px, 0.95vw, 15px); 
-      font-weight: 600; 
-      transition: color 0.2s, transform 0.2s; 
-      white-space: nowrap; 
-    }
-    .nav-link:hover, .nav-link.active { color: #fff; }
-    .mobile-menu-toggle { 
-      display: none; 
-      background: rgba(255, 255, 255, 0.06); 
-      border: 1px solid var(--card-border); 
-      padding: 8px 12px; 
-      border-radius: 10px; 
-      color: #fff; 
-      font-size: 22px; 
-      cursor: pointer; 
-      line-height: 1; 
-    }
-
-    .nav-actions { 
-      display: flex; 
-      align-items: center; 
-      gap: clamp(8px, 1vw, 12px); 
-      flex-shrink: 0; 
-     }
-    .btn-login { 
-      background: #ffffff; 
-      color: #1d4ed8; 
-      border: none; 
-      padding: clamp(8px, 1vh, 10px) clamp(16px, 1.3vw, 22px); 
-      border-radius: 8px; 
-      font-weight: 700; 
-      font-size: clamp(13.5px, 0.95vw, 14.5px); 
-      cursor: pointer; 
-      transition: 0.2s ease; 
-      text-decoration: none; 
-      display: inline-flex; 
-      align-items: center; 
-      white-space: nowrap; 
-    }
-    .btn-login:hover { 
-      background: #f1f5f9; 
-      transform: translateY(-1px); 
-    }
-    .btn-signup { 
-      background: #2563eb; 
-      border: none; 
-      color: #fff; 
-      padding: clamp(8px, 1vh, 10px) clamp(16px, 1.4vw, 22px); 
-      border-radius: 8px; 
-      font-weight: 700; 
-      font-size: clamp(13.5px, 0.95vw, 14.5px); 
-      cursor: pointer; 
-      transition: 0.2s ease; 
-      text-decoration: none; 
-      display: inline-flex; 
-      align-items: center; 
-      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); 
-      white-space: nowrap; 
-    }
-    .btn-signup:hover { 
-      background: #1d4ed8; 
-      transform: translateY(-1px); 
-    }
-    .mobile-only-login { display: none; }
-
-    /* HERO */
-    .support-hero { padding: 60px 0 40px; text-align: center; }
-    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 999px; font-size: 12.5px; font-weight: 700; color: #93c5fd; margin-bottom: 20px; }
-    .hero-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
-    .section-title { font-size: clamp(28px, 5vw, 42px); font-weight: 800; margin-bottom: 14px; letter-spacing: -0.8px; line-height: 1.2; }
-    .section-subtitle { color: var(--text-muted); font-size: 16.5px; max-width: 740px; margin: 0 auto 32px; line-height: 1.6; }
-
-    /* SECTION TABS / ANCHORS */
-    .quick-jump-bar { display: inline-flex; gap: 8px; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--card-border); padding: 6px; border-radius: 14px; margin-bottom: 48px; }
-    .quick-jump-btn { color: var(--text-muted); text-decoration: none; padding: 8px 18px; font-size: 13.5px; font-weight: 700; border-radius: 10px; transition: 0.2s; }
-    .quick-jump-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
-    .quick-jump-btn.active { color: #fff; background: var(--primary); }
-
-    /* DOWNLOAD CARDS SECTION */
-    .download-section { margin-bottom: 72px; }
-    .section-heading-wrap { text-align: left; margin-bottom: 28px; }
-    .section-pill { font-size: 11.5px; font-weight: 800; color: #60a5fa; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6px; display: inline-block; }
-    .section-header-title { font-size: 26px; font-weight: 800; color: #fff; }
-
-    .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
-    .download-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: transform 0.2s, border-color 0.2s; }
-    .download-card:hover { transform: translateY(-3px); border-color: rgba(59, 130, 246, 0.4); }
-    .download-card.highlight { border-color: rgba(59, 130, 246, 0.5); box-shadow: 0 0 30px rgba(59, 130, 246, 0.12); }
-
-    .card-top { margin-bottom: 20px; }
-    .platform-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .platform-icon-wrap { width: 52px; height: 52px; border-radius: 14px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; }
-    .platform-icon-wrap svg { width: 28px; height: 28px; fill: #fff; }
-    .version-tag { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; color: #34d399; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 9999px; }
-
-    .platform-name { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 6px; }
-    .platform-desc { color: var(--text-muted); font-size: 13.5px; line-height: 1.55; margin-bottom: 18px; }
-
-    .feature-bullets { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; font-size: 13px; color: #cbd5e1; }
-    .feature-bullets li { display: flex; align-items: flex-start; gap: 8px; }
-    .feature-bullets li span { color: var(--accent-green); font-weight: 800; flex-shrink: 0; }
-
-    .btn-download-placeholder { width: 100%; padding: 13px 18px; border-radius: 12px; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; margin-bottom: 10px; cursor: default; user-select: none; }
-    .btn-download-placeholder svg { width: 18px; height: 18px; fill: currentColor; }
-    .btn-placeholder-badge { width: 100%; padding: 9px 14px; border-radius: 10px; background: rgba(255, 255, 255, 0.04); border: 1px dashed rgba(255, 255, 255, 0.15); color: #94a3b8; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; text-align: center; }
-
-    /* HARDWARE COMPATIBILITY BANNER */
-    .hardware-banner { background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(22, 30, 49, 0.8)); border: 1px solid var(--card-border); border-radius: 18px; padding: 24px 28px; margin-bottom: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-    .hw-info h4 { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
-    .hw-info p { color: var(--text-muted); font-size: 13.5px; margin: 0; }
-    .hw-pills { display: flex; gap: 8px; flex-wrap: wrap; }
-    .hw-pill { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 8px; }
-
-    /* TICKET SUBMISSION SECTION */
-    .ticket-section { padding: 40px 0 80px; }
-    .ticket-grid { display: flex; justify-content: center; width: 100%; }
-
-    /* FORM CARD */
-    .ticket-form-card { width: 100%; max-width: 760px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 36px 32px; text-align: left; position: relative; }
-    .ticket-form-card h3 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 6px; }
-    .ticket-form-card .form-subtitle { color: var(--text-muted); font-size: 13.5px; margin-bottom: 24px; }
-
-    .form-group-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .form-group { margin-bottom: 18px; }
-    .form-group label { display: block; font-size: 13px; font-weight: 700; color: #cbd5e1; margin-bottom: 6px; }
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%;
-      padding: 12px 14px;
-      background: #090d16;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 10px;
-      color: #fff;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-    }
-    .form-group textarea { resize: vertical; min-height: 110px; line-height: 1.5; }
-    .field-hint { font-size: 11.5px; color: #64748b; margin-top: 4px; }
-
-    .btn-submit-ticket { width: 100%; padding: 14px; border-radius: 12px; background: var(--primary); color: #fff; border: none; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; }
-    .btn-submit-ticket:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-1px); }
-    .btn-submit-ticket:disabled { opacity: 0.6; cursor: not-allowed; }
-
-    /* SUCCESS STATE CARD (IN PLACE) */
-    .ticket-success-box { display: none; background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 16px; padding: 32px 24px; text-align: center; }
-    .ticket-success-icon { width: 56px; height: 56px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; font-size: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
-    .ticket-success-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px; }
-    .ticket-success-ref { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: #60a5fa; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); display: inline-block; padding: 4px 12px; border-radius: 8px; margin-bottom: 16px; }
-    .ticket-success-desc { color: #cbd5e1; font-size: 13.5px; line-height: 1.6; max-width: 480px; margin: 0 auto 24px; }
-    .btn-reset-ticket { padding: 9px 18px; border-radius: 10px; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
-    .btn-reset-ticket:hover { background: rgba(255, 255, 255, 0.14); }
-
-    /* REMOTE ACCESS CALLOUT BANNER */
-    .remote-callout-card { background: linear-gradient(135deg, rgba(22, 30, 49, 0.8), rgba(15, 23, 42, 0.95)); border: 1px solid var(--card-border); border-left: 4px solid var(--primary); border-radius: 16px; padding: 24px 28px; margin-top: 36px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; text-align: left; }
-    .remote-callout-text h4 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
-    .remote-callout-text p { color: var(--text-muted); font-size: 13.5px; margin: 0; }
-    .btn-remote-quick { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: #93c5fd; padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; transition: 0.2s; }
-    .btn-remote-quick:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
-
-    /* FOOTER & SOCIAL ICONS */
-    footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #0b0f19; font-size: 14px; width: 100%; }
-    /* 4-COLUMN RESPONSIVE FOOTER GRID */
-    .footer-grid { display: grid; grid-template-columns: 1.8fr 1.2fr 1.2fr 0.9fr; gap: 36px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 24px; }
-    @media (max-width: 960px) {
-      .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
-    }
-    @media (max-width: 600px) {
-      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
-    }
-    .footer-brand p { color: var(--text-muted); font-size: 14px; margin: 16px 0 24px 0; max-width: 320px; line-height: 1.6; }
-    
-    .social-links { display: flex; gap: 12px; margin-top: 16px; }
-    .social-icon-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; color: var(--text-muted); text-decoration: none; transition: 0.2s ease; }
-    .social-icon-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-2px); }
-    .social-icon-btn svg { width: 16px; height: 16px; fill: currentColor; }
-
-    .footer-col h4 { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
-    .footer-col ul { list-style: none; }
-    .footer-col ul li { margin-bottom: 12px; }
-    .footer-col ul li a { color: var(--text-muted); text-decoration: none; font-size: 14px; cursor: pointer; transition: 0.2s; }
-    .footer-col ul li a:hover { color: #fff; }
-    .footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--text-muted); font-size: 13px; }
-
-    /* MODALS & CHAT WIDGET */
-    .modal-overlay { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; padding: 16px; box-sizing: border-box; }
-    .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); padding: 36px 24px; border-radius: 20px; width: 100%; max-width: 440px; position: relative; text-align: center; margin: auto; max-height: 90vh; overflow-y: auto; }
-    .close-btn { position: absolute; top: 18px; right: 18px; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
-    .modal-card label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
-    .modal-card input { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; color: white; font-size: 15px; }
-    .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; }
-    .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
-
-    /* DYNAMIC RESPONSIVE RULES (Mobile, Tablet, Desktop) */
-    @media (max-width: 1140px) {
-      .logo { order: 1;  white-space: nowrap; flex-shrink: 0; }
-      .nav-actions { order: 2;  flex-shrink: 0; }
-      .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; order: 3; }
-      .nav-links {
-        display: none;
-        position: absolute;
-        top: calc(100% + 1px);
-        left: 0;
-        right: 0;
-        width: 100%;
-        flex-direction: column;
-        align-items: stretch;
-        background: rgba(9, 13, 22, 0.98);
-        backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-        padding: 20px 24px;
-        gap: 10px;
-        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85);
-        border-radius: 0 0 16px 16px;
-        box-sizing: border-box;
-        z-index: 1000;
-        margin: 0;
-      }
-      .nav-links.mobile-open { display: flex; }
-      .nav-link {
-        padding: 12px 14px;
-        font-size: 15.5px;
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-      }
-      .nav-link:hover { background: rgba(255, 255, 255, 0.08); }
-      .ticket-grid { grid-template-columns: 1fr; gap: 28px; }
-      .download-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
-      .desktop-only-btn { display: none !important; }
-      .mobile-only-nav-actions { display: flex !important; }
-    }
-    @media (max-width: 768px) {
-      .support-hero { padding: 36px 0 24px; }
-      .section-title { font-size: 26px; }
-      .section-subtitle { font-size: 14.5px; margin-bottom: 24px; }
-      .quick-jump-bar {
-        display: flex;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        white-space: nowrap;
-        width: 100%;
-        max-width: 100%;
-        padding: 5px;
-        scrollbar-width: none;
-        justify-content: flex-start;
-      }
-      .quick-jump-bar::-webkit-scrollbar { display: none; }
-      .quick-jump-btn { flex-shrink: 0; padding: 7px 13px; font-size: 12px; }
-      .download-grid { grid-template-columns: 1fr; gap: 18px; }
-      .download-card { padding: 22px 18px; border-radius: 16px; }
-      .hardware-banner { padding: 20px 18px; flex-direction: column; align-items: flex-start; gap: 14px; }
-      .ticket-info-card { padding: 24px 18px; border-radius: 16px; }
-      .ticket-form-card { padding: 24px 18px; border-radius: 16px; }
-      .form-group-row { grid-template-columns: 1fr; gap: 12px; }
-      .form-group { margin-bottom: 14px; }
-      .form-group input, .form-group select, .form-group textarea { font-size: 16px !important; padding: 11px 12px; }
-      .remote-callout-card { padding: 18px 16px; flex-direction: column; align-items: stretch; gap: 14px; }
-      .btn-remote-quick { width: 100%; justify-content: center; }
-      /* 4-COLUMN RESPONSIVE FOOTER GRID */
-    .footer-grid { display: grid; grid-template-columns: 1.8fr 1.2fr 1.2fr 0.9fr; gap: 36px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 24px; }
-    @media (max-width: 960px) {
-      .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
-    }
-    @media (max-width: 600px) {
-      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
-    }
-      .modal-card { padding: 24px 18px; max-width: calc(100vw - 32px); border-radius: 16px; }
-    }
-    @media (max-width: 640px) {
-      .nav-actions .btn-login { display: none; }
-      .mobile-only-login { display: inline-flex; width: 100%; justify-content: center; margin-top: 8px; }
-    }
-  
-    /* INDUSTRIES DROPDOWN - ROCK-SOLID HOVER & CLICK */
-    .nav-dropdown { position: relative; display: inline-flex; align-items: center; }
-    .nav-dropdown-btn {
-      background: none; border: none; color: var(--text-muted); font-size: 14.5px; font-weight: 600;
-      cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px;
-      transition: color 0.2s, background 0.2s; font-family: inherit;
-    }
-    .nav-dropdown:hover .nav-dropdown-btn,
-    .nav-dropdown.active .nav-dropdown-btn { color: #fff; background: rgba(255, 255, 255, 0.08); }
-    .dropdown-chevron { width: 14px; height: 14px; transition: transform 0.2s; pointer-events: none; }
-    .nav-dropdown:hover .dropdown-chevron,
-    .nav-dropdown.active .dropdown-chevron { transform: rotate(180deg); }
-
-    .dropdown-menu {
-      display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
-      width: 320px; background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 16px; padding: 8px;
-      box-shadow: 0 20px 45px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.08);
-      z-index: 9999; flex-direction: column; gap: 4px; margin-top: 6px;
-      pointer-events: auto;
-    }
-    /* Invisible hover bridge to eliminate gap dropping */
-    .dropdown-menu::before {
-      content: ''; position: absolute; top: -14px; left: 0; right: 0; height: 14px; background: transparent;
-    }
-    
-    .nav-dropdown:hover .dropdown-menu,
-    .nav-dropdown.active .dropdown-menu { display: flex; }
-    
-    .dropdown-item {
-      display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px;
-      text-decoration: none; color: #fff; transition: background 0.15s, transform 0.1s;
-      cursor: pointer; position: relative; z-index: 10000;
-    }
-    .dropdown-item * { pointer-events: none; }
-    .dropdown-item:hover { background: rgba(255, 255, 255, 0.1); transform: translateX(2px); }
-    .dropdown-item.active { background: rgba(37, 99, 235, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); }
-    .dropdown-icon { font-size: 20px; width: 34px; height: 34px; border-radius: 8px; background: rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .dropdown-title { font-size: 13.5px; font-weight: 700; color: #fff; line-height: 1.2; }
-    .dropdown-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-
-    @media (max-width: 1140px) {
-      .dropdown-menu { position: static; transform: none; width: 100%; box-shadow: none; background: rgba(15, 23, 42, 0.6); margin-top: 0; }
-      .dropdown-menu::before { display: none; }
-      .nav-dropdown { flex-direction: column; align-items: stretch; width: 100%; }
-      .nav-dropdown-btn { justify-content: space-between; width: 100%; padding: 10px 0; }
-      .dropdown-menu { display: none !important; }
-      .nav-dropdown.active .dropdown-menu { display: flex !important; }
-    }
-@media (max-width: 1140px) {
-      .dropdown-menu { position: static; transform: none; width: 100%; box-shadow: none; background: rgba(15, 23, 42, 0.6); }
-      .nav-dropdown { flex-direction: column; align-items: stretch; width: 100%; }
-      .nav-dropdown-btn { justify-content: space-between; width: 100%; padding: 10px 0; }
-      .nav-dropdown.active .dropdown-menu { display: flex; }
-    }
-
-  
-    /* UNIFIED NAVIGATION & HEADER (MATCHING HOMEPAGE EXACTLY) */
-    header { 
-      padding: clamp(12px, 1.6vh, 18px) 0; 
-      border-bottom: 1px solid var(--card-border); 
-      position: sticky; 
-      top: 0; 
-      background: rgba(9, 13, 22, 0.94); 
-      backdrop-filter: blur(14px); 
-      z-index: 1000; 
-      width: 100%; 
-    }
-    header .container { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      width: 100%; 
-      gap: clamp(12px, 1.8vw, 24px); 
-      position: relative;
-    }
-    .logo { 
-      display: flex; 
-      align-items: center; 
-      gap: 12px; 
-      font-size: clamp(19px, 1.6vw, 22px); 
-      font-weight: 800; 
-      color: #ffffff; 
-      text-decoration: none; 
-      letter-spacing: -0.5px; 
-      flex-shrink: 0; 
-      white-space: nowrap; 
-    }
-    .brand-logo-svg { 
-      width: clamp(32px, 2.4vw, 38px); 
-      height: clamp(32px, 2.4vw, 38px); 
-      flex-shrink: 0; 
-      display: block; 
-      border-radius: 50%; 
-      object-fit: contain; 
-    }
-    
-    .nav-links { 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      gap: clamp(8px, 1.1vw, 16px); 
-      flex: 1; 
-      margin: 0; 
-    }
-    .nav-link { 
-      color: #cbd5e1; 
-      text-decoration: none; 
-      font-size: clamp(13.5px, 0.95vw, 15px); 
-      font-weight: 600; 
-      transition: color 0.2s, transform 0.2s; 
-      white-space: nowrap; 
-    }
-    .nav-link:hover, .nav-link.active { 
-      color: #ffffff; 
-    }
-    .mobile-menu-toggle { 
-      display: none; 
-      background: rgba(255, 255, 255, 0.06); 
-      border: 1px solid var(--card-border); 
-      padding: 8px 12px; 
-      border-radius: 10px; 
-      color: #fff; 
-      font-size: 22px; 
-      cursor: pointer; 
-      line-height: 1; 
-    }
-
-    .nav-actions { 
-      display: flex; 
-      align-items: center; 
-      gap: clamp(8px, 1vw, 12px); 
-      flex-shrink: 0; 
-    }
-    .btn-login { 
-      background: #ffffff !important; 
-      color: #1d4ed8 !important; 
-      border: none !important; 
-      padding: clamp(8px, 1vh, 10px) clamp(16px, 1.3vw, 22px) !important; 
-      border-radius: 8px !important; 
-      font-weight: 700 !important; 
-      font-size: clamp(13.5px, 0.95vw, 14.5px) !important; 
-      cursor: pointer; 
-      transition: 0.2s ease; 
-      text-decoration: none; 
-      display: inline-flex; 
-      align-items: center; 
-      white-space: nowrap; 
-    }
-    .btn-login:hover { 
-      background: #f1f5f9 !important; 
-      transform: translateY(-1px); 
-    }
-    .btn-signup { 
-      background: #2563eb !important; 
-      border: none !important; 
-      color: #fff !important; 
-      padding: clamp(8px, 1vh, 10px) clamp(16px, 1.4vw, 22px) !important; 
-      border-radius: 8px !important; 
-      font-weight: 700 !important; 
-      font-size: clamp(13.5px, 0.95vw, 14.5px) !important; 
-      cursor: pointer; 
-      transition: 0.2s ease; 
-      text-decoration: none; 
-      display: inline-flex; 
-      align-items: center; 
-      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); 
-      white-space: nowrap; 
-    }
-    .btn-signup:hover { 
-      background: #1d4ed8 !important; 
-      transform: translateY(-1px); 
-    }
-    .mobile-only-login { display: none; }
-
-    /* INDUSTRIES DROPDOWN - ROCK SOLID HOVER BRIDGE & CLICK */
-    .nav-dropdown { 
-      position: relative; 
-      display: inline-flex; 
-      align-items: center; 
-    }
-    .nav-dropdown-btn {
-      background: none; 
-      border: none; 
-      color: #cbd5e1; 
-      font-size: clamp(13.5px, 0.95vw, 15px); 
-      font-weight: 600;
-      cursor: pointer; 
-      display: inline-flex; 
-      align-items: center; 
-      gap: 6px; 
-      padding: 6px 4px;
-      transition: color 0.2s; 
-      font-family: inherit;
-    }
-    .nav-dropdown:hover .nav-dropdown-btn, 
-    .nav-dropdown.active .nav-dropdown-btn { 
-      color: #ffffff; 
-    }
-    .dropdown-chevron { 
-      width: 14px; 
-      height: 14px; 
-      transition: transform 0.2s; 
-      pointer-events: none; 
-    }
-    .nav-dropdown:hover .dropdown-chevron,
-    .nav-dropdown.active .dropdown-chevron { 
-      transform: rotate(180deg); 
-    }
-
-    .dropdown-menu {
-      display: none; 
-      position: absolute; 
-      top: 100%; 
-      left: 50%; 
-      transform: translateX(-50%);
-      width: 330px; 
-      background: #0f172a; 
-      border: 1px solid rgba(255, 255, 255, 0.16); 
-      border-radius: 16px; 
-      padding: 8px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.08);
-      z-index: 9999; 
-      flex-direction: column; 
-      gap: 4px; 
-      margin-top: 8px;
-      pointer-events: auto;
-    }
-    /* Invisible hover bridge to eliminate gap dropping */
-    .dropdown-menu::before {
-      content: ''; 
-      position: absolute; 
-      top: -16px; 
-      left: 0; 
-      right: 0; 
-      height: 16px; 
-      background: transparent;
-    }
-    
-    .nav-dropdown:hover .dropdown-menu,
-    .nav-dropdown.active .dropdown-menu { 
-      display: flex; 
-    }
-    
-    .dropdown-item {
-      display: flex; 
-      align-items: center; 
-      gap: 12px; 
-      padding: 10px 12px; 
-      border-radius: 10px;
-      text-decoration: none; 
-      color: #fff; 
-      transition: background 0.15s, transform 0.1s;
-      cursor: pointer; 
-      position: relative; 
-      z-index: 10000;
-    }
-    .dropdown-item * { 
-      pointer-events: none; 
-    }
-    .dropdown-item:hover { 
-      background: rgba(255, 255, 255, 0.1); 
-      transform: translateX(3px); 
-    }
-    .dropdown-item.active { 
-      background: rgba(37, 99, 235, 0.22); 
-      border: 1px solid rgba(59, 130, 246, 0.45); 
-    }
-    .dropdown-icon { 
-      font-size: 20px; 
-      width: 36px; 
-      height: 36px; 
-      border-radius: 8px; 
-      background: rgba(255, 255, 255, 0.08); 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      flex-shrink: 0; 
-    }
-    .dropdown-title { 
-      font-size: 13.5px; 
-      font-weight: 700; 
-      color: #fff; 
-      line-height: 1.2; 
-    }
-    .dropdown-desc { 
-      font-size: 11px; 
-      color: #94a3b8; 
-      margin-top: 2px; 
-    }
-
-    /* 4-COLUMN FOOTER GRID */
-    .footer-grid { 
-      display: grid; 
-      grid-template-columns: 1.8fr 1.2fr 1.2fr 0.9fr; 
-      gap: 36px; 
-      padding-bottom: 40px; 
-      border-bottom: 1px solid rgba(255,255,255,0.05); 
-      margin-bottom: 24px; 
-    }
-    @media (max-width: 960px) {
-      .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
-    }
-    @media (max-width: 600px) {
-      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
-    }
-
-    @media (max-width: 1140px) {
-      .logo { order: 1; }
-      .nav-actions { order: 2; }
-      .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; order: 3; }
-      .nav-links {
-        display: none;
-        position: absolute;
-        top: calc(100% + 1px);
-        left: 0;
-        right: 0;
-        width: 100%;
-        flex-direction: column;
-        align-items: stretch;
-        background: rgba(9, 13, 22, 0.98);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-        padding: 20px 24px;
-        gap: 10px;
-        box-sizing: border-box;
-      }
-      .nav-links.mobile-open { display: flex; }
-      .nav-link { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-      .dropdown-menu { position: static; transform: none; width: 100%; box-shadow: none; background: rgba(15, 23, 42, 0.6); margin-top: 0; }
-      .dropdown-menu::before { display: none; }
-      .nav-dropdown { flex-direction: column; align-items: stretch; width: 100%; }
-      .nav-dropdown-btn { justify-content: space-between; width: 100%; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-      .dropdown-menu { display: none !important; }
-      .nav-dropdown.active .dropdown-menu { display: flex !important; }
-      .nav-actions .btn-login { display: none; }
-      .mobile-only-login { display: inline-flex; width: 100%; justify-content: center; margin-top: 8px; }
-    }
-
-  
-    /* GOOGLE RECAPTCHA WIDGET ALIGNMENT */
-    .recaptcha-group {
-      margin: 16px 0 18px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    @media (max-width: 480px) {
-      .recaptcha-group {
-        transform: scale(0.88);
-        transform-origin: left top;
-      }
-    }
-
-  </style>
-
-  <script>
-    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
-    let supabaseClient;
-
-    document.addEventListener("DOMContentLoaded", function() {
-      // Initialize Supabase Client
-      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    });
-
-    // --- AUTO-ASSIGNMENT ENGINE (EVERY INCOMING TICKET ASSIGNED FIRST TO CUSTOMER SUPPORT) ---
-    function getAutoAssignedStaff(ticketData = {}) {
-      return {
-        assigned_to: 'support@flexitapapp.com',
-        staff_name: 'Customer Support Desk',
-        role: 'support',
-        role_title: 'Customer Support Desk',
-        routing_reason: 'Mandatory intake assignment to Customer Support Desk'
-      };
-    }
-
-    const GOOGLE_TICKET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzJu1CEi1qhT-k7Qc_tisMN7vXbbCuGymgiMMk_K6PGIMnrUHkIrYEuQFMCviZfaYvoQw/exec';
-
-    async function sendTicketLifecycleNotification({
-      ticketNumber,
-      recipientEmail,
-      storeName,
-      tier = 'tier_1',
-      details = '',
-      resolutionNotes = '',
-      isResolved = false
-    }) {
-      if (!recipientEmail) return;
-
-      const emailSubject = isResolved
-        ? `[FlexiTap Support] Resolved: Ticket #${ticketNumber} - ${storeName}`
-        : `[FlexiTap Support] Ticket #${ticketNumber} Acknowledged - ${storeName}`;
-
-      const tierLabel = tier === 'tier_3' ? 'Tier 3 (Core Dev Engineering)' : (tier === 'tier_2' ? 'Tier 2 (Technical Support)' : 'Tier 1 (Merchant Operations)');
-
-      const brandedHtml = isResolved
-        ? `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
-            <div style="background: #0f172a; padding: 24px; text-align: center;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">FlexiTap POS Support</h1>
-              <p style="color: #94a3b8; margin: 4px 0 0; font-size: 13px;">Official Operations &amp; Engineering Desk</p>
-            </div>
-            <div style="padding: 28px 24px;">
-              <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
-                <div style="color: #065f46; font-size: 14px; font-weight: 700;">✅ Issue Marked as Resolved</div>
-                <div style="color: #047857; font-size: 13px; margin-top: 2px;">Ticket <strong>#${ticketNumber}</strong> has been completed and verified.</div>
-              </div>
-              <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">
-                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${storeName}</td></tr>
-                <tr><td style="padding: 6px 0; color: #64748b;">Ticket Reference:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 700;">#${ticketNumber}</td></tr>
-                <tr><td style="padding: 6px 0; color: #64748b;">Support Tier:</td><td style="padding: 6px 0; color: #0f172a;">${tierLabel}</td></tr>
-              </table>
-              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Resolution Details &amp; Engineer Notes:</div>
-                <div style="color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${resolutionNotes || 'All diagnostic inspections passed and terminal sync is restored.'}</div>
-              </div>
-              <!-- PWA Support App Callout -->
-              <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #10b981; border-radius: 10px; padding: 18px 20px; margin: 20px 0; text-align: center;">
-                <div style="color: #34d399; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">📱 Verify on Your Terminal or Mobile</div>
-                <div style="color: #ffffff; font-size: 15px; font-weight: 800; margin-bottom: 6px;">Check Status in FlexiTap Support App (PWA)</div>
-                <p style="color: #94a3b8; font-size: 12.5px; margin: 0 0 14px; line-height: 1.45;">You can view the full resolution summary, test terminal connectivity, or open a follow-up inquiry anytime in the app.</p>
-                <a href="https://flexitapapp.com/flexi-app.html" target="_blank" style="display: inline-block; background: #10b981; color: #ffffff; text-decoration: none; padding: 10px 22px; border-radius: 8px; font-size: 13px; font-weight: 800; box-shadow: 0 4px 12px rgba(16,185,129,0.35);">
-                  Open Support App (PWA) &rarr;
-                </a>
-              </div>
-              <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px;">If you have any further questions or require additional adjustments, simply reply directly to this email.</p>
-            </div>
-            <div style="background: #f1f5f9; padding: 16px 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
-              &copy; 2026 FlexiTap POS • www.flexitapapp.com • Support Desk
-            </div>
-          </div>
-        `
-        : `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
-            <div style="background: #0f172a; padding: 24px; text-align: center;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">FlexiTap POS Support</h1>
-              <p style="color: #94a3b8; margin: 4px 0 0; font-size: 13px;">Official Operations &amp; Engineering Desk</p>
-            </div>
-            <div style="padding: 28px 24px;">
-              <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
-                <div style="color: #1e40af; font-size: 14px; font-weight: 700;">🎫 Ticket Received &amp; Logged</div>
-                <div style="color: #2563eb; font-size: 13px; margin-top: 2px;">Your ticket <strong>#${ticketNumber}</strong> has been dispatched to our engineering queue.</div>
-              </div>
-              <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">
-                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${storeName}</td></tr>
-                <tr><td style="padding: 6px 0; color: #64748b;">Ticket Reference:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 700;">#${ticketNumber}</td></tr>
-                <tr><td style="padding: 6px 0; color: #64748b;">Support Tier:</td><td style="padding: 6px 0; color: #0f172a;">${tierLabel}</td></tr>
-              </table>
-              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Issue Description:</div>
-                <div style="color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${details || 'No detailed description provided.'}</div>
-              </div>
-              <!-- PWA Support App Callout -->
-              <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #3b82f6; border-radius: 10px; padding: 18px 20px; margin: 20px 0; text-align: center;">
-                <div style="color: #60a5fa; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">📱 Need Real-Time Help or Live Chat?</div>
-                <div style="color: #ffffff; font-size: 15px; font-weight: 800; margin-bottom: 6px;">Open the FlexiTap Support App (PWA)</div>
-                <p style="color: #94a3b8; font-size: 12.5px; margin: 0 0 14px; line-height: 1.45;">Track this ticket's live status, launch instant support chat, or request remote device diagnostics directly from your smartphone or POS terminal.</p>
-                <a href="https://flexitapapp.com/flexi-app.html" target="_blank" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; padding: 10px 22px; border-radius: 8px; font-size: 13px; font-weight: 800; box-shadow: 0 4px 12px rgba(37,99,235,0.35);">
-                  Launch Support App (PWA) &rarr;
-                </a>
-              </div>
-              <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px;">Our operations and core engineering team are reviewing your inquiry. You will receive an email update as soon as progress is made or when the ticket is resolved.</p>
-            </div>
-            <div style="background: #f1f5f9; padding: 16px 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
-              &copy; 2026 FlexiTap POS • www.flexitapapp.com • Support Desk
-            </div>
-          </div>
-        `;
-
-      const payload = {
-        recipient_email: recipientEmail,
-        subject: emailSubject,
-        store_name: storeName || 'Store',
-        ticket_number: ticketNumber,
-        tier: tier,
-        details: details,
-        resolution_notes: resolutionNotes,
-        html: brandedHtml
-      };
-
-      // 1. Dispatch via Google Workspace Webhook
-      try {
-        fetch(GOOGLE_TICKET_WEBHOOK_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        }).catch(e => console.warn('Webhook background dispatch note:', e));
-      } catch (err) {
-        console.warn('Webhook dispatch exception:', err);
-      }
-
-      // 2. Also log to Supabase ticket_notifications if table exists
-      try {
-        const notificationRecord = {
-          ticket_id: String(ticketNumber || Date.now()),
-          ticket_number: typeof ticketNumber === 'number' ? ticketNumber : parseInt(ticketNumber, 10) || null,
-          recipient_email: recipientEmail,
-          notification_type: isResolved ? 'resolution_notice' : 'submission_acknowledgment',
-          subject: emailSubject,
-          store_name: storeName || 'Store',
-          tier: tier || 'tier_1',
-          details: details || '',
-          resolution_notes: resolutionNotes || '',
-          status: 'delivered',
-          created_at: new Date().toISOString()
-        };
-        if (typeof supabaseClient !== 'undefined' && supabaseClient.from) {
-          supabaseClient.from('ticket_notifications').insert([notificationRecord]).catch(() => {});
-        }
-      } catch (_) {}
-
-      return { success: true, email: recipientEmail, subject: emailSubject };
-    }
-
-    // --- SUBMIT SUPPORT TICKET DIRECT TO BACKEND ---
-    async function submitSupportTicket(event) {
-      event.preventDefault();
-
-      const btn = document.getElementById('ticket-submit-btn');
-      const errorDiv = document.getElementById('ticket-error-msg');
-      const formEl = document.getElementById('support-ticket-form');
-      const successBox = document.getElementById('ticket-success-box');
-
-      const storeName = document.getElementById('t-store').value.trim();
-      const contactEmail = document.getElementById('t-email').value.trim();
-      const category = document.getElementById('t-category').value;
-      const priority = document.getElementById('t-priority').value;
-      const subject = document.getElementById('t-subject').value.trim();
-      const description = document.getElementById('t-description').value.trim();
-
-      if (!storeName || !contactEmail || !subject || !description) {
-        errorDiv.innerText = 'Please complete all required fields.';
-        errorDiv.style.display = 'block';
-        return;
-      }
-
-      // Security Verification Check (reCAPTCHA)
-      const recaptchaResponse = (typeof grecaptcha !== 'undefined') ? grecaptcha.getResponse() : '';
-      if (!recaptchaResponse) {
-        errorDiv.innerText = 'Security Verification: Please check the "I\'m not a robot" box before submitting.';
-        errorDiv.style.display = 'block';
-        return;
-      }
-
-      errorDiv.style.display = 'none';
-      errorDiv.innerText = '';
-      btn.disabled = true;
-      btn.innerHTML = '<span>⏳ Submitting Ticket...</span>';
-
-      // Auto-assign to Dev or Customer Support (Admin excluded)
-      const autoAssign = getAutoAssignedStaff({ category: category, subject: subject, description: description });
-
-      const payload = {
-        store_name: storeName,
-        contact_email: contactEmail,
-        category: category,
-        priority: priority,
-        subject: subject,
-        description: description,
-        status: 'open',
-        assigned_to: autoAssign.assigned_to,
-        device_telemetry: {
-          app_version: 'Web Support v2.4.1',
-          device_role: 'Customer Ticket',
-          sqlite_healthy: true,
-          channel: 'Support & Download Portal',
-          user_agent: navigator.userAgent,
-          platform: navigator.platform,
-          language: navigator.language,
-          screen_resolution: `${window.screen.width}x${window.screen.height}`,
-          submitted_at: new Date().toISOString(),
-          auto_assigned: autoAssign,
-          recaptcha_verified: true,
-          recaptcha_token: recaptchaResponse
-        }
-      };
-
-      try {
-        const { data, error } = await supabaseClient
-          .from('tickets')
-          .insert([payload])
-          .select();
-
-        if (error) {
-          console.error('Supabase ticket submission error:', error);
-          errorDiv.innerText = 'Submission error: ' + error.message;
-          errorDiv.style.display = 'block';
-          btn.disabled = false;
-          btn.innerHTML = 'Submit Support Ticket';
-          if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
-          return;
-        }
-
-        const createdTicket = (data && data.length > 0) ? data[0] : null;
-        const ticketRef = createdTicket 
-          ? (createdTicket.ticket_number ? `#${createdTicket.ticket_number}` : createdTicket.id.substring(0, 8).toUpperCase())
-          : '#REC-' + Math.floor(1000 + Math.random() * 9000);
-
-        document.getElementById('ticket-ref-display').innerText = 'Ticket Reference: ' + ticketRef;
-        document.getElementById('ticket-confirmed-email').innerText = contactEmail;
-        const assignedEl = document.getElementById('ticket-assigned-display');
-        if (assignedEl) {
-          assignedEl.innerText = `${autoAssign.staff_name} (${autoAssign.role === 'dev' ? 'Core Dev' : 'Customer Support Specialist'})`;
-        }
-
-        if (contactEmail) {
-          sendTicketLifecycleNotification({
-            ticketNumber: createdTicket ? (createdTicket.ticket_number || createdTicket.id) : ticketRef,
-            recipientEmail: contactEmail,
-            storeName: storeName,
-            tier: 'tier_1',
-            details: description,
-            isResolved: false
-          });
-        }
-
-        formEl.style.display = 'none';
-        successBox.style.display = 'block';
-
-        if (window.FlexiAnalytics) {
-          FlexiAnalytics.track('ticket_submitted', {
-            event_type: 'lead',
-            category: category,
-            priority: priority,
-            ticket_ref: ticketRef
-          });
-        }
-
-      } catch (err) {
-        console.error('Ticket network exception:', err);
-        errorDiv.innerText = 'Network error submitting ticket. Please check connection or email support@flexitapapp.com.';
-        errorDiv.style.display = 'block';
-        btn.disabled = false;
-        btn.innerHTML = 'Submit Support Ticket';
-      }
-    }
-
-    function resetTicketForm() {
-      const formEl = document.getElementById('support-ticket-form');
-      const successBox = document.getElementById('ticket-success-box');
-      const btn = document.getElementById('ticket-submit-btn');
-      
-      formEl.reset();
-      if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
-      formEl.style.display = 'block';
-      successBox.style.display = 'none';
-      btn.disabled = false;
-      btn.innerHTML = 'Submit Support Ticket';
-    }
-
-    // --- MOBILE MENU TOGGLE ---
-    
-        function toggleDropdown(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      const dd = document.getElementById('industriesDropdown');
-      if (dd) {
-        dd.classList.toggle('active');
-      }
-    }
-
-    document.addEventListener('click', function(e) {
-      const dd = document.getElementById('industriesDropdown');
-      if (dd && !dd.contains(e.target)) {
-        dd.classList.remove('active');
-      }
-    });
-
-    function toggleMobileMenu() {
-      const el = document.getElementById('navLinksContainer');
-      if (el) el.classList.toggle('mobile-open');
-    }
-
-    // --- MODAL CONTROLS ---
-    function openModal(id) {
-      const modal = document.getElementById(id);
-      if (modal) modal.style.display = 'flex';
-    }
-    function closeModal(id) {
-      const modal = document.getElementById(id);
-      if (modal) modal.style.display = 'none';
-    }
-
-
-    // --- AUTH LOGIN SUBMIT ---
-    let pendingSubpageAuthEmail = '';
-
-    // --- AUTH LOGIN SUBMIT ---
-    async function handleMerchantLogin(event) {
-      event.preventDefault();
-      const email = document.getElementById('login-email').value.trim();
-      const password = document.getElementById('login-password').value;
-      const errorDiv = document.getElementById('login-modal-error');
-      const btn = document.getElementById('login-submit-btn');
-
-      errorDiv.innerText = '';
-      btn.innerText = 'Verifying credentials...';
-
-      try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-
-        pendingSubpageAuthEmail = email;
-        btn.innerText = 'Sending 2FA code...';
-
-        const { error: otpErr } = await supabaseClient.auth.signInWithOtp({
-          email,
-          options: { shouldCreateUser: false }
-        });
-        if (otpErr) throw otpErr;
-
-        closeModal('login-modal');
-        openSubpageOtpModal(email);
-      } catch (err) {
-        errorDiv.innerText = err.message || 'Login failed. Please check your credentials.';
-      } finally {
-        btn.innerText = 'Log In to Merchant Portal';
-      }
-    }
-
-    function openSubpageOtpModal(email) {
-      const emailToUse = email || pendingSubpageAuthEmail;
-      const displayEl = document.getElementById('subpage-otp-display-email');
-      if (displayEl) displayEl.innerText = emailToUse;
-      const codeInp = document.getElementById('subpage-otp-code');
-      if (codeInp) codeInp.value = '';
-      const msg = document.getElementById('subpage-otp-msg');
-      if (msg) msg.innerText = '';
-      const modal = document.getElementById('subpage-otp-modal');
-      if (modal) {
-        modal.style.display = 'flex';
-        if (codeInp) setTimeout(() => codeInp.focus(), 100);
-      }
-    }
-
-    function closeSubpageOtpModal() {
-      const modal = document.getElementById('subpage-otp-modal');
-      if (modal) modal.style.display = 'none';
-    }
-
-    async function handleSubpageResendOtp() {
-      const email = pendingSubpageAuthEmail || document.getElementById('login-email')?.value.trim();
-      const msg = document.getElementById('subpage-otp-msg');
-      if (!email) return;
-
-      try {
-        const { error } = await supabaseClient.auth.signInWithOtp({
-          email,
-          options: { shouldCreateUser: false }
-        });
-        if (error) throw error;
-        if (msg) {
-          msg.style.color = '#34d399';
-          msg.innerText = '✓ New verification code sent to your email!';
-        }
-      } catch (err) {
-        if (msg) {
-          msg.style.color = '#f87171';
-          msg.innerText = err.message || 'Failed to resend code.';
-        }
-      }
-    }
-
-    async function handleSubpageVerifyOtp(event) {
-      event.preventDefault();
-      const email = pendingSubpageAuthEmail || document.getElementById('login-email')?.value.trim();
-      const token = document.getElementById('subpage-otp-code')?.value.trim();
-      const btn = document.getElementById('subpage-otp-verify-btn');
-      const msg = document.getElementById('subpage-otp-msg');
-
-      if (!email || !token) return;
-      if (btn) { btn.disabled = true; btn.innerText = 'Verifying code...'; }
-      if (msg) msg.innerText = '';
-
-      try {
-        const { data, error } = await supabaseClient.auth.verifyOtp({
-          email,
-          token,
-          type: 'email'
-        });
-        if (error) throw error;
-        closeSubpageOtpModal();
-        window.location.href = 'portal.html';
-      } catch (err) {
-        if (msg) {
-          msg.style.color = '#f87171';
-          msg.innerText = err.message || 'Invalid or expired verification code.';
-        }
-      } finally {
-        if (btn) { btn.disabled = false; btn.innerText = 'Verify & Enter Portal'; }
-      }
-    }
-
-    function openSubpageForgotModal() {
-      closeModal('login-modal');
-      const emailInp = document.getElementById('login-email');
-      const forgotInp = document.getElementById('subpage-forgot-email');
-      if (emailInp && forgotInp) forgotInp.value = emailInp.value.trim();
-      const msg = document.getElementById('subpage-forgot-msg');
-      if (msg) msg.innerText = '';
-      const modal = document.getElementById('subpage-forgot-modal');
-      if (modal) modal.style.display = 'flex';
-    }
-
-    function closeSubpageForgotModal() {
-      const modal = document.getElementById('subpage-forgot-modal');
-      if (modal) modal.style.display = 'none';
-    }
-
-    async function handleSubpageForgotSubmit(event) {
-      event.preventDefault();
-      const email = document.getElementById('subpage-forgot-email')?.value.trim();
-      const btn = document.getElementById('subpage-forgot-btn');
-      const msg = document.getElementById('subpage-forgot-msg');
-      if (!email) return;
-
-      if (btn) { btn.disabled = true; btn.innerText = 'Sending link...'; }
-      if (msg) msg.innerText = '';
-
-      try {
-        const redirectUrl = window.location.href.split('#')[0];
-        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: redirectUrl });
-        if (error) throw error;
-        if (msg) {
-          msg.style.color = '#34d399';
-          msg.innerText = '✓ Recovery link sent! Please check your email inbox and spam folder.';
-        }
-        if (btn) btn.innerText = 'Link Sent';
-      } catch (err) {
-        if (msg) {
-          msg.style.color = '#f87171';
-          msg.innerText = err.message || 'Failed to send recovery email.';
-        }
-        if (btn) { btn.disabled = false; btn.innerText = 'Send Recovery Link'; }
-      }
-    }
-
-    async function handleSubpageUpdatePassword(event) {
-      event.preventDefault();
-      const pw1 = document.getElementById('subpage-new-password')?.value;
-      const pw2 = document.getElementById('subpage-confirm-password')?.value;
-      const btn = document.getElementById('subpage-new-pw-btn');
-      const msg = document.getElementById('subpage-new-pw-msg');
-
-      if (pw1 !== pw2) {
-        if (msg) { msg.style.color = '#f87171'; msg.innerText = 'Passwords do not match.'; }
-        return;
-      }
-      if (btn) { btn.disabled = true; btn.innerText = 'Saving password...'; }
-      if (msg) msg.innerText = '';
-
-      try {
-        const { error } = await supabaseClient.auth.updateUser({ password: pw1 });
-        if (error) throw error;
-        if (msg) {
-          msg.style.color = '#34d399';
-          msg.innerText = '✓ Password updated successfully! Redirecting to Back Office...';
-        }
-        setTimeout(() => {
-          window.location.href = 'portal.html';
-        }, 1200);
-      } catch (err) {
-        if (msg) {
-          msg.style.color = '#f87171';
-          msg.innerText = err.message || 'Failed to update password.';
-        }
-        if (btn) { btn.disabled = false; btn.innerText = 'Save New Password & Sign In'; }
-      }
-    }
-
-    if (window.location.hash && window.location.hash.includes('type=recovery')) {
-      const modal = document.getElementById('subpage-new-pw-modal');
-      if (modal) modal.style.display = 'flex';
-    }
-
-    if (typeof supabaseClient !== 'undefined' && supabaseClient.auth) {
-      supabaseClient.auth.onAuthStateChange((event) => {
-        if (event === 'PASSWORD_RECOVERY') {
-          const modal = document.getElementById('subpage-new-pw-modal');
-          if (modal) modal.style.display = 'flex';
-        }
-      });
-    }
-
-    // --- PWA INSTALLATION CONTROLLER ---
-    let deferredSupportPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredSupportPrompt = e;
-    });
-
-    async function triggerPwaInstall() {
-      if (deferredSupportPrompt) {
-        deferredSupportPrompt.prompt();
-        const choice = await deferredSupportPrompt.userChoice;
-        if (choice && choice.outcome === 'accepted') {
-          deferredSupportPrompt = null;
-          return;
-        }
-      }
-      openModal('pwa-install-modal');
-    }
-
-    async function executeNativeInstallPrompt() {
-      if (deferredSupportPrompt) {
-        deferredSupportPrompt.prompt();
-        const choice = await deferredSupportPrompt.userChoice;
-        if (choice && choice.outcome === 'accepted') {
-          deferredSupportPrompt = null;
-          closeModal('pwa-install-modal');
-          return;
-        }
-      }
-      window.location.href = 'flexi-app.html';
-    }
-  </script>
-</head>
-<body>
-
-  <!-- NAVBAR -->
-  <header>
-    <div class="container">
-      <a href="/" class="logo">
-        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" />
-        <span>FlexiTap POS</span>
-      </a>
-      
-      <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">☰</button>
-
-      <div class="nav-links" id="navLinksContainer">
-        <a href="features.html" class="nav-link">Capabilities</a>
-        <!-- INDUSTRIES DROPDOWN -->
-        <div class="nav-dropdown" id="industriesDropdown">
-          <button class="nav-link nav-dropdown-btn" onclick="toggleDropdown(event)">
-            <span>Industries</span>
-            <svg class="dropdown-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-          </button>
-          <div class="dropdown-menu">
-            <a href="pos-for-cafes.html" class="dropdown-item">
-              <span class="dropdown-icon">☕</span>
-              <div>
-                <div class="dropdown-title">Cafes &amp; Bakeries</div>
-                <div class="dropdown-desc">KOT tickets &amp; barista rush speed</div>
-              </div>
-            </a>
-            <a href="pos-for-retail.html" class="dropdown-item">
-              <span class="dropdown-icon">🛍️</span>
-              <div>
-                <div class="dropdown-title">Retail &amp; Boutiques</div>
-                <div class="dropdown-desc">Barcode scanning &amp; variant matrices</div>
-              </div>
-            </a>
-            <a href="pos-for-quick-service.html" class="dropdown-item">
-              <span class="dropdown-icon">🍔</span>
-              <div>
-                <div class="dropdown-title">Quick-Serve &amp; Food Trucks</div>
-                <div class="dropdown-desc">3-second tender, KDS &amp; bump bar</div>
-              </div>
-            </a>
-            <a href="pos-for-fine-dining.html" class="dropdown-item">
-              <span class="dropdown-icon">🍷</span>
-              <div>
-                <div class="dropdown-title">Fine Dining &amp; Full Service</div>
-                <div class="dropdown-desc">Floor plan, course firing &amp; split checks</div>
-              </div>
-            </a>
-            <a href="pos-for-professional-services.html" class="dropdown-item">
-              <span class="dropdown-icon">✂️</span>
-              <div>
-                <div class="dropdown-title">Professional Services &amp; Salons</div>
-                <div class="dropdown-desc">Appointments, deposits &amp; staff splits</div>
-              </div>
-            </a>
-          </div>
-        </div>
-        <a href="pricing.html" class="nav-link">Pricing</a>
-        <a href="download.html" class="nav-link">Downloads</a>
-        <a href="about.html" class="nav-link">About &amp; FAQ</a>
-        <a href="insights.html" class="nav-link">Insights</a>
-        <a href="support.html" class="nav-link active">Support</a>
-        <a href="community.html" class="nav-link">Community</a>
-        <div class="mobile-only-nav-actions" style="display: none; flex-direction: column; gap: 10px; width: 100%; padding-top: 12px; border-top: 1px solid var(--card-border); margin-top: 4px;">
-          <a href="pricing.html" class="btn-signup" style="justify-content: center; width: 100%;">Get Started</a>
-          <button class="btn-login" onclick="openModal('login-modal')" style="width: 100%;">Merchant Login</button>
-        </div>
-      </div>
-
-      <div class="nav-actions">
-        <button type="button" class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
-        <a href="pricing.html" class="btn-signup">Get Started</a>
-      </div>
-    </div>
-  </header>
-
-  <!-- HERO SECTION -->
-  <main class="container">
-    <section class="support-hero">
-      <div class="hero-badge">
-        <span class="hero-dot"></span> Official Releases & Dedicated Customer Support
-      </div>
-      
-      <h1 class="section-title">Support &amp; App Downloads</h1>
-      <p class="section-subtitle">
-        Official FlexiTap POS client builds for your tablets, counters, and registers are available now in our Download Center. Connect directly with technical assistance, or dispatch a high-priority ticket directly to our operations engineering team.
-      </p>
-
-      <div class="quick-jump-bar">
-        <button onclick="triggerPwaInstall()" class="quick-jump-btn" style="color: #60a5fa; background: rgba(59,130,246,0.18); border: 1px solid rgba(59,130,246,0.5); cursor: pointer; font-family: inherit;">📲 Install App</button>
-        <a href="download.html" class="quick-jump-btn active">📦 App Downloads</a>
-        <a href="#community-hub" class="quick-jump-btn" style="color: #38bdf8;">👥 Merchant Community</a>
-        <a href="#ticket" class="quick-jump-btn">🎫 Submit a Ticket</a>
-        <a href="#remote-assist" class="quick-jump-btn">⚡ Remote Diagnostics</a>
-      </div>
-    </section>
-
-    <!-- SECTION 1: DOWNLOADS SHOWCASE -->
-    <section id="downloads" class="download-section">
-      <div style="background: linear-gradient(135deg, rgba(30, 58, 138, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 20px; padding: clamp(28px, 4vw, 44px); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);">
-        <span class="section-pill" style="margin-bottom: 0;">Official Public Launch: Today, Nov 21, 2026 • 9:00 AM CST</span>
-        <h2 class="section-header-title" style="font-size: clamp(24px, 2.5vw, 34px); margin: 0;">Install FlexiTap on Your Existing Hardware</h2>
-        <p style="color: var(--text-muted); font-size: clamp(14px, 1.1vw, 16px); max-width: 680px; margin: 0; line-height: 1.6;">
-          Deploy zero-latency offline POS checkout to your Windows touchscreen registers and Android / Sunmi handhelds. iOS edition releasing November 28, 2026.
-        </p>
-
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 6px 0;">
-          <span style="background: rgba(59, 130, 246, 0.15); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3); padding: 7px 14px; border-radius: 999px; font-size: 13.5px; font-weight: 600;">💻 Windows 10/11 (.exe)</span>
-          <span style="background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); padding: 7px 14px; border-radius: 999px; font-size: 13.5px; font-weight: 600;">📱 Android &amp; Sunmi (.apk)</span>
-          <span style="background: rgba(255, 255, 255, 0.08); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.2); padding: 7px 14px; border-radius: 999px; font-size: 13.5px; font-weight: 600;">🍎 iOS &amp; iPadOS (Nov 28)</span>
-        </div>
-
-        <a href="download.html" class="btn-primary" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; padding: 14px 32px; border-radius: 12px; font-weight: 800; font-size: 16px; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45); transition: transform 0.2s, background 0.2s;">
-          <svg style="width: 20px; height: 20px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
-          Go to Official Download Center &rarr;
-        </a>
-      </div>
-
-      <!-- HARDWARE CALLOUT -->
-      <div class="hardware-banner" style="margin-top: 36px; margin-bottom: 0;">
-        <div class="hw-info">
-          <h4>🔌 Open Hardware Freedom — Bring Your Own Device</h4>
-          <p>FlexiTap does not force you to buy overpriced proprietary terminals. Keep your existing printers, tablets, and cash drawers.</p>
-        </div>
-        <div class="hw-pills">
-          <span class="hw-pill">Sunmi Hardware Certified</span>
-          <span class="hw-pill">Epson &amp; Star ESC/POS</span>
-          <span class="hw-pill">Zebra Barcode Scanners</span>
-          <span class="hw-pill">Windows Touch Terminals</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 2: EXPEDITED TICKET SUBMISSION -->
-    <section id="ticket" class="ticket-section">
-      <div class="ticket-grid">
-
-        <!-- RIGHT COLUMN: TICKET SUBMISSION FORM -->
-        <div class="ticket-form-card">
-          
-          <!-- SUBMISSION FORM -->
-          <form id="support-ticket-form" onsubmit="submitSupportTicket(event)">
-            <h3>Submit a Support Ticket</h3>
-            <p class="form-subtitle">Encountering an issue or have a question? Submit your details below and our team will assist you promptly.</p>
-
-            <div class="form-group-row">
-              <div class="form-group">
-                <label for="t-store">Store / Merchant Name *</label>
-                <input type="text" id="t-store" required placeholder="e.g. Blue Bottle Coffee Uptown" />
-              </div>
-
-              <div class="form-group">
-                <label for="t-email">Contact Email Address *</label>
-                <input type="email" id="t-email" required placeholder="e.g. manager@bluebottle.com" />
-              </div>
-            </div>
-
-            <div class="form-group-row">
-              <div class="form-group">
-                <label for="t-category">Issue Category</label>
-                <select id="t-category">
-                  <option value="printer">Thermal Printer &amp; Cash Drawer</option>
-                  <option value="hardware">Touch Terminal &amp; Sunmi Tablet</option>
-                  <option value="payment">Payment Terminal &amp; Card Reader</option>
-                  <option value="sync">Offline Sync &amp; Database Journal</option>
-                  <option value="billing">Subscription, VIP Pass &amp; License</option>
-                  <option value="general" selected>General Setup / Assistance</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="t-priority">Severity / Priority</label>
-                <select id="t-priority">
-                  <option value="low">Low — General Question / Future Setup</option>
-                  <option value="medium" selected>Medium — Non-blocking Issue</option>
-                  <option value="high">High — Register Degraded / Slow</option>
-                  <option value="urgent">🚨 Urgent — Counter Down / Cannot Checkout</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="t-subject">Ticket Subject / Summary *</label>
-              <input type="text" id="t-subject" required placeholder="e.g. Kitchen printer delays receipt cutter on breakfast rush" />
-            </div>
-
-            <div class="form-group">
-              <label for="t-description">Detailed Description &amp; Error Notes *</label>
-              <textarea id="t-description" required placeholder="Please describe the steps to reproduce, device model, and any error message displayed on your terminal..."></textarea>
-              <div class="field-hint">Hardware telemetry and browser details will be attached automatically to accelerate diagnosis.</div>
-            </div>
-
-            
-            <!-- Google reCAPTCHA Security Verification -->
-            <div class="form-group recaptcha-group">
-              <div class="g-recaptcha" data-sitekey="6LeU2w4uAAAAAO-a-U3zP0zEnFsLM1wSObfhAcWa" data-theme="dark"></div>
-            </div>
-
-            <div id="ticket-error-msg" class="error-msg" style="display:none; text-align:left; margin-bottom:12px;"></div>
-
-            <button type="submit" class="btn-submit-ticket" id="ticket-submit-btn">
-              <span>Submit Support Ticket</span>
-            </button>
-          </form>
-
-          <!-- SUCCESS STATE CARD -->
-          <div id="ticket-success-box" class="ticket-success-box">
-            <div class="ticket-success-icon">✓</div>
-            <h4 class="ticket-success-title">Support Ticket Received!</h4>
-            <div id="ticket-ref-display" class="ticket-success-ref">Ticket Reference: #REC-000</div>
-            <p class="ticket-success-desc">
-              Your inquiry has been received and auto-assigned to <strong id="ticket-assigned-display" style="color: #38bdf8;">Customer Support Specialist</strong>. A confirmation has been dispatched to <strong id="ticket-confirmed-email" style="color: #60a5fa;">your email</strong>.
-            </p>
-            <button type="button" class="btn-reset-ticket" onclick="resetTicketForm()">
-              + Submit Another Ticket
-            </button>
-          </div>
-
-        </div>
-
-      </div>
-
-            <!-- MERCHANT COMMUNITY BANNER -->
-      <div id="community-hub" class="community-callout-card" style="background: linear-gradient(135deg, rgba(24, 119, 242, 0.15), rgba(15, 23, 42, 0.9)); border: 1px solid rgba(24, 119, 242, 0.35); border-radius: 18px; padding: 28px 32px; margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
-        <div style="max-width: 650px;">
-          <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(24, 119, 242, 0.2); border: 1px solid rgba(24, 119, 242, 0.4); color: #60a5fa; font-size: 11.5px; font-weight: 800; padding: 4px 12px; border-radius: 9999px; margin-bottom: 12px; text-transform: uppercase;">
-            <span>👥 Official Merchant Community</span>
-          </div>
-          <h4 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
-            Join the FlexiTap Cafe &amp; Retail Operators Group
-          </h4>
-          <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin: 0;">
-            Connect with fellow coffee shop owners, baristas, and retailers. Share verified thermal receipt printer setups, exchange operational workflows, and chat directly with the engineering team.
-          </p>
-        </div>
-        <div>
-          <a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer" style="background: #1877f2; color: #fff; padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(24, 119, 242, 0.4); white-space: nowrap;">
-            <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-            <span>Join Facebook Community ↗</span>
-          </a>
-        </div>
-      </div>
-
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 26px; height: 26px;" />
-            <div style="font-weight: 800; color: #fff; font-size: 18px;">FlexiTap POS</div>
-          </div>
-          <p>Simplify Sales. Grow Your Business. A point-of-sale built for shop owners, baristas, and anyone who needs things to just work.</p>
-          
-          <div class="social-links">
-            <a href="https://www.facebook.com/FlexiTapPOS" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="Facebook">
-              <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-            </a>
-            <a href="https://www.youtube.com/@FlexiTapPOS" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="YouTube">
-              <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-            </a>
-            <a href="https://x.com/flexitapapp" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="X (Twitter)">
-              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="Instagram">
-              <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <div class="footer-col">
-          <h4>Industry Solutions</h4>
-          <ul>
-            <li><a href="pos-for-cafes.html">Cafes &amp; Bakeries</a></li>
-            <li><a href="pos-for-retail.html">Retail &amp; Boutiques</a></li>
-            <li><a href="pos-for-quick-service.html">Quick-Serve &amp; Food Trucks</a></li>
-            <li><a href="pos-for-fine-dining.html">Fine Dining &amp; Full Service</a></li>
-            <li><a href="pos-for-professional-services.html">Professional Services &amp; Salons</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4>Product</h4>
-          <ul>
-            <li><a href="features.html">Capabilities</a></li>
-            <li><a href="pricing.html">Pricing</a></li>
-            <li><a href="download.html">Downloads</a></li>
-            <li><a href="about.html">FAQ</a></li>
-            <li><a href="insights.html">Insights &amp; News</a></li>
-            <li><a href="support.html">Support</a></li>
-            <li><a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer">Merchant Community (FB Group) ↗</a></li>
-            <li><a href="affiliate.html">Affiliate &amp; Partner Program <span style="font-size: 0.72rem; color: #f87171; font-weight: 700; margin-left: 4px;">(Paused)</span></a></li>
-            <li><a href="dev-portal.html" rel="nofollow">Staff &amp; Dev Portal</a></li>
-            <li><a href="#" onclick="openCalendarBooking(event)">Book a Live Demo</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4>Legal</h4>
-          <ul>
-            <li><a href="privacy.html">Privacy Policy</a></li>
-            <li><a href="terms.html">Terms of Service</a></li>
-            <li><a href="refunds.html">Refund Policy</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <div>&copy; 2026 FlexiTap POS. All rights reserved.</div>
-        <div>Launch Date: Today, November 21, 2026 • 9:00 AM CST</div>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Elevated Sales & Inquiries Live Chat is dynamically managed by sales-chat.js -->
-
-  <!-- MERCHANT LOGIN MODAL -->
-  <div class="modal-overlay" id="login-modal">
-    <div class="modal-card">
-      <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
-      <div style="display: flex; justify-content: center; margin-bottom: 16px;">
-        <img src="image_02e503.png" alt="FlexiTap Logo" style="width: 48px; height: 48px; border-radius: 50%;" />
-      </div>
-      <h3 style="font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px;">Merchant Sign In</h3>
-      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Access your store telemetry, cloud reports, and ad-hoc remote support session.</p>
-      
-      <form id="login-form" onsubmit="handleMerchantLogin(event)">
-        <label>Merchant Email</label>
-        <input type="email" id="login-email" required placeholder="owner@store.com" />
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-          <label style="margin-bottom: 0;">Password</label>
-          <a href="javascript:void(0)" onclick="openSubpageForgotModal()" style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 600;">Forgot password?</a>
-        </div>
-        <input type="password" id="login-password" required placeholder="••••••••" />
-        <button type="submit" class="submit-btn" id="login-submit-btn">Log In to Merchant Portal</button>
-      </form>
-      <div id="login-modal-error" class="error-msg"></div>
-    </div>
-  </div>
-
-  <!-- SUBPAGE TWO-STEP VERIFICATION (OTP) MODAL -->
-  <div class="modal-overlay" id="subpage-otp-modal">
-    <div class="modal-card">
-      <button class="close-btn" onclick="closeSubpageOtpModal()">&times;</button>
-      <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-        <span style="font-size: 22px;">🔒</span>
-        <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin: 0;">Two-Step Verification (OTP)</h2>
-      </div>
-      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
-        A security verification code has been sent to <strong id="subpage-otp-display-email" style="color: #fff;">your email</strong>. Enter the code below to complete sign-in.
-      </p>
-      
-      <form onsubmit="handleSubpageVerifyOtp(event)">
-        <label>Security Verification Code (OTP)</label>
-        <input type="text" id="subpage-otp-code" required placeholder="12345678" maxlength="10" inputmode="numeric" style="text-align: center; font-size: 20px; letter-spacing: 4px; font-weight: 800; width: 100%; padding: 12px; margin-bottom: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #fff; outline: none;" />
-        <button type="submit" class="submit-btn" id="subpage-otp-verify-btn">Verify &amp; Enter Portal</button>
-      </form>
-
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
-        <button type="button" onclick="handleSubpageResendOtp()" style="background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 600; cursor: pointer;">Resend Code</button>
-        <button type="button" onclick="closeSubpageOtpModal()" style="background: none; border: none; color: var(--text-muted); font-size: 12px; cursor: pointer;">Back to Login</button>
-      </div>
-
-      <div id="subpage-otp-msg" class="error-msg"></div>
-    </div>
-  </div>
-
-  <!-- SUBPAGE FORGOT PASSWORD MODAL -->
-  <div class="modal-overlay" id="subpage-forgot-modal">
-    <div class="modal-card">
-      <button class="close-btn" onclick="closeSubpageForgotModal()">&times;</button>
-      <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Reset Merchant Password</h2>
-      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Enter your store account email and we'll send you a secure recovery link via Supabase SMTP.</p>
-      <form onsubmit="handleSubpageForgotSubmit(event)">
-        <label>Merchant Email</label>
-        <input type="email" id="subpage-forgot-email" required placeholder="owner@store.com" style="width: 100%; padding: 12px; margin-bottom: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #fff; outline: none;" />
-        <button type="submit" class="submit-btn" id="subpage-forgot-btn">Send Recovery Link</button>
-      </form>
-      <div id="subpage-forgot-msg" class="error-msg"></div>
-    </div>
-  </div>
-
-  <!-- SUBPAGE RECOVERY / SET NEW PASSWORD MODAL -->
-  <div class="modal-overlay" id="subpage-new-pw-modal">
-    <div class="modal-card">
-      <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Set New Password</h2>
-      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Your recovery session is verified. Enter a new password for your merchant account.</p>
-      <form onsubmit="handleSubpageUpdatePassword(event)">
-        <label>New Password</label>
-        <input type="password" id="subpage-new-password" required placeholder="••••••••" minlength="6" style="width: 100%; padding: 12px; margin-bottom: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #fff; outline: none;" />
-        <label>Confirm New Password</label>
-        <input type="password" id="subpage-confirm-password" required placeholder="••••••••" minlength="6" style="width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #fff; outline: none;" />
-        <button type="submit" class="submit-btn" id="subpage-new-pw-btn">Save New Password &amp; Sign In</button>
-      </form>
-      <div id="subpage-new-pw-msg" class="error-msg"></div>
-    </div>
-  </div>
-
-  <!-- PWA INSTALLATION MODAL -->
-  <div class="modal-overlay" id="pwa-install-modal">
-    <div class="modal-card" style="max-width: 480px; text-align: left;">
-      <button class="close-btn" onclick="closeModal('pwa-install-modal')">&times;</button>
-      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-        <img src="image_02e503.png" alt="FlexiTap Logo" style="width: 44px; height: 44px; border-radius: 12px;" />
-        <div>
-          <h3 style="font-size: 19px; font-weight: 800; color: #fff; margin: 0;">Install FlexiTap Support App</h3>
-          <p style="color: var(--text-muted); font-size: 12px; margin: 2px 0 0 0;">Dedicated POS Diagnostics &amp; Ticket Tracking</p>
-        </div>
-      </div>
-
-      <p style="color: #cbd5e1; font-size: 13.5px; line-height: 1.55; margin-bottom: 18px;">
-        Install the support app directly on your tablet, register, or phone for native camera inspection and real-time ticket alerts:
-      </p>
-
-      <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px; margin-bottom: 18px; font-size: 13px; line-height: 1.6;">
-        <div style="font-weight: 700; color: #60a5fa; margin-bottom: 4px;">📱 On Android POS / Sunmi / Chrome:</div>
-        <div style="color: var(--text-muted); margin-bottom: 10px;">Tap <strong>"Install App Now"</strong> below, or tap the browser menu (<strong>⋮</strong>) and select <strong>"Install App"</strong>.</div>
-
-        <div style="font-weight: 700; color: #34d399; margin-bottom: 4px;">🍎 On Apple iPad / iPhone (Safari):</div>
-        <div style="color: var(--text-muted); margin-bottom: 10px;">
-          1. Tap the <strong>Share</strong> button (<strong>⎋</strong>) at the bottom or top of Safari.<br>
-          2. Scroll down and tap <strong>"Add to Home Screen"</strong> (<strong>⊞</strong>).<br>
-          3. Tap <strong>Add</strong> to launch from your home screen.
-        </div>
-
-        <div style="font-weight: 700; color: #c084fc; margin-bottom: 4px;">💻 On Windows Counter Register (Edge / Chrome):</div>
-        <div style="color: var(--text-muted);">Click the <strong>Install</strong> icon in the browser address bar (top right).</div>
-      </div>
-
-      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <button class="submit-btn" onclick="executeNativeInstallPrompt()" style="flex: 1; padding: 12px 16px; font-size: 14px;">
-          📲 Install App Now
-        </button>
-        <a href="flexi-app.html?standalone=true" target="_blank" style="padding: 12px 16px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid var(--card-border); color: #fff; font-weight: 700; font-size: 13px; text-decoration: none; display: flex; align-items: center; justify-content: center;">
-          Open App ↗
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Unified Elevated Sales & Inquiries Live Chat -->
-  <script src="sales-chat.js?v=20261102" defer></script>
-  <!-- Privacy & Tracking Cookie Consent Banner -->
-  <script src="cookie-consent.js?v=20261031" defer></script>
-</body>
-</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>FlexiTap POS Support — Guides, Troubleshooting & Downloads</title>
+  <meta name="description" content="Official support center, setup guides, printer configurations, and hardware troubleshooting for FlexiTap POS terminals.">
+  <link rel="canonical" href="https://flexitapapp.com/support.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://flexitapapp.com/support.html">
+  <meta property="og:site_name" content="FlexiTap POS">
+  <meta property="og:title" content="FlexiTap POS Support — Guides, Troubleshooting & Downloads">
+  <meta property="og:description" content="Official support center, setup guides, printer configurations, and hardware troubleshooting for FlexiTap POS terminals.">
+  <meta property="og:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://flexitapapp.com/support.html">
+  <meta name="twitter:title" content="FlexiTap POS Support — Guides, Troubleshooting & Downloads">
+  <meta name="twitter:description" content="Official support center, setup guides, printer configurations, and hardware troubleshooting for FlexiTap POS terminals.">
+  <meta name="twitter:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
+  
+  <link rel="icon" type="image/png" href="image_02e503.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./image_02e503.png">
+  <meta name="theme-color" content="#080c14">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Google reCAPTCHA v2 -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+  <script src="analytics.js?v=20261031" defer></script>
+  <!-- In-House Philippine Affiliate & Referral Tracker -->
+  <script src="affiliate-tracker.js?v=20261031" defer></script>
+  
+  <link rel="preload" href="fonts/480c062501_tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css?v=20261031">
+
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(22, 30, 49, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent-green: #10b981;
+      --accent-purple: #8b5cf6;
+      --accent-orange: #f59e0b;
+      --accent-red: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+    html, body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; width: 100%; max-width: 100vw; overflow-x: clip; position: relative; }
+    /* FLUID CONTAINER - True Full-Width Edge-to-Edge Like Shift4 */
+    .container { 
+      width: 100%; 
+      max-width: 100%; 
+      margin: 0; 
+      padding: 0 clamp(24px, 4vw, 64px); 
+      box-sizing: border-box; 
+      position: relative; 
+      z-index: 2; 
+    }
+
+    /* HEADER & NAV - Fully Responsive & Non-Stepped */
+    header { 
+      padding: clamp(12px, 1.6vh, 18px) 0; 
+      border-bottom: 1px solid var(--card-border); 
+      position: sticky; 
+      top: 0; 
+      background: rgba(9, 13, 22, 0.94); 
+      backdrop-filter: blur(14px); 
+      z-index: 100; 
+      width: 100%; 
+    }
+    header .container { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      width: 100%; 
+      gap: clamp(12px, 1.8vw, 24px); 
+      position: relative;
+    }
+    .logo { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      font-size: clamp(19px, 1.6vw, 22px); 
+      font-weight: 800; 
+      color: #ffffff; 
+      text-decoration: none; 
+      letter-spacing: -0.5px; 
+      flex-shrink: 0; 
+     white-space: nowrap; }
+    .brand-logo-svg { 
+      width: clamp(32px, 2.4vw, 38px); 
+      height: clamp(32px, 2.4vw, 38px); 
+      flex-shrink: 0; 
+      display: block; 
+      border-radius: 50%; 
+      object-fit: contain; 
+    }
+    
+    .nav-links { 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: clamp(8px, 1.1vw, 16px); 
+      flex: 1; 
+      margin: 0; 
+    }
+    .nav-link { 
+      color: #cbd5e1; 
+      text-decoration: none; 
+      font-size: clamp(13.5px, 0.95vw, 15px); 
+      font-weight: 600; 
+      transition: color 0.2s, transform 0.2s; 
+      white-space: nowrap; 
+    }
+    .nav-link:hover, .nav-link.active { color: #fff; }
+    .mobile-menu-toggle { 
+      display: none; 
+      background: rgba(255, 255, 255, 0.06); 
+      border: 1px solid var(--card-border); 
+      padding: 8px 12px; 
+      border-radius: 10px; 
+      color: #fff; 
+      font-size: 22px; 
+      cursor: pointer; 
+      line-height: 1; 
+    }
+
+    .nav-actions { 
+      display: flex; 
+      align-items: center; 
+      gap: clamp(8px, 1vw, 12px); 
+      flex-shrink: 0; 
+     }
+    .btn-login { 
+      background: #ffffff; 
+      color: #1d4ed8; 
+      border: none; 
+      padding: clamp(8px, 1vh, 10px) clamp(16px, 1.3vw, 22px); 
+      border-radius: 8px; 
+      font-weight: 700; 
+      font-size: clamp(13.5px, 0.95vw, 14.5px); 
+      cursor: pointer; 
+      transition: 0.2s ease; 
+      text-decoration: none; 
+      display: inline-flex; 
+      align-items: center; 
+      white-space: nowrap; 
+    }
+    .btn-login:hover { 
+      background: #f1f5f9; 
+      transform: translateY(-1px); 
+    }
+    .btn-signup { 
+      background: #2563eb; 
+      border: none; 
+      color: #fff; 
+      padding: clamp(8px, 1vh, 10px) clamp(16px, 1.4vw, 22px); 
+      border-radius: 8px; 
+      font-weight: 700; 
+      font-size: clamp(13.5px, 0.95vw, 14.5px); 
+      cursor: pointer; 
+      transition: 0.2s ease; 
+      text-decoration: none; 
+      display: inline-flex; 
+      align-items: center; 
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); 
+      white-space: nowrap; 
+    }
+    .btn-signup:hover { 
+      background: #1d4ed8; 
+      transform: translateY(-1px); 
+    }
+    .mobile-only-login { display: none; }
+
+    /* HERO */
+    .support-hero { padding: 60px 0 40px; text-align: center; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 999px; font-size: 12.5px; font-weight: 700; color: #93c5fd; margin-bottom: 20px; }
+    .hero-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+    .section-title { font-size: clamp(28px, 5vw, 42px); font-weight: 800; margin-bottom: 14px; letter-spacing: -0.8px; line-height: 1.2; }
+    .section-subtitle { color: var(--text-muted); font-size: 16.5px; max-width: 740px; margin: 0 auto 32px; line-height: 1.6; }
+
+    /* SECTION TABS / ANCHORS */
+    .quick-jump-bar { display: inline-flex; gap: 8px; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--card-border); padding: 6px; border-radius: 14px; margin-bottom: 48px; }
+    .quick-jump-btn { color: var(--text-muted); text-decoration: none; padding: 8px 18px; font-size: 13.5px; font-weight: 700; border-radius: 10px; transition: 0.2s; }
+    .quick-jump-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+    .quick-jump-btn.active { color: #fff; background: var(--primary); }
+
+    /* DOWNLOAD CARDS SECTION */
+    .download-section { margin-bottom: 72px; }
+    .section-heading-wrap { text-align: left; margin-bottom: 28px; }
+    .section-pill { font-size: 11.5px; font-weight: 800; color: #60a5fa; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6px; display: inline-block; }
+    .section-header-title { font-size: 26px; font-weight: 800; color: #fff; }
+
+    .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+    .download-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: transform 0.2s, border-color 0.2s; }
+    .download-card:hover { transform: translateY(-3px); border-color: rgba(59, 130, 246, 0.4); }
+    .download-card.highlight { border-color: rgba(59, 130, 246, 0.5); box-shadow: 0 0 30px rgba(59, 130, 246, 0.12); }
+
+    .card-top { margin-bottom: 20px; }
+    .platform-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .platform-icon-wrap { width: 52px; height: 52px; border-radius: 14px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; }
+    .platform-icon-wrap svg { width: 28px; height: 28px; fill: #fff; }
+    .version-tag { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; color: #34d399; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 9999px; }
+
+    .platform-name { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .platform-desc { color: var(--text-muted); font-size: 13.5px; line-height: 1.55; margin-bottom: 18px; }
+
+    .feature-bullets { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; font-size: 13px; color: #cbd5e1; }
+    .feature-bullets li { display: flex; align-items: flex-start; gap: 8px; }
+    .feature-bullets li span { color: var(--accent-green); font-weight: 800; flex-shrink: 0; }
+
+    .btn-download-placeholder { width: 100%; padding: 13px 18px; border-radius: 12px; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; margin-bottom: 10px; cursor: default; user-select: none; }
+    .btn-download-placeholder svg { width: 18px; height: 18px; fill: currentColor; }
+    .btn-placeholder-badge { width: 100%; padding: 9px 14px; border-radius: 10px; background: rgba(255, 255, 255, 0.04); border: 1px dashed rgba(255, 255, 255, 0.15); color: #94a3b8; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; text-align: center; }
+
+    /* HARDWARE COMPATIBILITY BANNER */
+    .hardware-banner { background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(22, 30, 49, 0.8)); border: 1px solid var(--card-border); border-radius: 18px; padding: 24px 28px; margin-bottom: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .hw-info h4 { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+    .hw-info p { color: var(--text-muted); font-size: 13.5px; margin: 0; }
+    .hw-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .hw-pill { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 8px; }
+
+    /* TICKET SUBMISSION SECTION */
+    .ticket-section { padding: 40px 0 80px; }
+    .ticket-grid { display: flex; justify-content: center; width: 100%; }
+
+    /* FORM CARD */
+    .ticket-form-card { width: 100%; max-width: 760px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 36px 32px; text-align: left; position: relative; }
+    .ticket-form-card h3 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .ticket-form-card .form-subtitle { color: var(--text-muted); font-size: 13.5px; margin-bottom: 24px; }
+
+    .form-group-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 700; color: #cbd5e1; margin-bottom: 6px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 12px 14px;
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    .form-group textarea { resize: vertical; min-height: 110px; line-height: 1.5; }
+    .field-hint { font-size: 11.5px; color: #64748b; margin-top: 4px; }
+
+    .btn-submit-ticket { width: 100%; padding: 14px; border-radius: 12px; background: var(--primary); color: #fff; border: none; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; }
+    .btn-submit-ticket:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-submit-ticket:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* SUCCESS STATE CARD (IN PLACE) */
+    .ticket-success-box { display: none; background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 16px; padding: 32px 24px; text-align: center; }
+    .ticket-success-icon { width: 56px; height: 56px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; font-size: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .ticket-success-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .ticket-success-ref { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: #60a5fa; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); display: inline-block; padding: 4px 12px; border-radius: 8px; margin-bottom: 16px; }
+    .ticket-success-desc { color: #cbd5e1; font-size: 13.5px; line-height: 1.6; max-width: 480px; margin: 0 auto 24px; }
+    .btn-reset-ticket { padding: 9px 18px; border-radius: 10px; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-reset-ticket:hover { background: rgba(255, 255, 255, 0.14); }
+
+    /* REMOTE ACCESS CALLOUT BANNER */
+    .remote-callout-card { background: linear-gradient(135deg, rgba(22, 30, 49, 0.8), rgba(15, 23, 42, 0.95)); border: 1px solid var(--card-border); border-left: 4px solid var(--primary); border-radius: 16px; padding: 24px 28px; margin-top: 36px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; text-align: left; }
+    .remote-callout-text h4 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+    .remote-callout-text p { color: var(--text-muted); font-size: 13.5px; margin: 0; }
+    .btn-remote-quick { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: #93c5fd; padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; transition: 0.2s; }
+    .btn-remote-quick:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* FOOTER & SOCIAL ICONS */
+    footer { border-top: 1px solid var(--card-border); padding: 60px 0 30px; background: #0b0f19; font-size: 14px; width: 100%; }
+    /* 4-COLUMN RESPONSIVE FOOTER GRID */
+    .footer-grid { display: grid; grid-template-columns: 1.8fr 1.2fr 1.2fr 0.9fr; gap: 36px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 24px; }
+    @media (max-width: 960px) {
+      .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    }
+    @media (max-width: 600px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+    }
+    .footer-brand p { color: var(--text-muted); font-size: 14px; margin: 16px 0 24px 0; max-width: 320px; line-height: 1.6; }
+    
+    .social-links { display: flex; gap: 12px; margin-top: 16px; }
+    .social-icon-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; color: var(--text-muted); text-decoration: none; transition: 0.2s ease; }
+    .social-icon-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-2px); }
+    .social-icon-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+    .footer-col h4 { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 12px; }
+    .footer-col ul li a { color: var(--text-muted); text-decoration: none; font-size: 14px; cursor: pointer; transition: 0.2s; }
+    .footer-col ul li a:hover { color: #fff; }
+    .footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--text-muted); font-size: 13px; }
+
+    /* MODALS & CHAT WIDGET */
+    .modal-overlay { display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; padding: 16px; box-sizing: border-box; }
+    .modal-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.12); padding: 36px 24px; border-radius: 20px; width: 100%; max-width: 440px; position: relative; text-align: center; margin: auto; max-height: 90vh; overflow-y: auto; }
+    .close-btn { position: absolute; top: 18px; right: 18px; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
+    .modal-card label { display: block; text-align: left; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
+    .modal-card input { width: 100%; padding: 12px 14px; margin-bottom: 18px; background: #090d16; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; color: white; font-size: 15px; }
+    .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 15px; }
+    .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
+
+    /* DYNAMIC RESPONSIVE RULES (Mobile, Tablet, Desktop) */
+    @media (max-width: 1140px) {
+      .logo { order: 1;  white-space: nowrap; flex-shrink: 0; }
+      .nav-actions { order: 2;  flex-shrink: 0; }
+      .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; order: 3; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: calc(100% + 1px);
+        left: 0;
+        right: 0;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        background: rgba(9, 13, 22, 0.98);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 20px 24px;
+        gap: 10px;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85);
+        border-radius: 0 0 16px 16px;
+        box-sizing: border-box;
+        z-index: 1000;
+        margin: 0;
+      }
+      .nav-links.mobile-open { display: flex; }
+      .nav-link {
+        padding: 12px 14px;
+        font-size: 15.5px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .nav-link:hover { background: rgba(255, 255, 255, 0.08); }
+      .ticket-grid { grid-template-columns: 1fr; gap: 28px; }
+      .download-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+      .desktop-only-btn { display: none !important; }
+      .mobile-only-nav-actions { display: flex !important; }
+    }
+    @media (max-width: 768px) {
+      .support-hero { padding: 36px 0 24px; }
+      .section-title { font-size: 26px; }
+      .section-subtitle { font-size: 14.5px; margin-bottom: 24px; }
+      .quick-jump-bar {
+        display: flex;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+        width: 100%;
+        max-width: 100%;
+        padding: 5px;
+        scrollbar-width: none;
+        justify-content: flex-start;
+      }
+      .quick-jump-bar::-webkit-scrollbar { display: none; }
+      .quick-jump-btn { flex-shrink: 0; padding: 7px 13px; font-size: 12px; }
+      .download-grid { grid-template-columns: 1fr; gap: 18px; }
+      .download-card { padding: 22px 18px; border-radius: 16px; }
+      .hardware-banner { padding: 20px 18px; flex-direction: column; align-items: flex-start; gap: 14px; }
+      .ticket-info-card { padding: 24px 18px; border-radius: 16px; }
+      .ticket-form-card { padding: 24px 18px; border-radius: 16px; }
+      .form-group-row { grid-template-columns: 1fr; gap: 12px; }
+      .form-group { margin-bottom: 14px; }
+      .form-group input, .form-group select, .form-group textarea { font-size: 16px !important; padding: 11px 12px; }
+      .remote-callout-card { padding: 18px 16px; flex-direction: column; align-items: stretch; gap: 14px; }
+      .btn-remote-quick { width: 100%; justify-content: center; }
+      /* 4-COLUMN RESPONSIVE FOOTER GRID */
+    .footer-grid { display: grid; grid-template-columns: 1.8fr 1.2fr 1.2fr 0.9fr; gap: 36px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 24px; }
+    @media (max-width: 960px) {
+      .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    }
+    @media (max-width: 600px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+    }
+      .modal-card { padding: 24px 18px; max-width: calc(100vw - 32px); border-radius: 16px; }
+    }
+    @media (max-width: 640px) {
+      .nav-actions .btn-login { display: none; }
+      .mobile-only-login { display: inline-flex; width: 100%; justify-content: center; margin-top: 8px; }
+    }
+  
+    /* INDUSTRIES DROPDOWN - ROCK-SOLID HOVER & CLICK */
+    .nav-dropdown { position: relative; display: inline-flex; align-items: center; }
+    .nav-dropdown-btn {
+      background: none; border: none; color: var(--text-muted); font-size: 14.5px; font-weight: 600;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px;
+      transition: color 0.2s, background 0.2s; font-family: inherit;
+    }
+    .nav-dropdown:hover .nav-dropdown-btn,
+    .nav-dropdown.active .nav-dropdown-btn { color: #fff; background: rgba(255, 255, 255, 0.08); }
+    .dropdown-chevron { width: 14px; height: 14px; transition: transform 0.2s; pointer-events: none; }
+    .nav-dropdown:hover .dropdown-chevron,
+    .nav-dropdown.active .dropdown-chevron { transform: rotate(180deg); }
+
+    .dropdown-menu {
+      display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      width: 320px; background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px; padding: 8px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.08);
+      z-index: 9999; flex-direction: column; gap: 4px; margin-top: 6px;
+      pointer-events: auto;
+    }
+    /* Invisible hover bridge to eliminate gap dropping */
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: -14px; left: 0; right: 0; height: 14px; background: transparent;
+    }
+    
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown.active .dropdown-menu { display: flex; }
+    
+    .dropdown-item {
+      display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px;
+      text-decoration: none; color: #fff; transition: background 0.15s, transform 0.1s;
+      cursor: pointer; position: relative; z-index: 10000;
+    }
+    .dropdown-item * { pointer-events: none; }
+    .dropdown-item:hover { background: rgba(255, 255, 255, 0.1); transform: translateX(2px); }
+    .dropdown-item.active { background: rgba(37, 99, 235, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); }
+    .dropdown-icon { font-size: 20px; width: 34px; height: 34px; border-radius: 8px; background: rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .dropdown-title { font-size: 13.5px; font-weight: 700; color: #fff; line-height: 1.2; }
+    .dropdown-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    @media (max-width: 1140px) {
+      .dropdown-menu { position: static; transform: none; width: 100%; box-shadow: none; background: rgba(15, 23, 42, 0.6); margin-top: 0; }
+      .dropdown-menu::before { display: none; }
+      .nav-dropdown { flex-direction: column; align-items: stretch; width: 100%; }
+      .nav-dropdown-btn { justify-content: space-between; width: 100%; padding: 10px 0; }
+      .dropdown-menu { display: none !important; }
+      .nav-dropdown.active .dropdown-menu { display: flex !important; }
+    }
+@media (max-width: 1140px) {
+      .dropdown-menu { position: static; transform: none; width: 100%; box-shadow: none; background: rgba(15, 23, 42, 0.6); }
+      .nav-dropdown { flex-direction: column; align-items: stretch; width: 100%; }
+      .nav-dropdown-btn { justify-content: space-between; width: 100%; padding: 10px 0; }
+      .nav-dropdown.active .dropdown-menu { display: flex; }
+    }
+
+  
+    /* UNIFIED NAVIGATION & HEADER (MATCHING HOMEPAGE EXACTLY) */
+    header { 
+      padding: clamp(12px, 1.6vh, 18px) 0; 
+      border-bottom: 1px solid var(--card-border); 
+      position: sticky; 
+      top: 0; 
+      background: rgba(9, 13, 22, 0.94); 
+      backdrop-filter: blur(14px); 
+      z-index: 1000; 
+      width: 100%; 
+    }
+    header .container { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      width: 100%; 
+      gap: clamp(12px, 1.8vw, 24px); 
+      position: relative;
+    }
+    .logo { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      font-size: clamp(19px, 1.6vw, 22px); 
+      font-weight: 800; 
+      color: #ffffff; 
+      text-decoration: none; 
+      letter-spacing: -0.5px; 
+      flex-shrink: 0; 
+      white-space: nowrap; 
+    }
+    .brand-logo-svg { 
+      width: clamp(32px, 2.4vw, 38px); 
+      height: clamp(32px, 2.4vw, 38px); 
+      flex-shrink: 0; 
+      display: block; 
+      border-radius: 50%; 
+      object-fit: contain; 
+    }
+    
+    .nav-links { 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: clamp(8px, 1.1vw, 16px); 
+      flex: 1; 
+      margin: 0; 
+    }
+    .nav-link { 
+      color: #cbd5e1; 
+      text-decoration: none; 
+      font-size: clamp(13.5px, 0.95vw, 15px); 
+      font-weight: 600; 
+      transition: color 0.2s, transform 0.2s; 
+      white-space: nowrap; 
+    }
+    .nav-link:hover, .nav-link.active { 
+      color: #ffffff; 
+    }
+    .mobile-menu-toggle { 
+      display: none; 
+      background: rgba(255, 255, 255, 0.06); 
+      border: 1px solid var(--card-border); 
+      padding: 8px 12px; 
+      border-radius: 10px; 
+      color: #fff; 
+      font-size: 22px; 
+      cursor: pointer; 
+      line-height: 1; 
+    }
+
+    .nav-actions { 
+      display: flex; 
+      align-items: center; 
+      gap: clamp(8px, 1vw, 12px); 
+      flex-shrink: 0; 
+    }
+    .btn-login { 
+      background: #ffffff !important; 
+      color: #1d4ed8 !important; 
+      border: none !important; 
+      padding: clamp(8px, 1vh, 10px) clamp(16px, 1.3vw, 22px) !important; 
+      border-radius: 8px !important; 
+      font-weight: 700 !important; 
+      font-size: clamp(13.5px, 0.95vw, 14.5px) !important; 
+      cursor: pointer; 
+      transition: 0.2s ease; 
+      text-decoration: none; 
+      display: inline-flex; 
+      align-items: center; 
+      white-space: nowrap; 
+    }
+    .btn-login:hover { 
+      background: #f1f5f9 !important; 
+      transform: translateY(-1px); 
+    }
+    .btn-signup { 
+      background: #2563eb !important; 
+      border: none !important; 
+      color: #fff !important; 
+      padding: clamp(8px, 1vh, 10px) clamp(16px, 1.4vw, 22px) !important; 
+      border-radius: 8px !important; 
+      font-weight: 700 !important; 
+      font-size: clamp(13.5px, 0.95vw, 14.5px) !important; 
+      cursor: pointer; 
+      transition: 0.2s ease; 
+      text-decoration: none; 
+      display: inline-flex; 
+      align-items: center; 
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); 
+      white-space: nowrap; 
+    }
+    .btn-signup:hover { 
+      background: #1d4ed8 !important; 
+      transform: translateY(-1px); 
+    }
+    .mobile-only-login { display: none; }
+
+    /* INDUSTRIES DROPDOWN - ROCK SOLID HOVER BRIDGE & CLICK */
+    .nav-dropdown { 
+      position: relative; 
+      display: inline-flex; 
+      align-items: center; 
+    }
+    .nav-dropdown-btn {
+      background: none; 
+      border: none; 
+      color: #cbd5e1; 
+      font-size: clamp(13.5px, 0.95vw, 15px); 
+      font-weight: 600;
+      cursor: pointer; 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 6px; 
+      padding: 6px 4px;
+      transition: color 0.2s; 
+      font-family: inherit;
+    }
+    .nav-dropdown:hover .nav-dropdown-btn, 
+    .nav-dropdown.active .nav-dropdown-btn { 
+      color: #ffffff; 
+    }
+    .dropdown-chevron { 
+      width: 14px; 
+      height: 14px; 
+      transition: transform 0.2s; 
+      pointer-events: none; 
+    }
+    .nav-dropdown:hover .dropdown-chevron,
+    .nav-dropdown.active .dropdown-chevron { 
+      transform: rotate(180deg); 
+    }
+
+    .dropdown-menu {
+      display: none; 
+      position: absolute; 
+      top: 100%; 
+      left: 50%; 
+      transform: translateX(-50%);
+      width: 330px; 
+      background: #0f172a; 
+      border: 1px solid rgba(255, 255, 255, 0.16); 
+      border-radius: 16px; 
+      padding: 8px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.08);
+      z-index: 9999; 
+      flex-direction: column; 
+      gap: 4px; 
+      margin-top: 8px;
+      pointer-events: auto;
+    }
+    /* Invisible hover bridge to eliminate gap dropping */
+    .dropdown-menu::before {
+      content: ''; 
+      position: absolute; 
+      top: -16px; 
+      left: 0; 
+      right: 0; 
+      height: 16px; 
+      background: transparent;
+    }
+    
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown.active .dropdown-menu { 
+      display: flex; 
+    }
+    
+    .dropdown-item {
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      padding: 10px 12px; 
+      border-radius: 10px;
+      text-decoration: none; 
+      color: #fff; 
+      transition: background 0.15s, transform 0.1s;
+      cursor: pointer; 
+      position: relative; 
+      z-index: 10000;
+    }
+    .dropdown-item * { 
+      pointer-events: none; 
+    }
+    .dropdown-item:hover { 
+      background: rgba(255, 255, 255, 0.1); 
+      transform: translateX(3px); 
+    }
+    .dropdown-item.active { 
+      background: rgba(37, 99, 235, 0.22); 
+      border: 1px solid rgba(59, 130, 246, 0.45); 
+    }
+    .dropdown-icon { 
+      font-size: 20px; 
+      width: 36px; 
+      height: 36px; 
+      border-radius: 8px; 
+      background: rgba(255, 255, 255, 0.08); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      flex-shrink: 0; 
+    }
+    .dropdown-title { 
+      font-size: 13.5px; 
+      font-weight: 700; 
+      color: #fff; 
+      line-height: 1.2; 
+    }
+    .dropdown-desc { 
+      font-size: 11px; 
+      color: #94a3b8; 
+      margin-top: 2px; 
+    }
+
+    /* 4-COLUMN FOOTER GRID */
+    .footer-grid { 
+      display: grid; 
+      grid-template-columns: 1.8fr 1.2fr 1.2fr 0.9fr; 
+      gap: 36px; 
+      padding-bottom: 40px; 
+      border-bottom: 1px solid rgba(255,255,255,0.05); 
+      margin-bottom: 24px; 
+    }
+    @media (max-width: 960px) {
+      .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    }
+    @media (max-width: 600px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+    }
+
+    @media (max-width: 1140px) {
+      .logo { order: 1; }
+      .nav-actions { order: 2; }
+      .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; order: 3; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: calc(100% + 1px);
+        left: 0;
+        right: 0;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        background: rgba(9, 13, 22, 0.98);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 20px 24px;
+        gap: 10px;
+        box-sizing: border-box;
+      }
+      .nav-links.mobile-open { display: flex; }
+      .nav-link { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+      .dropdown-menu { position: static; transform: none; width: 100%; box-shadow: none; background: rgba(15, 23, 42, 0.6); margin-top: 0; }
+      .dropdown-menu::before { display: none; }
+      .nav-dropdown { flex-direction: column; align-items: stretch; width: 100%; }
+      .nav-dropdown-btn { justify-content: space-between; width: 100%; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+      .dropdown-menu { display: none !important; }
+      .nav-dropdown.active .dropdown-menu { display: flex !important; }
+      .nav-actions .btn-login { display: none; }
+      .mobile-only-login { display: inline-flex; width: 100%; justify-content: center; margin-top: 8px; }
+    }
+
+  
+    /* GOOGLE RECAPTCHA WIDGET ALIGNMENT */
+    .recaptcha-group {
+      margin: 16px 0 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    @media (max-width: 480px) {
+      .recaptcha-group {
+        transform: scale(0.88);
+        transform-origin: left top;
+      }
+    }
+
+  </style>
+
+  <script>
+    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+    let supabaseClient;
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // Initialize Supabase Client
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    });
+
+    // --- AUTO-ASSIGNMENT ENGINE (EVERY INCOMING TICKET ASSIGNED FIRST TO CUSTOMER SUPPORT) ---
+    function getAutoAssignedStaff(ticketData = {}) {
+      return {
+        assigned_to: 'support@flexitapapp.com',
+        staff_name: 'Customer Support Desk',
+        role: 'support',
+        role_title: 'Customer Support Desk',
+        routing_reason: 'Mandatory intake assignment to Customer Support Desk'
+      };
+    }
+
+    const GOOGLE_TICKET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzJu1CEi1qhT-k7Qc_tisMN7vXbbCuGymgiMMk_K6PGIMnrUHkIrYEuQFMCviZfaYvoQw/exec';
+
+    async function sendTicketLifecycleNotification({
+      ticketNumber,
+      recipientEmail,
+      storeName,
+      tier = 'tier_1',
+      details = '',
+      resolutionNotes = '',
+      isResolved = false
+    }) {
+      if (!recipientEmail) return;
+
+      const emailSubject = isResolved
+        ? `[FlexiTap Support] Resolved: Ticket #${ticketNumber} - ${storeName}`
+        : `[FlexiTap Support] Ticket #${ticketNumber} Acknowledged - ${storeName}`;
+
+      const tierLabel = tier === 'tier_3' ? 'Tier 3 (Core Dev Engineering)' : (tier === 'tier_2' ? 'Tier 2 (Technical Support)' : 'Tier 1 (Merchant Operations)');
+
+      const brandedHtml = isResolved
+        ? `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+            <div style="background: #0f172a; padding: 24px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">FlexiTap POS Support</h1>
+              <p style="color: #94a3b8; margin: 4px 0 0; font-size: 13px;">Official Operations &amp; Engineering Desk</p>
+            </div>
+            <div style="padding: 28px 24px;">
+              <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
+                <div style="color: #065f46; font-size: 14px; font-weight: 700;">✅ Issue Marked as Resolved</div>
+                <div style="color: #047857; font-size: 13px; margin-top: 2px;">Ticket <strong>#${ticketNumber}</strong> has been completed and verified.</div>
+              </div>
+              <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">
+                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${storeName}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Ticket Reference:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 700;">#${ticketNumber}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Support Tier:</td><td style="padding: 6px 0; color: #0f172a;">${tierLabel}</td></tr>
+              </table>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Resolution Details &amp; Engineer Notes:</div>
+                <div style="color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${resolutionNotes || 'All diagnostic inspections passed and terminal sync is restored.'}</div>
+              </div>
+              <!-- PWA Support App Callout -->
+              <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #10b981; border-radius: 10px; padding: 18px 20px; margin: 20px 0; text-align: center;">
+                <div style="color: #34d399; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">📱 Verify on Your Terminal or Mobile</div>
+                <div style="color: #ffffff; font-size: 15px; font-weight: 800; margin-bottom: 6px;">Check Status in FlexiTap Support App (PWA)</div>
+                <p style="color: #94a3b8; font-size: 12.5px; margin: 0 0 14px; line-height: 1.45;">You can view the full resolution summary, test terminal connectivity, or open a follow-up inquiry anytime in the app.</p>
+                <a href="https://flexitapapp.com/flexi-app.html" target="_blank" style="display: inline-block; background: #10b981; color: #ffffff; text-decoration: none; padding: 10px 22px; border-radius: 8px; font-size: 13px; font-weight: 800; box-shadow: 0 4px 12px rgba(16,185,129,0.35);">
+                  Open Support App (PWA) &rarr;
+                </a>
+              </div>
+              <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px;">If you have any further questions or require additional adjustments, simply reply directly to this email.</p>
+            </div>
+            <div style="background: #f1f5f9; padding: 16px 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
+              &copy; 2026 FlexiTap POS • www.flexitapapp.com • Support Desk
+            </div>
+          </div>
+        `
+        : `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+            <div style="background: #0f172a; padding: 24px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">FlexiTap POS Support</h1>
+              <p style="color: #94a3b8; margin: 4px 0 0; font-size: 13px;">Official Operations &amp; Engineering Desk</p>
+            </div>
+            <div style="padding: 28px 24px;">
+              <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
+                <div style="color: #1e40af; font-size: 14px; font-weight: 700;">🎫 Ticket Received &amp; Logged</div>
+                <div style="color: #2563eb; font-size: 13px; margin-top: 2px;">Your ticket <strong>#${ticketNumber}</strong> has been dispatched to our engineering queue.</div>
+              </div>
+              <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 20px;">
+                <tr><td style="padding: 6px 0; color: #64748b; width: 140px;">Store Name:</td><td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${storeName}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Ticket Reference:</td><td style="padding: 6px 0; color: #2563eb; font-weight: 700;">#${ticketNumber}</td></tr>
+                <tr><td style="padding: 6px 0; color: #64748b;">Support Tier:</td><td style="padding: 6px 0; color: #0f172a;">${tierLabel}</td></tr>
+              </table>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Issue Description:</div>
+                <div style="color: #1e293b; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${details || 'No detailed description provided.'}</div>
+              </div>
+              <!-- PWA Support App Callout -->
+              <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #3b82f6; border-radius: 10px; padding: 18px 20px; margin: 20px 0; text-align: center;">
+                <div style="color: #60a5fa; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">📱 Need Real-Time Help or Live Chat?</div>
+                <div style="color: #ffffff; font-size: 15px; font-weight: 800; margin-bottom: 6px;">Open the FlexiTap Support App (PWA)</div>
+                <p style="color: #94a3b8; font-size: 12.5px; margin: 0 0 14px; line-height: 1.45;">Track this ticket's live status, launch instant support chat, or request remote device diagnostics directly from your smartphone or POS terminal.</p>
+                <a href="https://flexitapapp.com/flexi-app.html" target="_blank" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; padding: 10px 22px; border-radius: 8px; font-size: 13px; font-weight: 800; box-shadow: 0 4px 12px rgba(37,99,235,0.35);">
+                  Launch Support App (PWA) &rarr;
+                </a>
+              </div>
+              <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px;">Our operations and core engineering team are reviewing your inquiry. You will receive an email update as soon as progress is made or when the ticket is resolved.</p>
+            </div>
+            <div style="background: #f1f5f9; padding: 16px 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
+              &copy; 2026 FlexiTap POS • www.flexitapapp.com • Support Desk
+            </div>
+          </div>
+        `;
+
+      const payload = {
+        recipient_email: recipientEmail,
+        subject: emailSubject,
+        store_name: storeName || 'Store',
+        ticket_number: ticketNumber,
+        tier: tier,
+        details: details,
+        resolution_notes: resolutionNotes,
+        html: brandedHtml
+      };
+
+      // 1. Dispatch via Google Workspace Webhook
+      try {
+        fetch(GOOGLE_TICKET_WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        }).catch(e => console.warn('Webhook background dispatch note:', e));
+      } catch (err) {
+        console.warn('Webhook dispatch exception:', err);
+      }
+
+      // 2. Also log to Supabase ticket_notifications if table exists
+      try {
+        const notificationRecord = {
+          ticket_id: String(ticketNumber || Date.now()),
+          ticket_number: typeof ticketNumber === 'number' ? ticketNumber : parseInt(ticketNumber, 10) || null,
+          recipient_email: recipientEmail,
+          notification_type: isResolved ? 'resolution_notice' : 'submission_acknowledgment',
+          subject: emailSubject,
+          store_name: storeName || 'Store',
+          tier: tier || 'tier_1',
+          details: details || '',
+          resolution_notes: resolutionNotes || '',
+          status: 'delivered',
+          created_at: new Date().toISOString()
+        };
+        if (typeof supabaseClient !== 'undefined' && supabaseClient.from) {
+          supabaseClient.from('ticket_notifications').insert([notificationRecord]).catch(() => {});
+        }
+      } catch (_) {}
+
+      return { success: true, email: recipientEmail, subject: emailSubject };
+    }
+
+    // --- SUBMIT SUPPORT TICKET DIRECT TO BACKEND ---
+    async function submitSupportTicket(event) {
+      event.preventDefault();
+
+      const btn = document.getElementById('ticket-submit-btn');
+      const errorDiv = document.getElementById('ticket-error-msg');
+      const formEl = document.getElementById('support-ticket-form');
+      const successBox = document.getElementById('ticket-success-box');
+
+      const storeName = document.getElementById('t-store').value.trim();
+      const contactEmail = document.getElementById('t-email').value.trim();
+      const category = document.getElementById('t-category').value;
+      const priority = document.getElementById('t-priority').value;
+      const subject = document.getElementById('t-subject').value.trim();
+      const description = document.getElementById('t-description').value.trim();
+
+      if (!storeName || !contactEmail || !subject || !description) {
+        errorDiv.innerText = 'Please complete all required fields.';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      // Security Verification Check (reCAPTCHA)
+      const recaptchaResponse = (typeof grecaptcha !== 'undefined') ? grecaptcha.getResponse() : '';
+      if (!recaptchaResponse) {
+        errorDiv.innerText = 'Security Verification: Please check the "I\'m not a robot" box before submitting.';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      errorDiv.style.display = 'none';
+      errorDiv.innerText = '';
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳ Submitting Ticket...</span>';
+
+      // Auto-assign to Dev or Customer Support (Admin excluded)
+      const autoAssign = getAutoAssignedStaff({ category: category, subject: subject, description: description });
+
+      const payload = {
+        store_name: storeName,
+        contact_email: contactEmail,
+        category: category,
+        priority: priority,
+        subject: subject,
+        description: description,
+        status: 'open',
+        assigned_to: autoAssign.assigned_to,
+        device_telemetry: {
+          app_version: 'Web Support v2.4.1',
+          device_role: 'Customer Ticket',
+          sqlite_healthy: true,
+          channel: 'Support & Download Portal',
+          user_agent: navigator.userAgent,
+          platform: navigator.platform,
+          language: navigator.language,
+          screen_resolution: `${window.screen.width}x${window.screen.height}`,
+          submitted_at: new Date().toISOString(),
+          auto_assigned: autoAssign,
+          recaptcha_verified: true,
+          recaptcha_token: recaptchaResponse
+        }
+      };
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('tickets')
+          .insert([payload])
+          .select();
+
+        if (error) {
+          console.error('Supabase ticket submission error:', error);
+          errorDiv.innerText = 'Submission error: ' + error.message;
+          errorDiv.style.display = 'block';
+          btn.disabled = false;
+          btn.innerHTML = 'Submit Support Ticket';
+          if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
+          return;
+        }
+
+        const createdTicket = (data && data.length > 0) ? data[0] : null;
+        const ticketRef = createdTicket 
+          ? (createdTicket.ticket_number ? `#${createdTicket.ticket_number}` : createdTicket.id.substring(0, 8).toUpperCase())
+          : '#REC-' + Math.floor(1000 + Math.random() * 9000);
+
+        document.getElementById('ticket-ref-display').innerText = 'Ticket Reference: ' + ticketRef;
+        document.getElementById('ticket-confirmed-email').innerText = contactEmail;
+        const assignedEl = document.getElementById('ticket-assigned-display');
+        if (assignedEl) {
+          assignedEl.innerText = `${autoAssign.staff_name} (${autoAssign.role === 'dev' ? 'Core Dev' : 'Customer Support Specialist'})`;
+        }
+
+        if (contactEmail) {
+          sendTicketLifecycleNotification({
+            ticketNumber: createdTicket ? (createdTicket.ticket_number || createdTicket.id) : ticketRef,
+            recipientEmail: contactEmail,
+            storeName: storeName,
+            tier: 'tier_1',
+            details: description,
+            isResolved: false
+          });
+        }
+
+        formEl.style.display = 'none';
+        successBox.style.display = 'block';
+
+        if (window.FlexiAnalytics) {
+          FlexiAnalytics.track('ticket_submitted', {
+            event_type: 'lead',
+            category: category,
+            priority: priority,
+            ticket_ref: ticketRef
+          });
+        }
+
+      } catch (err) {
+        console.error('Ticket network exception:', err);
+        errorDiv.innerText = 'Network error submitting ticket. Please check connection or email support@flexitapapp.com.';
+        errorDiv.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = 'Submit Support Ticket';
+      }
+    }
+
+    function resetTicketForm() {
+      const formEl = document.getElementById('support-ticket-form');
+      const successBox = document.getElementById('ticket-success-box');
+      const btn = document.getElementById('ticket-submit-btn');
+      
+      formEl.reset();
+      if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
+      formEl.style.display = 'block';
+      successBox.style.display = 'none';
+      btn.disabled = false;
+      btn.innerHTML = 'Submit Support Ticket';
+    }
+
+    // --- MOBILE MENU TOGGLE ---
+    
+        function toggleDropdown(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const dd = document.getElementById('industriesDropdown');
+      if (dd) {
+        dd.classList.toggle('active');
+      }
+    }
+
+    document.addEventListener('click', function(e) {
+      const dd = document.getElementById('industriesDropdown');
+      if (dd && !dd.contains(e.target)) {
+        dd.classList.remove('active');
+      }
+    });
+
+    function toggleMobileMenu() {
+      const el = document.getElementById('navLinksContainer');
+      if (el) el.classList.toggle('mobile-open');
+    }
+
+    // --- MODAL CONTROLS ---
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.style.display = 'flex';
+    }
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.style.display = 'none';
+    }
+
+
+    // --- AUTH LOGIN SUBMIT ---
+    let pendingSubpageAuthEmail = '';
+
+    // --- AUTH LOGIN SUBMIT ---
+    async function handleMerchantLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorDiv = document.getElementById('login-modal-error');
+      const btn = document.getElementById('login-submit-btn');
+
+      errorDiv.innerText = '';
+      btn.innerText = 'Verifying credentials...';
+
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+
+        pendingSubpageAuthEmail = email;
+        btn.innerText = 'Sending 2FA code...';
+
+        const { error: otpErr } = await supabaseClient.auth.signInWithOtp({
+          email,
+          options: { shouldCreateUser: false }
+        });
+        if (otpErr) throw otpErr;
+
+        closeModal('login-modal');
+        openSubpageOtpModal(email);
+      } catch (err) {
+        errorDiv.innerText = err.message || 'Login failed. Please check your credentials.';
+      } finally {
+        btn.innerText = 'Log In to Merchant Portal';
+      }
+    }
+
+    function openSubpageOtpModal(email) {
+      const emailToUse = email || pendingSubpageAuthEmail;
+      const displayEl = document.getElementById('subpage-otp-display-email');
+      if (displayEl) displayEl.innerText = emailToUse;
+      const codeInp = document.getElementById('subpage-otp-code');
+      if (codeInp) codeInp.value = '';
+      const msg = document.getElementById('subpage-otp-msg');
+      if (msg) msg.innerText = '';
+      const modal = document.getElementById('subpage-otp-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+        if (codeInp) setTimeout(() => codeInp.focus(), 100);
+      }
+    }
+
+    function closeSubpageOtpModal() {
+      const modal = document.getElementById('subpage-otp-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    async function handleSubpageResendOtp() {
+      const email = pendingSubpageAuthEmail || document.getElementById('login-email')?.value.trim();
+      const msg = document.getElementById('subpage-otp-msg');
+      if (!email) return;
+
+      try {
+        const { error } = await supabaseClient.auth.signInWithOtp({
+          email,
+          options: { shouldCreateUser: false }
+        });
+        if (error) throw error;
+        if (msg) {
+          msg.style.color = '#34d399';
+          msg.innerText = '✓ New verification code sent to your email!';
+        }
+      } catch (err) {
+        if (msg) {
+          msg.style.color = '#f87171';
+          msg.innerText = err.message || 'Failed to resend code.';
+        }
+      }
+    }
+
+    async function handleSubpageVerifyOtp(event) {
+      event.preventDefault();
+      const email = pendingSubpageAuthEmail || document.getElementById('login-email')?.value.trim();
+      const token = document.getElementById('subpage-otp-code')?.value.trim();
+      const btn = document.getElementById('subpage-otp-verify-btn');
+      const msg = document.getElementById('subpage-otp-msg');
+
+      if (!email || !token) return;
+      if (btn) { btn.disabled = true; btn.innerText = 'Verifying code...'; }
+      if (msg) msg.innerText = '';
+
+      try {
+        const { data, error } = await supabaseClient.auth.verifyOtp({
+          email,
+          token,
+          type: 'email'
+        });
+        if (error) throw error;
+        closeSubpageOtpModal();
+        window.location.href = 'portal.html';
+      } catch (err) {
+        if (msg) {
+          msg.style.color = '#f87171';
+          msg.innerText = err.message || 'Invalid or expired verification code.';
+        }
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerText = 'Verify & Enter Portal'; }
+      }
+    }
+
+    function openSubpageForgotModal() {
+      closeModal('login-modal');
+      const emailInp = document.getElementById('login-email');
+      const forgotInp = document.getElementById('subpage-forgot-email');
+      if (emailInp && forgotInp) forgotInp.value = emailInp.value.trim();
+      const msg = document.getElementById('subpage-forgot-msg');
+      if (msg) msg.innerText = '';
+      const modal = document.getElementById('subpage-forgot-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeSubpageForgotModal() {
+      const modal = document.getElementById('subpage-forgot-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    async function handleSubpageForgotSubmit(event) {
+      event.preventDefault();
+      const email = document.getElementById('subpage-forgot-email')?.value.trim();
+      const btn = document.getElementById('subpage-forgot-btn');
+      const msg = document.getElementById('subpage-forgot-msg');
+      if (!email) return;
+
+      if (btn) { btn.disabled = true; btn.innerText = 'Sending link...'; }
+      if (msg) msg.innerText = '';
+
+      try {
+        const redirectUrl = window.location.href.split('#')[0];
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: redirectUrl });
+        if (error) throw error;
+        if (msg) {
+          msg.style.color = '#34d399';
+          msg.innerText = '✓ Recovery link sent! Please check your email inbox and spam folder.';
+        }
+        if (btn) btn.innerText = 'Link Sent';
+      } catch (err) {
+        if (msg) {
+          msg.style.color = '#f87171';
+          msg.innerText = err.message || 'Failed to send recovery email.';
+        }
+        if (btn) { btn.disabled = false; btn.innerText = 'Send Recovery Link'; }
+      }
+    }
+
+    async function handleSubpageUpdatePassword(event) {
+      event.preventDefault();
+      const pw1 = document.getElementById('subpage-new-password')?.value;
+      const pw2 = document.getElementById('subpage-confirm-password')?.value;
+      const btn = document.getElementById('subpage-new-pw-btn');
+      const msg = document.getElementById('subpage-new-pw-msg');
+
+      if (pw1 !== pw2) {
+        if (msg) { msg.style.color = '#f87171'; msg.innerText = 'Passwords do not match.'; }
+        return;
+      }
+      if (btn) { btn.disabled = true; btn.innerText = 'Saving password...'; }
+      if (msg) msg.innerText = '';
+
+      try {
+        const { error } = await supabaseClient.auth.updateUser({ password: pw1 });
+        if (error) throw error;
+        if (msg) {
+          msg.style.color = '#34d399';
+          msg.innerText = '✓ Password updated successfully! Redirecting to Back Office...';
+        }
+        setTimeout(() => {
+          window.location.href = 'portal.html';
+        }, 1200);
+      } catch (err) {
+        if (msg) {
+          msg.style.color = '#f87171';
+          msg.innerText = err.message || 'Failed to update password.';
+        }
+        if (btn) { btn.disabled = false; btn.innerText = 'Save New Password & Sign In'; }
+      }
+    }
+
+    if (window.location.hash && window.location.hash.includes('type=recovery')) {
+      const modal = document.getElementById('subpage-new-pw-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    if (typeof supabaseClient !== 'undefined' && supabaseClient.auth) {
+      supabaseClient.auth.onAuthStateChange((event) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          const modal = document.getElementById('subpage-new-pw-modal');
+          if (modal) modal.style.display = 'flex';
+        }
+      });
+    }
+
+    // --- PWA INSTALLATION CONTROLLER ---
+    let deferredSupportPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredSupportPrompt = e;
+    });
+
+    async function triggerPwaInstall() {
+      if (deferredSupportPrompt) {
+        deferredSupportPrompt.prompt();
+        const choice = await deferredSupportPrompt.userChoice;
+        if (choice && choice.outcome === 'accepted') {
+          deferredSupportPrompt = null;
+          return;
+        }
+      }
+      openModal('pwa-install-modal');
+    }
+
+    async function executeNativeInstallPrompt() {
+      if (deferredSupportPrompt) {
+        deferredSupportPrompt.prompt();
+        const choice = await deferredSupportPrompt.userChoice;
+        if (choice && choice.outcome === 'accepted') {
+          deferredSupportPrompt = null;
+          closeModal('pwa-install-modal');
+          return;
+        }
+      }
+      window.location.href = 'flexi-app.html';
+    }
+  </script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header>
+    <div class="container">
+      <a href="/" class="logo">
+        <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" />
+        <span>FlexiTap POS</span>
+      </a>
+      
+      <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">☰</button>
+
+      <div class="nav-links" id="navLinksContainer">
+        <!-- INDUSTRIES DROPDOWN -->
+        <div class="nav-dropdown" id="industriesDropdown">
+          <button class="nav-link nav-dropdown-btn" onclick="toggleDropdown(event)">
+            <span>Industries</span>
+            <svg class="dropdown-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </button>
+          <div class="dropdown-menu">
+            <a href="pos-for-cafes.html" class="dropdown-item">
+              <span class="dropdown-icon">☕</span>
+              <div>
+                <div class="dropdown-title">Cafes &amp; Bakeries</div>
+                <div class="dropdown-desc">KOT tickets &amp; barista rush speed</div>
+              </div>
+            </a>
+            <a href="pos-for-retail.html" class="dropdown-item">
+              <span class="dropdown-icon">🛍️</span>
+              <div>
+                <div class="dropdown-title">Retail &amp; Boutiques</div>
+                <div class="dropdown-desc">Barcode scanning &amp; variant matrices</div>
+              </div>
+            </a>
+            <a href="pos-for-quick-service.html" class="dropdown-item">
+              <span class="dropdown-icon">🍔</span>
+              <div>
+                <div class="dropdown-title">Quick-Serve &amp; Food Trucks</div>
+                <div class="dropdown-desc">3-second tender, KDS &amp; bump bar</div>
+              </div>
+            </a>
+            <a href="pos-for-fine-dining.html" class="dropdown-item">
+              <span class="dropdown-icon">🍷</span>
+              <div>
+                <div class="dropdown-title">Fine Dining &amp; Full Service</div>
+                <div class="dropdown-desc">Floor plan, course firing &amp; split checks</div>
+              </div>
+            </a>
+            <a href="pos-for-professional-services.html" class="dropdown-item">
+              <span class="dropdown-icon">✂️</span>
+              <div>
+                <div class="dropdown-title">Professional Services &amp; Salons</div>
+                <div class="dropdown-desc">Appointments, deposits &amp; staff splits</div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <a href="features.html" class="nav-link">Capabilities</a>
+        <a href="pricing.html" class="nav-link">Pricing</a>
+        <a href="download.html" class="nav-link">Downloads</a>
+        <a href="about.html" class="nav-link">About &amp; FAQ</a>
+        <a href="insights.html" class="nav-link">Insights</a>
+        <a href="support.html" class="nav-link active">Support</a>
+        <a href="community.html" class="nav-link">Community</a>
+        <div class="mobile-only-nav-actions" style="display: none; flex-direction: column; gap: 10px; width: 100%; padding-top: 12px; border-top: 1px solid var(--card-border); margin-top: 4px;">
+          <a href="pricing.html" class="btn-signup" style="justify-content: center; width: 100%;">Get Started</a>
+          <button class="btn-login" onclick="openModal('login-modal')" style="width: 100%;">Merchant Login</button>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <button type="button" class="btn-login" onclick="openModal('login-modal')">Merchant Login</button>
+        <a href="pricing.html" class="btn-signup">Get Started</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <main class="container">
+    <section class="support-hero">
+      <div class="hero-badge">
+        <span class="hero-dot"></span> Dedicated Merchant Care &amp; Real-Time Diagnostics
+      </div>
+      
+      <h1 class="section-title">Support &amp; Merchant Care</h1>
+      <p class="section-subtitle">
+        Get instant operational assistance, submit high-priority support tickets directly to our engineering desk, or install our dedicated Support Progressive Web App (PWA) onto your smartphone or register for round-the-clock shift support.
+      </p>
+
+      <div class="quick-jump-bar">
+        <button onclick="triggerPwaInstall()" class="quick-jump-btn" style="color: #60a5fa; background: rgba(59,130,246,0.18); border: 1px solid rgba(59,130,246,0.5); cursor: pointer; font-family: inherit;">📲 Install Support PWA</button>
+        <a href="#ticket" class="quick-jump-btn active">🎫 Submit a Ticket</a>
+        <a href="#remote-assist" class="quick-jump-btn">⚡ Remote Diagnostics</a>
+        <a href="#community-hub" class="quick-jump-btn" style="color: #38bdf8;">👥 Merchant Community</a>
+        <a href="download.html" class="quick-jump-btn" style="color: #cbd5e1;">📦 POS Client Downloads</a>
+      </div>
+    </section>
+
+    <!-- SECTION 1: DEDICATED SUPPORT PWA APP SHOWCASE -->
+    <section id="support-pwa" style="margin-top: 36px; margin-bottom: 48px;">
+      <div style="background: linear-gradient(135deg, rgba(22, 30, 49, 0.88) 0%, rgba(15, 23, 42, 0.96) 100%); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 24px; padding: clamp(28px, 4vw, 48px); display: grid; grid-template-columns: 1.15fr 0.85fr; gap: clamp(24px, 4vw, 48px); align-items: center; box-shadow: 0 20px 48px rgba(0, 0, 0, 0.45); position: relative; overflow: hidden;">
+        
+        <!-- Ambient Decorative Glow -->
+        <div style="position: absolute; top: -80px; left: -80px; width: 280px; height: 280px; background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%); pointer-events: none;"></div>
+
+        <!-- Left Column: Copy & PWA Feature Highlights -->
+        <div style="display: flex; flex-direction: column; gap: 18px; text-align: left; z-index: 2;">
+          <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); padding: 6px 14px; border-radius: 999px; width: fit-content;">
+            <span style="font-size: 13px;">📲</span>
+            <span style="font-size: 12.5px; font-weight: 700; color: #93c5fd; text-transform: uppercase; letter-spacing: 0.5px;">Progressive Web App (PWA) • Instant Mobile Care</span>
+          </div>
+
+          <h2 style="font-size: clamp(26px, 2.8vw, 36px); font-weight: 800; color: #ffffff; line-height: 1.2; margin: 0; letter-spacing: -0.5px;">
+            FlexiTap Support App in Your Pocket
+          </h2>
+
+          <p style="color: #cbd5e1; font-size: clamp(14px, 1.05vw, 16px); line-height: 1.65; margin: 0;">
+            Never let a counter disruption stall your store. Install our dedicated <strong>Support Progressive Web App (PWA)</strong> directly onto your iPhone, Android, or tablet without waiting for app store reviews. Submit priority tickets, inspect live technician status, and sign into your verified merchant account anywhere.
+          </p>
+
+          <!-- 4 Feature Bullets -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 6px;">
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 12px; padding: 14px;">
+              <div style="font-weight: 700; color: #60a5fa; font-size: 13.5px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                <span>⚡</span> 5-Second Installation
+              </div>
+              <div style="color: var(--text-muted); font-size: 12.5px; line-height: 1.5;">
+                Add to Home Screen in Safari (iOS) or Chrome (Android) with zero app store friction.
+              </div>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 12px; padding: 14px;">
+              <div style="font-weight: 700; color: #34d399; font-size: 13.5px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                <span>🔒</span> Store Account Sign In
+              </div>
+              <div style="color: var(--text-muted); font-size: 12.5px; line-height: 1.5;">
+                Secure store credentials login to track tickets, view technician logs, and manage registers.
+              </div>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 12px; padding: 14px;">
+              <div style="font-weight: 700; color: #fbbf24; font-size: 13.5px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                <span>🛰️</span> Live Tech Status
+              </div>
+              <div style="color: var(--text-muted); font-size: 12.5px; line-height: 1.5;">
+                Get real-time push updates as operations engineers resolve terminal or printer queries.
+              </div>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 12px; padding: 14px;">
+              <div style="font-weight: 700; color: #c084fc; font-size: 13.5px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                <span>📶</span> Offline Diagnostic Care
+              </div>
+              <div style="color: var(--text-muted); font-size: 12.5px; line-height: 1.5;">
+                Logs hardware errors and receipt disconnects locally even during store internet outages.
+              </div>
+            </div>
+          </div>
+
+          <!-- CTAs -->
+          <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 8px;">
+            <button onclick="triggerPwaInstall()" class="btn-primary" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; padding: 12px 24px; border-radius: 12px; font-weight: 800; font-size: 15px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45); transition: 0.2s;">
+              <span>📲</span> Install Support App (PWA)
+            </button>
+            <button onclick="openModal('login-modal')" class="btn-login" style="background: rgba(255,255,255,0.08) !important; color: #ffffff !important; border: 1px solid rgba(255,255,255,0.2) !important; padding: 12px 22px !important; border-radius: 12px !important; font-weight: 700 !important; font-size: 14.5px !important; cursor: pointer;">
+              <span>🔑</span> Merchant Account Sign In
+            </button>
+          </div>
+
+          <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px;">
+            Looking for the cash register installer instead? <a href="download.html" style="color: #60a5fa; font-weight: 600; text-decoration: none;">Visit Download Center &rarr;</a>
+          </div>
+        </div>
+
+        <!-- Right Column: iPhone Mockup with Uploaded UI Screen -->
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 2;">
+          <div style="position: absolute; width: 320px; height: 320px; background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(37, 99, 235, 0.08) 50%, transparent 70%); filter: blur(40px); pointer-events: none; z-index: 1;"></div>
+          <div style="position: relative; z-index: 2; max-width: 320px; width: 100%; text-align: center;">
+            <img src="iphone_support_pwa.png" alt="FlexiTap Support PWA Login Screen on iPhone" style="width: 100%; height: auto; display: block; filter: drop-shadow(0 20px 35px rgba(0,0,0,0.6)); border-radius: 38px; transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'" />
+            <div style="margin-top: 14px; display: inline-flex; align-items: center; gap: 8px; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 999px; padding: 6px 14px; font-size: 12px; color: #93c5fd; font-weight: 700;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></span>
+              Support PWA • Live Mobile UI
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- HARDWARE CALLOUT -->
+      <div class="hardware-banner" style="margin-top: 36px; margin-bottom: 0;">
+        <div class="hw-info">
+          <h4>🔌 Open Hardware Freedom — Bring Your Own Device</h4>
+          <p>FlexiTap does not force you to buy overpriced proprietary terminals. Keep your existing printers, tablets, and cash drawers.</p>
+        </div>
+        <div class="hw-pills">
+          <span class="hw-pill">Sunmi Hardware Certified</span>
+          <span class="hw-pill">Epson &amp; Star ESC/POS</span>
+          <span class="hw-pill">Zebra Barcode Scanners</span>
+          <span class="hw-pill">Windows Touch Terminals</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: EXPEDITED TICKET SUBMISSION -->
+    <section id="ticket" class="ticket-section">
+      <div class="ticket-grid">
+
+        <!-- RIGHT COLUMN: TICKET SUBMISSION FORM -->
+        <div class="ticket-form-card">
+          
+          <!-- SUBMISSION FORM -->
+          <form id="support-ticket-form" onsubmit="submitSupportTicket(event)">
+            <h3>Submit a Support Ticket</h3>
+            <p class="form-subtitle">Encountering an issue or have a question? Submit your details below and our team will assist you promptly.</p>
+
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="t-store">Store / Merchant Name *</label>
+                <input type="text" id="t-store" required placeholder="e.g. Blue Bottle Coffee Uptown" />
+              </div>
+
+              <div class="form-group">
+                <label for="t-email">Contact Email Address *</label>
+                <input type="email" id="t-email" required placeholder="e.g. manager@bluebottle.com" />
+              </div>
+            </div>
+
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="t-category">Issue Category</label>
+                <select id="t-category">
+                  <option value="printer">Thermal Printer &amp; Cash Drawer</option>
+                  <option value="hardware">Touch Terminal &amp; Sunmi Tablet</option>
+                  <option value="payment">Payment Terminal &amp; Card Reader</option>
+                  <option value="sync">Offline Sync &amp; Database Journal</option>
+                  <option value="billing">Subscription, VIP Pass &amp; License</option>
+                  <option value="general" selected>General Setup / Assistance</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="t-priority">Severity / Priority</label>
+                <select id="t-priority">
+                  <option value="low">Low — General Question / Future Setup</option>
+                  <option value="medium" selected>Medium — Non-blocking Issue</option>
+                  <option value="high">High — Register Degraded / Slow</option>
+                  <option value="urgent">🚨 Urgent — Counter Down / Cannot Checkout</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="t-subject">Ticket Subject / Summary *</label>
+              <input type="text" id="t-subject" required placeholder="e.g. Kitchen printer delays receipt cutter on breakfast rush" />
+            </div>
+
+            <div class="form-group">
+              <label for="t-description">Detailed Description &amp; Error Notes *</label>
+              <textarea id="t-description" required placeholder="Please describe the steps to reproduce, device model, and any error message displayed on your terminal..."></textarea>
+              <div class="field-hint">Hardware telemetry and browser details will be attached automatically to accelerate diagnosis.</div>
+            </div>
+
+            
+            <!-- Google reCAPTCHA Security Verification -->
+            <div class="form-group recaptcha-group">
+              <div class="g-recaptcha" data-sitekey="6LeU2w4uAAAAAO-a-U3zP0zEnFsLM1wSObfhAcWa" data-theme="dark"></div>
+            </div>
+
+            <div id="ticket-error-msg" class="error-msg" style="display:none; text-align:left; margin-bottom:12px;"></div>
+
+            <button type="submit" class="btn-submit-ticket" id="ticket-submit-btn">
+              <span>Submit Support Ticket</span>
+            </button>
+          </form>
+
+          <!-- SUCCESS STATE CARD -->
+          <div id="ticket-success-box" class="ticket-success-box">
+            <div class="ticket-success-icon">✓</div>
+            <h4 class="ticket-success-title">Support Ticket Received!</h4>
+            <div id="ticket-ref-display" class="ticket-success-ref">Ticket Reference: #REC-000</div>
+            <p class="ticket-success-desc">
+              Your inquiry has been received and auto-assigned to <strong id="ticket-assigned-display" style="color: #38bdf8;">Customer Support Specialist</strong>. A confirmation has been dispatched to <strong id="ticket-confirmed-email" style="color: #60a5fa;">your email</strong>.
+            </p>
+            <button type="button" class="btn-reset-ticket" onclick="resetTicketForm()">
+              + Submit Another Ticket
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+            <!-- MERCHANT COMMUNITY BANNER -->
+      <div id="community-hub" class="community-callout-card" style="background: linear-gradient(135deg, rgba(24, 119, 242, 0.15), rgba(15, 23, 42, 0.9)); border: 1px solid rgba(24, 119, 242, 0.35); border-radius: 18px; padding: 28px 32px; margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+        <div style="max-width: 650px;">
+          <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(24, 119, 242, 0.2); border: 1px solid rgba(24, 119, 242, 0.4); color: #60a5fa; font-size: 11.5px; font-weight: 800; padding: 4px 12px; border-radius: 9999px; margin-bottom: 12px; text-transform: uppercase;">
+            <span>👥 Official Merchant Community</span>
+          </div>
+          <h4 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+            Join the FlexiTap Cafe &amp; Retail Operators Group
+          </h4>
+          <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin: 0;">
+            Connect with fellow coffee shop owners, baristas, and retailers. Share verified thermal receipt printer setups, exchange operational workflows, and chat directly with the engineering team.
+          </p>
+        </div>
+        <div>
+          <a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer" style="background: #1877f2; color: #fff; padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(24, 119, 242, 0.4); white-space: nowrap;">
+            <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            <span>Join Facebook Community ↗</span>
+          </a>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 26px; height: 26px;" />
+            <div style="font-weight: 800; color: #fff; font-size: 18px;">FlexiTap POS</div>
+          </div>
+          <p>Simplify Sales. Grow Your Business. A point-of-sale built for shop owners, baristas, and anyone who needs things to just work.</p>
+          
+          <div class="social-links">
+            <a href="https://www.facebook.com/FlexiTapPOS" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="Facebook">
+              <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="https://www.youtube.com/@FlexiTapPOS" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="YouTube">
+              <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a href="https://x.com/flexitapapp" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="X (Twitter)">
+              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" title="Instagram">
+              <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Industry Solutions</h4>
+          <ul>
+            <li><a href="pos-for-cafes.html">Cafes &amp; Bakeries</a></li>
+            <li><a href="pos-for-retail.html">Retail &amp; Boutiques</a></li>
+            <li><a href="pos-for-quick-service.html">Quick-Serve &amp; Food Trucks</a></li>
+            <li><a href="pos-for-fine-dining.html">Fine Dining &amp; Full Service</a></li>
+            <li><a href="pos-for-professional-services.html">Professional Services &amp; Salons</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="features.html">Capabilities</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="download.html">Downloads</a></li>
+            <li><a href="about.html">FAQ</a></li>
+            <li><a href="insights.html">Insights &amp; News</a></li>
+            <li><a href="support.html">Support</a></li>
+            <li><a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer">Merchant Community (FB Group) ↗</a></li>
+            <li><a href="affiliate.html">Affiliate &amp; Partner Program <span style="font-size: 0.72rem; color: #f87171; font-weight: 700; margin-left: 4px;">(Paused)</span></a></li>
+            <li><a href="dev-portal.html" rel="nofollow">Staff &amp; Dev Portal</a></li>
+            <li><a href="#" onclick="openCalendarBooking(event)">Book a Live Demo</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="refunds.html">Refund Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 FlexiTap POS. All rights reserved.</div>
+        <div>Launch Date: Today, November 21, 2026 • 9:00 AM CST</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Elevated Sales & Inquiries Live Chat is dynamically managed by sales-chat.js -->
+
+  <!-- MERCHANT LOGIN MODAL -->
+  <div class="modal-overlay" id="login-modal">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
+      <div style="display: flex; justify-content: center; margin-bottom: 16px;">
+        <img src="image_02e503.png" alt="FlexiTap Logo" style="width: 48px; height: 48px; border-radius: 50%;" />
+      </div>
+      <h3 style="font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px;">Merchant Sign In</h3>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Access your store telemetry, cloud reports, and ad-hoc remote support session.</p>
+      
+      <form id="login-form" onsubmit="handleMerchantLogin(event)">
+        <label>Merchant Email</label>
+        <input type="email" id="login-email" required placeholder="owner@store.com" />
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label style="margin-bottom: 0;">Password</label>
+          <a href="javascript:void(0)" onclick="openSubpageForgotModal()" style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 600;">Forgot password?</a>
+        </div>
+        <input type="password" id="login-password" required placeholder="••••••••" />
+        <button type="submit" class="submit-btn" id="login-submit-btn">Log In to Merchant Portal</button>
+      </form>
+      <div id="login-modal-error" class="error-msg"></div>
+    </div>
+  </div>
+
+  <!-- SUBPAGE TWO-STEP VERIFICATION (OTP) MODAL -->
+  <div class="modal-overlay" id="subpage-otp-modal">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeSubpageOtpModal()">&times;</button>
+      <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+        <span style="font-size: 22px;">🔒</span>
+        <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin: 0;">Two-Step Verification (OTP)</h2>
+      </div>
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+        A security verification code has been sent to <strong id="subpage-otp-display-email" style="color: #fff;">your email</strong>. Enter the code below to complete sign-in.
+      </p>
+      
+      <form onsubmit="handleSubpageVerifyOtp(event)">
+        <label>Security Verification Code (OTP)</label>
+        <input type="text" id="subpage-otp-code" required placeholder="12345678" maxlength="10" inputmode="numeric" style="text-align: center; font-size: 20px; letter-spacing: 4px; font-weight: 800; width: 100%; padding: 12px; margin-bottom: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #fff; outline: none;" />
+        <button type="submit" class="submit-btn" id="subpage-otp-verify-btn">Verify &amp; Enter Portal</button>
+      </form>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+        <button type="button" onclick="handleSubpageResendOtp()" style="background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 600; cursor: pointer;">Resend Code</button>
+        <button type="button" onclick="closeSubpageOtpModal()" style="background: none; border: none; color: var(--text-muted); font-size: 12px; cursor: pointer;">Back to Login</button>
+      </div>
+
+      <div id="subpage-otp-msg" class="error-msg"></div>
+    </div>
+  </div>
+
+  <!-- SUBPAGE FORGOT PASSWORD MODAL -->
+  <div class="modal-overlay" id="subpage-forgot-modal">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeSubpageForgotModal()">&times;</button>
+      <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Reset Merchant Password</h2>
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Enter your store account email and we'll send you a secure recovery link via Supabase SMTP.</p>
+      <form onsubmit="handleSubpageForgotSubmit(event)">
+        <label>Merchant Email</label>
+        <input type="email" id="subpage-forgot-email" required placeholder="owner@store.com" style="width: 100%; padding: 12px; margin-bottom: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #fff; outline: none;" />
+        <button type="submit" class="submit-btn" id="subpage-forgot-btn">Send Recovery Link</button>
+      </form>
+      <div id="subpage-forgot-msg" class="error-msg"></div>
+    </div>
+  </div>
+
+  <!-- SUBPAGE RECOVERY / SET NEW PASSWORD MODAL -->
+  <div class="modal-overlay" id="subpage-new-pw-modal">
+    <div class="modal-card">
+      <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Set New Password</h2>
+      <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Your recovery session is verified. Enter a new password for your merchant account.</p>
+      <form onsubmit="handleSubpageUpdatePassword(event)">
+        <label>New Password</label>
+        <input type="password" id="subpage-new-password" required placeholder="••••••••" minlength="6" style="width: 100%; padding: 12px; margin-bottom: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #fff; outline: none;" />
+        <label>Confirm New Password</label>
+        <input type="password" id="subpage-confirm-password" required placeholder="••••••••" minlength="6" style="width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; color: #fff; outline: none;" />
+        <button type="submit" class="submit-btn" id="subpage-new-pw-btn">Save New Password &amp; Sign In</button>
+      </form>
+      <div id="subpage-new-pw-msg" class="error-msg"></div>
+    </div>
+  </div>
+
+  <!-- PWA INSTALLATION MODAL -->
+  <div class="modal-overlay" id="pwa-install-modal">
+    <div class="modal-card" style="max-width: 480px; text-align: left;">
+      <button class="close-btn" onclick="closeModal('pwa-install-modal')">&times;</button>
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+        <img src="image_02e503.png" alt="FlexiTap Logo" style="width: 44px; height: 44px; border-radius: 12px;" />
+        <div>
+          <h3 style="font-size: 19px; font-weight: 800; color: #fff; margin: 0;">Install FlexiTap Support App</h3>
+          <p style="color: var(--text-muted); font-size: 12px; margin: 2px 0 0 0;">Dedicated POS Diagnostics &amp; Ticket Tracking</p>
+        </div>
+      </div>
+
+      <p style="color: #cbd5e1; font-size: 13.5px; line-height: 1.55; margin-bottom: 18px;">
+        Install the support app directly on your tablet, register, or phone for native camera inspection and real-time ticket alerts:
+      </p>
+
+      <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px; margin-bottom: 18px; font-size: 13px; line-height: 1.6;">
+        <div style="font-weight: 700; color: #60a5fa; margin-bottom: 4px;">📱 On Android POS / Sunmi / Chrome:</div>
+        <div style="color: var(--text-muted); margin-bottom: 10px;">Tap <strong>"Install App Now"</strong> below, or tap the browser menu (<strong>⋮</strong>) and select <strong>"Install App"</strong>.</div>
+
+        <div style="font-weight: 700; color: #34d399; margin-bottom: 4px;">🍎 On Apple iPad / iPhone (Safari):</div>
+        <div style="color: var(--text-muted); margin-bottom: 10px;">
+          1. Tap the <strong>Share</strong> button (<strong>⎋</strong>) at the bottom or top of Safari.<br>
+          2. Scroll down and tap <strong>"Add to Home Screen"</strong> (<strong>⊞</strong>).<br>
+          3. Tap <strong>Add</strong> to launch from your home screen.
+        </div>
+
+        <div style="font-weight: 700; color: #c084fc; margin-bottom: 4px;">💻 On Windows Counter Register (Edge / Chrome):</div>
+        <div style="color: var(--text-muted);">Click the <strong>Install</strong> icon in the browser address bar (top right).</div>
+      </div>
+
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="submit-btn" onclick="executeNativeInstallPrompt()" style="flex: 1; padding: 12px 16px; font-size: 14px;">
+          📲 Install App Now
+        </button>
+        <a href="flexi-app.html?standalone=true" target="_blank" style="padding: 12px 16px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid var(--card-border); color: #fff; font-weight: 700; font-size: 13px; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+          Open App ↗
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unified Elevated Sales & Inquiries Live Chat -->
+  <script src="sales-chat.js?v=20261102" defer></script>
+  <!-- Privacy & Tracking Cookie Consent Banner -->
+  <script src="cookie-consent.js?v=20261031" defer></script>
+</body>
+</html>
