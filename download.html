@@ -1218,11 +1218,19 @@
         return;
       }
 
-      if (window.FlexiTapAnalytics && typeof window.FlexiTapAnalytics.trackEvent === 'function') {
-        window.FlexiTapAnalytics.trackEvent('download_click', {
-          platform: platform,
-          version: currentVersion
-        });
+      try {
+        if (window.FlexiAnalytics && typeof window.FlexiAnalytics.trackDownloadClick === 'function') {
+          window.FlexiAnalytics.trackDownloadClick(platform, 'FlexiTap POS ' + platform + ' v' + currentVersion);
+        } else if (window.FlexiTapAnalytics && typeof window.FlexiTapAnalytics.trackEvent === 'function') {
+          window.FlexiTapAnalytics.trackEvent('download_click', {
+            event_type: 'download_click',
+            platform: platform,
+            version: currentVersion,
+            file: platform === 'windows' ? 'FlexiTap_v' + currentVersion + '_Setup.exe' : 'FlexiTap_v' + currentVersion + '.apk'
+          });
+        }
+      } catch (trackErr) {
+        console.debug('[Analytics] Download track notice:', trackErr);
       }
 
       const fileName = platform === 'windows' 
@@ -1243,6 +1251,21 @@
     }
 
     function openAppStoreNotice() {
+      try {
+        if (window.FlexiAnalytics && typeof window.FlexiAnalytics.trackDownloadClick === 'function') {
+          window.FlexiAnalytics.trackDownloadClick('ios', 'FlexiTap POS iOS Notice v' + currentVersion);
+        } else if (window.FlexiTapAnalytics && typeof window.FlexiTapAnalytics.trackEvent === 'function') {
+          window.FlexiTapAnalytics.trackEvent('download_click', {
+            event_type: 'download_click',
+            platform: 'ios',
+            version: currentVersion,
+            label: 'iOS App Store Notice View'
+          });
+        }
+      } catch (trackErr) {
+        console.debug('[Analytics] iOS track notice:', trackErr);
+      }
+
       alert(
         'FlexiTap for iPadOS & iOS will officially be available on November 28, 2026 on the Apple App Store as our review completes.\n\n' +
         'Windows and Android/Sunmi editions are available for download right now.'

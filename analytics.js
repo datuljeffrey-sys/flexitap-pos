@@ -129,6 +129,10 @@
       });
     },
 
+    trackEvent: function(eventName, properties) {
+      return this.track(eventName, properties);
+    },
+
     trackDownloadClick: function(platform, label) {
       this.track('download_click', {
         event_type: 'download_click',
@@ -139,8 +143,9 @@
     }
   };
 
-  // Expose to window
+  // Expose to window (both FlexiAnalytics and FlexiTapAnalytics for compatibility)
   window.FlexiAnalytics = FlexiAnalytics;
+  window.FlexiTapAnalytics = FlexiAnalytics;
 
   // Auto-run on DOM Ready
   function onReady() {
