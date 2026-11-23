@@ -1,0 +1,20 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "*.io.flexitap.app",
+        "paths": [
+          "/login-callback*",
+          "/reset-password*",
+          "/auth/v1/callback*"
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "*.io.flexitap.app"
+    ]
+  }
+}
