@@ -5,6 +5,14 @@
 -- 1. Open your Supabase Dashboard: https://supabase.com/dashboard/project/_/sql
 -- 2. Click "New Query" (or paste into SQL Editor).
 -- 3. Click "RUN" (or Ctrl + Enter).
+-- 
+-- WHAT THIS SCRIPT DOES:
+-- Part 1: Installs 'admin_purge_merchant_account' & 'admin_delete_hardware_asset' (SECURITY DEFINER)
+--         Allows Dev Portal & Merchant Portal to permanently hard-purge accounts
+--         and individual hardware assets/devices from Supabase.
+-- Part 2: Sets up RLS DELETE policies so staff accounts can manage profiles, stores, subscriptions, and devices.
+-- Part 3: Wipes all existing dummy/test merchant rows (test, fdfd, hjnj, KKK, etc.)
+--         while strictly protecting master staff accounts (info@, datuljeffrey@, liamjareddatul@).
 -- ==============================================================================
 
 -- ------------------------------------------------------------------------------
@@ -87,13 +95,9 @@ BEGIN
   END IF;
 
   IF to_regclass('public.pos_devices') IS NOT NULL THEN
-    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'pos_devices' AND column_name = 'user_id') THEN
-      EXECUTE 'DELETE FROM public.pos_devices WHERE user_id::text = $1 OR (store_id::text = ANY($2))' USING target_account_id::text, v_store_ids;
-    ELSIF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'pos_devices' AND column_name = 'store_id') THEN
-      IF v_store_ids IS NOT NULL AND array_length(v_store_ids, 1) > 0 THEN
-        EXECUTE 'DELETE FROM public.pos_devices WHERE store_id::text = ANY($1)' USING v_store_ids;
-      END IF;
-    END IF;
+    DELETE FROM public.pos_devices
+    WHERE user_id::text = target_account_id::text
+       OR (v_store_ids IS NOT NULL AND store_id::text = ANY(v_store_ids));
   END IF;
 
   -- 3. Wipe sales summaries & feedback
@@ -110,17 +114,19 @@ BEGIN
   END IF;
 
   -- 4. Wipe tickets & notes
-  IF to_regclass('public.ticket_notes') IS NOT NULL AND to_regclass('public.tickets') IS NOT NULL THEN
+  IF to_regclass('public.ticket_notes') IS NOT NULL THEN
     DELETE FROM public.ticket_notes
     WHERE ticket_id IN (
       SELECT id FROM public.tickets 
       WHERE merchant_id::text = target_account_id::text
+         OR (v_store_ids IS NOT NULL AND store_id::text = ANY(v_store_ids))
     );
   END IF;
 
   IF to_regclass('public.tickets') IS NOT NULL THEN
     DELETE FROM public.tickets
-    WHERE merchant_id::text = target_account_id::text;
+    WHERE merchant_id::text = target_account_id::text
+       OR (v_store_ids IS NOT NULL AND store_id::text = ANY(v_store_ids));
   END IF;
 
   -- 5. Wipe support & remote sessions
@@ -171,11 +177,11 @@ BEGIN
 
   -- 8. Hard delete from profiles
   IF to_regclass('public.profiles') IS NOT NULL THEN
-    DELETE FROM public.profiles WHERE id::text = target_account_id::text;
+    DELETE FROM public.profiles WHERE id = target_account_id;
   END IF;
 
   -- 9. Hard delete from auth.users (Master Supabase Auth)
-  DELETE FROM auth.users WHERE id::text = target_account_id::text;
+  DELETE FROM auth.users WHERE id = target_account_id;
 
   RETURN jsonb_build_object(
     'success', true,
@@ -251,7 +257,7 @@ DROP POLICY IF EXISTS "Staff can delete profiles" ON public.profiles;
 CREATE POLICY "Staff can delete profiles"
   ON public.profiles FOR DELETE
   TO authenticated
-  USING (public.is_admin_or_staff_caller() OR auth.uid()::text = id::text);
+  USING (public.is_admin_or_staff_caller() OR auth.uid() = id);
 
 DROP POLICY IF EXISTS "Staff can delete stores" ON public.stores;
 CREATE POLICY "Staff can delete stores"
@@ -284,12 +290,12 @@ CREATE POLICY "Staff and owners can delete devices"
 -- ------------------------------------------------------------------------------
 DO $$
 DECLARE
-  v_purge_ids TEXT[];
+  v_purge_ids UUID[];
   v_store_ids TEXT[];
   v_count INT := 0;
 BEGIN
-  -- Collect all test/dummy account profile IDs as TEXT to prevent any type mismatches
-  SELECT ARRAY_AGG(p.id::text) INTO v_purge_ids
+  -- Select all test/dummy account profile IDs (Excluding master admin/dev emails & stores)
+  SELECT ARRAY_AGG(p.id) INTO v_purge_ids
   FROM public.profiles p
   LEFT JOIN auth.users u ON u.id = p.id
   WHERE (
@@ -297,8 +303,8 @@ BEGIN
     OR LOWER(COALESCE(p.full_name, '')) IN ('test', 'test account', 'purged merchant')
     OR LOWER(COALESCE(u.email, '')) LIKE '%test%'
     OR LOWER(COALESCE(u.email, '')) LIKE '%purged%'
-    OR p.id::text IN (
-      SELECT s.owner_id::text FROM public.stores s 
+    OR p.id IN (
+      SELECT s.owner_id FROM public.stores s 
       WHERE LOWER(s.name) IN ('test', 'test account', 'fdfd', 'hjnj', 'kkk')
     )
   )
@@ -313,53 +319,48 @@ BEGIN
     -- Find all stores owned by these test accounts or named 'test', 'fdfd', 'kkk'
     SELECT ARRAY_AGG(id::text) INTO v_store_ids
     FROM public.stores
-    WHERE owner_id::text = ANY(v_purge_ids)
-       OR user_id::text = ANY(v_purge_ids)
+    WHERE owner_id = ANY(v_purge_ids)
+       OR user_id = ANY(v_purge_ids)
        OR LOWER(name) IN ('test', 'test account', 'fdfd', 'hjnj', 'kkk');
 
     -- 1. Subscriptions
     IF to_regclass('public.subscriptions') IS NOT NULL THEN
-      DELETE FROM public.subscriptions WHERE user_id::text = ANY(v_purge_ids);
+      DELETE FROM public.subscriptions WHERE user_id = ANY(v_purge_ids);
     END IF;
 
     -- 2. Devices
     IF to_regclass('public.devices') IS NOT NULL THEN
       DELETE FROM public.devices 
-      WHERE user_id::text = ANY(v_purge_ids)
+      WHERE user_id = ANY(v_purge_ids)
          OR (v_store_ids IS NOT NULL AND store_id::text = ANY(v_store_ids));
     END IF;
 
-    -- 2b. POS Devices (Safely handle schema variations)
     IF to_regclass('public.pos_devices') IS NOT NULL THEN
-      IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'pos_devices' AND column_name = 'user_id') THEN
-        EXECUTE 'DELETE FROM public.pos_devices WHERE user_id::text = ANY($1) OR (store_id::text = ANY($2))' 
-        USING v_purge_ids, v_store_ids;
-      ELSIF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'pos_devices' AND column_name = 'store_id') THEN
-        IF v_store_ids IS NOT NULL AND array_length(v_store_ids, 1) > 0 THEN
-          EXECUTE 'DELETE FROM public.pos_devices WHERE store_id::text = ANY($1)' 
-          USING v_store_ids;
-        END IF;
-      END IF;
+      DELETE FROM public.pos_devices 
+      WHERE user_id = ANY(v_purge_ids)
+         OR (v_store_ids IS NOT NULL AND store_id::text = ANY(v_store_ids));
     END IF;
 
     -- 3. Tickets
     IF to_regclass('public.tickets') IS NOT NULL THEN
-      DELETE FROM public.tickets WHERE merchant_id::text = ANY(v_purge_ids);
+      DELETE FROM public.tickets 
+      WHERE merchant_id = ANY(v_purge_ids)
+         OR (v_store_ids IS NOT NULL AND store_id::text = ANY(v_store_ids));
     END IF;
 
     -- 4. Stores
     IF to_regclass('public.stores') IS NOT NULL THEN
       DELETE FROM public.stores 
-      WHERE owner_id::text = ANY(v_purge_ids)
-         OR user_id::text = ANY(v_purge_ids)
+      WHERE owner_id = ANY(v_purge_ids)
+         OR user_id = ANY(v_purge_ids)
          OR (v_store_ids IS NOT NULL AND id::text = ANY(v_store_ids));
     END IF;
 
     -- 5. Profiles
-    DELETE FROM public.profiles WHERE id::text = ANY(v_purge_ids);
+    DELETE FROM public.profiles WHERE id = ANY(v_purge_ids);
 
-    -- 6. auth.users (Master Auth records - cast to UUID)
-    DELETE FROM auth.users WHERE id::text = ANY(v_purge_ids);
+    -- 6. auth.users (Master Auth records)
+    DELETE FROM auth.users WHERE id = ANY(v_purge_ids);
 
     RAISE NOTICE 'Successfully purged % test accounts from Supabase!', v_count;
   END IF;

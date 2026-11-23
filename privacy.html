@@ -7,24 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-    <title>FlexiTap POS Privacy Policy</title>
-  <meta name="description" content="How FlexiTap protects and handles merchant account data, operational records, and local database security.">
-  <link rel="canonical" href="https://flexitapapp.com/privacy.html">
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://flexitapapp.com/privacy.html">
-  <meta property="og:site_name" content="FlexiTap POS">
-  <meta property="og:title" content="FlexiTap POS Privacy Policy">
-  <meta property="og:description" content="How FlexiTap protects and handles merchant account data, operational records, and local database security.">
-  <meta property="og:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
-
-  <!-- Twitter Cards -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://flexitapapp.com/privacy.html">
-  <meta name="twitter:title" content="FlexiTap POS Privacy Policy">
-  <meta name="twitter:description" content="How FlexiTap protects and handles merchant account data, operational records, and local database security.">
-  <meta name="twitter:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
+  <title>FlexiTap — Privacy Policy</title>
   
   <link rel="icon" type="image/png" href="image_02e503.png">
   <link rel="shortcut icon" href="favicon.ico">
@@ -35,8 +18,7 @@
   <!-- Include Paddle.js -->
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 
-  <link rel="preload" href="fonts/480c062501_tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="fonts.css?v=20261031">
+  <link rel="stylesheet" href="fonts.css">
 
   <style>
     :root {
@@ -59,6 +41,7 @@
       line-height: 1.6; 
       width: 100%; 
       max-width: 100vw; 
+      overflow-x: hidden;
       overflow-x: clip; 
       position: relative; 
     }
@@ -103,7 +86,7 @@
       text-decoration: none; 
       letter-spacing: -0.5px; 
       flex-shrink: 0; 
-     white-space: nowrap; }
+    }
     .brand-logo-svg { 
       width: clamp(32px, 2.4vw, 38px); 
       height: clamp(32px, 2.4vw, 38px); 
@@ -117,7 +100,7 @@
       display: flex; 
       align-items: center; 
       justify-content: center; 
-      gap: clamp(8px, 1.1vw, 16px); 
+      gap: clamp(14px, 1.8vw, 28px); 
       flex: 1; 
       margin: 0; 
     }
@@ -147,7 +130,7 @@
       align-items: center; 
       gap: clamp(8px, 1vw, 12px); 
       flex-shrink: 0; 
-     }
+    }
     .btn-login { 
       background: #ffffff; 
       color: #1d4ed8; 
@@ -213,7 +196,7 @@
     .app-btn:hover { border-color: rgba(255,255,255,0.2); }
     .app-btn svg { width: 18px; height: 18px; }
 
-    .footer-col h4, .footer-col .footer-title { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+    .footer-col h4 { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
     .footer-col ul { list-style: none; }
     .footer-col ul li { margin-bottom: 12px; }
     .footer-col ul li a { color: var(--text-muted); text-decoration: none; font-size: 14px; cursor: pointer; transition: 0.2s; }
@@ -232,9 +215,9 @@
     .error-msg { color: #f87171; font-size: 13px; margin-top: 12px; text-align: center; }
 
     /* DYNAMIC RESPONSIVE RULES (Mobile, Tablet, Desktop) */
-    @media (max-width: 1140px) {
-      .logo { order: 1;  white-space: nowrap; flex-shrink: 0; }
-      .nav-actions { order: 2;  flex-shrink: 0; }
+    @media (max-width: 1023px) {
+      .logo { order: 1; }
+      .nav-actions { order: 2; }
       .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; order: 3; }
       .nav-links {
         display: none;
@@ -493,7 +476,7 @@
   <!-- NAVBAR -->
   <header>
     <div class="container">
-      <a href="/" class="logo">
+      <a href="index.html" class="logo">
         <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" />
         <span>FlexiTap POS</span>
       </a>
@@ -503,9 +486,10 @@
       <div class="nav-links" id="navLinksContainer">
         <a href="features.html" class="nav-link" onclick="toggleMobileMenu()">Capabilities</a>
         <a href="pricing.html" class="nav-link" onclick="toggleMobileMenu()">Pricing</a>
-        <a href="about.html" class="nav-link" onclick="toggleMobileMenu()">About &amp; FAQ</a>
+        <a href="about.html" class="nav-link" onclick="toggleMobileMenu()">About Us & FAQ</a>
         <a href="insights.html" class="nav-link" onclick="toggleMobileMenu()">Insights</a>
-        <a href="support.html" class="nav-link" onclick="toggleMobileMenu()">Support</a>
+        <a href="support.html" class="nav-link" onclick="toggleMobileMenu()">Support & Download</a>
+        <a href="dev-portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
         <button class="btn-login mobile-only-login" onclick="openModal('login-modal'); toggleMobileMenu();">Merchant Login</button>
       </div>
 
@@ -521,125 +505,107 @@
     <div class="policy-container">
       <h1>Privacy Policy</h1>
       <div class="policy-body">
-        <p style="font-size: 13.5px; color: var(--primary); font-weight: 700; margin-bottom: 12px; letter-spacing: 0.5px;">VERSION 2.4 — LAST REVISED NOVEMBER 21, 2026</p>
-        
-        <p>FlexiTap (“FlexiTap”, “we”, “us”, “our”) provides an offline-first point-of-sale, inventory management, and business operational software platform to commercial businesses worldwide. This Privacy Policy explains what personal data we collect, why we collect it, how it is processed, who we share it with, and how you can exercise your legal rights. It applies to the FlexiTap mobile and desktop applications, the web portal at https://flexitapapp.com, and any related software services (collectively, the “Service”).</p>
+        <p>FlexiTap (“FlexiTap”, “we”, “us”, “our”) is an offline-first point-of-sale, inventory management, and business operational software application provided to merchants worldwide. This Privacy Policy explains what personal data we collect, why we collect it, who we share it with, and how you can exercise your rights. It applies to the FlexiTap mobile and desktop apps, the web portal at https://flexitapapp.com, and any related services (collectively, the “Service”).</p>
 
-        <p><strong>Applicable Privacy Laws &amp; Global Scope:</strong><br>
-        This Policy is intended to apply globally. Depending on where you, your business, your employees, or your customers are located, additional data protection laws (including the EU and UK General Data Protection Regulation / GDPR, the California Consumer Privacy Act as amended by the CPRA, and applicable international privacy frameworks) may apply to personal data processed through the Service. Nothing in this Policy limits rights or obligations that cannot lawfully be excluded under the applicable law of the data subject’s or merchant’s jurisdiction. Where required, FlexiTap complies with applicable legal obligations concerning transparency, security, data-subject rights, breach response, cross-border transfers, and regulatory cooperation.</p>
+        <p>Where this Policy refers to “personal data”, we mean any information that relates to an identified or identifiable natural person, as defined under applicable data protection laws, including the EU and UK General Data Protection Regulation (GDPR), the California Consumer Privacy Act / CPRA, Republic Act No. 10173 (Philippine Data Privacy Act of 2012 / DPA), and other applicable international privacy frameworks.</p>
 
         <div>
-          <strong>1. Controller and Processor Roles</strong><br>
-          For account administration, subscription management, billing records, security monitoring, fraud prevention, diagnostic telemetry, customer support, and legal compliance, FlexiTap acts as an <strong>independent data controller</strong> (or business under applicable privacy laws). Our Merchant of Record, Paddle, acts as an independent data controller for payment processing, subscription transactions, and statutory tax remittance.<br><br>
-          For customer records, employee timecards, supplier details, and other third-party operational information that a merchant records or uploads into the Service, <strong>the merchant acts as the data controller</strong>, and FlexiTap acts as a <strong>data processor (or service provider)</strong>: we process that data solely on the merchant's behalf and pursuant to documented instructions to provide the Service. The merchant remains responsible for establishing a lawful basis for processing, providing all required privacy notices to individuals, and honoring data subject rights requests under the laws of its operating jurisdiction.
+          <strong>1. Who is responsible for your data (Controller vs. Processor Roles)</strong><br>
+          For data we collect directly about you, the account holder (your email, business profile, subscription tier, and device metadata), FlexiTap acts as the data controller (or Personal Information Controller / PIC under Philippine law).<br><br>
+          For customer records, employee timecards, or supplier contacts that you record into the Service, <strong>you act as the data controller (PIC)</strong> and FlexiTap acts strictly as your <strong>data processor (or Personal Information Processor / PIP)</strong>: we process that data solely on your behalf and on your documented instructions to provide the Service. You are solely responsible for having a lawful basis to collect and process such information, for providing any required notices to the individuals concerned, and for honoring their data subject rights under the laws of your operating jurisdiction.
         </div>
 
         <div>
-          <strong>2. What We Collect and Sensitive Data Exclusions</strong><br><br>
-          <strong>Account data.</strong> Business name, owner or administrator name, business email address, physical address, business telephone number, store logo, locale settings, and subscription metadata (such as order IDs and customer tokens issued by Paddle).<br><br>
-          <strong>Staff data.</strong> Employee names, email addresses, phone numbers, role and permission assignments, secure 4-digit login PINs, and shift attendance records created by the merchant.<br><br>
-          <strong>Customer data recorded by merchants.</strong> Names, phone numbers, physical delivery addresses, transaction notes, loyalty point balances, and internal customer store credit / house account ledgers recorded at the merchant's discretion.<br><br>
-          <strong>Operational and inventory data.</strong> Menu items, modifiers, recipes, stock quantities, vendor lists, sales tickets, discounts, cash register drawer balances, and printable receipt templates.<br><br>
-          <strong>Device and diagnostic telemetry.</strong> Device hardware model, operating system and version, app build, unique installation identifiers used for multi-terminal sync pairing, push notification tokens, IP address, and system runtime crash logs. Crash logs are used solely to debug errors and do not intentionally contain business record contents. Product metrics are aggregated or irreversibly pseudonymized.<br><br>
-          <strong>Communications.</strong> Inquiries, feedback, and diagnostic attachments submitted to customer support or developer channels.<br><br>
-          <strong>Strict Prohibition of Highly Sensitive Data:</strong><br>
-          The Service is strictly not designed or intended for the collection or storage of highly sensitive personal data, including national or government identification numbers (e.g., SSNs, passport numbers), biometric data, biometric timeclocks, financial account passwords, or full credit/debit card numbers.<br><br>
-          <strong>Cardholder Data Exclusion (PCI DSS):</strong> FlexiTap does not collect, process, or store full Primary Account Numbers (PANs), CVVs, card PINs, or magnetic stripe/chip track data. In-store card payments are processed entirely off-system by external PCI-compliant terminals. Online subscription billing is handled directly by Paddle under PCI DSS Level 1 certification.<br><br>
-          <strong>Health and Patient Data Exclusion:</strong> FlexiTap does not knowingly collect or process Protected Health Information (PHI). The Service is not a certified electronic health record (EHR) system and must not be used to store patient, medical, prescription, or clinical records under HIPAA or international health privacy regulations.
+          <strong>2. What we collect</strong><br><br>
+          <strong>Account data.</strong> Email address, business name and type, business address and contact information, business logo, country and locale, and the subscription receipt, order ID, or customer token issued by Paddle, our Merchant of Record.<br><br>
+          <strong>Staff data.</strong> Names, email addresses, phone numbers, photos, role and permission assignments, login PINs, and login activity for staff accounts you create.<br><br>
+          <strong>Customer data you record.</strong> Names, phone numbers, addresses, notes, loyalty point balances and ledger, outstanding debt and debt payment history, and any photos of payment proofs you upload (e.g. transfer slips). You decide what to record.<br><br>
+          <strong>Transactional and operational data.</strong> Items, item variants, modifiers, taxes, discounts, payment methods, transactions, orders, shifts, settlements, stock levels and adjustments, receipts, and printable templates.<br><br>
+          <strong>Exclusion of Cardholder Data (PCI DSS):</strong> FlexiTap explicitly excludes Cardholder Data. We do not collect, process, or store full credit or debit card Primary Account Numbers (PANs), card expiration dates, CVVs, or card magnetic stripe/chip track data. Any card payment processed at merchant locations is handled directly off-system by physical payment terminals or certified third-party merchant acquirers. For web subscription billing, all card details are submitted directly to our Merchant of Record, Paddle, under PCI DSS Level 1 compliance.<br><br>
+          <strong>Exclusion of Protected Health Information (HIPAA):</strong> FlexiTap does not collect or process Protected Health Information (PHI) and is not intended for use with patient medical data.<br><br>
+          <strong>Device and technical data.</strong> Device model, operating system and version, app version, locale, a per-device identifier and device key used for sync and pairing, push-notification token, IP address, and approximate region derived from it.<br><br>
+          <strong>Crash and diagnostic data.</strong> Stack traces, performance metrics, and similar runtime information used to detect and fix bugs. We do not intentionally include the contents of your business records in these reports.<br><br>
+          <strong>Communications.</strong> Messages you send to support and any attachments you provide.
         </div>
 
         <div>
-          <strong>3. How We Use Your Data and Legal Bases</strong><br>
-          We process personal data only when supported by a valid legal basis:
-          <ul style="margin: 8px 0 8px 20px; line-height: 1.6;">
-            <li><strong>Performance of Contract:</strong> To provision your account, maintain peer-to-peer and cloud database synchronization across paired registers, generate transaction summaries, and deliver core point-of-sale functionality;</li>
-            <li><strong>Subscription Billing:</strong> Facilitated through Paddle (Merchant of Record) to process renewals, prevent subscription fraud, and remit applicable sales taxes;</li>
-            <li><strong>Customer Support &amp; Technical Standby:</strong> To diagnose sync anomalies, investigate bug reports, and provide merchant assistance;</li>
-            <li><strong>Legitimate Interests:</strong> To maintain system security, detect abusive activity, prevent unauthorized device pairing, and optimize application performance;</li>
-            <li><strong>Legal Compliance:</strong> To comply with applicable tax, financial, accounting, and regulatory recordkeeping duties.</li>
+          <strong>3. How we use your data and the legal bases</strong><br>
+          <ul>
+            <li>To provide the Service — keeping your data in sync across your paired devices, processing your transactions, generating receipts, sending operational push notifications, and similar (basis: performance of our contract with you);</li>
+            <li>To process payments and subscriptions — through Paddle (our Merchant of Record), which validates transactions, processes subscriptions, and remits taxes on our behalf (basis: performance of our contract);</li>
+            <li>To provide customer support when you contact us (basis: performance of our contract and our legitimate interest in resolving your inquiry);</li>
+            <li>To improve reliability through aggregated and anonymized crash and performance metrics (basis: our legitimate interest in maintaining a working product);</li>
+            <li>To comply with legal obligations and to protect the rights, safety, or property of FlexiTap, our users, or the public (basis: legal obligation and legitimate interest).</li>
           </ul>
-          We do not sell personal data, and we do not use your operational records for cross-context behavioral advertising, third-party profiling, or automated credit scoring. The Service is 100% ad-free across all tiers.
+          <br>
+          We do not sell your personal data, and we do not use it for cross-context behavioral advertising or profiling. The Service is 100% ad-free across all tiers.
         </div>
 
         <div>
-          <strong>4. Subprocessors and Data Sharing</strong><br>
-          We share data only with vetted third-party service providers and subprocessors bound by strict data protection, confidentiality, and security obligations, strictly as necessary to operate the Service:<br><br>
-          <strong>Supabase Inc.</strong> — User authentication, managed PostgreSQL database infrastructure, real-time WebSocket replication, and tenant-isolated encrypted cloud storage buckets for optional merchant database snapshots (.bak);<br><br>
-          <strong>Paddle (Paddle.com Market Ltd / Paddle Payments)</strong> — Merchant of Record, subscription billing gateway, tax compliance, and fraud screening. Paddle processes customer payment information as an independent data controller;<br><br>
-          <strong>Google Drive (Google LLC)</strong> — Optional client-side database backup integration initiated directly by the merchant via Google OAuth 2.0. Backup archives are uploaded directly to the merchant's personal Google Drive storage; FlexiTap does not store merchant Google credentials on our servers;<br><br>
-          <strong>Cloudflare Inc.</strong> — Edge network routing, SSL/TLS cryptographic provisioning, DDoS mitigation, and web application firewall security;<br><br>
-          <strong>RustDesk</strong> — Optional on-demand remote desktop tooling for FlexiTap Pro diagnostic support sessions, activated strictly upon explicit merchant PIN consent and real-time merchant supervision, with zero unattended or background access.<br><br>
-          We may also disclose information where required by law, valid subpoena, court order, or binding governmental demand, or when necessary to protect the vital interests, safety, or legal rights of FlexiTap, our merchants, or the public.
+          <strong>4. Who we share data with</strong><br>
+          We share data only with service providers we rely on to operate the Service, and only to the extent necessary for them to perform their function. Each is bound by appropriate confidentiality and data-processing obligations.<br><br>
+          <strong>Supabase</strong> – user authentication, PostgreSQL database hosting, realtime synchronization, and private, tenant-isolated cloud storage buckets for encrypted merchant database backups (.bak).<br><br>
+          <strong>Paddle (Paddle.com Market Ltd)</strong> – Merchant of Record, subscription billing, fraud detection, and tax remittance. We never see or store your full payment card details.<br><br>
+          <strong>Google Drive (Google LLC)</strong> – optional manual database snapshot backups initiated by you, stored directly in your own personal Google Drive account via Google OAuth 2.0. We do not store or access your personal Drive files or credentials on our servers.<br><br>
+          <strong>Cloudflare (Cloudflare, Inc.)</strong> – edge security, content delivery, SSL certificate provisioning, and DDoS protection for our website and API.<br><br>
+          <strong>RustDesk (Remote Desktop Tooling)</strong> – optional on-demand remote support for Founders Pro merchants, used strictly during authorized diagnostic support sessions with explicit merchant PIN authorization and real-time merchant supervision, without background or unattended access.<br><br>
+          <strong>Hosting and infrastructure providers</strong> we use to operate our backend.<br><br>
+          We may also disclose data when required by law, valid legal process, or a binding order from a competent authority, or to protect the rights, safety, or property of FlexiTap, our users, or the public. If we are involved in a merger, acquisition, or sale of assets, your data may be transferred as part of that transaction, and we will notify you before it becomes subject to a different privacy policy.
         </div>
 
         <div>
-          <strong>5. Where Your Data Lives and International Transfers</strong><br>
-          Operational cloud data is stored in high-security data centers located in the United States and global edge nodes provided by our hosting infrastructure. Because our third-party infrastructure operates internationally, personal data may be transferred to, stored in, or accessed from jurisdictions outside your home country. Where cross-border data transfers occur from the EEA, UK, Switzerland, or other jurisdictions requiring transfer safeguards, we rely on standard recognized mechanisms, such as the European Commission’s Standard Contractual Clauses (SCCs), the UK International Data Transfer Addendum, and robust supplementary technical measures including end-to-end encryption in transit (TLS 1.3) and AES-256 encryption at rest.
+          <strong>5. Where your data lives and international transfers</strong><br>
+          We store operational data encrypted at rest on servers operated by us and by our hosting providers. Backups are encrypted and retained for up to 30 days. Some of our service providers (including those listed above) operate globally, which means your data may be transferred to, stored in, or accessed from countries other than the one in which you reside, including countries that may not provide the same level of data-protection law as your own. Where required, we rely on appropriate safeguards for such transfers, such as the European Commission's Standard Contractual Clauses, the UK International Data Transfer Addendum, or equivalent mechanisms.
         </div>
 
         <div>
-          <strong>6. Retention and Deletion Schedule</strong><br>
-          We retain account and operational data for as long as your merchant account remains active or as needed to provide the Service.<br><br>
-          <strong>Upon Account Deletion (https://flexitapapp.com/account/delete):</strong>
-          <ul style="margin: 8px 0 8px 20px; line-height: 1.6;">
-            <li><strong>Production Databases:</strong> Your account profile, store catalog, and cloud-synced transaction records are scheduled for permanent deletion or irreversible anonymization from active production servers within approximately thirty (30) days;</li>
-            <li><strong>Disaster-Recovery Backups:</strong> Encrypted system database snapshots (.bak) and disaster-recovery archives persist in private, restricted storage for up to an additional thirty (30) days before being securely overwritten or permanently purged;</li>
-            <li><strong>Legal &amp; Financial Records:</strong> Information required for tax reporting, dispute defense, anti-fraud enforcement, or statutory compliance will be retained strictly for the duration mandated by applicable law;</li>
-            <li><strong>Merchant-Exported Backups:</strong> Database files exported to your local devices, external hard drives, or personal Google Drive accounts remain under your exclusive custody and control. FlexiTap cannot and does not delete files from your personal storage destinations.</li>
+          <strong>6. How long we keep your data</strong><br>
+          We retain your data for as long as your account is active and for as long as we need it to provide the Service. After you delete your account via https://flexitapapp.com/account/delete, we delete or irreversibly anonymize your account and operational data from production systems within a reasonable period (typically 30 days), and remove it from encrypted backups within a further 30 days. We may retain certain information for longer if required to comply with a legal obligation, resolve disputes, or enforce our agreements.
+        </div>
+
+        <div>
+          <strong>7. Data loss and Free-tier storage</strong><br>
+          Free-tier data is stored only on your device. We do not back it up and we cannot recover it if your device is lost, stolen, damaged, factory reset, or if the app is uninstalled. The Service is offline-first: changes you make while offline are queued locally and uploaded the next time the device successfully reaches our servers. If the device is wiped, replaced, or reinstalled before that upload completes, the queued changes are lost. You are solely responsible for maintaining your own backups using the manual export, local database backup, and manual Google Drive backup features available under Data Management in the Service. Please see our Terms of Service for the full allocation of responsibility regarding data loss.
+        </div>
+
+        <div>
+          <strong>8. Security and cyber liability disclaimer</strong><br>
+          We employ reasonable and appropriate technical and organizational measures designed to protect your data, including encryption in transit (TLS), encrypted database storage at rest, token-based authentication, database Row-Level Security (RLS) enforcing strict tenant isolation, private storage access policies, audit logging, device pairing authorization, and the ability to remotely deactivate paired devices.<br><br>
+          <strong>No Absolute Security or Cyber Insurance:</strong> However, no method of digital storage or internet transmission is completely secure, and we cannot guarantee absolute immunity from unauthorized access, cyber attacks, hardware theft, or zero-day vulnerabilities. FlexiTap is a startup software provider and <strong>does not carry commercial cyber liability insurance</strong> covering merchant data or operations. FlexiTap does not act as an insurer of your business data. You are solely responsible for safeguarding your account credentials, enforcing staff PINs, securing your local physical devices and Wi-Fi networks, maintaining your own offline backups, and obtaining independent cyber liability insurance if required for your business operations.
+        </div>
+
+        <div>
+          <strong>9. Your rights</strong><br>
+          Depending on your location and the data-protection laws that apply to you, you may have the following rights with respect to personal data we hold about you as an account holder:
+          <ul>
+            <li><strong>Access and portability</strong> — request a copy of your personal data in a structured, commonly used format. Email support@flexitapapp.com and we will respond within the period required by applicable law (typically 30 days).</li>
+            <li><strong>Correction / rectification</strong> — edit your data inside the app, or request corrections.</li>
+            <li><strong>Deletion / erasure</strong> — visit https://flexitapapp.com/account/delete to permanently delete your account and all associated operational data.</li>
+            <li><strong>Objection and restriction</strong> — object to, or ask us to restrict, certain processing of your personal data.</li>
+            <li><strong>Withdraw consent</strong> — where we rely on your consent, you may withdraw it at any time, without affecting the lawfulness of processing carried out before withdrawal.</li>
+            <li><strong>Lodge a complaint</strong> — with the competent data-protection supervisory authority in your country of residence.</li>
           </ul>
+          <br>
+          <strong>Jurisdiction-Specific Schedule: Republic of the Philippines (RA 10173)</strong><br>
+          For individuals and merchants residing or operating within the Republic of the Philippines, you are entitled to all statutory rights under Section 16 of the <strong>Data Privacy Act of 2012 (Republic Act No. 10173)</strong>, including the right to be informed, right to access, right to object, right to erasure or blocking, right to rectify, right to damages, and the absolute right to lodge a complaint with the <strong>National Privacy Commission (NPC) of the Philippines</strong> (https://privacy.gov.ph).<br><br>
+          
+          <strong>Jurisdiction-Specific Schedule: California (CCPA/CPRA) &amp; EU/UK (GDPR)</strong><br>
+          For users in California, we do not sell or share personal information as those terms are defined under the CCPA/CPRA. You have the right to know, delete, correct, and limit the use of sensitive personal information without discrimination. For users in the European Economic Area (EEA) and the UK, we process personal data under lawful bases recognized by the GDPR.
         </div>
 
         <div>
-          <strong>7. Data Loss and Offline-First Local Storage</strong><br>
-          The Free Community Tier stores all operational data locally on your physical device. FlexiTap does not maintain server-side copies or cloud backups for Free-tier stores; if your device is damaged, lost, stolen, factory-reset, or the app is uninstalled, your local data cannot be recovered. For all tiers, operational data recorded while offline is queued locally and synchronizes upon reconnecting to the internet. Merchants are solely responsible for creating regular offline database backups and exports using the tools provided under Data Management.
+          <strong>10. Children</strong><br>
+          The Service is intended for use by businesses and is not directed at children under 16, and we do not knowingly collect personal data from children. If you believe a child has provided us with personal data, please contact us and we will delete it.
         </div>
 
         <div>
-          <strong>8. Security, Cyber Liability Disclaimer, and Incident Response Protocol</strong><br>
-          We employ industry-standard technical, organizational, and administrative safeguards designed to protect personal data against unauthorized access, loss, or alteration, including TLS encryption in transit, encrypted storage at rest, token-based authentication, database Row-Level Security (RLS) tenant isolation, private storage access controls, and device de-authorization capabilities.<br><br>
-          <strong>No Absolute Security or Cyber Insurance:</strong> No digital transmission or storage architecture can be guaranteed 100% immune from cyber threats or hardware failure. FlexiTap is a software provider and does not carry commercial cyber liability insurance covering merchant operations. You are solely responsible for securing physical devices, enforcing staff PIN confidentiality, maintaining local Wi-Fi security, and obtaining independent commercial insurance if required for your business.<br><br>
-          <strong>Security Incident Response Protocol:</strong><br>
-          If FlexiTap confirms a security incident or unauthorized access impacting personal data processed through the Service, FlexiTap will take immediate, reasonable steps to contain, investigate, mitigate, and remediate the incident. Where required by applicable law, FlexiTap will notify the competent supervisory authorities, affected data subjects, and/or the affected merchant without undue delay. Where the merchant acts as data controller and is responsible for notifying its customers or staff, FlexiTap will provide reasonable cooperation and diagnostic information, subject to confidentiality, law enforcement, and security constraints.
+          <strong>11. Changes to this Policy</strong><br>
+          We may update this Policy from time to time. We will indicate the date of the most recent revision at the top of this page, and where the changes are material we will provide additional notice in the app or by email. Your continued use of the Service after changes take effect constitutes your acceptance of the revised Policy.
         </div>
 
         <div>
-          <strong>9. Data Subject Rights &amp; Requests Concerning Merchant-Submitted Data</strong><br>
-          Depending on your jurisdiction, you may have the right to access, rectify, erase, restrict, or port your personal data, or object to certain processing without discriminatory treatment.<br><br>
-          <strong>Account Holders:</strong> You can edit profile information in the app or delete your cloud account at https://flexitapapp.com/account/delete. To submit a data access or portability request, email privacy@flexitapapp.com.<br><br>
-          <strong>Requests Concerning Merchant-Submitted Data:</strong><br>
-          If your personal data (such as a customer contact, store credit record, or employee timecard) was collected or submitted to the Service by a merchant or employer, please direct your privacy request <strong>first to that merchant organization</strong>. The merchant acts as the data controller determining the purposes of processing and is responsible for responding to individual rights requests. FlexiTap will provide reasonable technical assistance to the merchant to fulfill valid statutory requests.
-        </div>
-
-        <div>
-          <strong>10. Children's Privacy</strong><br>
-          The Service is intended strictly for commercial business use by adults and is not directed to children. We do not knowingly collect personal data directly from children in violation of applicable laws (including COPPA). If you believe an unauthorized minor has submitted personal data to FlexiTap, please contact privacy@flexitapapp.com, and we will promptly assess the request and delete the information in accordance with applicable law.
-        </div>
-
-        <div>
-          <strong>11. Data Processing Addendum (DPA) for Merchants</strong><br>
-          To the extent FlexiTap processes personal data of customers, employees, or third parties on behalf of a merchant in its capacity as a data processor (or service provider), the following operational terms apply:<br>
-          <ul style="margin: 8px 0 8px 20px; line-height: 1.6;">
-            <li><strong>Documented Instructions:</strong> FlexiTap processes such data solely to provide, maintain, and support the Service in accordance with the Terms of Service and documented merchant configuration;</li>
-            <li><strong>Confidentiality:</strong> Personnel authorized to access merchant data are bound by formal confidentiality obligations;</li>
-            <li><strong>Security Safeguards:</strong> FlexiTap implements and maintains the technical and organizational security measures described in Section 8;</li>
-            <li><strong>Subprocessor Authorization:</strong> The merchant grants general authorization for FlexiTap to engage the subprocessors listed in Section 4, subject to equivalent data protection obligations;</li>
-            <li><strong>Assistance with Rights:</strong> FlexiTap provides technical capabilities within the software (e.g., export, correction, deletion) enabling the merchant to honor data subject requests;</li>
-            <li><strong>Incident Support:</strong> FlexiTap will promptly notify and assist the merchant in the event of a confirmed security incident as set out in Section 8;</li>
-            <li><strong>Deletion or Return:</strong> Upon account termination, FlexiTap will delete or return merchant operational data in accordance with the Retention Schedule in Section 6.</li>
-          </ul>
-        </div>
-
-        <div>
-          <strong>12. Changes to this Policy</strong><br>
-          We may update this Privacy Policy periodically to reflect product updates, operational changes, or legal requirements. We will indicate the version and revision date at the top of this document and provide prominent notice in the application or by email for material changes. Continued use of the Service following such updates constitutes acknowledgment of the revised Policy.
-        </div>
-
-        <div>
-          <strong>13. Data Protection Officer &amp; Privacy Contact</strong><br>
-          For privacy inquiries, data subject requests, or regulatory communications, contact our Data Protection Team at:<br>
-          <strong>Data Protection Officer</strong><br>
-          FlexiTap Legal &amp; Privacy Team<br>
-          Email: <a href="mailto:privacy@flexitapapp.com" style="color: var(--primary);">privacy@flexitapapp.com</a> (cc: <a href="mailto:support@flexitapapp.com" style="color: var(--primary);">support@flexitapapp.com</a>)
+          <strong>12. Contact</strong><br>
+          Questions, requests, or complaints about this Policy or our handling of your data? Contact our Data Privacy Officer at support@flexitapapp.com.
         </div>
       </div>
     </div>
@@ -675,21 +641,20 @@
         </div>
 
         <!-- PRODUCT LINKS -->
-        <div class="footer-col"><div class="footer-title">Product</div>
+        <div class="footer-col">
+          <h4>Product</h4>
           <ul>
             <li><a href="features.html">Capabilities</a></li>
             <li><a href="pricing.html">Pricing</a></li>
             <li><a href="about.html">FAQ</a></li>
             <li><a href="insights.html">Insights &amp; News</a></li>
-            <li><a href="support.html">Support</a></li>
-            <li><a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer">Merchant Community (FB Group) ↗</a></li>
-            <li><a href="affiliate.html">Affiliate &amp; Partner Program</a></li>
-            <li><a href="dev-portal.html" rel="nofollow">Staff &amp; Dev Portal</a></li>
+            <li><a href="support.html">Support &amp; Download</a></li>
           </ul>
         </div>
 
         <!-- LEGAL LINKS -->
-        <div class="footer-col"><div class="footer-title">Legal</div>
+        <div class="footer-col">
+          <h4>Legal</h4>
           <ul>
             <li><a href="privacy.html">Privacy Policy</a></li>
             <li><a href="terms.html">Terms of Service</a></li>
@@ -815,8 +780,8 @@
     });
   </script>
   <!-- Unified Elevated Sales & Inquiries Live Chat -->
-  <script src="sales-chat.js?v=20261102" defer></script>
+  <script src="sales-chat.js?v=20261122"></script>
   <!-- Privacy & Tracking Cookie Consent Banner -->
-  <script src="cookie-consent.js?v=20261031" defer></script>
+  <script src="cookie-consent.js"></script>
 </body>
 </html>

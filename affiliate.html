@@ -7,28 +7,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-    <title>FlexiTap Affiliate Program — Earn Recurring Payouts</title>
-  <meta name="description" content="Partner with FlexiTap POS. Earn generous commissions recommending reliable offline POS solutions to retail and restaurant owners.">
-  <link rel="canonical" href="https://flexitapapp.com/affiliate.html">
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://flexitapapp.com/affiliate.html">
-  <meta property="og:site_name" content="FlexiTap POS">
-  <meta property="og:title" content="FlexiTap Partner & Affiliate Program — Earn Recurring Commissions">
-  <meta property="og:description" content="Partner with FlexiTap POS. Earn generous commissions recommending reliable offline POS solutions to retail and restaurant owners.">
-  <meta property="og:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
-
-  <!-- Twitter Cards -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://flexitapapp.com/affiliate.html">
-  <meta name="twitter:title" content="FlexiTap Partner & Affiliate Program — Earn Recurring Commissions">
-  <meta name="twitter:description" content="Partner with FlexiTap POS. Earn generous commissions recommending reliable offline POS solutions to retail and restaurant owners.">
-  <meta name="twitter:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
+  <title>Partner &amp; Referral Program 🇵🇭 — FlexiTap POS</title>
   <meta name="description" content="Earn ₱3,000 to ₱6,000 for every café, restaurant, or retail store in the Philippines that switches to FlexiTap POS. Direct payouts to GCash, Maya, or bank.">
   <link rel="icon" type="image/png" href="image_02e503.png">
-  <link rel="preload" href="fonts/480c062501_tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="fonts.css?v=20261031">
+  <link rel="stylesheet" href="fonts.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -74,6 +56,36 @@
     .nav-links a:hover, .nav-links a.active { color: #fff; }
     .btn-portal-link { background: rgba(37, 99, 235, 0.12); border: 1px solid rgba(37, 99, 235, 0.35); color: #60a5fa; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none; transition: all 0.15s; }
     .btn-portal-link:hover { background: #2563eb; color: #fff; }
+    .mobile-menu-toggle {
+      display: none;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      padding: 8px 12px;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    @media (max-width: 860px) {
+      .mobile-menu-toggle { display: block; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #090d16;
+        border-bottom: 1px solid var(--card-border);
+        flex-direction: column;
+        padding: 16px 24px;
+        gap: 14px;
+        align-items: flex-start;
+      }
+      .nav-links.active { display: flex; }
+      .nav-links a { width: 100%; }
+      .btn-portal-link { text-align: center; }
+    }
 
     /* Hero Section */
     .hero { padding: 68px 0 44px; text-align: center; }
@@ -240,11 +252,12 @@
   <!-- HEADER -->
   <header>
     <div class="container nav-wrap">
-      <a href="/" class="logo">
+      <a href="index.html" class="logo">
         <img src="image_02e503.png" alt="FlexiTap Logo">
         <span>FlexiTap POS</span>
       </a>
-      <div class="nav-links">
+      <button class="mobile-menu-toggle" onclick="document.getElementById('affiliateNavLinks').classList.toggle('active')" aria-label="Toggle navigation">☰</button>
+      <div class="nav-links" id="affiliateNavLinks">
         <a href="features.html">Capabilities</a>
         <a href="pricing.html">Pricing</a>
         <a href="partner-portal.html" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #34d399; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none;">Partner Portal (2FA) 🤝</a>
@@ -347,20 +360,12 @@
 
   <footer>
     <div class="container">
-      <div style="margin-bottom: 12px; font-size: 13px;">
-        <a href="/" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Home</a> &bull;
-        <a href="features.html" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Capabilities</a> &bull;
-        <a href="pricing.html" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Pricing</a> &bull;
-        <a href="about.html" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">About &amp; FAQ</a> &bull;
-        <a href="support.html" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Support</a> &bull;
-        <a href="dev-portal.html" rel="nofollow" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Staff &amp; Dev Portal</a>
-      </div>
       <div>&copy; 2026 FlexiTap POS &bull; Philippine Partner &amp; Referral Program</div>
       <div style="font-size: 12px; margin-top: 6px;">Questions? Reach our partner desk at <a href="mailto:info@flexitapapp.com" style="color:#60a5fa; text-decoration: none;">info@flexitapapp.com</a></div>
     </div>
   </footer>
 
-  <script src="affiliate-tracker.js?v=20261031" defer></script>
+  <script src="affiliate-tracker.js"></script>
   <script>
     const SUPABASE_URL = "https://ezaqdnnecfkmqjdzigrf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE";
@@ -580,6 +585,6 @@
     });
   </script>
   <!-- Privacy & Tracking Cookie Consent Banner -->
-  <script src="cookie-consent.js?v=20261031" defer></script>
+  <script src="cookie-consent.js"></script>
 </body>
 </html>

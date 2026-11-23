@@ -7,24 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-    <title>FlexiTap POS Refund & Cancellation Policy</title>
-  <meta name="description" content="Details on FlexiTap subscription cancellations, Paddle billing terms, and subscription plan policies.">
-  <link rel="canonical" href="https://flexitapapp.com/refunds.html">
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://flexitapapp.com/refunds.html">
-  <meta property="og:site_name" content="FlexiTap POS">
-  <meta property="og:title" content="FlexiTap POS Refund & Cancellation Policy">
-  <meta property="og:description" content="Details on FlexiTap subscription cancellations, Paddle billing terms, and subscription plan policies.">
-  <meta property="og:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
-
-  <!-- Twitter Cards -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://flexitapapp.com/refunds.html">
-  <meta name="twitter:title" content="FlexiTap POS Refund & Cancellation Policy">
-  <meta name="twitter:description" content="Details on FlexiTap subscription cancellations, Paddle billing terms, and subscription plan policies.">
-  <meta name="twitter:image" content="https://flexitapapp.com/flexitap_facebook_post_real_dashboard.png">
+  <title>FlexiTap POS — Refund & Cancellation Policy</title>
   
   <link rel="icon" type="image/png" href="image_02e503.png">
   <link rel="shortcut icon" href="favicon.ico">
@@ -35,8 +18,7 @@
   <!-- Include Paddle.js -->
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 
-  <link rel="preload" href="fonts/480c062501_tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="fonts.css?v=20261031">
+  <link rel="stylesheet" href="fonts.css">
 
   <style>
     :root {
@@ -59,6 +41,7 @@
       line-height: 1.6; 
       width: 100%; 
       max-width: 100vw; 
+      overflow-x: hidden;
       overflow-x: clip; 
       position: relative; 
     }
@@ -69,15 +52,15 @@
     /* HEADER & NAV */
     header { padding: clamp(12px, 1.5vh, 18px) 0; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: rgba(9, 13, 22, 0.94); backdrop-filter: blur(12px); z-index: 100; width: 100%; }
     header .container { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: nowrap; gap: clamp(12px, 2vw, 24px); }
-    .logo { display: flex; align-items: center; gap: clamp(8px, 1vw, 12px); font-size: clamp(18px, 1.4vw, 22px); font-weight: 800; color: #ffffff; text-decoration: none; letter-spacing: -0.5px; flex-shrink: 0;  white-space: nowrap; }
+    .logo { display: flex; align-items: center; gap: clamp(8px, 1vw, 12px); font-size: clamp(18px, 1.4vw, 22px); font-weight: 800; color: #ffffff; text-decoration: none; letter-spacing: -0.5px; flex-shrink: 0; }
     .brand-logo-svg { width: clamp(30px, 2.4vw, 36px); height: clamp(30px, 2.4vw, 36px); flex-shrink: 0; display: block; border-radius: 50%; object-fit: contain; }
     
-    .nav-links { display: flex; align-items: center; justify-content: center; gap: clamp(8px, 1.1vw, 16px); flex: 1; margin: 0; }
+    .nav-links { display: flex; align-items: center; justify-content: center; gap: clamp(14px, 1.8vw, 26px); flex: 1; margin: 0; }
     .nav-link { color: #cbd5e1; text-decoration: none; font-size: clamp(13.5px, 0.95vw, 15px); font-weight: 600; transition: color 0.2s, transform 0.2s; white-space: nowrap; }
     .nav-link:hover, .nav-link.active { color: #fff; }
     .mobile-menu-toggle { display: none; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--card-border); padding: 8px 12px; border-radius: 10px; color: #fff; font-size: 22px; cursor: pointer; line-height: 1; }
 
-    .nav-actions { display: flex; align-items: center; gap: clamp(8px, 1vw, 12px); flex-shrink: 0;  }
+    .nav-actions { display: flex; align-items: center; gap: clamp(8px, 1vw, 12px); flex-shrink: 0; }
     .btn-login { 
       background: #ffffff; 
       color: #1d4ed8; 
@@ -143,7 +126,7 @@
     .app-btn:hover { border-color: rgba(255,255,255,0.2); }
     .app-btn svg { width: 18px; height: 18px; }
 
-    .footer-col h4, .footer-col .footer-title { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+    .footer-col h4 { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
     .footer-col ul { list-style: none; }
     .footer-col ul li { margin-bottom: 12px; }
     .footer-col ul li a { color: var(--text-muted); text-decoration: none; font-size: 14px; cursor: pointer; transition: 0.2s; }
@@ -166,10 +149,10 @@
     .chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 13px; }
     .chat-msg { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 12px 14px; border-radius: 12px; color: #f8fafc; }
 
-    @media (max-width: 1140px) {
+    @media (max-width: 1023px) {
       header .container { position: relative; }
-      .logo { order: 1;  white-space: nowrap; flex-shrink: 0; }
-      .nav-actions { order: 2;  flex-shrink: 0; }
+      .logo { order: 1; }
+      .nav-actions { order: 2; }
       .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; order: 3; }
       .nav-links {
         display: none;
@@ -428,7 +411,7 @@
   <!-- NAVBAR -->
   <header>
     <div class="container">
-      <a href="/" class="logo">
+      <a href="index.html" class="logo">
         <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" />
         <span>FlexiTap POS</span>
       </a>
@@ -438,9 +421,10 @@
       <div class="nav-links" id="navLinksContainer">
         <a href="features.html" class="nav-link" onclick="toggleMobileMenu()">Capabilities</a>
         <a href="pricing.html" class="nav-link" onclick="toggleMobileMenu()">Pricing</a>
-        <a href="about.html" class="nav-link" onclick="toggleMobileMenu()">About &amp; FAQ</a>
+        <a href="about.html" class="nav-link" onclick="toggleMobileMenu()">About Us & FAQ</a>
         <a href="insights.html" class="nav-link" onclick="toggleMobileMenu()">Insights</a>
-        <a href="support.html" class="nav-link" onclick="toggleMobileMenu()">Support</a>
+        <a href="support.html" class="nav-link" onclick="toggleMobileMenu()">Support & Download</a>
+        <a href="dev-portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
         <button class="btn-login mobile-only-login" onclick="openModal('login-modal'); toggleMobileMenu();">Merchant Login</button>
       </div>
 
@@ -456,7 +440,6 @@
     <div class="policy-container">
       <h1>Refund & Cancellation Policy</h1>
       <div class="policy-body">
-        <p style="font-size: 13.5px; color: var(--primary); font-weight: 700; margin-bottom: 12px; letter-spacing: 0.5px;">VERSION 2.4 — LAST REVISED NOVEMBER 21, 2026</p>
         <p>FlexiTap POS (“FlexiTap”, “we”, “us”, “our”) provides point-of-sale software and related services on a software-as-a-service (SaaS) basis. All payments, merchant of record tax compliance, and billing transactions are processed globally via our authorized payment merchant and reseller, <strong>Paddle</strong>.</p>
 
         <div>
@@ -466,9 +449,9 @@
         </div>
 
         <div>
-          <strong>2. Annual Plans & Pre-Launch Subscription Terms</strong><br>
-          During the pre-launch phase leading up to our official release on <strong>November 21, 2026</strong>, customers may purchase an Annual Plan via Paddle to lock in discounted early-adopter rates and early access.<br><br>
-          Although payment is collected upfront to secure your pre-launch subscription, your official 12-month subscription and renewal cycle <strong>do not start on the purchase date</strong>—they are strictly tied to and activate only when you download the app and complete your onboarding process on or after launch day (November 21, 2026).
+          <strong>2. Founders VIP Annual Pass & Pre-Launch Terms</strong><br>
+          During the pre-launch phase leading up to our official release on <strong>November 13, 2026</strong>, customers may purchase an exclusive Founders VIP Annual Pass via Paddle to lock in discounted early-adopter rates and 1-week early access.<br><br>
+          Although payment is collected upfront to secure your VIP spot, your official 12-month subscription and renewal cycle <strong>do not start on the purchase date</strong>—they are strictly tied to and activate only when you download the app and complete your onboarding process on or after launch day (November 13, 2026).
         </div>
 
         <div>
@@ -482,19 +465,19 @@
           We review refund requests on a strict case-by-case basis (in coordination with Paddle) and may issue a refund at our sole discretion under the following limited circumstances:
           <ul>
             <li><strong>Technical Incompatibility / Failure:</strong> Verified technical failures or severe core software incompatibilities directly attributable to FlexiTap that prevent normal usage, reported within the first 7 days of initial app onboarding.</li>
-            <li><strong>Pre-Launch Subscription Requests:</strong> Refund requests for pre-launch subscriptions submitted prior to app activation/onboarding launch will be evaluated on a case-by-case basis.</li>
+            <li><strong>Pre-Launch Founders VIP Requests:</strong> Refund requests for pre-launch Founders VIP passes submitted prior to app activation/onboarding launch will be evaluated on a case-by-case basis.</li>
             <li><strong>Billing Errors:</strong> Documented duplicate billings or erroneous overcharges caused by our payment processor (Paddle).</li>
           </ul>
         </div>
 
         <div>
           <strong>5. How to Request Assistance or Inquiries</strong><br>
-          If you believe you qualify for an exception under Section 4, need help managing your Paddle subscription, or have questions regarding your billing cycle, please contact our support and sales team directly at <a href="mailto:sales@flexitapapp.com">sales@flexitapapp.com</a> (or manage your billing directly via your Paddle receipt link) with your registered business name, account email, and detailed reason for your request. Approved refunds will be processed back to your original payment method within Paddle's standard processing timeframes.
+          If you believe you qualify for an exception under Section 4, need help managing your Paddle subscription, or have questions regarding your billing cycle, please contact our support and sales team directly at <a href="mailto:sales@flexitappapp.com">sales@flexitappapp.com</a> (or manage your billing directly via your Paddle receipt link) with your registered business name, account email, and detailed reason for your request. Approved refunds will be processed back to your original payment method within Paddle's standard processing timeframes.
         </div>
 
         <div>
           <strong>6. Changes to This Policy</strong><br>
-          We may update this Refund Policy from time to time. The current version and revision date are always posted at the top of this page (Current: Version 2.4, Last Revised November 21, 2026). Continued use of the Service after any changes take effect constitutes your acceptance of the revised policy.
+          We may update this Refund Policy from time to time. The most current version will always be posted on our website, and continued use of the Service after any changes take effect constitutes your acceptance of the revised policy.
         </div>
       </div>
     </div>
@@ -518,20 +501,19 @@
           </div>
         </div>
 
-        <div class="footer-col"><div class="footer-title">Product</div>
+        <div class="footer-col">
+          <h4>Product</h4>
           <ul>
             <li><a href="features.html">Capabilities</a></li>
             <li><a href="pricing.html">Pricing</a></li>
             <li><a href="about.html">FAQ</a></li>
             <li><a href="insights.html">Insights &amp; News</a></li>
-            <li><a href="support.html">Support</a></li>
-            <li><a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer">Merchant Community (FB Group) ↗</a></li>
-            <li><a href="affiliate.html">Affiliate &amp; Partner Program</a></li>
-            <li><a href="dev-portal.html" rel="nofollow">Staff &amp; Dev Portal</a></li>
+            <li><a href="support.html">Support &amp; Download</a></li>
           </ul>
         </div>
 
-        <div class="footer-col"><div class="footer-title">Legal</div>
+        <div class="footer-col">
+          <h4>Legal</h4>
           <ul>
             <li><a href="privacy.html">Privacy Policy</a></li>
             <li><a href="terms.html">Terms of Service</a></li>
@@ -542,7 +524,7 @@
 
       <div class="footer-bottom">
         <div>&copy; 2026 FlexiTap POS. All rights reserved.</div>
-        <div>www.flexitapapp.com</div>
+        <div>www.flexitappapp.com</div>
       </div>
     </div>
   </footer>
@@ -656,8 +638,8 @@
     });
   </script>
   <!-- Unified Elevated Sales & Inquiries Live Chat -->
-  <script src="sales-chat.js?v=20261102" defer></script>
+  <script src="sales-chat.js?v=20261122"></script>
   <!-- Privacy & Tracking Cookie Consent Banner -->
-  <script src="cookie-consent.js?v=20261031" defer></script>
+  <script src="cookie-consent.js"></script>
 </body>
 </html>

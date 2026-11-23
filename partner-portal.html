@@ -3,7 +3,6 @@
 <head>
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
-  <meta name="robots" content="noindex, nofollow">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -16,8 +15,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- Typography -->
-  <link rel="preload" href="fonts/480c062501_tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="fonts.css?v=20261031">
+  <link rel="stylesheet" href="fonts.css">
 
   <style>
     :root {
@@ -659,7 +657,7 @@
             <thead>
               <tr>
                 <th>Store DBA</th>
-                <th>Plan Tier</th>
+                <th>VIP Tier</th>
                 <th>Date</th>
                 <th style="text-align: right;">Status</th>
               </tr>
@@ -902,7 +900,7 @@
   </div>
 
   <!-- Client Tracking & Portal Engine -->
-  <script src="affiliate-tracker.js?v=20261031" defer></script>
+  <script src="affiliate-tracker.js"></script>
   <script>
     const SUPABASE_URL = "https://ezaqdnnecfkmqjdzigrf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE";
@@ -1551,9 +1549,9 @@
       } else {
         refTbody.innerHTML = referrals.map(r => {
           const dStr = r.created_at ? new Date(r.created_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
-          let tierPill = '<span class="badge badge-green">Plus Plan</span>';
+          let tierPill = '<span class="badge badge-green">Plus VIP (₱3k)</span>';
           if (r.plan_tier && r.plan_tier.toLowerCase().includes('pro')) {
-            tierPill = '<span class="badge badge-blue">Pro Plan</span>';
+            tierPill = '<span class="badge badge-blue">Pro VIP (₱6k)</span>';
           } else if (r.plan_tier && r.plan_tier.toLowerCase().includes('free')) {
             tierPill = '<span class="badge" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);">Free Waitlist</span>';
           }

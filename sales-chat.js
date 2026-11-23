@@ -130,13 +130,13 @@
         position: fixed;
         bottom: clamp(20px, 2.5vh, 32px);
         right: clamp(20px, 2.5vw, 32px);
-        width: clamp(56px, 4.2vw, 68px);
-        height: clamp(56px, 4.2vw, 68px);
+        width: clamp(58px, 4.4vw, 68px);
+        height: clamp(58px, 4.4vw, 68px);
         border-radius: 50%;
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-        border: 2px solid rgba(255, 255, 255, 0.22);
+        background: #090d16;
+        border: 2.5px solid rgba(255, 255, 255, 0.45);
         color: #ffffff;
-        box-shadow: 0 10px 32px rgba(37, 99, 235, 0.45), 0 4px 14px rgba(0,0,0,0.35);
+        box-shadow: 0 10px 32px rgba(37, 99, 235, 0.45), 0 6px 18px rgba(0,0,0,0.5);
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -144,25 +144,54 @@
         z-index: 99999;
         transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
         outline: none;
+        padding: 0;
+        overflow: visible;
       }
       #ft-chat-launcher:hover {
         transform: scale(1.08);
-        box-shadow: 0 16px 40px rgba(37, 99, 235, 0.6), 0 6px 18px rgba(0,0,0,0.4);
+        box-shadow: 0 16px 40px rgba(37, 99, 235, 0.6), 0 6px 18px rgba(0,0,0,0.5);
       }
       #ft-chat-launcher:active {
         transform: scale(0.96);
       }
+      .ft-launcher-avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        display: block;
+      }
+      #ft-chat-launcher.ft-open .ft-launcher-avatar {
+        display: none;
+      }
+      #ft-chat-launcher #ft-launcher-icon {
+        display: none;
+        font-size: 26px;
+        line-height: 1;
+        font-weight: 300;
+      }
+      #ft-chat-launcher.ft-open #ft-launcher-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: #1e293b;
+        color: #fff;
+      }
       .ft-launcher-pulse {
         position: absolute;
-        top: 2px;
-        right: 2px;
-        width: 14px;
-        height: 14px;
+        top: 1px;
+        right: 1px;
+        width: 15px;
+        height: 15px;
         border-radius: 50%;
         background: #10b981;
-        border: 2px solid #090d16;
+        border: 2.5px solid #090d16;
         box-shadow: 0 0 10px #10b981;
         animation: ftPulse 2s infinite;
+        z-index: 2;
       }
       @keyframes ftPulse {
         0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
@@ -181,6 +210,136 @@
         border-radius: 10px;
         border: 2px solid #090d16;
         display: none;
+        z-index: 2;
+      }
+
+      /* Proactive Welcome Speech Bubble */
+      #ft-proactive-bubble {
+        position: fixed;
+        bottom: clamp(92px, 10vh, 116px);
+        right: clamp(20px, 2.5vw, 32px);
+        max-width: 330px;
+        width: calc(100vw - 40px);
+        background: rgba(15, 23, 42, 0.96);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 18px;
+        padding: 16px 18px 14px;
+        box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.3);
+        z-index: 99997;
+        cursor: pointer;
+        animation: ftBubbleSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        color: #f8fafc;
+        transform-origin: bottom right;
+      }
+      @keyframes ftBubbleSlideIn {
+        from { opacity: 0; transform: translateY(14px) scale(0.92); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      .ft-bubble-fade-out {
+        opacity: 0 !important;
+        transform: translateY(8px) scale(0.95) !important;
+        transition: opacity 0.22s ease, transform 0.22s ease !important;
+      }
+      .ft-bubble-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      .ft-bubble-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1.5px solid #38bdf8;
+      }
+      .ft-bubble-author-wrap {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .ft-bubble-name {
+        font-size: 12.5px;
+        font-weight: 800;
+        color: #ffffff;
+      }
+      .ft-bubble-badge {
+        font-size: 10px;
+        font-weight: 700;
+        color: #10b981;
+        background: rgba(16, 185, 129, 0.12);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        padding: 2px 7px;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .ft-bubble-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #10b981;
+        box-shadow: 0 0 6px #10b981;
+      }
+      .ft-bubble-close {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        background: none;
+        border: none;
+        color: #94a3b8;
+        font-size: 18px;
+        line-height: 1;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        transition: color 0.15s;
+      }
+      .ft-bubble-close:hover {
+        color: #ffffff;
+      }
+      .ft-bubble-text {
+        font-size: 13.5px;
+        line-height: 1.48;
+        color: #e2e8f0;
+        margin-bottom: 12px;
+      }
+      .ft-bubble-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .ft-bubble-chip {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        color: #f1f5f9;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 6px 11px;
+        border-radius: 9999px;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s, transform 0.15s;
+      }
+      .ft-bubble-chip:hover {
+        background: rgba(56, 189, 248, 0.2);
+        border-color: #38bdf8;
+        color: #ffffff;
+        transform: translateY(-1px);
+      }
+      .ft-bubble-tail {
+        position: absolute;
+        bottom: -7px;
+        right: 28px;
+        width: 14px;
+        height: 14px;
+        background: rgba(15, 23, 42, 0.96);
+        border-right: 1px solid rgba(255, 255, 255, 0.18);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+        transform: rotate(45deg);
       }
 
       /* Chat Window - Fluid Tablet & Desktop Size */
@@ -607,7 +766,8 @@
     launcher.innerHTML = `
       <div class="ft-launcher-pulse" id="ft-launcher-pulse"></div>
       <div class="ft-launcher-badge" id="ft-launcher-badge">1</div>
-      <span id="ft-launcher-icon" style="font-size: 24px; line-height: 1;">💬</span>
+      <img src="chat-specialist.png" alt="Sarah - FlexiTap Solutions Specialist" class="ft-launcher-avatar" />
+      <span id="ft-launcher-icon">&times;</span>
     `;
 
     // Window container
@@ -617,13 +777,13 @@
       <div class="ft-chat-header">
         <div class="ft-header-brand">
           <div class="ft-avatar">
-            ⚡
+            <img src="chat-specialist.png" alt="Sarah - FlexiTap Solutions Specialist" style="width: 100%; height: 100%; border-radius: 9px; object-fit: cover;" />
             <div class="ft-avatar-status"></div>
           </div>
           <div>
-            <div class="ft-header-title">FlexiTap Sales &amp; Inquiries</div>
+            <div class="ft-header-title">Sarah • Solutions Specialist</div>
             <div class="ft-header-sub">
-              <span>●</span> Online • Replies in ~2m
+              <span style="color: #10b981;">●</span> Online • Typically replies instantly
             </div>
           </div>
         </div>
@@ -667,9 +827,9 @@
 
   // Toggle Chat Visibility
   function toggleChat() {
+    dismissProactiveBubble(false);
     state.isOpen = !state.isOpen;
     const win = document.getElementById('ft-chat-window');
-    const icon = document.getElementById('ft-launcher-icon');
     const launcher = document.getElementById('ft-chat-launcher');
     const badge = document.getElementById('ft-launcher-badge');
 
@@ -677,16 +837,12 @@
 
     if (state.isOpen) {
       win.style.display = 'flex';
-      icon.innerHTML = '&times;';
-      icon.style.fontSize = '';
       if (badge) badge.style.display = 'none';
       scrollToBottom();
       const input = document.getElementById('ft-chat-input');
       if (input && window.innerWidth > 640) setTimeout(() => input.focus(), 150);
     } else {
       win.style.display = 'none';
-      icon.innerHTML = '💬';
-      icon.style.fontSize = '';
     }
     persistState();
   }
@@ -729,18 +885,7 @@
       headerHtml = `<div class="ft-msg agent-badge">🛡️ ${safeStaffName}</div>`;
     }
 
-    let contentHtml = '';
-    if (msg.sender === 'bot') {
-      // Bot messages contain trusted interactive UI templates (chips, buttons, links, cards)
-      contentHtml = msg.text;
-    } else if (msg.sender === 'agent') {
-      // Live staff messages: escape HTML and preserve line breaks
-      contentHtml = escapeHtml(msg.text).replace(/\n/g, '<br>');
-    } else {
-      // Visitor user input: sanitize against XSS and preserve line breaks
-      contentHtml = escapeHtml(msg.text).replace(/\n/g, '<br>');
-    }
-
+    const contentHtml = (msg.sender === 'bot') ? msg.text : escapeHtml(msg.text);
     div.innerHTML = `
       ${headerHtml}
       <div class="ft-msg-content">${contentHtml}</div>
@@ -783,20 +928,20 @@
 
     // Default first greeting
     addMessage('bot', `
-      👋 <strong>Welcome to FlexiTap POS!</strong>
-      <br>Our engineering and sales desk is standing by. How can we configure your counter setup today?
+      👋 <strong>Hi! Welcome to FlexiTap.</strong>
+      <br>Are you setting up POS for a cafe, restaurant, or retail store? Let me know if you need help or want to see a live demo!
       <div class="ft-chips-container" style="margin-top: 10px;">
         <button class="ft-chip-btn accent" onclick="window.FlexiTapChat.startLiveChat()">
-          💬 Chat Live with an Engineer
+          💬 Chat Live with Concierge
         </button>
-        <button class="ft-chip-btn" onclick="window.FlexiTapChat.startQualification()">
-          🏢 Find My Setup (Venue / Terminals)
+        <button class="ft-chip-btn" onclick="window.FlexiTapChat.pickVenue('Cafe / Coffee Shop / Bakery')">
+          ☕ Cafe / Bakery Setup
         </button>
-        <button class="ft-chip-btn" onclick="window.FlexiTapChat.showPricingFAQ()">
-          💳 Pricing Plans &amp; 100% Guarantee
+        <button class="ft-chip-btn" onclick="window.FlexiTapChat.pickVenue('Retail Boutique / Grocery Store')">
+          🛍️ Retail Store Setup
         </button>
         <button class="ft-chip-btn" onclick="window.FlexiTapChat.showBookingModal()">
-          📅 Book a 1-on-1 Live Walkthrough
+          📅 Book Live Demo
         </button>
       </div>
     `);
@@ -846,9 +991,9 @@
     }
 
     // 3. Pricing & Founders Pass
-    if (q.includes('price') || q.includes('pricing') || q.includes('cost') || q.includes('fee') || q.includes('rate') || q.includes('plan') || q.includes('annual')) {
+    if (q.includes('price') || q.includes('pricing') || q.includes('cost') || q.includes('fee') || q.includes('rate') || q.includes('vip') || q.includes('annual')) {
       return `
-        <strong>💳 Flexible Monthly &amp; Annual Plans:</strong><br>
+        <strong>💳 Founders VIP Annual Pass:</strong><br>
         • <strong>Plus ($290/yr):</strong> Up to 5 terminals, KDS kitchen screens, customer loyalty &amp; online portal.<br>
         • <strong>Pro ($590/yr):</strong> Unlimited terminals, custom table floor plans, ingredient recipe inventory &amp; 24/7 remote support.<br>
         <em>Includes a 7-day 100% money-back live shift guarantee. Fixed rate for life!</em>
@@ -928,7 +1073,7 @@
     addMessage('visitor', hardware);
 
     const isLarge = state.qualificationData.stations.includes('5+') || state.qualificationData.stations.includes('2-4');
-    const recommendedTier = isLarge ? 'FlexiTap Pro ($49.99/mo or $590/yr)' : 'FlexiTap Plus ($24.99/mo or $290/yr)';
+    const recommendedTier = isLarge ? 'Founders VIP Pro ($590/year)' : 'Founders VIP Plus ($290/year)';
 
     setTimeout(() => {
       addMessage('bot', `
@@ -939,7 +1084,7 @@
         • <strong>Recommended Tier:</strong> <span style="color:#34d399; font-weight:800;">${recommendedTier}</span><br>
         • <strong>Estimated Savings:</strong> ~$1,400/yr vs. Toast / Square terminal subscriptions.
         <div class="ft-chat-card" style="margin-top: 10px;">
-          <div style="font-size: 11.5px; font-weight: 700; color: #93c5fd; margin-bottom: 6px;">📩 Send custom spec &amp; plan offer to your email:</div>
+          <div style="font-size: 11.5px; font-weight: 700; color: #93c5fd; margin-bottom: 6px;">📩 Send custom spec &amp; VIP offer to your email:</div>
           <form onsubmit="window.FlexiTapChat.submitLeadFromCard(event)">
             <input type="text" id="ft-lead-name" class="ft-form-input" placeholder="Your Name / Business Name" required />
             <input type="email" id="ft-lead-email" class="ft-form-input" placeholder="Business Email (owner@venue.com)" required />
@@ -983,7 +1128,7 @@
 
     addMessage('visitor', `My contact details: ${name} (${email}${phone ? ', Tel: ' + phone : ''})`);
     addMessage('bot', `
-      🎉 <strong>Thank you, ${escapeHtml(name)}!</strong>
+      🎉 <strong>Thank you, ${name}!</strong>
       <br>Your configuration is locked in and your inquiry is routed to our live sales &amp; engineering desk.
       <br><br>You can now type any questions directly below — a team member will reply here in real-time!
     `);
@@ -1255,7 +1400,7 @@
   // Show pricing FAQ in chat
   function showPricingFAQ() {
     addMessage('bot', `
-      <strong>💳 Flexible Monthly &amp; Annual Plans:</strong><br>
+      <strong>💳 Founders VIP Annual Pass:</strong><br>
       • <strong>Plus ($290/yr):</strong> Up to 5 terminals, KDS kitchen screens, customer loyalty &amp; online portal.<br>
       • <strong>Pro ($590/yr):</strong> Unlimited terminals, custom table floor plans, ingredient recipe inventory &amp; 24/7 remote standby.<br>
       <em>Includes 7-day 100% money-back live shift guarantee. Fixed for life with zero terminal leasing fees!</em>
@@ -1283,8 +1428,104 @@
       <strong>📅 Schedule a Live 1-on-1 Walkthrough:</strong><br>
       Choose a date and time that fits your schedule, or email our engineering lead directly at <a href="mailto:info@flexitapapp.com" style="color:#60a5fa; font-weight:700;">info@flexitapapp.com</a>.
       <br><br>
-      <a href="/#demo" style="display:inline-block; padding:8px 14px; background:#2563eb; color:#ffffff; border-radius:8px; font-weight:700; text-decoration:none; font-size:12px;">📅 Go to Demo Scheduler</a>
+      <a href="index.html#demo" style="display:inline-block; padding:8px 14px; background:#2563eb; color:#ffffff; border-radius:8px; font-weight:700; text-decoration:none; font-size:12px;">📅 Go to Demo Scheduler</a>
     `);
+  }
+
+  // -------------------------------------------------------------
+  // Proactive Welcome Speech Bubble
+  // -------------------------------------------------------------
+  function scheduleProactiveBubble() {
+    try {
+      if (sessionStorage.getItem('flexitap_chat_bubble_dismissed') === 'true') return;
+      if (localStorage.getItem(STORAGE_KEYS.IS_OPEN) === 'true') return;
+    } catch (e) {}
+
+    setTimeout(() => {
+      if (state.isOpen) return;
+      showProactiveBubble();
+    }, 3500);
+  }
+
+  function showProactiveBubble() {
+    if (document.getElementById('ft-proactive-bubble')) return;
+    if (state.isOpen) return;
+
+    const bubble = document.createElement('div');
+    bubble.id = 'ft-proactive-bubble';
+    bubble.innerHTML = `
+      <button class="ft-bubble-close" id="ft-bubble-close-btn" aria-label="Dismiss message">&times;</button>
+      <div class="ft-bubble-header">
+        <img src="chat-specialist.png" alt="Sarah - FlexiTap Solutions Specialist" class="ft-bubble-avatar" onerror="this.style.display='none'" />
+        <div class="ft-bubble-author-wrap">
+          <span class="ft-bubble-name">Sarah</span>
+          <span class="ft-bubble-badge"><span class="ft-bubble-dot"></span> Live Concierge</span>
+        </div>
+      </div>
+      <div class="ft-bubble-text">
+        👋 Hi! Welcome to FlexiTap. Are you setting up POS for a cafe, restaurant, or retail store? Let me know if you need help or want to see a live demo!
+      </div>
+      <div class="ft-bubble-chips">
+        <button type="button" class="ft-bubble-chip" data-choice="cafe">☕ Cafe / Bakery</button>
+        <button type="button" class="ft-bubble-chip" data-choice="restaurant">🍽️ Restaurant</button>
+        <button type="button" class="ft-bubble-chip" data-choice="retail">🛍️ Retail Store</button>
+        <button type="button" class="ft-bubble-chip" data-choice="demo">📅 Book Demo</button>
+      </div>
+      <div class="ft-bubble-tail"></div>
+    `;
+
+    document.body.appendChild(bubble);
+
+    // Subtle audio chime
+    try {
+      playNotificationChime();
+    } catch (e) {}
+
+    const closeBtn = document.getElementById('ft-bubble-close-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dismissProactiveBubble(true);
+      });
+    }
+
+    bubble.querySelectorAll('.ft-bubble-chip').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const choice = btn.getAttribute('data-choice');
+        dismissProactiveBubble(false);
+        if (!state.isOpen) toggleChat();
+
+        if (choice === 'demo') {
+          showBookingModal();
+        } else {
+          startQualification();
+          setTimeout(() => {
+            if (choice === 'cafe') pickVenue('Cafe / Coffee Shop / Bakery');
+            else if (choice === 'restaurant') pickVenue('Full-Service Restaurant / Diner');
+            else if (choice === 'retail') pickVenue('Retail Boutique / Grocery Store');
+          }, 250);
+        }
+      });
+    });
+
+    bubble.addEventListener('click', (e) => {
+      dismissProactiveBubble(false);
+      if (!state.isOpen) toggleChat();
+    });
+  }
+
+  function dismissProactiveBubble(remember = true) {
+    const bubble = document.getElementById('ft-proactive-bubble');
+    if (bubble) {
+      bubble.classList.add('ft-bubble-fade-out');
+      setTimeout(() => bubble.remove(), 240);
+    }
+    if (remember) {
+      try {
+        sessionStorage.setItem('flexitap_chat_bubble_dismissed', 'true');
+      } catch (e) {}
+    }
   }
 
   // Global API attached to window for HTML onclick callbacks
@@ -1299,6 +1540,7 @@
     submitContactForChat,
     showPricingFAQ,
     showBookingModal,
+    dismissProactiveBubble,
     reset: resetConversation
   };
 
@@ -1322,6 +1564,8 @@
         icon.innerHTML = '&times;';
         icon.style.fontSize = '';
       }
+    } else {
+      scheduleProactiveBubble();
     }
 
     // If an existing session was saved, reconnect Realtime

@@ -24,7 +24,7 @@
 
 ## Pricing & Licensing
 - **Free Community Plan**: $0/month forever. 1 active terminal, full local SQLite offline capability, receipt printing, and basic reporting.
-- **FlexiTap Pro Annual Plan**: $590/year (or flexible $49.99/mo). Free community tier ($0/mo) and Plus plan ($24.99/mo or $290/yr) also available. Unlimited paired terminals, multi-station KDS routing, customer display (CDS), remote diagnostics, and multi-location cloud synchronization.
+- **Founders VIP Annual Pass**: $590/year (or custom retail tier upon public launch Nov 13, 2026). Unlimited paired terminals, multi-station KDS routing, customer display (CDS), remote diagnostics, and multi-location cloud synchronization.
 - **Zero Hidden Terminal Fees**: No recurring per-terminal software leases or forced merchant processing contracts.
 
 ## Technical Architecture & Benchmarks
