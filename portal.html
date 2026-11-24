@@ -260,7 +260,7 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
     /* Support floating button & AI + Live Support Panel */
-    #merchant-chat-btn { position: fixed; bottom: 22px; right: 24px; background: #16a34a; color: white; border: none; border-radius: 9999px; padding: 12px 22px; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 9px; cursor: pointer; box-shadow: 0 12px 28px rgba(0,0,0,0.28); z-index: 990; transition: transform 0.2s, background 0.2s; }
+    #merchant-chat-btn { position: fixed; bottom: 22px; right: 24px; background: #16a34a; color: white; border: none; border-radius: 9999px; padding: 12px 22px; font-weight: 700; font-size: 14px; display: none; align-items: center; gap: 9px; cursor: pointer; box-shadow: 0 12px 28px rgba(0,0,0,0.28); z-index: 990; transition: transform 0.2s, background 0.2s; }
     #merchant-chat-btn:hover { transform: scale(1.04); background: #15803d; }
     #merchant-chat-panel {
       display: none;
@@ -5178,9 +5178,13 @@
       const loginView = document.getElementById('login-view');
       const appLayout = document.getElementById('app-layout');
       const gateView = document.getElementById('free-gate-view');
+      const chatBtn = document.getElementById('merchant-chat-btn');
+      const chatPanel = document.getElementById('merchant-chat-panel');
       if (loginView) loginView.style.display = 'none';
       if (appLayout) appLayout.style.display = 'none';
       if (gateView) gateView.style.display = 'none';
+      if (chatBtn) chatBtn.style.display = 'none';
+      if (chatPanel) chatPanel.style.display = 'none';
 
       let isStaff = false;
 
@@ -5321,6 +5325,8 @@
         if (!isStaff && !window.isDevInspectionMode && (!isPaidTier || tierLower === 'free' || tierLower.includes('free'))) {
           if (appLayout) appLayout.style.display = 'none';
           if (loginView) loginView.style.display = 'none';
+          if (chatBtn) chatBtn.style.display = 'none';
+          if (chatPanel) chatPanel.style.display = 'none';
           const gate = document.getElementById('free-gate-view');
           if (gate) {
             gate.style.display = 'flex';
@@ -5330,10 +5336,11 @@
           return; // Strictly stop here: Free tier accounts do not enter Back Office
         }
 
-        // Authenticated Plus/Pro/Staff: Reveal Cloud Back Office Layout
+        // Authenticated Plus/Pro/Staff: Reveal Cloud Back Office Layout & Support Assistant
         if (appLayout) appLayout.style.display = 'flex';
         if (gateView) gateView.style.display = 'none';
         if (loginView) loginView.style.display = 'none';
+        if (chatBtn) chatBtn.style.display = 'flex';
 
         const storeTierEl = document.getElementById('store-tier-display');
         if (storeTierEl) storeTierEl.innerText = tier.toUpperCase() + ' EDITION';
@@ -5372,6 +5379,10 @@
         if (!isStaff && !window.isDevInspectionMode) {
           if (appLayout) appLayout.style.display = 'none';
           if (loginView) loginView.style.display = 'none';
+          const chatBtn = document.getElementById('merchant-chat-btn');
+          const chatPanel = document.getElementById('merchant-chat-panel');
+          if (chatBtn) chatBtn.style.display = 'none';
+          if (chatPanel) chatPanel.style.display = 'none';
           const gate = document.getElementById('free-gate-view');
           if (gate) {
             gate.style.display = 'flex';
@@ -6090,12 +6101,16 @@
       const appLayout = document.getElementById('app-layout');
       const gate = document.getElementById('free-gate-view');
       const loginView = document.getElementById('login-view');
+      const chatBtn = document.getElementById('merchant-chat-btn');
+      const chatPanel = document.getElementById('merchant-chat-panel');
       const pw = document.getElementById('p-password');
       const btn = document.getElementById('p-btn');
       const err = document.getElementById('p-err');
 
       if (appLayout) appLayout.style.display = 'none';
       if (gate) gate.style.display = 'none';
+      if (chatBtn) chatBtn.style.display = 'none';
+      if (chatPanel) chatPanel.style.display = 'none';
       if (pw) pw.value = '';
       if (btn) {
         btn.innerText = 'Sign In to Reports';
@@ -6205,8 +6220,12 @@
           const appLayout = document.getElementById('app-layout');
           const gate = document.getElementById('free-gate-view');
           const loginView = document.getElementById('login-view');
+          const chatBtn = document.getElementById('merchant-chat-btn');
+          const chatPanel = document.getElementById('merchant-chat-panel');
           if (appLayout) appLayout.style.display = 'none';
           if (gate) gate.style.display = 'none';
+          if (chatBtn) chatBtn.style.display = 'none';
+          if (chatPanel) chatPanel.style.display = 'none';
           if (loginView) loginView.style.display = 'flex';
         }
       } catch (err) {
@@ -6539,9 +6558,13 @@
         const loginView = document.getElementById('login-view');
         const appLayout = document.getElementById('app-layout');
         const gate = document.getElementById('free-gate-view');
+        const chatBtn = document.getElementById('merchant-chat-btn');
+        const chatPanel = document.getElementById('merchant-chat-panel');
         if (loginView) loginView.style.display = 'flex';
         if (appLayout) appLayout.style.display = 'none';
         if (gate) gate.style.display = 'none';
+        if (chatBtn) chatBtn.style.display = 'none';
+        if (chatPanel) chatPanel.style.display = 'none';
       }
     });
 
