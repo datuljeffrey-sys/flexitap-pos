@@ -4192,43 +4192,61 @@
       }, 15000);
     }
 
-    async function checkDevSession() {
-      if (window.location.hash && window.location.hash.includes('type=recovery')) {
-        const modal = document.getElementById('dev-new-password-modal');
-        if (modal) modal.style.display = 'flex';
-      }
-
-      const authResponse = await supabaseClient.auth.getSession();
-      const session = authResponse.data.session;
-      
-      const is2FaVerified = sessionStorage.getItem('ft_dev_2fa_verified') === 'true';
-      const verifiedAt = parseInt(sessionStorage.getItem('ft_dev_auth_verified_at') || '0', 10);
-      const lastActivity = parseInt(sessionStorage.getItem('ft_dev_last_activity') || '0', 10);
-      const now = Date.now();
-
-      if (session && session.user) {
-        // Enforce OWASP security: Must have completed 2FA in this browser session and be within timeout limits
-        if (!is2FaVerified || !verifiedAt || !lastActivity) {
-          await devLogout('🛡️ Security Notice: Active 2FA session expired. Please sign in with email verification.');
-          return;
-        }
-
-        if (now - lastActivity > DEV_IDLE_TIMEOUT_MS) {
-          await devLogout('🛡️ Security Timeout: Session expired due to 30 minutes of inactivity. Please sign in with 2FA.');
-          return;
-        }
-
-        if (now - verifiedAt > DEV_MAX_SESSION_MS) {
-          await devLogout('🛡️ Security Notice: Maximum active session limit (2 hours) reached. Please re-authenticate.');
-          return;
-        }
-
-        sessionStorage.setItem('ft_dev_last_activity', now.toString());
-        await verifyDevRole(session.user);
-        startDevSessionWatchdog();
-      } else {
-        await devLogout();
-      }
+    async function checkDevSession() {
+      // 1. Password Recovery / Invitation Flow Gate: Keep recovery session alive!
+      const hasRecoveryHash = window.location.hash && (window.location.hash.includes('type=recovery') || window.location.hash.includes('access_token'));
+      const hasRecoveryQuery = window.location.search && (window.location.search.includes('type=recovery') || window.location.search.includes('code='));
+
+      if (hasRecoveryHash || hasRecoveryQuery || window.__isPasswordRecoveryActive) {
+        if (window.location.search && window.location.search.includes('code=')) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const authCode = urlParams.get('code');
+          if (authCode) {
+            try {
+              await supabaseClient.auth.exchangeCodeForSession(authCode);
+            } catch (pkceErr) {
+              console.warn('PKCE exchange notice:', pkceErr);
+            }
+          }
+        }
+        window.__isPasswordRecoveryActive = true;
+        const modal = document.getElementById('dev-new-password-modal');
+        if (modal) modal.style.display = 'flex';
+        // CRITICAL: Exit immediately to preserve recovery session and prevent devLogout() from destroying it!
+        return;
+      }
+
+      const authResponse = await supabaseClient.auth.getSession();
+      const session = authResponse?.data?.session;
+
+      const is2FaVerified = sessionStorage.getItem('ft_dev_2fa_verified') === 'true';
+      const verifiedAt = parseInt(sessionStorage.getItem('ft_dev_auth_verified_at') || '0', 10);
+      const lastActivity = parseInt(sessionStorage.getItem('ft_dev_last_activity') || '0', 10);
+      const now = Date.now();
+
+      if (session && session.user) {
+        // Enforce OWASP security: Must have completed 2FA in this browser session and be within timeout limits
+        if (!is2FaVerified || !verifiedAt || !lastActivity) {
+          await devLogout('🛡️ Security Notice: Active 2FA session expired. Please sign in with email verification.');
+          return;
+        }
+
+        if (now - lastActivity > DEV_IDLE_TIMEOUT_MS) {
+          await devLogout('🛡️ Security Timeout: Session expired due to 30 minutes of inactivity. Please sign in with 2FA.');
+          return;
+        }
+
+        if (now - verifiedAt > DEV_MAX_SESSION_MS) {
+          await devLogout('🛡️ Security Notice: Maximum active session limit (2 hours) reached. Please re-authenticate.');
+          return;
+        }
+
+        sessionStorage.setItem('ft_dev_last_activity', now.toString());
+        await verifyDevRole(session.user);
+        startDevSessionWatchdog();
+      } else {
+        await devLogout();
+      }
     }
 
     async function verifyDevRole(user) {
@@ -4789,46 +4807,73 @@
       }
     }
 
-    async function handleDevUpdatePassword(e) {
-      e.preventDefault();
-      const pw1 = document.getElementById('dev-new-password').value;
-      const pw2 = document.getElementById('dev-confirm-password').value;
-      const btn = document.getElementById('dev-new-pw-btn');
-      const msg = document.getElementById('dev-new-pw-msg');
-
-      if (pw1 !== pw2) {
-        msg.style.color = '#ef4444';
-        msg.innerText = 'Passwords do not match.';
-        return;
-      }
-      btn.disabled = true;
-      btn.innerText = 'Saving password...';
-      msg.innerText = '';
-
-      try {
-        const { error } = await supabaseClient.auth.updateUser({ password: pw1 });
-        if (error) throw error;
-        msg.style.color = '#34d399';
-        msg.innerText = '✓ Password updated successfully! Accessing Staff Ops...';
-        setTimeout(async () => {
-          document.getElementById('dev-new-password-modal').style.display = 'none';
-          const { data } = await supabaseClient.auth.getUser();
-          if (data && data.user) {
-            verifyDevRole(data.user);
-          }
-        }, 1200);
-      } catch (err) {
-        msg.style.color = '#ef4444';
-        msg.innerText = err.message || 'Failed to update password.';
-        btn.disabled = false;
-        btn.innerText = 'Save New Password & Authenticate';
-      }
+    async function handleDevUpdatePassword(e) {
+      e.preventDefault();
+      const pw1 = document.getElementById('dev-new-password').value;
+      const pw2 = document.getElementById('dev-confirm-password').value;
+      const btn = document.getElementById('dev-new-pw-btn');
+      const msg = document.getElementById('dev-new-pw-msg');
+
+      if (pw1 !== pw2) {
+        msg.style.color = '#ef4444';
+        msg.innerText = 'Passwords do not match.';
+        return;
+      }
+      if (pw1.length < 8) {
+        msg.style.color = '#ef4444';
+        msg.innerText = 'Password must be at least 8 characters long.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = 'Saving password...';
+      msg.innerText = '';
+
+      try {
+        const { data: sessData } = await supabaseClient.auth.getSession();
+        if (!sessData?.session) {
+          throw new Error('Your reset link has expired or session is invalid. Please request a new recovery link.');
+        }
+
+        const { error } = await supabaseClient.auth.updateUser({ password: pw1 });
+        if (error) throw error;
+
+        msg.style.color = '#34d399';
+        msg.innerText = '✓ Password updated successfully! Accessing Staff Ops...';
+
+        window.__isPasswordRecoveryActive = false;
+        sessionStorage.setItem('ft_dev_2fa_verified', 'true');
+        sessionStorage.setItem('ft_dev_auth_verified_at', Date.now().toString());
+        sessionStorage.setItem('ft_dev_last_activity', Date.now().toString());
+
+        if (window.location.hash || window.location.search) {
+          const cleanUrl = window.location.pathname;
+          window.history.replaceState({}, document.title, cleanUrl);
+        }
+
+        setTimeout(async () => {
+          document.getElementById('dev-new-password-modal').style.display = 'none';
+          const { data: userData } = await supabaseClient.auth.getUser();
+          if (userData && userData.user) {
+            verifyDevRole(userData.user);
+          } else {
+            window.location.reload();
+          }
+        }, 1200);
+      } catch (err) {
+        msg.style.color = '#ef4444';
+        msg.innerText = err.message || 'Failed to update password.';
+        btn.disabled = false;
+        btn.innerText = 'Save New Password & Authenticate';
+      }
     }
 
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        const modal = document.getElementById('dev-new-password-modal');
-        if (modal) modal.style.display = 'flex';
+      if (event === 'PASSWORD_RECOVERY') {
+        window.__isPasswordRecoveryActive = true;
+        const modal = document.getElementById('dev-new-password-modal');
+        if (modal) modal.style.display = 'flex';
+        return;
       } else if (session?.user) {
         if (window.location.hash && window.location.hash.includes('access_token')) {
           const cleanUrl = window.location.pathname + window.location.search;
@@ -10388,120 +10433,126 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
       }
     }
 
-    async function handleCreateStaffSubmit(e) {
-      e.preventDefault();
-      const submitBtn = document.getElementById('btn-submit-staff-add');
-      const originalText = submitBtn.textContent;
-      submitBtn.textContent = 'Provisioning Staff...';
-      submitBtn.disabled = true;
-
-      const fullName = document.getElementById('add-staff-name').value.trim();
-      const email = document.getElementById('add-staff-email').value.trim().toLowerCase();
-      const department = document.getElementById('add-staff-dept').value;
-      const roleTitle = document.getElementById('add-staff-title').value.trim() || 'Team Specialist';
-      const role = document.getElementById('add-staff-role').value;
-      const password = document.getElementById('add-staff-password').value;
-
-      const permissions = {
-        clients: document.getElementById('perm-clients').checked,
-        tickets: document.getElementById('perm-tickets').checked,
-        support: document.getElementById('perm-support').checked,
-        remote: document.getElementById('perm-remote').checked,
-        updates: document.getElementById('perm-updates').checked,
-        monitoring: document.getElementById('perm-monitoring').checked,
-        errors: document.getElementById('perm-errors').checked,
-        analytics: document.getElementById('perm-analytics').checked,
-        team: document.getElementById('perm-team').checked
-      };
-
-      const newId = 'staff-' + Date.now();
-
-      // 1. Attempt Supabase Auth creation
-      try {
-        await supabaseClient.auth.signUp({
-          email: email,
-          password: password,
-          options: {
-            data: {
-              full_name: fullName,
-              role: role,
-              department: department,
-              role_title: roleTitle
-            }
-          }
-        });
-      } catch (authErr) {
-        console.warn('Supabase auth.signUp note:', authErr);
-      }
-
-      // 2. Upsert profile in Supabase
-      try {
-        await supabaseClient.from('profiles').upsert([
-          {
-            email: email,
-            full_name: fullName,
-            role: role,
-            business_category: 'dev_staff',
-            subscription_tier: 'pro'
-          }
-        ]);
-      } catch (dbErr) {
-        console.warn('Supabase profile upsert note:', dbErr);
-      }
-
-      // 3. Persist into local staff list
-      let localStaff = [];
-      try {
-        const saved = localStorage.getItem('flexitap_staff_team_members');
-        if (saved) localStaff = JSON.parse(saved);
-      } catch (err) {}
-
-      const newMember = {
-        id: newId,
-        full_name: fullName,
-        email: email,
-        department: department,
-        role_title: roleTitle,
-        role: role,
-        status: 'active',
-        clock_status: 'clocked_out',
-        shift_time: 'Ready for assignment',
-        current_assignment: department,
-        permissions: permissions
-      };
-
-      localStaff.unshift(newMember);
-      localStorage.setItem('flexitap_staff_team_members', JSON.stringify(localStaff));
-
-      // Clear from deleted blacklist if previously removed
-      try {
-        let deletedEmails = JSON.parse(localStorage.getItem('flexitap_deleted_staff_emails') || '[]');
-        deletedEmails = deletedEmails.filter(e => e !== email);
-        localStorage.setItem('flexitap_deleted_staff_emails', JSON.stringify(deletedEmails));
-      } catch (e) {}
-
-      submitBtn.textContent = originalText;
-      submitBtn.disabled = false;
-      closeAddStaffModal();
-
-      // Dispatch Staff Welcome Invitation Email
-      sendStaffWelcomeEmail({
-        fullName: fullName,
-        email: email,
-        role: role,
-        department: department,
-        roleTitle: roleTitle
-      });
-
-      lastProvisionedCreds = {
-        name: fullName,
-        email: email,
-        role: getStaffRoleBadgeHtml(role).replace(/<[^>]+>/g, ''),
-        password: password
-      };
-      openStaffCredsModal(lastProvisionedCreds);
-
-      loadTeamData();
+    async function handleCreateStaffSubmit(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('btn-submit-staff-add');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Provisioning & Sending Setup Email...';
+      submitBtn.disabled = true;
+
+      const fullName = document.getElementById('add-staff-name').value.trim();
+      const email = document.getElementById('add-staff-email').value.trim().toLowerCase();
+      const department = document.getElementById('add-staff-dept').value;
+      const roleTitle = document.getElementById('add-staff-title').value.trim() || 'Team Specialist';
+      const role = document.getElementById('add-staff-role').value;
+
+      const permissions = {
+        clients: document.getElementById('perm-clients').checked,
+        tickets: document.getElementById('perm-tickets').checked,
+        support: document.getElementById('perm-support').checked,
+        remote: document.getElementById('perm-remote').checked,
+        updates: document.getElementById('perm-updates').checked,
+        monitoring: document.getElementById('perm-monitoring').checked,
+        errors: document.getElementById('perm-errors').checked,
+        analytics: document.getElementById('perm-analytics').checked,
+        team: document.getElementById('perm-team').checked
+      };
+
+      const newId = 'staff-' + Date.now();
+      const redirectUrl = 'https://flexitapapp.com/dev-portal.html';
+
+      // 1. Send password setup & invitation email via Supabase Auth
+      try {
+        const { error: resetErr } = await supabaseClient.auth.resetPasswordForEmail(email, {
+          redirectTo: redirectUrl
+        });
+
+        if (resetErr) {
+          // If user does not exist in Auth yet, register them and dispatch setup link
+          const tempSecret = 'FXT-' + Math.random().toString(36).slice(-8) + '!@';
+          const { error: signErr } = await supabaseClient.auth.signUp({
+            email: email,
+            password: tempSecret,
+            options: {
+              data: { full_name: fullName, role: role, department: department, role_title: roleTitle }
+            }
+          });
+          if (!signErr) {
+            await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: redirectUrl });
+          }
+        }
+      } catch (authErr) {
+        console.warn('Supabase auth invite note:', authErr);
+      }
+
+      // 2. Upsert profile in Supabase
+      try {
+        await supabaseClient.from('profiles').upsert([
+          {
+            email: email,
+            full_name: fullName,
+            role: role,
+            business_category: 'dev_staff',
+            subscription_tier: 'pro'
+          }
+        ]);
+      } catch (dbErr) {
+        console.warn('Supabase profile upsert note:', dbErr);
+      }
+
+      // 3. Persist into local staff list
+      let localStaff = [];
+      try {
+        const saved = localStorage.getItem('flexitap_staff_team_members');
+        if (saved) localStaff = JSON.parse(saved);
+      } catch (err) {}
+
+      const newMember = {
+        id: newId,
+        full_name: fullName,
+        email: email,
+        department: department,
+        role_title: roleTitle,
+        role: role,
+        status: 'active',
+        clock_status: 'clocked_out',
+        shift_time: 'Ready for assignment',
+        current_assignment: department,
+        permissions: permissions
+      };
+
+      localStaff.unshift(newMember);
+      localStorage.setItem('flexitap_staff_team_members', JSON.stringify(localStaff));
+
+      // Clear from deleted blacklist if previously removed
+      try {
+        let deletedEmails = JSON.parse(localStorage.getItem('flexitap_deleted_staff_emails') || '[]');
+        deletedEmails = deletedEmails.filter(e => e !== email);
+        localStorage.setItem('flexitap_deleted_staff_emails', JSON.stringify(deletedEmails));
+      } catch (e) {}
+
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+      closeAddStaffModal();
+
+      // Dispatch Staff Welcome Invitation Email
+      sendStaffWelcomeEmail({
+        fullName: fullName,
+        email: email,
+        role: role,
+        department: department,
+        roleTitle: roleTitle
+      });
+
+      lastProvisionedCreds = {
+        name: fullName,
+        email: email,
+        role: (typeof getStaffRoleBadgeHtml === 'function' ? getStaffRoleBadgeHtml(role) : role).replace(/<[^>]+>/g, ''),
+        password: '✉️ Password setup link sent to email'
+      };
+      openStaffCredsModal(lastProvisionedCreds);
+
+      loadTeamData();
     }
 
     function openEditStaffModal(staffId) {
@@ -10725,12 +10776,13 @@ Reassigned to Support: ${supportStaff.staff_name} (${supportStaff.email})`;
 
     function copyStaffCredsToClipboard() {
       if (!lastProvisionedCreds) return;
-      const text = `FlexiTap Dev & Ops Portal Access:
-URL: ${window.location.origin + window.location.pathname}
-Email: ${lastProvisionedCreds.email}
-Password: ${lastProvisionedCreds.password}
-Role: ${lastProvisionedCreds.role}`;
-
+      const text = `FlexiTap Dev & Ops Portal Access Invitation:
+
+URL: ${window.location.origin + window.location.pathname}
+Email: ${lastProvisionedCreds.email}
+Role: ${lastProvisionedCreds.role}
+Password Setup: ${lastProvisionedCreds.password}`;
+
       navigator.clipboard.writeText(text).then(() => {
         alert('Login credentials copied to clipboard!');
       }).catch(() => {
@@ -15800,14 +15852,17 @@ Role: ${lastProvisionedCreds.role}`;
           </div>
         </div>
 
-        <!-- Temporary Password -->
-        <div class="crm-form-group" style="margin-bottom: 20px;">
-          <label>Initial Temporary Password *</label>
-          <div style="display: flex; gap: 8px;">
-            <input type="text" id="add-staff-password" class="crm-input" style="font-family: monospace;" required />
-            <button type="button" class="action-btn" onclick="generateRandomStaffPassword()" style="white-space: nowrap; padding: 0 14px;">🎲 Generate</button>
-          </div>
-          <span style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Staff member will use this password to sign into the Dev Portal.</span>
+        <!-- Automated Password Setup via Email -->
+        <div class="crm-form-group" style="margin-bottom: 20px; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 10px; padding: 12px 14px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.3rem;">✉️</span>
+            <div>
+              <div style="font-weight: 700; color: #93c5fd; font-size: 0.88rem;">Automated Email Setup (Zero-Trust Standard)</div>
+              <div style="font-size: 0.74rem; color: #cbd5e1; margin-top: 2px;">
+                An official setup link will be automatically emailed to this address so the staff member can choose their own secure password upon first login.
+              </div>
+            </div>
+          </div>
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--card-border); padding-top: 14px;">
@@ -15951,7 +16006,7 @@ Role: ${lastProvisionedCreds.role}`;
           <div id="creds-role" style="font-size: 0.92rem; font-weight: 700; color: #a78bfa;">-</div>
         </div>
         <div>
-          <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">TEMPORARY PASSWORD</span>
+          <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">PASSWORD STATUS</span>
           <div id="creds-password" style="font-size: 1.05rem; font-weight: 800; color: #34d399; font-family: monospace;">-</div>
         </div>
       </div>
