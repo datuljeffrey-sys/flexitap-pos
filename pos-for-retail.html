@@ -1315,6 +1315,10 @@
         if (!supabaseClient) throw new Error('Authentication client unavailable.');
         const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        const now = Date.now().toString();
+        sessionStorage.setItem('ft_p_2fa_verified', 'true');
+        sessionStorage.setItem('ft_p_auth_verified_at', now);
+        sessionStorage.setItem('ft_p_last_activity', now);
         window.location.href = 'portal.html';
       } catch (e) {
         if (err) err.innerText = e.message || 'Login failed. Please verify credentials.';

@@ -1449,6 +1449,44 @@
   </div>
 
   <script>
+    const SUPABASE_URL = 'https://ezaqdnnecfkmqjdzigrf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXFkbm5lY2ZrbXFqZHppZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTE0NDEsImV4cCI6MjA5Mjk2NzQ0MX0.QoJryCMZwf_haqFZVr4LGaJqQR0Ux7yMyzvr2xLiJQE';
+    let supabaseClient;
+
+    document.addEventListener("DOMContentLoaded", function() {
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    });
+
+    async function handleStoreLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorDiv = document.getElementById('login-error');
+      const btnText = document.getElementById('login-submit-btn');
+
+      if (errorDiv) errorDiv.innerText = '';
+      if (btnText) btnText.innerText = 'Verifying credentials...';
+
+      try {
+        if (!supabaseClient) supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+
+        const now = Date.now().toString();
+        sessionStorage.setItem('ft_p_2fa_verified', 'true');
+        sessionStorage.setItem('ft_p_auth_verified_at', now);
+        sessionStorage.setItem('ft_p_last_activity', now);
+
+        if (btnText) btnText.innerText = 'Entering portal...';
+        closeModal('login-modal');
+        window.location.href = 'portal.html';
+      } catch (err) {
+        if (errorDiv) errorDiv.innerText = err.message || 'Login failed. Please check your credentials.';
+      } finally {
+        if (btnText) btnText.innerText = 'Sign In to Dashboard';
+      }
+    }
+
     // Navigation toggle
     
         function toggleDropdown(e) {

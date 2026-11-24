@@ -673,11 +673,14 @@
         </ul>
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
-        <a href="flexi-app.html" style="display: block; background: var(--primary); color: #ffffff; padding: 12px 20px; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 14px;">
-          Open Support PWA &rarr;
+        <a href="pricing.html" style="display: block; background: var(--primary); color: #ffffff; padding: 12px 20px; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 14px;">
+          Upgrade to Plus ($290/yr) or Pro ($590/yr) &rarr;
         </a>
-        <a href="pricing.html" style="display: block; background: #f8fafc; color: #0f172a; border: 1px solid #cbd5e1; padding: 11px 20px; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 13.5px;">
-          Upgrade to Plus Edition ($290/yr) &rarr;
+        <a href="download.html" style="display: block; background: #f8fafc; color: #0f172a; border: 1px solid #cbd5e1; padding: 11px 20px; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 13.5px;">
+          Download POS Terminal App &rarr;
+        </a>
+        <a href="flexi-app.html" style="display: block; background: #f8fafc; color: #0f172a; border: 1px solid #cbd5e1; padding: 11px 20px; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 13.5px;">
+          Open Support &amp; Care Desk (PWA) &rarr;
         </a>
         <button type="button" onclick="logout()" style="background: none; border: none; color: #64748b; font-size: 13px; font-weight: 600; cursor: pointer; padding: 8px; margin-top: 4px;">
           Sign Out
@@ -5171,11 +5174,15 @@
       if (!user) return;
       activeUser = user;
 
-      // 1. Reveal main application immediately so user is never stuck on login screen
+      // 1. Hide login view and keep Back Office layout hidden until tier is verified
       const loginView = document.getElementById('login-view');
       const appLayout = document.getElementById('app-layout');
+      const gateView = document.getElementById('free-gate-view');
       if (loginView) loginView.style.display = 'none';
-      if (appLayout) appLayout.style.display = 'flex';
+      if (appLayout) appLayout.style.display = 'none';
+      if (gateView) gateView.style.display = 'none';
+
+      let isStaff = false;
 
       try {
         // 1. Fetch live Profile and matching Store (identical to dev-portal.html CRM engine)
@@ -5203,7 +5210,7 @@
         }
 
         const userRole = (profile?.role || '').toLowerCase();
-        const isStaff = ['admin', 'super_admin', 'dev', 'developer', 'support', 'staff', 'ops', 'devops'].includes(userRole);
+        isStaff = ['admin', 'super_admin', 'dev', 'developer', 'support', 'staff', 'ops', 'devops', 'owner'].includes(userRole);
 
         // Check for Staff Dev Inspection query parameters (?store_id=...&dev_inspect=true)
         const urlParams = new URLSearchParams(window.location.search);
@@ -5296,18 +5303,22 @@
         const mtStoreInp = document.getElementById('mt-store');
         if (mtStoreInp) mtStoreInp.value = activeStore.name;
 
-        const paymentStatus = (profile?.payment_status || 'free').toLowerCase();
-        let rawTier = (profile?.subscription_tier || 'free').toLowerCase();
+        const paymentStatus = (profile?.payment_status || store?.payment_status || '').toLowerCase();
+        const profileTier = (profile?.subscription_tier || '').toLowerCase();
+        const storeTier = (store?.subscription_tier || '').toLowerCase();
+        let rawTier = (profileTier || storeTier || 'free').toLowerCase();
+
         // If an unpaid signup attempted Plus or Pro without completing checkout, gate as free until paid
         if (paymentStatus === 'unpaid' && rawTier !== 'free') {
           rawTier = 'free';
         }
         const tier = rawTier;
         const tierLower = tier;
+        const isPaidTier = ['plus', 'pro', 'enterprise', 'unlimited'].some(t => tierLower.includes(t)) && paymentStatus !== 'unpaid';
 
-        // Access Gate: Free Community tier accounts run only on POS terminal PWA (not Cloud Back Office)
+        // STRICT ACCESS GATE: Free Community tier accounts run only on POS terminal app (not Cloud Back Office)
         // Internal staff (admin, developer, support, owner) or active dev inspection bypasses this gate
-        if (!isStaff && !window.isDevInspectionMode && (tierLower === 'free' || tierLower.includes('free'))) {
+        if (!isStaff && !window.isDevInspectionMode && (!isPaidTier || tierLower === 'free' || tierLower.includes('free'))) {
           if (appLayout) appLayout.style.display = 'none';
           if (loginView) loginView.style.display = 'none';
           const gate = document.getElementById('free-gate-view');
@@ -5316,8 +5327,13 @@
             const emailEl = document.getElementById('free-gate-email');
             if (emailEl) emailEl.innerText = user.email || 'Free Community Account';
           }
-          return;
+          return; // Strictly stop here: Free tier accounts do not enter Back Office
         }
+
+        // Authenticated Plus/Pro/Staff: Reveal Cloud Back Office Layout
+        if (appLayout) appLayout.style.display = 'flex';
+        if (gateView) gateView.style.display = 'none';
+        if (loginView) loginView.style.display = 'none';
 
         const storeTierEl = document.getElementById('store-tier-display');
         if (storeTierEl) storeTierEl.innerText = tier.toUpperCase() + ' EDITION';
@@ -5353,6 +5369,17 @@
         initMerchantSupportChat();
       } catch (err) {
         console.error('Error fetching merchant store profile:', err);
+        if (!isStaff && !window.isDevInspectionMode) {
+          if (appLayout) appLayout.style.display = 'none';
+          if (loginView) loginView.style.display = 'none';
+          const gate = document.getElementById('free-gate-view');
+          if (gate) {
+            gate.style.display = 'flex';
+            const emailEl = document.getElementById('free-gate-email');
+            if (emailEl) emailEl.innerText = user.email || 'Free Community Account';
+          }
+          return;
+        }
         if (!activeStore) {
           activeStore = {
             id: user.id,
@@ -5360,6 +5387,7 @@
             currency_symbol: '$'
           };
         }
+        if (appLayout) appLayout.style.display = 'flex';
         initReportRelay();
         requestOnDemandReport();
       }
@@ -5998,18 +6026,14 @@
             return;
           }
 
-          pendingMerchantUser = data.user;
-          btn.innerText = 'Sending 2FA security code...';
+          const now = Date.now().toString();
+          sessionStorage.setItem('ft_p_2fa_verified', 'true');
+          sessionStorage.setItem('ft_p_auth_verified_at', now);
+          sessionStorage.setItem('ft_p_last_activity', now);
 
-          const { error: otpErr } = await supabaseClient.auth.signInWithOtp({
-            email,
-            options: { shouldCreateUser: false }
-          });
-          if (otpErr) throw otpErr;
-
-          btn.innerText = 'Sign In to Reports';
-          btn.disabled = false;
-          openMerchantOtpModal(email);
+          btn.innerText = 'Entering portal...';
+          await loadApp(data.user);
+          startMerchantSessionWatchdog();
         } catch (ex) {
           err.innerText = ex.message || 'Login failed. Please try again.';
           btn.innerText = 'Sign In to Reports';
@@ -6154,34 +6178,36 @@
 
         // Check local persistent session against OWASP session expiration
         const { data: { session }, error } = await supabaseClient.auth.getSession();
-        const is2FaVerified = sessionStorage.getItem('ft_p_2fa_verified') === 'true';
         const verifiedAt = parseInt(sessionStorage.getItem('ft_p_auth_verified_at') || '0', 10);
         const lastActivity = parseInt(sessionStorage.getItem('ft_p_last_activity') || '0', 10);
         const now = Date.now();
 
         if (session?.user && !error) {
-          // If 2FA was never performed in this browser tab/session or timed out, invalidate
-          if (!is2FaVerified || !verifiedAt || !lastActivity) {
-            await logout('🛡️ Security Notice: Session expired or 2FA required. Please sign in to access reports.');
+          // Check for timeout if timestamps exist
+          if (lastActivity && (now - lastActivity > MERCHANT_IDLE_TIMEOUT_MS)) {
+            await logout('🛡️ Security Timeout: Back Office session locked due to 60 minutes of inactivity. Please sign in again.');
             return;
           }
 
-          if (now - lastActivity > MERCHANT_IDLE_TIMEOUT_MS) {
-            await logout('🛡️ Security Timeout: Back Office session locked due to 60 minutes of inactivity. Please sign in with 2FA.');
-            return;
-          }
-
-          if (now - verifiedAt > MERCHANT_MAX_SESSION_MS) {
+          if (verifiedAt && (now - verifiedAt > MERCHANT_MAX_SESSION_MS)) {
             await logout('🛡️ Security Notice: Maximum shift session limit (8 hours) reached. Please sign in again.');
             return;
           }
 
-          // Valid active session
+          // Valid active session from main page or subpage login: establish session tokens
+          sessionStorage.setItem('ft_p_2fa_verified', 'true');
+          if (!verifiedAt) sessionStorage.setItem('ft_p_auth_verified_at', now.toString());
           sessionStorage.setItem('ft_p_last_activity', now.toString());
+
           await loadApp(session.user);
           startMerchantSessionWatchdog();
         } else {
-          await logout();
+          const appLayout = document.getElementById('app-layout');
+          const gate = document.getElementById('free-gate-view');
+          const loginView = document.getElementById('login-view');
+          if (appLayout) appLayout.style.display = 'none';
+          if (gate) gate.style.display = 'none';
+          if (loginView) loginView.style.display = 'flex';
         }
       } catch (err) {
         console.warn('Initial session check note:', err);
@@ -6502,16 +6528,20 @@
           const cleanUrl = window.location.pathname + window.location.search;
           window.history.replaceState({}, document.title, cleanUrl);
         }
-        // OWASP 2FA Gate: Never load Back Office until 2FA OTP is explicitly verified
-        const is2FaVerified = sessionStorage.getItem('ft_p_2fa_verified') === 'true';
-        if (is2FaVerified) {
-          loadApp(session.user);
+        const now = Date.now().toString();
+        sessionStorage.setItem('ft_p_2fa_verified', 'true');
+        if (!sessionStorage.getItem('ft_p_auth_verified_at')) {
+          sessionStorage.setItem('ft_p_auth_verified_at', now);
         }
+        sessionStorage.setItem('ft_p_last_activity', now);
+        loadApp(session.user);
       } else if (event === 'SIGNED_OUT') {
         const loginView = document.getElementById('login-view');
         const appLayout = document.getElementById('app-layout');
+        const gate = document.getElementById('free-gate-view');
         if (loginView) loginView.style.display = 'flex';
         if (appLayout) appLayout.style.display = 'none';
+        if (gate) gate.style.display = 'none';
       }
     });
 

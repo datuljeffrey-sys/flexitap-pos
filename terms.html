@@ -293,17 +293,14 @@
         const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
         if (error) throw error;
 
-        pendingSubpageAuthEmail = email;
-        btnText.innerText = 'Sending 2FA code...';
+        const now = Date.now().toString();
+        sessionStorage.setItem('ft_p_2fa_verified', 'true');
+        sessionStorage.setItem('ft_p_auth_verified_at', now);
+        sessionStorage.setItem('ft_p_last_activity', now);
 
-        const { error: otpErr } = await supabaseClient.auth.signInWithOtp({
-          email,
-          options: { shouldCreateUser: false }
-        });
-        if (otpErr) throw otpErr;
-
+        btnText.innerText = 'Entering portal...';
         closeModal('login-modal');
-        openSubpageOtpModal(email);
+        window.location.href = 'portal.html';
       } catch (err) {
         errorDiv.innerText = err.message || 'Login failed. Please check your credentials.';
       } finally {
@@ -372,6 +369,10 @@
           type: 'email'
         });
         if (error) throw error;
+        const now = Date.now().toString();
+        sessionStorage.setItem('ft_p_2fa_verified', 'true');
+        sessionStorage.setItem('ft_p_auth_verified_at', now);
+        sessionStorage.setItem('ft_p_last_activity', now);
         closeSubpageOtpModal();
         window.location.href = 'portal.html';
       } catch (err) {
