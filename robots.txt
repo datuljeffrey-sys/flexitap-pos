@@ -1,6 +1,7 @@
 # FlexiTap POS - Search Engine & AI Agent Crawler Directives
 User-agent: *
 Allow: /
+Allow: /loyverse-pos-alternative.html
 Allow: /pos-for-cafes.html
 Allow: /pos-for-retail.html
 Allow: /pos-for-quick-service.html
@@ -13,19 +14,21 @@ Allow: /support.html
 Allow: /download.html
 Allow: /community.html
 Allow: /insights.html
+Allow: /insights/
 Allow: /affiliate.html
 Allow: /terms.html
 Allow: /privacy.html
 Allow: /refunds.html
 Allow: /llms.txt
 
-# Disallow internal apps, portals and account endpoints
-Disallow: /portal.html
+# Note: /portal.html intentionally omitted from Disallow so crawlers can read its <meta name="robots" content="noindex, nofollow"> directive and drop cached shell URLs.
 Disallow: /dev-portal.html
 Disallow: /dev_portal.html
 Disallow: /partner-portal.html
 Disallow: /flexi-app.html
 Disallow: /remote-support.html
+Disallow: /report_independent_review.html
+Disallow: /simulation_suite.html
 Disallow: /account/
 
 # Welcome AI Answer Engines (AEO)

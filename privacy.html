@@ -7,7 +7,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>FlexiTap — Privacy Policy</title>
+  <title>Privacy Policy | FlexiTap POS</title>
+  <meta name="description" content="Read the official FlexiTap POS Privacy Policy covering merchant data ownership, local SQLite storage, GDPR/DPA compliance, and PCI-DSS boundaries.">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="https://flexitapapp.com/privacy.html">
   
   <link rel="icon" type="image/png" href="image_02e503.png">
   <link rel="shortcut icon" href="favicon.ico">
@@ -477,7 +480,7 @@
   <!-- NAVBAR -->
   <header>
     <div class="container">
-      <a href="index.html" class="logo">
+      <a href="/" class="logo">
         <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" />
         <span>FlexiTap POS</span>
       </a>
@@ -490,7 +493,6 @@
         <a href="about.html" class="nav-link" onclick="toggleMobileMenu()">About Us & FAQ</a>
         <a href="insights.html" class="nav-link" onclick="toggleMobileMenu()">Insights</a>
         <a href="support.html" class="nav-link" onclick="toggleMobileMenu()">Support & Download</a>
-        <a href="dev-portal.html" class="nav-link" style="color: var(--primary);">Dev & Ops Portal ↗</a>
         <button class="btn-login mobile-only-login" onclick="openModal('login-modal'); toggleMobileMenu();">Merchant Login</button>
       </div>
 
@@ -661,6 +663,10 @@
             <li><a href="terms.html">Terms of Service</a></li>
             <li><a href="refunds.html">Refund Policy</a></li>
           </ul>
+          <h4 style="margin-top: 20px;">Compare</h4>
+          <ul>
+            <li><a href="loyverse-pos-alternative.html">Loyverse POS Alternative</a></li>
+          </ul>
         </div>
       </div>
 
@@ -678,7 +684,7 @@
       <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
       <div class="modal-header-logo">
         <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 36px; height: 36px;" />
-        <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Merchant Login</h2>
+        <div role="heading" aria-level="2" class="modal-heading" style="font-size: 24px; font-weight: 800; color: #fff;">Merchant Login</div>
       </div>
       <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Log in with your FlexiTap account credentials.</p>
 
@@ -704,7 +710,7 @@
       <button class="close-btn" onclick="closeSubpageOtpModal()">&times;</button>
       <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 8px;">
         <span style="font-size: 22px;">🔒</span>
-        <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin: 0;">Two-Step Verification (OTP)</h2>
+        <div role="heading" aria-level="2" class="modal-heading" style="font-size: 20px; font-weight: 800; color: #fff; margin: 0;">Two-Step Verification (OTP)</div>
       </div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
         A security verification code has been sent to <strong id="subpage-otp-display-email" style="color: #fff;">your email</strong>. Enter the code below to complete sign-in.
@@ -729,7 +735,7 @@
   <div class="modal-overlay" id="subpage-forgot-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeSubpageForgotModal()">&times;</button>
-      <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Reset Merchant Password</h2>
+      <div role="heading" aria-level="2" class="modal-heading" style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Reset Merchant Password</div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Enter your store account email and we'll send you a secure recovery link via Supabase SMTP.</p>
       <form onsubmit="handleSubpageForgotSubmit(event)">
         <label>Merchant Email</label>
@@ -743,7 +749,7 @@
   <!-- SUBPAGE RECOVERY / SET NEW PASSWORD MODAL -->
   <div class="modal-overlay" id="subpage-new-pw-modal">
     <div class="modal-card">
-      <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Set New Password</h2>
+      <div role="heading" aria-level="2" class="modal-heading" style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Set New Password</div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Your recovery session is verified. Enter a new password for your merchant account.</p>
       <form onsubmit="handleSubpageUpdatePassword(event)">
         <label>New Password</label>

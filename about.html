@@ -9,6 +9,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>About FlexiTap POS — Offline-First Point of Sale</title>
   <meta name="description" content="Learn about FlexiTap POS: why we built an offline-first POS for cafes and retail merchants to eliminate internet dependency and monthly fee gouging.">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <link rel="canonical" href="https://flexitapapp.com/about.html">
 
   <!-- Open Graph -->
@@ -863,6 +864,35 @@
       });
     }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "AboutPage",
+      "name": "About FlexiTap POS",
+      "url": "https://flexitapapp.com/about.html"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "FlexiTap POS",
+          "item": "https://flexitapapp.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "About & FAQ",
+          "item": "https://flexitapapp.com/about.html"
+        }
+      ]
+    }
+  ]
+}
+  </script>
 </head>
 <body>
 
@@ -1052,7 +1082,6 @@
             <li><a href="support.html">Support</a></li>
             <li><a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer">Merchant Community (FB Group) ↗</a></li>
             <li><a href="affiliate.html">Affiliate &amp; Partner Program <span style="font-size: 0.72rem; color: #f87171; font-weight: 700; margin-left: 4px;">(Paused)</span></a></li>
-            <li><a href="dev-portal.html" rel="nofollow">Staff &amp; Dev Portal</a></li>
             <li><a href="#" onclick="openCalendarBooking(event)">Book a Live Demo</a></li>
           </ul>
         </div>
@@ -1063,6 +1092,10 @@
             <li><a href="privacy.html">Privacy Policy</a></li>
             <li><a href="terms.html">Terms of Service</a></li>
             <li><a href="refunds.html">Refund Policy</a></li>
+          </ul>
+          <h3 style="margin-top: 20px;">Compare</h3>
+          <ul>
+            <li><a href="loyverse-pos-alternative.html">Loyverse POS Alternative</a></li>
           </ul>
         </div>
       </div>
@@ -1078,7 +1111,7 @@
   <div class="modal-overlay" id="login-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
-      <h2>Merchant Login</h2>
+      <div role="heading" aria-level="2" class="modal-heading" style="font-size: 22px; font-weight: 800; color: #ffffff; margin-bottom: 8px;">Merchant Login</div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Log in with your FlexiTap account credentials.</p>
       
       <form id="portal-login-form" onsubmit="handleStoreLogin(event)">
@@ -1103,7 +1136,7 @@
       <button class="close-btn" onclick="closeSubpageOtpModal()">&times;</button>
       <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 8px;">
         <span style="font-size: 22px;">🔒</span>
-        <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin: 0;">Two-Step Verification (OTP)</h2>
+        <div role="heading" aria-level="2" class="modal-heading" style="font-size: 20px; font-weight: 800; color: #fff; margin: 0;">Two-Step Verification (OTP)</div>
       </div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
         A security verification code has been sent to <strong id="subpage-otp-display-email" style="color: #fff;">your email</strong>. Enter the code below to complete sign-in.
@@ -1128,7 +1161,7 @@
   <div class="modal-overlay" id="subpage-forgot-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeSubpageForgotModal()">&times;</button>
-      <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Reset Merchant Password</h2>
+      <div role="heading" aria-level="2" class="modal-heading" style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Reset Merchant Password</div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Enter your store account email and we'll send you a secure recovery link via Supabase SMTP.</p>
       <form onsubmit="handleSubpageForgotSubmit(event)">
         <label>Merchant Email</label>
@@ -1142,7 +1175,7 @@
   <!-- SUBPAGE RECOVERY / SET NEW PASSWORD MODAL -->
   <div class="modal-overlay" id="subpage-new-pw-modal">
     <div class="modal-card">
-      <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Set New Password</h2>
+      <div role="heading" aria-level="2" class="modal-heading" style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Set New Password</div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Your recovery session is verified. Enter a new password for your merchant account.</p>
       <form onsubmit="handleSubpageUpdatePassword(event)">
         <label>New Password</label>

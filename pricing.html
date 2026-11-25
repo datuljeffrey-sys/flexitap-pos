@@ -7,8 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-    <title>Free Community POS & Transparent Pricing | FlexiTap</title>
-  <meta name="description" content="Transparent pricing with zero hidden fees. Start free with 100% offline POS, or choose flexible monthly and annual plans for cloud sync and multi-store fleet ops.">
+    <title>Free Community POS &amp; Transparent Pricing | FlexiTap</title>
+  <meta name="description" content="Transparent POS pricing with zero per-terminal fees. Start free forever with 100% offline POS, or upgrade to Plus ($290/yr) and Pro ($590/yr).">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <link rel="canonical" href="https://flexitapapp.com/pricing.html">
 
   <!-- Open Graph -->
@@ -2345,6 +2346,60 @@
     }
 
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "FlexiTap POS",
+      "operatingSystem": "Windows, Android, iPadOS, iOS, Web",
+      "applicationCategory": "BusinessApplication",
+      "url": "https://flexitapapp.com/pricing.html",
+      "offers": [
+        {
+          "@type": "Offer",
+          "name": "Free Community Edition",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock"
+        },
+        {
+          "@type": "Offer",
+          "name": "FlexiTap Plus (Annual)",
+          "price": "290",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock"
+        },
+        {
+          "@type": "Offer",
+          "name": "FlexiTap Pro (Annual)",
+          "price": "590",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock"
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "FlexiTap POS",
+          "item": "https://flexitapapp.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Pricing",
+          "item": "https://flexitapapp.com/pricing.html"
+        }
+      ]
+    }
+  ]
+}
+  </script>
 </head>
 <body>
 
@@ -2429,7 +2484,7 @@
         <span class="hero-dot"></span> Flexible Monthly &amp; Annual Subscription Plans
       </div>
       
-      <h1 class="section-title">Resilient Offline POS.<br>Zero Proprietary Terminal Fees.</h1>
+      <h1 class="section-title">Resilient Offline POS. <br>Zero Proprietary Terminal Fees.</h1>
       <p class="section-subtitle">Run your counter on standard tablets and PCs. Choose flexible monthly billing or save with our discounted annual plans.</p>
       
       <!-- GEOLOCATION TAG & BILLING CYCLE TOGGLE -->
@@ -2681,7 +2736,6 @@
             <li><a href="support.html">Support</a></li>
             <li><a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer">Merchant Community (FB Group) ↗</a></li>
             <li><a href="affiliate.html">Affiliate &amp; Partner Program <span style="font-size: 0.72rem; color: #f87171; font-weight: 700; margin-left: 4px;">(Paused)</span></a></li>
-            <li><a href="dev-portal.html" rel="nofollow">Staff &amp; Dev Portal</a></li>
             <li><a href="#" onclick="openCalendarBooking(event)">Book a Live Demo</a></li>
           </ul>
         </div>
@@ -2692,6 +2746,10 @@
             <li><a href="privacy.html">Privacy Policy</a></li>
             <li><a href="terms.html">Terms of Service</a></li>
             <li><a href="refunds.html">Refund Policy</a></li>
+          </ul>
+          <h4 style="margin-top: 20px;">Compare</h4>
+          <ul>
+            <li><a href="loyverse-pos-alternative.html">Loyverse POS Alternative</a></li>
           </ul>
         </div>
       </div>
@@ -2707,7 +2765,7 @@
   <div class="modal-overlay" id="signup-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeModal('signup-modal')">&times;</button>
-      <h2>Reserve Your Store</h2>
+      <div role="heading" aria-level="2" class="modal-heading" style="font-size: 22px; font-weight: 800; color: #ffffff; margin-bottom: 8px;">Reserve Your Store</div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;" id="modal-intent-helper">Enter your store details below.</p>
       <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 12.5px; color: #93c5fd; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
         <span>Already have a FlexiTap store account?</span>
@@ -2752,7 +2810,7 @@
       <button class="close-btn" onclick="closeModal('upgrade-modal')">&times;</button>
       <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
         <span style="font-size: 24px;">🚀</span>
-        <h2 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: #fff;">Upgrade Your Subscription</h2>
+        <div role="heading" aria-level="2" class="modal-heading" style="margin: 0; font-size: 1.25rem; font-weight: 800; color: #fff;">Upgrade Your Subscription</div>
       </div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 18px;" id="upgrade-modal-sub">
         Upgrading your existing FlexiTap store account. Zero downtime.
@@ -2815,7 +2873,7 @@
   <div class="modal-overlay" id="upgrade-success-modal">
     <div class="modal-card" style="max-width: 460px; text-align: center; padding: 32px 24px;">
       <div style="font-size: 52px; margin-bottom: 12px;">🎉</div>
-      <h2 style="font-size: 1.35rem; font-weight: 800; color: #fff; margin: 0 0 6px 0;">Subscription Upgraded!</h2>
+      <div role="heading" aria-level="2" class="modal-heading" style="font-size: 1.35rem; font-weight: 800; color: #fff; margin: 0 0 6px 0;">Subscription Upgraded!</div>
       <p style="color: #94a3b8; font-size: 13.5px; line-height: 1.5; margin: 0 0 20px 0;">
         Your store has been successfully upgraded. All POS registers and devices will unlock the new features automatically.
       </p>
@@ -2840,7 +2898,7 @@
       <div class="gcash-header-banner">
         <div>
           <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.85; font-weight: 800;">Official Philippine Payment</div>
-          <h2 style="font-size: 20px; font-weight: 800; margin: 2px 0 0; color: #fff;">Direct GCash Checkout 🇵🇭</h2>
+          <div role="heading" aria-level="2" class="modal-heading" style="font-size: 20px; font-weight: 800; margin: 2px 0 0; color: #fff;">Direct GCash Checkout 🇵🇭</div>
         </div>
         <div style="background: rgba(255,255,255,0.2); border-radius: 8px; padding: 6px 10px; font-size: 12px; font-weight: 800;">
           Zero Processing Fees
@@ -2950,7 +3008,7 @@
   <div class="modal-overlay" id="login-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
-      <h2>Merchant Login</h2>
+      <div role="heading" aria-level="2" class="modal-heading" style="font-size: 22px; font-weight: 800; color: #ffffff; margin-bottom: 8px;">Merchant Login</div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Sign in to manage your merchant profile.</p>
       
       <form id="login-form" onsubmit="handleMerchantLogin(event)">
@@ -2973,7 +3031,7 @@
       <button class="close-btn" onclick="closeSubpageOtpModal()">&times;</button>
       <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 8px;">
         <span style="font-size: 22px;">🔒</span>
-        <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin: 0;">Two-Step Verification (OTP)</h2>
+        <div role="heading" aria-level="2" class="modal-heading" style="font-size: 20px; font-weight: 800; color: #fff; margin: 0;">Two-Step Verification (OTP)</div>
       </div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
         A security verification code has been sent to <strong id="subpage-otp-display-email" style="color: #fff;">your email</strong>. Enter the code below to complete sign-in.
@@ -2998,7 +3056,7 @@
   <div class="modal-overlay" id="subpage-forgot-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeSubpageForgotModal()">&times;</button>
-      <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Reset Merchant Password</h2>
+      <div role="heading" aria-level="2" class="modal-heading" style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Reset Merchant Password</div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Enter your store account email and we'll send you a secure recovery link via Supabase SMTP.</p>
       <form onsubmit="handleSubpageForgotSubmit(event)">
         <label>Merchant Email</label>
@@ -3012,7 +3070,7 @@
   <!-- SUBPAGE RECOVERY / SET NEW PASSWORD MODAL -->
   <div class="modal-overlay" id="subpage-new-pw-modal">
     <div class="modal-card">
-      <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Set New Password</h2>
+      <div role="heading" aria-level="2" class="modal-heading" style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Set New Password</div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Your recovery session is verified. Enter a new password for your merchant account.</p>
       <form onsubmit="handleSubpageUpdatePassword(event)">
         <label>New Password</label>

@@ -1,44 +1,53 @@
 # FlexiTap POS
 
-> An offline-first point-of-sale (POS) and merchant operating system engineered for retail stores, restaurants, cafes, food trucks, and professional service businesses. Operates with 100% functionality on local SQLite database engines even when internet connectivity drops.
+> FlexiTap POS is an offline-first point-of-sale (POS) and merchant operating system engineered for small retail businesses, convenience stores, cafes, restaurants, food trucks, and professional service venues. Operates with 100% functionality on an embedded local SQLite database even when internet connectivity drops.
 
 ## Core Value Proposition
-- **Offline-First Resilience**: Ring up orders, calculate change, apply tax/discounts, split bills, and print kitchen order tickets (KOT) without internet.
-- **Zero Cloud Latency**: Counter tenders execute in under 15ms directly on local device hardware.
-- **BYOD (Bring Your Own Device)**: Runs on existing iPad, Android tablet, Windows PC, or Mac hardware. Zero proprietary terminal lease lock-ins.
-- **Local Network Sync (mDNS)**: Terminal-to-terminal and terminal-to-KDS communication occurs over local Wi-Fi/LAN without relying on external cloud servers.
-- **Automatic Cloud Sync**: Transaction records, inventory deltas, and telemetry automatically synchronize with the cloud once internet access is restored.
+- **Offline-First Resilience**: Ring up orders, scan barcodes, calculate change, apply tax/discounts, split bills, and print ESC/POS receipts & kitchen order tickets (KOT) with zero internet dependency.
+- **Zero Cloud Latency**: Counter tenders and 100,000+ SKU barcode lookups execute in under 15ms directly on local device hardware.
+- **BYOD (Bring Your Own Device)**: Runs on existing Windows 10/11 PCs & touchscreens, Android tablets & Sunmi terminals, and Apple iPadOS / iOS devices. Zero proprietary hardware lease lock-ins.
+- **Zero Processor Lock-In**: Keep your existing bank merchant account and external card terminal (PAX, Ingenico, Verifone, Maya, etc.) with zero forced payment processing markups.
+- **Local Network Sync (mDNS)**: Multi-terminal registers, Kitchen Display Systems (KDS), and Customer Displays (CDS) synchronize directly over local Wi-Fi/LAN without requiring cloud servers.
+- **Automatic Cloud Back Office Sync**: Paid plans automatically replicate encrypted transaction deltas, Z-reads, and multi-store inventory to the cloud when connectivity is available.
 
 ## Industry Verticals & Solutions
-- [Cafes & Bakeries](https://flexitapapp.com/pos-for-cafes.html): Barista rush speed, KOT printing, milk/syrup modifier groups, offline cash drawer kick.
-- [Retail & Boutiques](https://flexitapapp.com/pos-for-retail.html): 100,000+ SKU capacity, USB/Bluetooth barcode scanner integration, color/size variant matrices, stockroom inventory auditing.
-- [Quick-Serve & Food Trucks](https://flexitapapp.com/pos-for-quick-service.html): 3-second counter checkouts, real-time Kitchen Display System (KDS) bump bar routing, order status pickup displays.
-- [Fine Dining & Full Service](https://flexitapapp.com/pos-for-fine-dining.html): Visual table layout and floor plans, timed course firing (apps, mains, desserts), seat-level bill splitting, sommelier wine cellar tracking.
-- [Professional Services & Salons](https://flexitapapp.com/pos-for-professional-services.html): Appointment scheduling, client checkout with custom tip screens, multi-stylist commission splits, zero per-booking platform fees.
+- [Retail, Convenience & Boutique POS](https://flexitapapp.com/pos-for-retail.html): High-speed 1D/2D USB & Bluetooth barcode scanning for small retail businesses, convenience stores, and clothing shops (size/color variant matrices, parked sales, receiving & stockroom audits).
+- [Cafes, Coffee Shops & Bakeries](https://flexitapapp.com/pos-for-cafes.html): Free coffee shop POS software with rapid milk/syrup modifier groups, barista KOT routing, iPad/Android/Windows touch support, and offline cash drawer kick.
+- [Quick-Serve & Food Trucks](https://flexitapapp.com/pos-for-quick-service.html): 3-second counter checkouts, multi-station Kitchen Display System (KDS) bump bar routing, and order status pickup displays.
+- [Fine Dining & Full-Service Restaurants](https://flexitapapp.com/pos-for-fine-dining.html): Visual floor plans, timed course firing (appetizers, mains, desserts), seat-level bill splitting, and sommelier wine cellar inventory tracking.
+- [Professional Services, Salons & Spas](https://flexitapapp.com/pos-for-professional-services.html): Visual appointment timeline booking, staff commission attribution, and zero per-booking marketplace commissions.
+
+## Competitor Comparisons
+- [Loyverse POS Alternative](https://flexitapapp.com/loyverse-pos-alternative.html): True local SQLite offline reliability, built-in employee/inventory management without monthly per-employee add-on fees, universal ESC/POS printer support, and 1-click Loyverse CSV menu import.
 
 ## Key Hardware Compatibility
-- **Receipt & Kitchen Printers**: ESC/POS compliant thermal printers (Ethernet LAN, USB, Bluetooth, Wi-Fi, serial).
-- **Barcode Scanners**: 1D and 2D QR barcode scanner guns operating via USB HID keyboard emulation or Bluetooth SPP/HID.
+- **Receipt & Kitchen Printers**: ESC/POS compliant thermal printers (Ethernet LAN, USB, Bluetooth BLE, Wi-Fi, Serial, AirPrint, Star Micronics, Epson TM series, Sunmi internal printers).
+- **Barcode Scanners**: 1D UPC/EAN and 2D QR barcode scanner guns operating via USB HID keyboard emulation or Bluetooth SPP/HID.
 - **Cash Drawers**: Standard RJ11/RJ12 24V printer-driven kick ports.
-- **Operating Systems**: Web (PWA), Windows 10/11, macOS, Android (v8.0+), iOS / iPadOS (v14+).
+- **Operating Systems**: Windows 10/11 (.exe), Android 8.0+ & Sunmi (.apk), iPadOS / iOS, and Web.
 
-## Pricing & Licensing
-- **Free Community Plan**: $0/month forever. 1 active terminal, full local SQLite offline capability, receipt printing, and basic reporting.
-- **Founders VIP Annual Pass**: $590/year (or custom retail tier upon public launch Nov 13, 2026). Unlimited paired terminals, multi-station KDS routing, customer display (CDS), remote diagnostics, and multi-location cloud synchronization.
-- **Zero Hidden Terminal Fees**: No recurring per-terminal software leases or forced merchant processing contracts.
+## Transparent Pricing Plans
+- **Free Community Edition ($0 forever)**: 1 active POS register terminal, 100% offline local SQLite database, barcode scanning, ESC/POS receipt printing, local Z-read backups, and Support PWA access.
+- **Plus Edition ($290/year or monthly option)**: Single-store Cloud Back Office reporting suite, remote menu & inventory sync, multi-terminal local LAN sync, and technical support desk.
+- **Pro Edition ($590/year or monthly option)**: Multi-store Cloud Back Office, Kitchen Display (KDS) & Customer Display (CDS) station routing, AI sales insights, remote support utility, and priority engineering care.
 
-## Technical Architecture & Benchmarks
-- **Local Engine**: Embedded SQLite database with Write-Ahead Logging (WAL).
-- **Execution Speed**: Sub-15ms local barcode and SKU queries.
-- **Peer Sync**: UDP/TCP LAN socket protocol with mDNS auto-discovery.
-- **Cloud Backend**: Supabase PostgreSQL with Row Level Security (RLS) and real-time delta replication.
+## Technical Playbooks & Engineering Guides
+- [Why Offline-First POS Architecture Saves Stores $12,000/Yr in Outages](https://flexitapapp.com/insights/offline-first-pos-architecture.html)
+- [How High-Volume Coffee Bars Cut Peak Checkout Time from 45s to 12s](https://flexitapapp.com/insights/coffee-bar-checkout-speed.html)
+- [Zero-Latency Local Peer Sync with SQLite & Event Sourcing](https://flexitapapp.com/insights/sqlite-local-peer-sync-pos.html)
+- [Multi-Station Kitchen Display (KDS) Routing Guide](https://flexitapapp.com/insights/multi-station-kitchen-display-kds.html)
+- [ESC/POS Thermal Receipt Printer Benchmark: USB, Bluetooth & Ethernet](https://flexitapapp.com/insights/esc-pos-thermal-printer-benchmark.html)
+- [The True Cost of Hidden POS Terminal Lease Fees in 2026](https://flexitapapp.com/insights/hidden-pos-terminal-lease-fees.html)
+- [FlexiTap POS Official Multi-Platform Release Overview](https://flexitapapp.com/insights/flexitap-pos-official-launch.html)
 
 ## Official Resources & Links
-- Website: https://flexitapapp.com/
-- Capabilities & Architecture: https://flexitapapp.com/features.html
+- Homepage: https://flexitapapp.com/
+- Downloads (Windows, Android, iOS): https://flexitapapp.com/download.html
+- Capabilities & Features: https://flexitapapp.com/features.html
 - Pricing Plans: https://flexitapapp.com/pricing.html
-- Technical Support & FAQ: https://flexitapapp.com/about.html
-- Merchant Support & Remote Diagnostics: https://flexitapapp.com/support.html
-- Official Community Forum: https://flexitapapp.com/community.html
-- Official Community (FB Group): https://www.facebook.com/groups/1500322278604407
-- Official Contact: support@flexitapapp.com
+- Loyverse Comparison: https://flexitapapp.com/loyverse-pos-alternative.html
+- Insights & Playbooks: https://flexitapapp.com/insights.html
+- Merchant Community Forum: https://flexitapapp.com/community.html
+- Support & Hardware Setup: https://flexitapapp.com/support.html
+- About & FAQ: https://flexitapapp.com/about.html
+- Contact: support@flexitapapp.com

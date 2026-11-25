@@ -10,9 +10,9 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   
   <!-- SEO PRIMARY META -->
-  <title>FlexiTap Community Hub — POS Forum, Hardware Guides & Merchant Peer Help</title>
+  <title>FlexiTap Community — POS Forum, Printer &amp; Hardware Guides</title>
   <meta name="title" content="FlexiTap Community Hub — POS Forum, Hardware Guides & Merchant Peer Help">
-  <meta name="description" content="Official FlexiTap POS Merchant Community. Join peer discussions, browse ESC/POS printer setups, troubleshoot offline cashier checkouts, and vote on upcoming feature roadmaps.">
+  <meta name="description" content="Official FlexiTap POS merchant forum. Browse ESC/POS thermal printer guides, barcode scanner setups, offline cashier tips, and peer discussions.">
   <meta name="keywords" content="FlexiTap community, POS forum, offline POS discussion, ESC/POS printer troubleshooting, cashier setup, Star Micronics, Epson TM-T20III, barista checkout speed, retail inventory guides">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <link rel="canonical" href="https://flexitapapp.com/community.html">
@@ -936,7 +936,7 @@
   <div class="sub-bar">
     <div class="container">
       <div class="breadcrumb">
-        <a href="index.html">🏠 Home</a>
+        <a href="/">🏠 Home</a>
         <span>&rsaquo;</span>
         <span style="color: #fff; font-weight: 600;">Community</span>
       </div>
@@ -1283,9 +1283,10 @@
         <div class="footer-col">
           <h4>FlexiTap POS</h4>
           <ul>
-            <li><a href="index.html">Main Website &rarr;</a></li>
-            <li><a href="portal.html" target="_blank" rel="noopener noreferrer">Merchant Back Office &rarr;</a></li>
+            <li><a href="/">Main Website &rarr;</a></li>
+            <li><a href="portal.html" target="_blank" rel="nofollow noopener noreferrer">Merchant Back Office &rarr;</a></li>
             <li><a href="support.html">Help Desk &rarr;</a></li>
+            <li><a href="loyverse-pos-alternative.html">Loyverse POS Alternative &rarr;</a></li>
           </ul>
         </div>
       </div>
@@ -1293,7 +1294,7 @@
       <div class="footer-bottom">
         <div>&copy; 2026 FlexiTap Community Hub. Dedicated merchant forum.</div>
         <div>
-          <a href="index.html" style="color:var(--text-muted); text-decoration:none;">Back to Main Site &uarr;</a>
+          <a href="/" style="color:var(--text-muted); text-decoration:none;">Back to Main Site &uarr;</a>
         </div>
       </div>
     </div>
@@ -1431,7 +1432,7 @@
       const content = document.getElementById('modal-content');
 
       content.innerHTML = `
-        <h2 style="font-size: 1.35rem; font-weight: 800; color:#fff; margin-bottom: 6px;">Sign In to FlexiTap Community</h2>
+        <div role="heading" aria-level="2" class="modal-heading" style="font-size: 1.35rem; font-weight: 800; color:#fff; margin-bottom: 6px;">Sign In to FlexiTap Community</div>
         <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
           Use your registered FlexiTap store credentials to sign in directly without leaving this page.
         </p>
@@ -1528,7 +1529,7 @@
       }
 
       content.innerHTML = `
-        <h2 style="font-size: 1.25rem; font-weight: 800; color:#fff; margin-bottom: 8px;">Merchant Profile &amp; Subscription</h2>
+        <div role="heading" aria-level="2" class="modal-heading" style="font-size: 1.25rem; font-weight: 800; color:#fff; margin-bottom: 8px;">Merchant Profile &amp; Subscription</div>
         
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
           <div class="user-avatar-small" style="width:40px; height:40px; font-size:16px;">${escapeHtml(name[0])}</div>
@@ -1954,7 +1955,7 @@
         content.innerHTML = `
           <div style="text-align:center; padding: 20px 10px;">
             <div style="font-size:38px; margin-bottom:12px;">🔒</div>
-            <h2 style="font-size:1.35rem; font-weight:800; color:#fff; margin-bottom:8px;">Please sign in to start a discussion</h2>
+            <div role="heading" aria-level="2" class="modal-heading" style="font-size:1.35rem; font-weight:800; color:#fff; margin-bottom:8px;">Please sign in to start a discussion</div>
             <p style="font-size:13.5px; color:var(--text-muted); margin-bottom:22px; max-width:420px; margin-left:auto; margin-right:auto; line-height:1.5;">
               You must be signed in with your FlexiTap store account to create a new discussion topic and share with the merchant community.
             </p>
@@ -1973,7 +1974,7 @@
       }
 
       content.innerHTML = `
-        <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 6px;">Start a New Discussion</h2>
+        <div role="heading" aria-level="2" class="modal-heading" style="font-size: 1.3rem; font-weight: 800; margin-bottom: 6px;">Start a New Discussion</div>
         <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
           Share a question, hardware setup, or tip with the FlexiTap merchant community.
         </p>

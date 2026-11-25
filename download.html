@@ -9,8 +9,9 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <!-- Primary SEO Metadata -->
-  <title>Download FlexiTap POS — Windows (.exe) &amp; Android (.apk) Production Releases</title>
-  <meta name="description" content="Download official FlexiTap POS installers for Windows 10/11 touch terminals, Android commercial tablets, and Sunmi handheld devices. Local offline SQLite reliability.">
+  <title>Download FlexiTap POS — Windows (.exe) &amp; Android (.apk)</title>
+  <meta name="description" content="Download official FlexiTap POS installers for Windows 10/11 registers, Android tablets, Sunmi terminals, and iPadOS/iOS. 100% offline SQLite speed.">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <meta name="keywords" content="download flexitap pos, flexitap apk download, flexitap windows exe download, offline pos download, sunmi pos apk, cafe pos installer, retail pos setup">
   <link rel="canonical" href="https://flexitapapp.com/download.html">
 
@@ -680,6 +681,45 @@
     .submit-btn:hover { background: var(--primary-hover); }
     .error-msg { color: #f87171; font-size: 13px; margin-top: 10px; min-height: 18px; }
   </style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "FlexiTap POS",
+      "operatingSystem": "Windows 10, Windows 11, Android 8.0+, Sunmi OS, iPadOS, iOS",
+      "applicationCategory": "BusinessApplication",
+      "downloadUrl": "https://flexitapapp.com/download.html",
+      "softwareVersion": "2.0",
+      "offers": {
+        "@type": "Offer",
+        "name": "Free Community Edition",
+        "price": "0",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "FlexiTap POS",
+          "item": "https://flexitapapp.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Downloads",
+          "item": "https://flexitapapp.com/download.html"
+        }
+      ]
+    }
+  ]
+}
+  </script>
 </head>
 <body>
 
@@ -799,6 +839,7 @@
     </section>
 
     <!-- MULTI-PLATFORM DOWNLOAD GRID -->
+    <h2 style="text-align: center; font-size: clamp(22px, 2.8vw, 28px); font-weight: 800; color: #ffffff; margin: 12px 0 28px; letter-spacing: -0.4px;">Choose Your POS Operating System</h2>
     <div class="download-grid">
       
       <!-- CARD 1: WINDOWS -->
@@ -982,7 +1023,6 @@
             <li><a href="support.html">Support</a></li>
             <li><a href="https://www.facebook.com/groups/1500322278604407" target="_blank" rel="noopener noreferrer">Merchant Community (FB Group) ↗</a></li>
             <li><a href="affiliate.html">Affiliate &amp; Partner Program <span style="font-size: 0.72rem; color: #f87171; font-weight: 700; margin-left: 4px;">(Paused)</span></a></li>
-            <li><a href="dev-portal.html" rel="nofollow">Staff &amp; Dev Portal</a></li>
             <li><a href="#" onclick="openCalendarBooking(event)">Book a Live Demo</a></li>
           </ul>
         </div>
@@ -993,6 +1033,10 @@
             <li><a href="privacy.html">Privacy Policy</a></li>
             <li><a href="terms.html">Terms of Service</a></li>
             <li><a href="refunds.html">Refund Policy</a></li>
+          </ul>
+          <h4 style="margin-top: 20px;">Compare</h4>
+          <ul>
+            <li><a href="loyverse-pos-alternative.html">Loyverse POS Alternative</a></li>
           </ul>
         </div>
       </div>
@@ -1010,7 +1054,7 @@
       <button class="close-btn" onclick="closeModal('login-modal')">&times;</button>
       <div class="modal-header-logo">
         <img src="image_02e503.png" alt="FlexiTap Logo" class="brand-logo-svg" style="width: 36px; height: 36px;" />
-        <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Merchant Portal</h2>
+        <div role="heading" aria-level="2" class="modal-heading" style="font-size: 24px; font-weight: 800; color: #fff;">Merchant Portal</div>
       </div>
       <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Log in with your FlexiTap account credentials.</p>
 
@@ -1036,7 +1080,7 @@
       <button class="close-btn" onclick="closeSubpageOtpModal()">&times;</button>
       <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 8px;">
         <span style="font-size: 22px;">🔒</span>
-        <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin: 0;">Two-Step Verification (OTP)</h2>
+        <div role="heading" aria-level="2" class="modal-heading" style="font-size: 20px; font-weight: 800; color: #fff; margin: 0;">Two-Step Verification (OTP)</div>
       </div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
         A security verification code has been sent to <strong id="subpage-otp-display-email" style="color: #fff;">your email</strong>. Enter the code below to complete sign-in.
@@ -1061,7 +1105,7 @@
   <div class="modal-overlay" id="subpage-forgot-modal">
     <div class="modal-card">
       <button class="close-btn" onclick="closeSubpageForgotModal()">&times;</button>
-      <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Reset Merchant Password</h2>
+      <div role="heading" aria-level="2" class="modal-heading" style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px;">Reset Merchant Password</div>
       <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Enter your store account email and we'll send you a secure recovery link.</p>
       <form onsubmit="handleSubpageForgotSubmit(event)">
         <label>Merchant Email</label>
