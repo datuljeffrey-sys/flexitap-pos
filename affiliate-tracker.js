@@ -25,6 +25,29 @@
   var COOKIE_NAME = 'flexitap_ref';
   var COOKIE_DAYS = 60;
 
+  // GDPR/ePrivacy Compliance: Check cookieBanner / cookiePreferences before writing cookies
+  function hasCookieConsent() {
+    try {
+      var pref = localStorage.getItem('cookiePreferences');
+      if (pref === 'declined') return false;
+      return true; // Attribution allowed unless cookieBanner explicitly opted out
+    } catch (_) {
+      return true;
+    }
+  }
+
+  function acceptCookies() {
+    try {
+      localStorage.setItem('cookiePreferences', 'accepted');
+    } catch (_) {}
+  }
+
+  function clearSession() {
+    try {
+      sessionStorage.removeItem('flexitap_ref_logged');
+    } catch (_) {}
+  }
+
   // 1. Read Cookie Helper
   function getCookie(name) {
     var match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
@@ -33,6 +56,7 @@
 
   // 2. Set Cookie Helper
   function setCookie(name, value, days) {
+    if (!hasCookieConsent()) return;
     var d = new Date();
     d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
     var expires = 'expires=' + d.toUTCString();

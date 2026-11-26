@@ -179,6 +179,12 @@
       console.warn('Supabase initialization:', e);
     }
 
+    function clearLocalStorage() {
+      try {
+        localStorage.removeItem('flexitap_pwa_user');
+      } catch (_) {}
+    }
+
     // Auto-fill active session if logged in
     document.addEventListener('DOMContentLoaded', async () => {
       try {
@@ -261,7 +267,7 @@
 
         // 5. Sign out and show success
         await supabaseClient.auth.signOut().catch(() => {});
-        localStorage.removeItem('flexitap_pwa_user');
+        clearLocalStorage();
 
         alertBox.className = 'alert-msg ok';
         alertBox.innerHTML = '<strong>✓ Deletion Request Submitted:</strong> Your account has been scheduled for permanent erasure. Production data will be purged within 30 days and backups rotated within 30 days in full compliance with Section 6. Redirecting...';

@@ -371,27 +371,71 @@
     /* REGIONAL RESTRICTION BANNER (PH) */
     .ph-restricted-alert {
       display: none;
-      background: linear-gradient(180deg, rgba(120, 53, 15, 0.4), rgba(69, 26, 3, 0.6));
-      border: 1px solid rgba(245, 158, 11, 0.5);
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(148, 163, 184, 0.2);
       border-radius: 16px;
-      padding: 18px 24px;
+      padding: 16px 22px;
       max-width: 840px;
-      margin: 0 auto 36px;
+      margin: 0 auto 32px;
       text-align: left;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.25);
+      animation: fadeInNotice 0.35s ease-out;
     }
-    .ph-restricted-alert h4 {
-      color: #fde68a;
-      font-size: 15px;
-      font-weight: 800;
+    .ph-notice-wrap {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
+      gap: 14px;
     }
-    .ph-restricted-alert p {
-      color: #fef3c7;
-      font-size: 13.5px;
+    .ph-notice-icon {
+      font-size: 22px;
+      line-height: 1;
+      opacity: 0.9;
+      flex-shrink: 0;
+    }
+    .ph-notice-text {
+      font-size: 14px;
+      color: #94a3b8;
       line-height: 1.5;
+    }
+    .ph-notice-text strong {
+      color: #f1f5f9;
+      font-weight: 600;
+      display: inline-block;
+      margin-right: 4px;
+    }
+    @keyframes fadeInNotice {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* SUBTLE TOAST NOTIFICATION */
+    .ph-subtle-toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+      color: #f1f5f9;
+      padding: 12px 24px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 99999;
+    }
+    .ph-subtle-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
     }
 
     /* DETECTED PLATFORM BOX */
@@ -815,10 +859,13 @@
 
       <!-- REGIONAL RESTRICTION NOTICE (PH) -->
       <div class="ph-restricted-alert" id="ph-alert">
-        <h4>🔒 Notice for Visitors in the Philippines</h4>
-        <p>
-          Direct FlexiTap POS app binary downloads are currently not available in your region. For inquiries, hardware certifications, or enterprise partner onboarding, please contact our support desk or access the merchant web portal.
-        </p>
+        <div class="ph-notice-wrap">
+          <span class="ph-notice-icon">🌐</span>
+          <div class="ph-notice-text">
+            <strong>FlexiTap is currently not available for your country.</strong>
+            <span>Direct installer downloads are restricted in your region at this time.</span>
+          </div>
+        </div>
       </div>
 
       <!-- DYNAMIC DETECTED PLATFORM HERO CALLOUT -->
@@ -1129,14 +1176,13 @@
     // --- DYNAMIC RELEASE RESOLVER WITH PH REGIONAL BLOCK ---
     let currentVersion = '1.0.99'; // Dynamically synced with Supabase updates/version.json
     let isPhilippines = false;
-    const PH_RESTRICTION_ACTIVE = false; // Temporarily disabled for user testing
+    const PH_RESTRICTION_ACTIVE = true; // Active regional policy for direct downloads
 
     // Supabase Public Storage Base Endpoint
     const SUPABASE_STORAGE_BASE = 'https://ezaqdnnecfkmqjdzigrf.supabase.co/storage/v1/object/public/updates';
 
     // 1. Check if user is located in the Philippines (PH)
     async function checkPhilippinesRegion() {
-      // Temporarily bypassed for testing
       if (!PH_RESTRICTION_ACTIVE) {
         isPhilippines = false;
         return;
@@ -1174,35 +1220,51 @@
       const detectedBtn = document.getElementById('detected-btn');
       if (detectedBtn) {
         detectedBtn.classList.add('btn-disabled-ph');
-        detectedBtn.innerHTML = '<span>🚫</span> Download Unavailable in PH';
+        detectedBtn.innerHTML = '<span>🌐</span> Not Available in Your Country';
         detectedBtn.setAttribute('onclick', "showPhRestrictionNotice()");
       }
       const detectedMeta = document.getElementById('detected-meta');
       if (detectedMeta) {
-        detectedMeta.innerText = 'Restricted in the Philippines • Contact Support for Assistance';
+        detectedMeta.innerText = 'FlexiTap is currently not available for your country';
       }
 
       const winBtn = document.getElementById('btn-win-download');
       if (winBtn) {
         winBtn.classList.add('btn-disabled-ph');
-        winBtn.innerHTML = '<span>🚫</span> Unavailable in PH';
+        winBtn.innerHTML = '<span>🌐</span> Not Available in Your Country';
         winBtn.setAttribute('onclick', "showPhRestrictionNotice()");
       }
 
       const androidBtn = document.getElementById('btn-android-download');
       if (androidBtn) {
         androidBtn.classList.add('btn-disabled-ph');
-        androidBtn.innerHTML = '<span>🚫</span> Unavailable in PH';
+        androidBtn.innerHTML = '<span>🌐</span> Not Available in Your Country';
         androidBtn.setAttribute('onclick', "showPhRestrictionNotice()");
       }
     }
 
     function showPhRestrictionNotice() {
-      alert(
-        'Notice for Merchants in the Philippines:\n\n' +
-        'FlexiTap POS direct installer downloads are currently not available in your region.\n\n' +
-        'For enterprise inquiries or partner onboarding in the Philippines, please contact our support team.'
-      );
+      let toast = document.getElementById('ph-subtle-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'ph-subtle-toast';
+        toast.className = 'ph-subtle-toast';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = '<span>🌐</span> FlexiTap is currently not available for your country.';
+      toast.classList.add('show');
+
+      const alertBox = document.getElementById('ph-alert');
+      if (alertBox) {
+        alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        alertBox.style.borderColor = 'rgba(148, 163, 184, 0.5)';
+        setTimeout(() => { alertBox.style.borderColor = 'rgba(148, 163, 184, 0.2)'; }, 1500);
+      }
+
+      clearTimeout(window._phToastTimeout);
+      window._phToastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
     }
 
     // Platform Auto-Detection
