@@ -871,16 +871,16 @@
       <!-- DYNAMIC DETECTED PLATFORM HERO CALLOUT -->
       <div class="detected-hero-box" id="detected-box">
         <div class="detected-info">
-          <div class="detected-label">Recommended for Your Device</div>
+          <div class="detected-label">Release Maintenance Notice</div>
           <div class="detected-name" id="detected-title">
             <span>💻</span> Windows POS Edition (64-bit)
           </div>
           <div class="detected-meta" id="detected-meta">
-            Production Release • Offline SQLite Runtime Included
+            Installer downloads are temporarily paused while we roll out a new build.
           </div>
         </div>
-        <button class="btn-detected-download" id="detected-btn" onclick="executeDownload('windows')">
-          <span>📥</span> Download for Windows (.exe)
+        <button class="btn-detected-download btn-disabled-ph" id="detected-btn" type="button" disabled aria-disabled="true">
+          <span>🔒</span> Downloads Temporarily Disabled
         </button>
       </div>
     </section>
@@ -915,15 +915,15 @@
         </div>
 
         <div>
-          <button class="btn-download-primary" id="btn-win-download" onclick="executeDownload('windows')" style="background: #0078d7; color: #fff;">
+          <button class="btn-download-primary btn-disabled-ph" id="btn-win-download" type="button" disabled aria-disabled="true">
             <svg viewBox="0 0 24 24">
               <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
             </svg>
-            <span id="label-win-download">Download for Windows (.exe)</span>
+            <span id="label-win-download">Temporarily Unavailable</span>
           </button>
           <div class="btn-sub-meta">
             <span id="meta-win-file">Windows 10/11 (64-bit)</span>
-            <span style="color: #10b981; font-weight: 700;">✓ Verified Clean</span>
+            <span style="color: #94a3b8; font-weight: 700;">⏸ Build Updating</span>
           </div>
         </div>
       </div>
@@ -954,15 +954,15 @@
         </div>
 
         <div>
-          <button class="btn-download-primary" id="btn-android-download" onclick="executeDownload('android')" style="background: #10b981; color: #fff;">
+          <button class="btn-download-primary btn-disabled-ph" id="btn-android-download" type="button" disabled aria-disabled="true">
             <svg viewBox="0 0 24 24">
               <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
             </svg>
-            <span id="label-android-download">Download Android Package (.apk)</span>
+            <span id="label-android-download">Temporarily Unavailable</span>
           </button>
           <div class="btn-sub-meta">
             <span id="meta-android-file">Sunmi &amp; Android 8.0+</span>
-            <span style="color: #10b981; font-weight: 700;">✓ Verified Clean</span>
+            <span style="color: #94a3b8; font-weight: 700;">⏸ Build Updating</span>
           </div>
         </div>
       </div>
@@ -993,15 +993,15 @@
         </div>
 
         <div>
-          <button class="btn-download-primary" onclick="openAppStoreNotice()" style="background: rgba(255, 255, 255, 0.12); color: #fff; border: 1px solid rgba(255, 255, 255, 0.25);">
+          <button class="btn-download-primary btn-disabled-ph" type="button" disabled aria-disabled="true">
             <svg viewBox="0 0 24 24">
               <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.01c.67-.82 1.13-1.96 1.01-3.1-.97.04-2.15.65-2.85 1.47-.62.72-1.16 1.88-1.02 2.99 1.08.08 2.19-.54 2.86-1.36z"/>
             </svg>
-            Available November 28, 2026
+            Coming Soon on App Store
           </button>
           <div class="btn-sub-meta">
-            <span>Apple App Store Final Review</span>
-            <span style="color: #94a3b8;">Releases Nov 28</span>
+            <span>Apple App Store Review</span>
+            <span style="color: #94a3b8;">Coming Soon</span>
           </div>
         </div>
       </div>
@@ -1177,6 +1177,7 @@
     let currentVersion = '1.0.99'; // Dynamically synced with Supabase updates/version.json
     let isPhilippines = false;
     const PH_RESTRICTION_ACTIVE = true; // Active regional policy for direct downloads
+    const DOWNLOADS_TEMP_DISABLED = true; // Global switch to pause direct binary downloads
 
     // Supabase Public Storage Base Endpoint
     const SUPABASE_STORAGE_BASE = 'https://ezaqdnnecfkmqjdzigrf.supabase.co/storage/v1/object/public/updates';
@@ -1301,6 +1302,8 @@
         el.innerText = 'v' + ver + ' Release';
       });
 
+      if (DOWNLOADS_TEMP_DISABLED) return;
+
       if (!isPhilippines) {
         const winLabel = document.getElementById('label-win-download');
         if (winLabel) winLabel.innerText = 'Download for Windows (.exe)';
@@ -1318,8 +1321,11 @@
       }
     }
 
-    // Execute Download (Blocked if in PH, background download without exposing raw URL)
+    // Execute Download (Blocked if disabled or in PH, background download without exposing raw URL)
     function executeDownload(platform) {
+      if (DOWNLOADS_TEMP_DISABLED) {
+        return;
+      }
       if (PH_RESTRICTION_ACTIVE && isPhilippines) {
         showPhRestrictionNotice();
         return;
@@ -1546,6 +1552,17 @@
       const detectedTitle = document.getElementById('detected-title');
       const detectedMeta = document.getElementById('detected-meta');
       const detectedBtn = document.getElementById('detected-btn');
+
+      if (DOWNLOADS_TEMP_DISABLED) {
+        if (detected === 'android') {
+          detectedTitle.innerHTML = '<span>📱</span> Android &amp; Sunmi POS Edition';
+        } else if (detected === 'ios') {
+          detectedTitle.innerHTML = '<span>🍎</span> iPadOS &amp; iOS Edition';
+        } else {
+          detectedTitle.innerHTML = '<span>💻</span> Windows POS Edition (64-bit)';
+        }
+        return;
+      }
 
       if (detected === 'android') {
         detectedTitle.innerHTML = '<span>📱</span> Android &amp; Sunmi POS Edition';
