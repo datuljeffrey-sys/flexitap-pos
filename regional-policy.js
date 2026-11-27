@@ -8,6 +8,16 @@
 (function() {
   'use strict';
 
+  // Developer & Operations portals, simulation suites, and dev tools are strictly exempt from regional restrictions
+  const currentPath = (window.location.pathname || '').toLowerCase();
+  if (currentPath.includes('dev-portal') ||
+      currentPath.includes('dev_portal') ||
+      currentPath.includes('simulation_suite') ||
+      window.FLEXITAP_DEV_MODE === true ||
+      localStorage.getItem('flexitap_dev_bypass') === 'true') {
+    return;
+  }
+
   const REGIONAL_POLICY_ACTIVE = true;
   let isPH = false;
 
@@ -166,11 +176,10 @@
 
     const path = window.location.pathname.toLowerCase();
 
-    // A. Dedicated Portal Pages Guard: portal.html, dev-portal.html, partner-portal.html, flexi-app.html, simulation_suite.html
+    // A. Dedicated Merchant Portal Pages Guard: portal.html, partner-portal.html, flexi-app.html
     const isPortalPage = path.endsWith('/portal.html') || path.endsWith('/portal') ||
-                         path.endsWith('/dev-portal.html') || path.endsWith('/dev_portal.html') ||
                          path.endsWith('/partner-portal.html') || path.endsWith('/partner-portal') ||
-                         path.endsWith('/flexi-app.html') || path.endsWith('/simulation_suite.html');
+                         path.endsWith('/flexi-app.html');
 
     if (isPortalPage) {
       document.body.innerHTML = `
